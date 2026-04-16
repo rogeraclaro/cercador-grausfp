@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: executing
-stopped_at: Completed 01-project-setup-01-01-PLAN.md
-last_updated: "2026-04-16T20:30:38.615Z"
+status: verifying
+stopped_at: Completed 01-project-setup-01-02-PLAN.md
+last_updated: "2026-04-16T20:33:10.216Z"
 last_activity: 2026-04-16
 progress:
   total_phases: 6
-  completed_phases: 0
+  completed_phases: 1
   total_plans: 2
-  completed_plans: 1
-  percent: 50
+  completed_plans: 2
+  percent: 100
 ---
 
 # Project State
@@ -27,7 +27,7 @@ See: .planning/PROJECT.md (updated 2026-04-16)
 
 Phase: 01 (project-setup) — EXECUTING
 Plan: 2 of 2
-Status: Ready to execute
+Status: Phase complete — ready for verification
 Last activity: 2026-04-16
 
 Progress: [░░░░░░░░░░] 0%
@@ -53,6 +53,7 @@ Progress: [░░░░░░░░░░] 0%
 
 *Updated after each plan completion*
 | Phase 01-project-setup P01 | 2 | 3 tasks | 6 files |
+| Phase 01-project-setup P02 | 3 | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -68,6 +69,8 @@ Recent decisions affecting current work:
 - [Phase 01-project-setup]: app.py stub minim sense rutes: les rutes s'afegiran a la Fase 4
 - [Phase 01-project-setup]: requirements.txt sense versions fixes: pip resol les ultimes compatibles
 - [Phase 01-project-setup]: .env exclòs del repo (T-01-01); .env.example inclòs amb placeholder segur
+- [Phase 01-project-setup]: ofertes.json inclòs al repo (D-09): dades de mostra públiques sense PII ni secrets
+- [Phase 01-project-setup]: Stubs HTML sense CSS/JS: tot UI diferit a Fases 5 i 6 per mantenir la fase 1 com a esquelet pur
 
 ### Pending Todos
 
@@ -85,6 +88,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-16T20:30:38.612Z
-Stopped at: Completed 01-project-setup-01-01-PLAN.md
+Last session: 2026-04-16T20:33:10.214Z
+Stopped at: Completed 01-project-setup-01-02-PLAN.md
 Resume file: None

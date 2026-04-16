@@ -12,7 +12,7 @@ Six phases that take the project from empty directory to a deployed, fully-funct
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Project Setup** - Scaffold directory structure, dependencies, and config files
+- [x] **Phase 1: Project Setup** - Scaffold directory structure, dependencies, and config files (completed 2026-04-16)
 - [ ] **Phase 2: PDF Scrapers (Grados A, B, C)** - Download and parse the 3 official PDFs into structured records
 - [ ] **Phase 3: HTML Scrapers + Data Pipeline (Grados D, E)** - Scrape ministry HTML pages and consolidate all data into ofertes.json
 - [ ] **Phase 4: Flask API** - Expose the data via REST endpoints with async refresh and token-protected admin
@@ -33,7 +33,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Plans**: 2 plans
 Plans:
 - [x] 01-01-PLAN.md — Backend scaffold: app.py stub, requirements.txt, .env.example, .gitignore, scrapers/__init__.py
-- [ ] 01-02-PLAN.md — Frontend stubs i dades: index.html, admin.html, ofertes.json (mostra), README.md
+- [x] 01-02-PLAN.md — Frontend stubs i dades: index.html, admin.html, ofertes.json (mostra), README.md
 
 ### Phase 2: PDF Scrapers (Grados A, B, C)
 **Goal**: The three official PDFs from todofp.es are downloaded and parsed into clean structured records
@@ -105,7 +105,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Project Setup | 0/2 | Ready to execute | - |
+| 1. Project Setup | 2/2 | Complete   | 2026-04-16 |
 | 2. PDF Scrapers (Grados A, B, C) | 0/? | Not started | - |
 | 3. HTML Scrapers + Data Pipeline | 0/? | Not started | - |
 | 4. Flask API | 0/? | Not started | - |
