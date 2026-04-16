@@ -1,0 +1,28 @@
+# Secrets — mai al repositori
+.env
+
+# Cache Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Entorns virtuals
+venv/
+.venv/
+env/
+.env.bak
+
+# Paquets instal·lats
+*.egg-info/
+dist/
+build/
+
+# PDFs descarregats (artefactes de Fase 2-3, poden ser grans)
+*.pdf
+
+# IDE
+.DS_Store
+.idea/
+.vscode/
