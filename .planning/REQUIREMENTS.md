@@ -96,23 +96,62 @@
 
 ## Traceability
 
-*(Actualitzat durant la creació del roadmap)*
+*(Actualitzat 2026-04-16 — roadmap creat)*
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| PROJ-01..03 | — | Pending |
-| PDF-01..06 | — | Pending |
-| HTML-01..06 | — | Pending |
-| DATA-01..04 | — | Pending |
-| API-01..09 | — | Pending |
-| SRCH-01..10 | — | Pending |
-| ADMN-01..08 | — | Pending |
+| PROJ-01 | Phase 1 | Pending |
+| PROJ-02 | Phase 1 | Pending |
+| PROJ-03 | Phase 1 | Pending |
+| PDF-01 | Phase 2 | Pending |
+| PDF-02 | Phase 2 | Pending |
+| PDF-03 | Phase 2 | Pending |
+| PDF-04 | Phase 2 | Pending |
+| PDF-05 | Phase 2 | Pending |
+| PDF-06 | Phase 2 | Pending |
+| HTML-01 | Phase 3 | Pending |
+| HTML-02 | Phase 3 | Pending |
+| HTML-03 | Phase 3 | Pending |
+| HTML-04 | Phase 3 | Pending |
+| HTML-05 | Phase 3 | Pending |
+| HTML-06 | Phase 3 | Pending |
+| DATA-01 | Phase 3 | Pending |
+| DATA-02 | Phase 3 | Pending |
+| DATA-03 | Phase 3 | Pending |
+| DATA-04 | Phase 3 | Pending |
+| API-01 | Phase 4 | Pending |
+| API-02 | Phase 4 | Pending |
+| API-03 | Phase 4 | Pending |
+| API-04 | Phase 4 | Pending |
+| API-05 | Phase 4 | Pending |
+| API-06 | Phase 4 | Pending |
+| API-07 | Phase 4 | Pending |
+| API-08 | Phase 4 | Pending |
+| API-09 | Phase 4 | Pending |
+| SRCH-01 | Phase 5 | Pending |
+| SRCH-02 | Phase 5 | Pending |
+| SRCH-03 | Phase 5 | Pending |
+| SRCH-04 | Phase 5 | Pending |
+| SRCH-05 | Phase 5 | Pending |
+| SRCH-06 | Phase 5 | Pending |
+| SRCH-07 | Phase 5 | Pending |
+| SRCH-08 | Phase 5 | Pending |
+| SRCH-09 | Phase 5 | Pending |
+| SRCH-10 | Phase 5 | Pending |
+| ADMN-01 | Phase 6 | Pending |
+| ADMN-02 | Phase 6 | Pending |
+| ADMN-03 | Phase 6 | Pending |
+| ADMN-04 | Phase 6 | Pending |
+| ADMN-05 | Phase 6 | Pending |
+| ADMN-06 | Phase 6 | Pending |
+| ADMN-07 | Phase 6 | Pending |
+| ADMN-08 | Phase 6 | Pending |
 
 **Coverage:**
 - v1 requirements: 40 total
-- Mapped to phases: 0
-- Unmapped: 40 ⚠️
+- Mapped to phases: 40
+- Unmapped: 0 ✓
 
 ---
 *Requirements defined: 2026-04-16*
-*Last updated: 2026-04-16 after initial definition*
+*Last updated: 2026-04-16 — traceability mapped after roadmap creation*
