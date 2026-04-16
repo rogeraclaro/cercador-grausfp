@@ -30,7 +30,10 @@ Decimal phases appear between their surrounding integers in numeric order.
   2. Running `pip install -r requirements.txt` installs all 6 declared dependencies without errors
   3. `.gitignore` correctly excludes `.env`, Python cache files, and optionally `data/ofertes.json`
   4. A `.env.example` or README makes it clear how to configure `ADMIN_TOKEN`
-**Plans**: TBD
+**Plans**: 2 plans
+Plans:
+- [ ] 01-01-PLAN.md — Backend scaffold: app.py stub, requirements.txt, .env.example, .gitignore, scrapers/__init__.py
+- [ ] 01-02-PLAN.md — Frontend stubs i dades: index.html, admin.html, ofertes.json (mostra), README.md
 
 ### Phase 2: PDF Scrapers (Grados A, B, C)
 **Goal**: The three official PDFs from todofp.es are downloaded and parsed into clean structured records
@@ -102,7 +105,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Project Setup | 0/? | Not started | - |
+| 1. Project Setup | 0/2 | Ready to execute | - |
 | 2. PDF Scrapers (Grados A, B, C) | 0/? | Not started | - |
 | 3. HTML Scrapers + Data Pipeline | 0/? | Not started | - |
 | 4. Flask API | 0/? | Not started | - |
