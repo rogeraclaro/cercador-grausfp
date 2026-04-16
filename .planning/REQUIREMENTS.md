@@ -7,9 +7,9 @@
 
 ### Estructura del Projecte
 
-- [ ] **PROJ-01**: El projecte té l'estructura de directoris `fp-cercador/backend/` i `fp-cercador/frontend/` amb tots els fitxers necessaris
-- [ ] **PROJ-02**: El fitxer `.gitignore` exclou `.env`, `data/ofertes.json` (opcional) i fitxers de cache Python
-- [ ] **PROJ-03**: El fitxer `requirements.txt` conté: flask, flask-cors, pdfplumber, requests, beautifulsoup4, python-dotenv
+- [x] **PROJ-01**: El projecte té l'estructura de directoris `fp-cercador/backend/` i `fp-cercador/frontend/` amb tots els fitxers necessaris
+- [x] **PROJ-02**: El fitxer `.gitignore` exclou `.env`, `data/ofertes.json` (opcional) i fitxers de cache Python
+- [x] **PROJ-03**: El fitxer `requirements.txt` conté: flask, flask-cors, pdfplumber, requests, beautifulsoup4, python-dotenv
 
 ### Scraper PDFs (Grados A, B, C)
 
@@ -100,9 +100,9 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| PROJ-01 | Phase 1 | Pending |
-| PROJ-02 | Phase 1 | Pending |
-| PROJ-03 | Phase 1 | Pending |
+| PROJ-01 | Phase 1 | Complete |
+| PROJ-02 | Phase 1 | Complete |
+| PROJ-03 | Phase 1 | Complete |
 | PDF-01 | Phase 2 | Pending |
 | PDF-02 | Phase 2 | Pending |
 | PDF-03 | Phase 2 | Pending |

@@ -32,7 +32,7 @@ Decimal phases appear between their surrounding integers in numeric order.
   4. A `.env.example` or README makes it clear how to configure `ADMIN_TOKEN`
 **Plans**: 2 plans
 Plans:
-- [ ] 01-01-PLAN.md — Backend scaffold: app.py stub, requirements.txt, .env.example, .gitignore, scrapers/__init__.py
+- [x] 01-01-PLAN.md — Backend scaffold: app.py stub, requirements.txt, .env.example, .gitignore, scrapers/__init__.py
 - [ ] 01-02-PLAN.md — Frontend stubs i dades: index.html, admin.html, ofertes.json (mostra), README.md
 
 ### Phase 2: PDF Scrapers (Grados A, B, C)
