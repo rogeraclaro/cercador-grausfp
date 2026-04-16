@@ -1,0 +1,72 @@
+[
+  {
+    "id": 1,
+    "grado": "A",
+    "nivel": 1,
+    "familia": "Administració i Gestió",
+    "codigo": "ADGG0108",
+    "denominacion": "Operacions auxiliars de serveis administratius i generals",
+    "plan_antiguo": false,
+    "observaciones": ""
+  },
+  {
+    "id": 2,
+    "grado": "B",
+    "nivel": 2,
+    "familia": "Informàtica i Comunicacions",
+    "codigo": "IFCT0209",
+    "denominacion": "Sistemes microinformàtics",
+    "plan_antiguo": false,
+    "observaciones": ""
+  },
+  {
+    "id": 3,
+    "grado": "C",
+    "nivel": 3,
+    "familia": "Sanitat",
+    "codigo": "SANT0208",
+    "denominacion": "Atenció sanitària",
+    "plan_antiguo": true,
+    "observaciones": "(Plan antiguo)"
+  },
+  {
+    "id": 4,
+    "grado": "D",
+    "nivel": 1,
+    "familia": "Agrària",
+    "codigo": null,
+    "denominacion": "Agrojardineria i composicions florals",
+    "plan_antiguo": false,
+    "observaciones": ""
+  },
+  {
+    "id": 5,
+    "grado": "D",
+    "nivel": 2,
+    "familia": "Electricitat i Electrònica",
+    "codigo": null,
+    "denominacion": "Instal·lacions elèctriques i automàtiques",
+    "plan_antiguo": false,
+    "observaciones": ""
+  },
+  {
+    "id": 6,
+    "grado": "D",
+    "nivel": 3,
+    "familia": "Informàtica i Comunicacions",
+    "codigo": null,
+    "denominacion": "Administració de sistemes informàtics en xarxa",
+    "plan_antiguo": false,
+    "observaciones": ""
+  },
+  {
+    "id": 7,
+    "grado": "E",
+    "nivel": null,
+    "familia": "Sanitat",
+    "codigo": null,
+    "denominacion": "Audiologia protèsica",
+    "plan_antiguo": false,
+    "observaciones": ""
+  }
+]
