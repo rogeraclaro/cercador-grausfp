@@ -45,7 +45,11 @@ Plans:
   3. Each record has the correct `familia`, `codigo`, `denominacion`, and `observaciones` fields
   4. `nivel` is correctly derived from the code suffix (`_3B`→1, `_4B`→2, `_5B`→3) for every record
   5. Records with old-plan codes (`XXXN0000NN` format) or "(Plan antiguo)" in observations have `plan_antiguo: true`
-**Plans**: TBD
+**Plans**: 3 plans
+Plans:
+- [x] 02-01-PLAN.md — pdf_scraper.py (TDD): parse_grado_a/b/c, PREFIX_MAP, nivel i plan_antiguo amb suite de tests
+- [ ] 02-02-PLAN.md — pipeline.py: descàrrega PDFs, orquestració, escriptura atòmica ofertes.json
+- [ ] 02-03-PLAN.md — Execució real contra todofp.es + checkpoint de verificació de volum i estructura
 
 ### Phase 3: HTML Scrapers + Data Pipeline (Grados D, E)
 **Goal**: Grados D and E are scraped from ministry HTML pages and all 5 Grados are consolidated into a single ofertes.json
@@ -106,7 +110,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Project Setup | 2/2 | Complete   | 2026-04-16 |
-| 2. PDF Scrapers (Grados A, B, C) | 0/? | Not started | - |
+| 2. PDF Scrapers (Grados A, B, C) | 1/3 | In progress | - |
 | 3. HTML Scrapers + Data Pipeline | 0/? | Not started | - |
 | 4. Flask API | 0/? | Not started | - |
 | 5. Frontend — Cercador | 0/? | Not started | - |

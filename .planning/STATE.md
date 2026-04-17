@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: verifying
-stopped_at: Phase 2 context gathered
-last_updated: "2026-04-16T21:03:08.966Z"
-last_activity: 2026-04-16
+status: executing
+stopped_at: Phase 02 Plan 01 completed
+last_updated: "2026-04-17T10:15:00Z"
+last_activity: 2026-04-17 -- Phase 02 Plan 01 (pdf_scraper.py TDD) completed
 progress:
   total_phases: 6
   completed_phases: 1
-  total_plans: 2
-  completed_plans: 2
-  percent: 100
+  total_plans: 5
+  completed_plans: 3
+  percent: 60
 ---
 
 # Project State
@@ -21,16 +21,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-04-16)
 
 **Core value:** Un únic cercador que consolida tota l'oferta FP espanyola (Grados A–E) en temps real, filtrable per grado, família professional, nivell i text lliure.
-**Current focus:** Phase 01 — project-setup
+**Current focus:** Phase 02 — pdf-scrapers-grados-a-b-c
 
 ## Current Position
 
-Phase: 2
-Plan: Not started
-Status: Phase complete — ready for verification
-Last activity: 2026-04-16
+Phase: 02 (pdf-scrapers-grados-a-b-c) — EXECUTING
+Plan: 2 of 3
+Status: Plan 01 completat; continuant amb Plan 02
+Last activity: 2026-04-17 -- Phase 02 Plan 01 (pdf_scraper.py TDD) completed
 
-Progress: [░░░░░░░░░░] 0%
+Progress: [██░░░░░░░░] 20% (Phase 02 Plan 01 completat)
 
 ## Performance Metrics
 
@@ -71,6 +71,9 @@ Recent decisions affecting current work:
 - [Phase 01-project-setup]: .env exclòs del repo (T-01-01); .env.example inclòs amb placeholder segur
 - [Phase 01-project-setup]: ofertes.json inclòs al repo (D-09): dades de mostra públiques sense PII ni secrets
 - [Phase 01-project-setup]: Stubs HTML sense CSS/JS: tot UI diferit a Fases 5 i 6 per mantenir la fase 1 com a esquelet pur
+- [Phase 02-01]: pytest instal·lat com a dep de dev (no al requirements.txt — separat de runtime)
+- [Phase 02-01]: T-02-01 implementat: try/except per pàgina a _extract_records (threat model mitigate)
+- [Phase 02-01]: REFACTOR omès (codi sense duplicació significativa post-GREEN)
 
 ### Pending Todos
 
@@ -88,6 +91,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-16T21:03:08.958Z
-Stopped at: Phase 2 context gathered
-Resume file: .planning/phases/02-pdf-scrapers-grados-a-b-c/02-CONTEXT.md
+Last session: 2026-04-17T10:15:00Z
+Stopped at: Completed Phase 02 Plan 01 (pdf_scraper.py TDD — 27/27 tests passen)
+Resume file: .planning/phases/02-pdf-scrapers-grados-a-b-c/02-02-PLAN.md
