@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: executing
-stopped_at: Phase 02 Plan 01 completed
-last_updated: "2026-04-17T10:15:00Z"
-last_activity: 2026-04-17 -- Phase 02 Plan 01 (pdf_scraper.py TDD) completed
+status: Plan 02 completat; continuant amb Plan 03
+stopped_at: Phase 3 context gathered
+last_updated: "2026-04-17T15:47:43.715Z"
+last_activity: 2026-04-17 -- Phase 02 Plan 02 (pipeline.py TDD) completed
 progress:
   total_phases: 6
-  completed_phases: 1
+  completed_phases: 2
   total_plans: 5
-  completed_plans: 3
-  percent: 60
+  completed_plans: 5
+  percent: 100
 ---
 
 # Project State
@@ -26,11 +26,11 @@ See: .planning/PROJECT.md (updated 2026-04-16)
 ## Current Position
 
 Phase: 02 (pdf-scrapers-grados-a-b-c) — EXECUTING
-Plan: 2 of 3
-Status: Plan 01 completat; continuant amb Plan 02
-Last activity: 2026-04-17 -- Phase 02 Plan 01 (pdf_scraper.py TDD) completed
+Plan: 3 of 3
+Status: Plan 02 completat; continuant amb Plan 03
+Last activity: 2026-04-17 -- Phase 02 Plan 02 (pipeline.py TDD) completed
 
-Progress: [██░░░░░░░░] 20% (Phase 02 Plan 01 completat)
+Progress: [███░░░░░░░] 30% (Phase 02 Plans 01+02 completats)
 
 ## Performance Metrics
 
@@ -74,6 +74,8 @@ Recent decisions affecting current work:
 - [Phase 02-01]: pytest instal·lat com a dep de dev (no al requirements.txt — separat de runtime)
 - [Phase 02-01]: T-02-01 implementat: try/except per pàgina a _extract_records (threat model mitigate)
 - [Phase 02-01]: REFACTOR omès (codi sense duplicació significativa post-GREEN)
+- [Phase 02-02]: pipeline.py independent de Flask (D-09); app.py roman intacte fins a Fase 4
+- [Phase 02-02]: REFACTOR omès (implementació directa del pla sense duplicació)
 
 ### Pending Todos
 
@@ -91,6 +93,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-17T10:15:00Z
-Stopped at: Completed Phase 02 Plan 01 (pdf_scraper.py TDD — 27/27 tests passen)
-Resume file: .planning/phases/02-pdf-scrapers-grados-a-b-c/02-02-PLAN.md
+Last session: 2026-04-17T15:47:43.712Z
+Stopped at: Phase 3 context gathered
+Resume file: .planning/phases/03-html-scrapers-data-pipeline-grados-d-e/03-CONTEXT.md
