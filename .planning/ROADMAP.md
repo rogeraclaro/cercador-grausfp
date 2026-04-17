@@ -48,8 +48,8 @@ Plans:
 **Plans**: 3 plans
 Plans:
 - [x] 02-01-PLAN.md — pdf_scraper.py (TDD): parse_grado_a/b/c, PREFIX_MAP, nivel i plan_antiguo amb suite de tests
-- [ ] 02-02-PLAN.md — pipeline.py: descàrrega PDFs, orquestració, escriptura atòmica ofertes.json
-- [ ] 02-03-PLAN.md — Execució real contra todofp.es + checkpoint de verificació de volum i estructura
+- [x] 02-02-PLAN.md — pipeline.py: descàrrega PDFs, orquestració, escriptura atòmica ofertes.json
+- [x] 02-03-PLAN.md — Execució real contra todofp.es + checkpoint de verificació de volum i estructura
 
 ### Phase 3: HTML Scrapers + Data Pipeline (Grados D, E)
 **Goal**: Grados D and E are scraped from ministry HTML pages and all 5 Grados are consolidated into a single ofertes.json
@@ -61,7 +61,11 @@ Plans:
   3. Family is correctly inferred from section headings for every D/E record
   4. `backend/data/ofertes.json` is generated with the full schema: id, grado, nivel, familia, codigo, denominacion, plan_antiguo, observaciones
   5. The file contains 800–900 total records with unique, sequential IDs spanning all 5 Grados
-**Plans**: TBD
+**Plans**: 3 plans
+Plans:
+- [ ] 03-01-PLAN.md — Tests RED: fixtures HTML + test_html_scraper.py + .env.example
+- [ ] 03-02-PLAN.md — Implementació html_scraper.py (GREEN)
+- [ ] 03-03-PLAN.md — Integració pipeline.py + execució real + checkpoint DATA-04
 
 ### Phase 4: Flask API
 **Goal**: The data is accessible via a clean REST API with async refresh capability and protected admin endpoint
@@ -110,8 +114,8 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Project Setup | 2/2 | Complete   | 2026-04-16 |
-| 2. PDF Scrapers (Grados A, B, C) | 1/3 | In progress | - |
-| 3. HTML Scrapers + Data Pipeline | 0/? | Not started | - |
+| 2. PDF Scrapers (Grados A, B, C) | 2/3 | In progress | - |
+| 3. HTML Scrapers + Data Pipeline | 0/3 | Not started | - |
 | 4. Flask API | 0/? | Not started | - |
 | 5. Frontend — Cercador | 0/? | Not started | - |
 | 6. Frontend — Admin Panel | 0/? | Not started | - |
