@@ -152,11 +152,15 @@ def test_refresh_409_while_running(client):
 
 def test_refresh_started(client):
     """API-03: POST /api/admin/refresh llança el pipeline en background i retorna {"status": "started"}."""
+    import time
     with mock.patch(PATCH_PIPELINE_RUN, return_value=MOCK_PIPELINE_RESULT):
         r = client.post("/api/admin/refresh",
                         headers={"Authorization": "Bearer test-token"})
     assert r.status_code == 200
     assert r.get_json() == {"status": "started"}
+    # Espera que el thread daemon completi el pipeline mockejat abans que el
+    # fixture reset_refresh_state intenti alliberar el lock (WR-06: race condition).
+    time.sleep(0.05)
 
 
 # ---------------------------------------------------------------------------
