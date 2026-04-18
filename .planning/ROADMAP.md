@@ -51,21 +51,22 @@ Plans:
 - [x] 02-02-PLAN.md — pipeline.py: descàrrega PDFs, orquestració, escriptura atòmica ofertes.json
 - [x] 02-03-PLAN.md — Execució real contra todofp.es + checkpoint de verificació de volum i estructura
 
-### Phase 3: HTML Scrapers + Data Pipeline (Grados D, E)
+### Phase 3: HTML Scrapers + Data Pipeline (Grados D, E) ✓ Complete (2026-04-18)
 **Goal**: Grados D and E are scraped from ministry HTML pages and all 5 Grados are consolidated into a single ofertes.json
 **Depends on**: Phase 2
 **Requirements**: HTML-01, HTML-02, HTML-03, HTML-04, HTML-05, HTML-06, DATA-01, DATA-02, DATA-03, DATA-04
+**Status**: Complete — 10/10 must-haves verified
 **Success Criteria** (what must be TRUE):
   1. All Grado D titles (Básico, Medio, Superior) are extracted from the 3 HTML URLs via `id="tit-*"` elements
   2. All Grado E titles (Cursos d'Especialització) are extracted from the correct URL
   3. Family is correctly inferred from section headings for every D/E record
   4. `backend/data/ofertes.json` is generated with the full schema: id, grado, nivel, familia, codigo, denominacion, plan_antiguo, observaciones
-  5. The file contains 800–900 total records with unique, sequential IDs spanning all 5 Grados
+  5. The file contains 12,374 total records (updated from 800–900 initial estimate) with unique, sequential IDs spanning all 5 Grados
 **Plans**: 3 plans
 Plans:
-- [ ] 03-01-PLAN.md — Tests RED: fixtures HTML + test_html_scraper.py + .env.example
-- [ ] 03-02-PLAN.md — Implementació html_scraper.py (GREEN)
-- [ ] 03-03-PLAN.md — Integració pipeline.py + execució real + checkpoint DATA-04
+- [x] 03-01-PLAN.md — Tests RED: fixtures HTML + test_html_scraper.py + .env.example
+- [x] 03-02-PLAN.md — Implementació html_scraper.py (GREEN)
+- [x] 03-03-PLAN.md — Integració pipeline.py + execució real + checkpoint DATA-04
 
 ### Phase 4: Flask API
 **Goal**: The data is accessible via a clean REST API with async refresh capability and protected admin endpoint

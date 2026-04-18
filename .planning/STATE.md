@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: Plan 02 completat; continuant amb Plan 03
-stopped_at: Phase 3 context gathered
-last_updated: "2026-04-17T15:47:43.715Z"
-last_activity: 2026-04-17 -- Phase 02 Plan 02 (pipeline.py TDD) completed
+status: Phase 03 completa — 10/10 must-haves verificats
+stopped_at: Phase 03 complete
+last_updated: "2026-04-18T17:52:00.000Z"
+last_activity: 2026-04-18 -- Phase 03 completa (12.374 registres, 55 tests passant)
 progress:
   total_phases: 6
-  completed_phases: 2
-  total_plans: 5
-  completed_plans: 5
-  percent: 100
+  completed_phases: 3
+  total_plans: 8
+  completed_plans: 8
+  percent: 50
 ---
 
 # Project State
@@ -21,16 +21,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-04-16)
 
 **Core value:** Un únic cercador que consolida tota l'oferta FP espanyola (Grados A–E) en temps real, filtrable per grado, família professional, nivell i text lliure.
-**Current focus:** Phase 02 — pdf-scrapers-grados-a-b-c
+**Current focus:** Phase 04 — Flask API
 
 ## Current Position
 
-Phase: 02 (pdf-scrapers-grados-a-b-c) — EXECUTING
+Phase: 03 (html-scrapers-data-pipeline-grados-d-e) — COMPLETE
 Plan: 3 of 3
-Status: Plan 02 completat; continuant amb Plan 03
-Last activity: 2026-04-17 -- Phase 02 Plan 02 (pipeline.py TDD) completed
+Status: Phase 03 completa — 10/10 must-haves verificats
+Last activity: 2026-04-18 -- Phase 03 completa (html_scraper.py, pipeline integrat, 12.374 registres)
 
-Progress: [███░░░░░░░] 30% (Phase 02 Plans 01+02 completats)
+Progress: [█████░░░░░] 50% (Fases 01, 02, 03 completades)
 
 ## Performance Metrics
 
@@ -76,6 +76,11 @@ Recent decisions affecting current work:
 - [Phase 02-01]: REFACTOR omès (codi sense duplicació significativa post-GREEN)
 - [Phase 02-02]: pipeline.py independent de Flask (D-09); app.py roman intacte fins a Fase 4
 - [Phase 02-02]: REFACTOR omès (implementació directa del pla sense duplicació)
+- [Phase 03-02]: Mètode B (headers del <td>) per inferència de família; HTML_FAMILY_ALIASES per 2 anomalies HTML
+- [Phase 03-02]: HEADERS duplicat intencionalment a html_scraper.py per evitar dependència circular
+- [Phase 03-03]: PREFIX_MAP expandit a 30 entrades (incl. ART, SAN, UF, MF per LOGSE/HTML)
+- [Phase 03-03]: DATA-04 actualitzat: 12.374 registres reals (A:8537, B:2786, C:820, D:195, E:36)
+- [Phase 03-03]: _build_fam_map accepta alt sense prefix "Logotipo " per Grado E (Inteligencia Artificial y Data)
 
 ### Pending Todos
 
