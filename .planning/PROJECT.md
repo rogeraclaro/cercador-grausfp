@@ -12,13 +12,13 @@ Un únic cercador que consolida tota l'oferta FP espanyola (Grados A–E) en tem
 
 ### Validated
 
-(Cap encara — ship per validar)
+- [x] Scraper de PDFs per als Grados A, B, C (pdfplumber) amb detecció de família, nivell i pla antic — Validated in Phase 02
+- [x] Scraper HTML per als Grados D (Básico, Medio, Superior) i E (Cursos d'Especialització) — Validated in Phase 03
+- [x] Generació de `data/ofertes.json` amb el schema definit (id, grado, nivel, familia, codigo, denominacion, plan_antiguo, observaciones) — Validated in Phase 03 (12.374 registres, 0 desconeguts)
 
 ### Active
 
-- [ ] Scraper de PDFs per als Grados A, B, C (pdfplumber) amb detecció de família, nivell i pla antic
-- [ ] Scraper HTML per als Grados D (Básico, Medio, Superior) i E (Cursos d'Especialització)
-- [ ] Generació de `data/ofertes.json` amb el schema definit (id, grado, nivel, familia, codigo, denominacion, plan_antiguo, observaciones)
+- [ ] API Flask amb endpoints: GET /api/ofertes, POST /api/admin/refresh (protegit per token), GET /api/refresh-status, GET /health
 - [ ] API Flask amb endpoints: GET /api/ofertes, POST /api/admin/refresh (protegit per token), GET /api/refresh-status, GET /health
 - [ ] Execució del refresh en thread separat (no bloquejant), amb estat idle/running/done/error
 - [ ] Frontend estàtic sense dependències externes amb cerca en temps real (filtre simultani per text, grado, família, nivell, pla antic)
@@ -41,7 +41,7 @@ Un únic cercador que consolida tota l'oferta FP espanyola (Grados A–E) en tem
 - **Font de dades:** 3 PDFs oficials del Ministeri (todofp.es) per als Grados A/B/C + 4 pàgines HTML per als Grados D/E
 - **Extracció PDFs:** text natiu (no escanejat), llegible amb pdfplumber. Taules amb columnes Código/Denominación/Observaciones agrupades per família i nivell (deduïble del sufix del codi: `_3B`→N1, `_4B`→N2, `_5B`→N3)
 - **Extracció HTML:** elements amb atribut `id="tit-*"`, família inferida de capçaleres de secció
-- **Volum esperat:** ~850 registres totals (A: ~120, B: ~200, C: ~380, D: ~150, E: ~36)
+- **Volum real:** 12.374 registres totals (A: 8.537, B: 2.786, C: 820, D: 195, E: 36) — mesurat en Phase 03
 - **Desplegament:** VPS Ubuntu 24.04 amb CloudPanel; Flask serveix l'API, el frontend és estàtic
 - **Codis pla antic:** format `XXXN0000NN` o ` (Plan antiguo)` a Observaciones → `plan_antiguo: true`
 
@@ -80,4 +80,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-04-16 after initialization*
+*Last updated: 2026-04-18 after Phase 03 completion*
