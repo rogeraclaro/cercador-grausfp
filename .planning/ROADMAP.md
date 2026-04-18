@@ -78,8 +78,11 @@ Plans:
   3. `POST /api/admin/refresh` with a valid Bearer token launches the pipeline in a background thread and returns `{"status": "started"}` immediately (non-blocking)
   4. `POST /api/admin/refresh` returns 401 for a wrong token and 409 if a refresh is already running
   5. `GET /api/refresh-status` returns the correct state (idle/running/done/error) with last_run, total, by_grado, duration_seconds, and errors
-**Plans**: TBD
-**UI hint**: no
+**Plans**: 3 plans
+Plans:
+- [ ] 04-01-PLAN.md — TDD RED: refresh_state.py + test_api.py amb 9 tests per a tots els endpoints
+- [ ] 04-02-PLAN.md — Implementació GREEN: app.py complet amb totes les rutes Flask
+- [ ] 04-03-PLAN.md — Integració real: curl verification + checkpoint humà del refresh en background
 
 ### Phase 5: Frontend — Cercador
 **Goal**: Users can search the full FP catalog in real time from a static HTML page with no external dependencies
@@ -116,7 +119,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
 |-------|----------------|--------|-----------|
 | 1. Project Setup | 2/2 | Complete   | 2026-04-16 |
 | 2. PDF Scrapers (Grados A, B, C) | 2/3 | In progress | - |
-| 3. HTML Scrapers + Data Pipeline | 0/3 | Not started | - |
-| 4. Flask API | 0/? | Not started | - |
+| 3. HTML Scrapers + Data Pipeline | 3/3 | Complete | 2026-04-18 |
+| 4. Flask API | 0/3 | Planned | - |
 | 5. Frontend — Cercador | 0/? | Not started | - |
 | 6. Frontend — Admin Panel | 0/? | Not started | - |
