@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: Phase 03 completa — 10/10 must-haves verificats
-stopped_at: Phase 03 complete
-last_updated: "2026-04-18T17:52:00.000Z"
-last_activity: 2026-04-18 -- Phase 03 completa (12.374 registres, 55 tests passant)
+status: Phase 04 planificada — 3 plans, verificació superada
+stopped_at: Phase 04 ready to execute
+last_updated: "2026-04-18T18:30:00.000Z"
+last_activity: 2026-04-18 -- Phase 04 Flask API planificada (3 plans, 9 requisits coberts)
 progress:
   total_phases: 6
   completed_phases: 3
-  total_plans: 8
+  total_plans: 11
   completed_plans: 8
   percent: 50
 ---
@@ -25,12 +25,12 @@ See: .planning/PROJECT.md (updated 2026-04-16)
 
 ## Current Position
 
-Phase: 03 (html-scrapers-data-pipeline-grados-d-e) — COMPLETE
-Plan: 3 of 3
-Status: Phase 03 completa — 10/10 must-haves verificats
-Last activity: 2026-04-18 -- Phase 03 completa (html_scraper.py, pipeline integrat, 12.374 registres)
+Phase: 04 (flask-api) — READY TO EXECUTE
+Plan: 0 of 3
+Status: Phase 04 planificada — 3 plans verificats (TDD RED → GREEN → verificació real)
+Last activity: 2026-04-18 -- Phase 04 Flask API planificada (3 plans, 9 requisits API coberts)
 
-Progress: [█████░░░░░] 50% (Fases 01, 02, 03 completades)
+Progress: [█████░░░░░] 50% (Fases 01, 02, 03 completades; 04 planificada)
 
 ## Performance Metrics
 
@@ -98,6 +98,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-17T15:47:43.712Z
-Stopped at: Phase 3 context gathered
-Resume file: .planning/phases/03-html-scrapers-data-pipeline-grados-d-e/03-CONTEXT.md
+Last session: 2026-04-18T18:30:00.000Z
+Stopped at: Phase 04 planificada, llesta per executar
+Resume file: .planning/phases/04-flask-api/04-01-PLAN.md
