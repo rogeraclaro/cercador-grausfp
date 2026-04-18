@@ -1,0 +1,1079 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - generic [ref=e3]:
+      - button "HERRAMIENTAS DE ACCESIBILIDAD" [ref=e4] [cursor=pointer]:
+        - generic [ref=e5]:
+          - generic [ref=e6]: HERRAMIENTAS DE
+          - generic [ref=e7]: ACCESIBILIDAD
+      - generic [ref=e8]: 
+    - button "" [ref=e9] [cursor=pointer]
+  - link "Saltar al contenido" [ref=e10] [cursor=pointer]:
+    - /url: "#contenedor"
+  - generic [ref=e11]:
+    - banner [ref=e12]:
+      - generic [ref=e13]:
+        - link "Logotipo de TodoFP" [ref=e14] [cursor=pointer]:
+          - /url: /inicio.html
+          - img "Logotipo de TodoFP" [ref=e15]
+        - generic [ref=e16]:
+          - group "Campos de búsqueda" [ref=e19]:
+            - generic [ref=e20]: Campos de búsqueda
+            - generic [ref=e21]: Buscador
+            - textbox "Buscador" [ref=e22]:
+              - /placeholder: Buscar
+            - button "Buscar" [ref=e23] [cursor=pointer]
+          - link "Escudo del Ministerio" [ref=e25] [cursor=pointer]:
+            - /url: https://www.educacionfpydeportes.gob.es
+            - img "Escudo del Ministerio" [ref=e26]
+      - navigation [ref=e28]:
+        - list [ref=e29]:
+          - listitem [ref=e30]:
+            - link "Sobre FP" [ref=e31] [cursor=pointer]:
+              - /url: /sobre-fp.html
+          - listitem [ref=e32]:
+            - link "Qué estudiar" [ref=e33] [cursor=pointer]:
+              - /url: /que-estudiar.html
+          - listitem [ref=e34]:
+            - link "Cómo, cuándo y dónde estudiar" [ref=e35] [cursor=pointer]:
+              - /url: /como-cuando-y-donde-estudiar.html
+          - listitem [ref=e36]:
+            - link "Evaluación y Calidad" [ref=e37] [cursor=pointer]:
+              - /url: /evaluacion-calidad.html
+          - listitem [ref=e38]:
+            - link "Acreditación de competencias" [ref=e39] [cursor=pointer]:
+              - /url: /acreditacion-de-competencias.html
+          - listitem [ref=e40]:
+            - link "Orientación" [ref=e41] [cursor=pointer]:
+              - /url: /orientacion-profesional.html
+          - listitem [ref=e42]:
+            - link "Comunidad docente" [ref=e43] [cursor=pointer]:
+              - /url: /comunidad-docente.html
+          - listitem [ref=e44]:
+            - link "Convalidaciones y homologaciones" [ref=e45] [cursor=pointer]:
+              - /url: /convalidaciones-equivalencias-homologaciones.html
+    - generic [ref=e46]:
+      - list [ref=e48]:
+        - listitem [ref=e49]:
+          - link "Inicio" [ref=e50] [cursor=pointer]:
+            - /url: /inicio.html
+        - listitem [ref=e51]:
+          - link "Qué estudiar" [ref=e52] [cursor=pointer]:
+            - /url: /que-estudiar.html
+        - listitem [ref=e53]:
+          - link "Grados E" [ref=e54] [cursor=pointer]:
+            - /url: /que-estudiar/grados-e.html
+        - listitem [ref=e55]: Cursos de Especialización
+      - generic [ref=e57]:
+        - navigation [ref=e58]:
+          - paragraph [ref=e59]:
+            - link "Qué estudiar" [ref=e60] [cursor=pointer]:
+              - /url: /que-estudiar.html
+          - list [ref=e61]:
+            - listitem [ref=e62]:
+              - link "App soyfp" [ref=e63] [cursor=pointer]:
+                - /url: /que-estudiar/app-soyfp.html
+            - listitem [ref=e64]:
+              - link "Grados D" [ref=e65] [cursor=pointer]:
+                - /url: /que-estudiar/grados-d.html
+            - listitem [ref=e66]:
+              - link "Grados E" [ref=e67] [cursor=pointer]:
+                - /url: /que-estudiar/grados-e.html
+              - list [ref=e68]:
+                - listitem [ref=e69]:
+                  - link "Cursos de Especialización" [ref=e70] [cursor=pointer]:
+                    - /url: /que-estudiar/grados-e/curso-especializacion.html
+                  - list [ref=e71]:
+                    - listitem [ref=e72]:
+                      - link "Cursos de Especialización en las CCAA" [ref=e73] [cursor=pointer]:
+                        - /url: /que-estudiar/grados-e/curso-especializacion/webs-cursos-especializacion-ccaa.html
+            - listitem [ref=e74]:
+              - link "Ciclos Formativos y Cursos de Especialización por Familias Profesionales" [ref=e75] [cursor=pointer]:
+                - /url: /que-estudiar/familias-profesionales.html
+            - listitem [ref=e76]:
+              - link "Títulos LOGSE" [ref=e77] [cursor=pointer]:
+                - /url: /que-estudiar/antiguos-titulos.html
+            - listitem [ref=e78]:
+              - link "Catálogos y folletos descargables" [ref=e79] [cursor=pointer]:
+                - /url: /que-estudiar/material-descargable.html
+        - link "Cursos de Especialización en las CCAA Cursos de Especialización en las CCAA Cursos de Especialización en las CCAA" [ref=e82] [cursor=pointer]:
+          - /url: /que-estudiar/grados-e/curso-especializacion/webs-cursos-especializacion-ccaa.html
+          - generic [ref=e83]: Cursos de Especialización en las CCAA
+          - generic [ref=e84]: Cursos de Especialización en las CCAA
+          - img "Cursos de Especialización en las CCAA" [ref=e85]
+      - generic [ref=e86]:
+        - paragraph [ref=e87]:
+          - link "Volver" [ref=e88] [cursor=pointer]:
+            - /url: /que-estudiar/grados-e.html
+        - heading "Cursos de Especialización" [level=1] [ref=e89]
+        - table [ref=e93]:
+          - rowgroup [ref=e94]:
+            - row "Familia Titulación Real decreto Currículo Ministerio Currículos CCAA Perfiles profesionales Dónde estudiar" [ref=e95]:
+              - columnheader "Familia" [ref=e96]
+              - columnheader "Titulación" [ref=e97]
+              - columnheader "Real decreto" [ref=e98]
+              - columnheader "Currículo Ministerio" [ref=e99]
+              - columnheader "Currículos CCAA" [ref=e100]
+              - columnheader "Perfiles profesionales" [ref=e101]
+              - columnheader "Dónde estudiar" [ref=e102]
+          - rowgroup [ref=e103]:
+            - row "Logotipo Agraria Curso de especialización en Floristería y arte floral (Acceso GM) Real decreto No definido Currículos CCAA Perfiles profesionales Dónde estudiar" [ref=e104]:
+              - rowheader "Logotipo Agraria" [ref=e105]:
+                - img "Logotipo Agraria" [ref=e106]
+              - cell "Curso de especialización en Floristería y arte floral (Acceso GM)" [ref=e107]:
+                - paragraph [ref=e108]:
+                  - link "Curso de especialización en Floristería y arte floral (Acceso GM)" [ref=e109] [cursor=pointer]:
+                    - /url: /que-estudiar/familias-profesionales/agraria/ce-floristeria-arte-floral.html
+              - cell "Real decreto Curso de especialización en Floristería y arte floral (Acceso GM)" [ref=e110]:
+                - link "Real decreto Curso de especialización en Floristería y arte floral (Acceso GM)" [ref=e111] [cursor=pointer]:
+                  - /url: https://www.boe.es/diario_boe/txt.php?id=BOE-A-2024-21707
+              - cell "No definido" [ref=e112]:
+                - text: "-"
+                - generic [ref=e113]: No definido
+              - cell "Currículos CCAA Curso de especialización en Floristería y arte floral (Acceso GM)" [ref=e114]:
+                - link "Currículos CCAA Curso de especialización en Floristería y arte floral (Acceso GM)" [ref=e115] [cursor=pointer]:
+                  - /url: /que-estudiar/familias-profesionales/agraria/ce-floristeria-arte-floral/curriculos-ccaa.html
+              - cell "Perfiles profesionales Curso de especialización en Floristería y arte floral (Acceso GM)" [ref=e116]:
+                - link "Perfiles profesionales Curso de especialización en Floristería y arte floral (Acceso GM)" [ref=e117] [cursor=pointer]:
+                  - /url: /dam/jcr:0583d1ea-8821-4dbb-9c9e-a15dcc16c7b7/perfiles-profesionales-floristeria-y-arte-floral.pdf
+              - cell "Dónde estudiar Curso de especialización en Floristería y arte floral (Acceso GM)" [ref=e118]:
+                - link "Dónde estudiar Curso de especialización en Floristería y arte floral (Acceso GM)" [ref=e119] [cursor=pointer]:
+                  - /url: https://www.educacion.gob.es/centros/buscarCentros?ensenanzaFP=125_0101
+            - row "Curso de especialización en Insecticultura (Acceso GM) Real decreto No definido No definido No definido No definido" [ref=e120]:
+              - cell "Curso de especialización en Insecticultura (Acceso GM)" [ref=e121]:
+                - paragraph [ref=e122]:
+                  - link "Curso de especialización en Insecticultura (Acceso GM)" [ref=e123] [cursor=pointer]:
+                    - /url: /que-estudiar/familias-profesionales/agraria/ce-fp-insecticultura.html
+              - cell "Real decreto Curso de especialización en Insecticultura (Acceso GM)" [ref=e124]:
+                - link "Real decreto Curso de especialización en Insecticultura (Acceso GM)" [ref=e125] [cursor=pointer]:
+                  - /url: "https://www.boe.es/boe/dias/2026/03/13/pdfs/BOE-A-2026-5871.pdf "
+              - cell "No definido" [ref=e126]:
+                - text: "-"
+                - generic [ref=e127]: No definido
+              - cell "No definido" [ref=e128]:
+                - text: "-"
+                - generic [ref=e129]: No definido
+              - cell "No definido" [ref=e130]:
+                - text: "-"
+                - generic [ref=e131]: No definido
+              - cell "No definido" [ref=e132]:
+                - text: "-"
+                - generic [ref=e133]: No definido
+            - row "Logotipo Comercio y Marketing Comercio electrónico (Acceso GS) Real decreto No definido Currículos CCAA Perfiles profesionales Dónde estudiar" [ref=e134]:
+              - rowheader "Logotipo Comercio y Marketing" [ref=e135]:
+                - img "Logotipo Comercio y Marketing" [ref=e136]
+              - cell "Comercio electrónico (Acceso GS)" [ref=e137]:
+                - paragraph [ref=e138]:
+                  - link "Comercio electrónico (Acceso GS)" [ref=e139] [cursor=pointer]:
+                    - /url: /que-estudiar/familias-profesionales/comercio-marketing/ce-comercio-electronico.html
+              - cell "Real decreto Comercio electrónico (Acceso GS)" [ref=e140]:
+                - link "Real decreto Comercio electrónico (Acceso GS)" [ref=e141] [cursor=pointer]:
+                  - /url: https://www.boe.es/diario_boe/txt.php?id=BOE-A-2024-12502
+              - cell "No definido" [ref=e142]:
+                - text: "-"
+                - generic [ref=e143]: No definido
+              - cell "Currículos CCAA Comercio electrónico (Acceso GS)" [ref=e144]:
+                - link "Currículos CCAA Comercio electrónico (Acceso GS)" [ref=e145] [cursor=pointer]:
+                  - /url: /que-estudiar/familias-profesionales/comercio-marketing/ce-comercio-electronico/curriculos-ccaa.html
+              - cell "Perfiles profesionales Comercio electrónico (Acceso GS)" [ref=e146]:
+                - link "Perfiles profesionales Comercio electrónico (Acceso GS)" [ref=e147] [cursor=pointer]:
+                  - /url: /dam/jcr:5a832e63-346a-41d2-a6cb-dd4763ad7882/perfiles-profesionales-comercio-electronico.pdf
+              - cell "Dónde estudiar Comercio electrónico (Acceso GS)" [ref=e148]:
+                - link "Dónde estudiar Comercio electrónico (Acceso GS)" [ref=e149] [cursor=pointer]:
+                  - /url: https://www.educacion.gob.es/centros/buscarCentros?ensenanzaFP=124_2203
+            - row "Posicionamiento en buscadores (SEO/SEM) y comunicación en redes sociales (Acceso GS) Real decreto Modificación No definido Currículos CCAA Perfiles profesionales Dónde estudiar" [ref=e150]:
+              - cell "Posicionamiento en buscadores (SEO/SEM) y comunicación en redes sociales (Acceso GS)" [ref=e151]:
+                - paragraph [ref=e152]:
+                  - link "Posicionamiento en buscadores (SEO/SEM) y comunicación en redes sociales (Acceso GS)" [ref=e153] [cursor=pointer]:
+                    - /url: /que-estudiar/familias-profesionales/comercio-marketing/ce-posicionamiento-buscadores-comunicacion-rrss.html
+              - cell "Real decreto Posicionamiento en buscadores (SEO/SEM) y comunicación en redes sociales (Acceso GS) Modificación" [ref=e154]:
+                - list [ref=e155]:
+                  - listitem [ref=e156]:
+                    - link "Real decreto Posicionamiento en buscadores (SEO/SEM) y comunicación en redes sociales (Acceso GS)" [ref=e157] [cursor=pointer]:
+                      - /url: https://www.boe.es/diario_boe/txt.php?id=BOE-A-2024-3537
+                  - listitem [ref=e158]:
+                    - link "Modificación Real decreto Posicionamiento en buscadores (SEO/SEM) y comunicación en redes sociales (Acceso GS)" [ref=e159] [cursor=pointer]:
+                      - /url: https://www.boe.es/eli/es/rd/2024/05/21/497
+                      - text: Modificación
+              - cell "No definido" [ref=e160]:
+                - text: "-"
+                - generic [ref=e161]: No definido
+              - cell "Currículos CCAA Posicionamiento en buscadores (SEO/SEM) y comunicación en redes sociales (Acceso GS)" [ref=e162]:
+                - link "Currículos CCAA Posicionamiento en buscadores (SEO/SEM) y comunicación en redes sociales (Acceso GS)" [ref=e163] [cursor=pointer]:
+                  - /url: /que-estudiar/familias-profesionales/comercio-marketing/ce-posicionamiento-buscadores-comunicacion-rrss/curriculos-ccaa.html
+              - cell "Perfiles profesionales Posicionamiento en buscadores (SEO/SEM) y comunicación en redes sociales (Acceso GS)" [ref=e164]:
+                - link "Perfiles profesionales Posicionamiento en buscadores (SEO/SEM) y comunicación en redes sociales (Acceso GS)" [ref=e165] [cursor=pointer]:
+                  - /url: /dam/jcr:60c04ce8-2599-41a5-8856-6a3788522997/curso-de-especializaci-n-en-posicionamiento-en-busca.pdf
+              - cell "Dónde estudiar Posicionamiento en buscadores (SEO/SEM) y comunicación en redes sociales (Acceso GS)" [ref=e166]:
+                - link "Dónde estudiar Posicionamiento en buscadores (SEO/SEM) y comunicación en redes sociales (Acceso GS)" [ref=e167] [cursor=pointer]:
+                  - /url: https://www.educacion.gob.es/centros/buscarCentros?ensenanzaFP=124_2201
+            - row "Redacción de contenidos digitales para marketing y ventas (Acceso GS) Real decreto Modificación No definido Currículos CCAA Perfiles profesionales Dónde estudiar" [ref=e168]:
+              - cell "Redacción de contenidos digitales para marketing y ventas (Acceso GS)" [ref=e169]:
+                - paragraph [ref=e170]:
+                  - link "Redacción de contenidos digitales para marketing y ventas (Acceso GS)" [ref=e171] [cursor=pointer]:
+                    - /url: /que-estudiar/familias-profesionales/comercio-marketing/ce-redaccion-contenidos-marketing-ventas.html
+              - cell "Real decreto Redacción de contenidos digitales para marketing y ventas (Acceso GS) Modificación" [ref=e172]:
+                - list [ref=e173]:
+                  - listitem [ref=e174]:
+                    - link "Real decreto Redacción de contenidos digitales para marketing y ventas (Acceso GS)" [ref=e175] [cursor=pointer]:
+                      - /url: https://www.boe.es/diario_boe/txt.php?id=BOE-A-2024-3538
+                  - listitem [ref=e176]:
+                    - link "Modificación Real decreto Redacción de contenidos digitales para marketing y ventas (Acceso GS)" [ref=e177] [cursor=pointer]:
+                      - /url: https://www.boe.es/eli/es/rd/2024/05/21/497
+                      - text: Modificación
+              - cell "No definido" [ref=e178]:
+                - text: "-"
+                - generic [ref=e179]: No definido
+              - cell "Currículos CCAA Redacción de contenidos digitales para marketing y ventas (Acceso GS)" [ref=e180]:
+                - link "Currículos CCAA Redacción de contenidos digitales para marketing y ventas (Acceso GS)" [ref=e181] [cursor=pointer]:
+                  - /url: /que-estudiar/familias-profesionales/comercio-marketing/ce-redaccion-contenidos-marketing-ventas/curriculos-ccaa.html
+              - cell "Perfiles profesionales Redacción de contenidos digitales para marketing y ventas (Acceso GS)" [ref=e182]:
+                - link "Perfiles profesionales Redacción de contenidos digitales para marketing y ventas (Acceso GS)" [ref=e183] [cursor=pointer]:
+                  - /url: /dam/jcr:821125ce-e87a-4447-b74a-054548c7eaaa/curso-de-especializaci-n-en-redacci-n-de-contenidos-.pdf
+              - cell "Dónde estudiar Redacción de contenidos digitales para marketing y ventas (Acceso GS)" [ref=e184]:
+                - link "Dónde estudiar Redacción de contenidos digitales para marketing y ventas (Acceso GS)" [ref=e185] [cursor=pointer]:
+                  - /url: https://www.educacion.gob.es/centros/buscarCentros?ensenanzaFP=124_2202
+            - row "Logotipo Electricidad y Electrónica Curso de Especialización en Ciberseguridad en entornos de las tecnologías de operación (Acceso GS) Real decreto Modificación No definido Currículos CCAA Perfiles profesionales Dónde estudiar" [ref=e186]:
+              - rowheader "Logotipo Electricidad y Electrónica" [ref=e187]:
+                - img "Logotipo Electricidad y Electrónica" [ref=e188]
+              - cell "Curso de Especialización en Ciberseguridad en entornos de las tecnologías de operación (Acceso GS)" [ref=e189]:
+                - paragraph [ref=e190]:
+                  - link "Curso de Especialización en Ciberseguridad en entornos de las tecnologías de operación (Acceso GS)" [ref=e191] [cursor=pointer]:
+                    - /url: /que-estudiar/familias-profesionales/electricidad-electronica/ce-ciberseguridad-tecnologias-operacion.html
+              - cell "Real decreto Curso de Especialización en Ciberseguridad en entornos de las tecnologías de operación (Acceso GS) Modificación" [ref=e192]:
+                - list [ref=e193]:
+                  - listitem [ref=e194]:
+                    - link "Real decreto Curso de Especialización en Ciberseguridad en entornos de las tecnologías de operación (Acceso GS)" [ref=e195] [cursor=pointer]:
+                      - /url: https://www.boe.es/diario_boe/txt.php?id=BOE-A-2020-4962
+                  - listitem [ref=e196]:
+                    - link "Modificación Real decreto Curso de Especialización en Ciberseguridad en entornos de las tecnologías de operación (Acceso GS)" [ref=e197] [cursor=pointer]:
+                      - /url: https://www.boe.es/eli/es/rd/2024/05/21/497
+                      - text: Modificación
+              - cell "No definido" [ref=e198]:
+                - text: "-"
+                - generic [ref=e199]: No definido
+              - cell "Currículos CCAA Curso de Especialización en Ciberseguridad en entornos de las tecnologías de operación (Acceso GS)" [ref=e200]:
+                - link "Currículos CCAA Curso de Especialización en Ciberseguridad en entornos de las tecnologías de operación (Acceso GS)" [ref=e201] [cursor=pointer]:
+                  - /url: /que-estudiar/familias-profesionales/electricidad-electronica/ce-ciberseguridad-tecnologias-operacion/curriculos-ccaa.html
+              - cell "Perfiles profesionales Curso de Especialización en Ciberseguridad en entornos de las tecnologías de operación (Acceso GS)" [ref=e202]:
+                - link "Perfiles profesionales Curso de Especialización en Ciberseguridad en entornos de las tecnologías de operación (Acceso GS)" [ref=e203] [cursor=pointer]:
+                  - /url: /dam/jcr:26bfe1d9-5256-415b-b809-0ad20b98b819/curso-de-especializaci-n-en-ciberseguridad-en-entorn.pdf
+              - cell "Dónde estudiar Curso de Especialización en Ciberseguridad en entornos de las tecnologías de operación (Acceso GS)" [ref=e204]:
+                - link "Dónde estudiar Curso de Especialización en Ciberseguridad en entornos de las tecnologías de operación (Acceso GS)" [ref=e205] [cursor=pointer]:
+                  - /url: https://www.educacion.gob.es/centros/buscarCentros?ensenanzaFP=124_1001
+            - row "Curso de Especialización en Implementación de redes 5G (Acceso GM) Real decreto Modificación No definido Currículos CCAA Perfiles profesionales Dónde estudiar" [ref=e206]:
+              - cell "Curso de Especialización en Implementación de redes 5G (Acceso GM)" [ref=e207]:
+                - paragraph [ref=e208]:
+                  - link "Curso de Especialización en Implementación de redes 5G (Acceso GM)" [ref=e209] [cursor=pointer]:
+                    - /url: /que-estudiar/familias-profesionales/electricidad-electronica/ce-implementacion-redes-5g.html
+              - cell "Real decreto Curso de Especialización en Implementación de redes 5G (Acceso GM) Modificación" [ref=e210]:
+                - list [ref=e211]:
+                  - listitem [ref=e212]:
+                    - link "Real decreto Curso de Especialización en Implementación de redes 5G (Acceso GM)" [ref=e213] [cursor=pointer]:
+                      - /url: "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2021-7556 "
+                  - listitem [ref=e214]:
+                    - link "Modificación Real decreto Curso de Especialización en Implementación de redes 5G (Acceso GM)" [ref=e215] [cursor=pointer]:
+                      - /url: https://www.boe.es/eli/es/rd/2024/05/21/497
+                      - text: Modificación
+              - cell "No definido" [ref=e216]:
+                - text: "-"
+                - generic [ref=e217]: No definido
+              - cell "Currículos CCAA Curso de Especialización en Implementación de redes 5G (Acceso GM)" [ref=e218]:
+                - link "Currículos CCAA Curso de Especialización en Implementación de redes 5G (Acceso GM)" [ref=e219] [cursor=pointer]:
+                  - /url: /que-estudiar/familias-profesionales/electricidad-electronica/ce-implementacion-redes-5g/curriculos-ccaa.html
+              - cell "Perfiles profesionales Curso de Especialización en Implementación de redes 5G (Acceso GM)" [ref=e220]:
+                - link "Perfiles profesionales Curso de Especialización en Implementación de redes 5G (Acceso GM)" [ref=e221] [cursor=pointer]:
+                  - /url: /dam/jcr:7b0cc2a8-934f-437e-beaa-d5313e6ac107/curso-de-especializaci-n-en-implementaci-n-de-redes-.pdf
+              - cell "Dónde estudiar Curso de Especialización en Implementación de redes 5G (Acceso GM)" [ref=e222]:
+                - link "Dónde estudiar Curso de Especialización en Implementación de redes 5G (Acceso GM)" [ref=e223] [cursor=pointer]:
+                  - /url: https://www.educacion.gob.es/centros/buscarCentros?ensenanzaFP=125_1001
+            - row "Curso de Especialización en Instalación y mantenimiento de sistemas conectados a internet (IoT) (Acceso GM) Real decreto Modificación No definido Currículos CCAA Perfiles profesionales Dónde estudiar" [ref=e224]:
+              - cell "Curso de Especialización en Instalación y mantenimiento de sistemas conectados a internet (IoT) (Acceso GM)" [ref=e225]:
+                - paragraph [ref=e226]:
+                  - link "Curso de Especialización en Instalación y mantenimiento de sistemas conectados a internet (IoT) (Acceso GM)" [ref=e227] [cursor=pointer]:
+                    - /url: /que-estudiar/familias-profesionales/electricidad-electronica/ce-instalacion-mto-sitemas-conectados-internet.html
+              - cell "Real decreto Curso de Especialización en Instalación y mantenimiento de sistemas conectados a internet (IoT) (Acceso GM) Modificación" [ref=e228]:
+                - list [ref=e229]:
+                  - listitem [ref=e230]:
+                    - link "Real decreto Curso de Especialización en Instalación y mantenimiento de sistemas conectados a internet (IoT) (Acceso GM)" [ref=e231] [cursor=pointer]:
+                      - /url: https://www.boe.es/diario_boe/txt.php?id=BOE-A-2022-5596
+                  - listitem [ref=e232]:
+                    - link "Modificación Real decreto Curso de Especialización en Instalación y mantenimiento de sistemas conectados a internet (IoT) (Acceso GM)" [ref=e233] [cursor=pointer]:
+                      - /url: https://www.boe.es/eli/es/rd/2024/05/21/497
+                      - text: Modificación
+              - cell "No definido" [ref=e234]:
+                - text: "-"
+                - generic [ref=e235]: No definido
+              - cell "Currículos CCAA Curso de Especialización en Instalación y mantenimiento de sistemas conectados a internet (IoT) (Acceso GM)" [ref=e236]:
+                - link "Currículos CCAA Curso de Especialización en Instalación y mantenimiento de sistemas conectados a internet (IoT) (Acceso GM)" [ref=e237] [cursor=pointer]:
+                  - /url: /que-estudiar/familias-profesionales/electricidad-electronica/ce-instalacion-mto-sitemas-conectados-internet/curriculos-ccaa.html
+              - cell "Perfiles profesionales Curso de Especialización en Instalación y mantenimiento de sistemas conectados a internet (IoT) (Acceso GM)" [ref=e238]:
+                - link "Perfiles profesionales Curso de Especialización en Instalación y mantenimiento de sistemas conectados a internet (IoT) (Acceso GM)" [ref=e239] [cursor=pointer]:
+                  - /url: /dam/jcr:907355c7-5831-45d5-927c-72bfa9c3761f/curso-de-especializaci-n-en-instalaci-n-y-mantenimie.pdf
+              - cell "Dónde estudiar Curso de Especialización en Instalación y mantenimiento de sistemas conectados a internet (IoT) (Acceso GM)" [ref=e240]:
+                - link "Dónde estudiar Curso de Especialización en Instalación y mantenimiento de sistemas conectados a internet (IoT) (Acceso GM)" [ref=e241] [cursor=pointer]:
+                  - /url: https://www.educacion.gob.es/centros/buscarCentros?ensenanzaFP=125_1002
+            - row "Curso de Especialización en Robótica colaborativa (Acceso GS) Real decreto Modificación No definido Currículos CCAA No definido Dónde estudiar" [ref=e242]:
+              - cell "Curso de Especialización en Robótica colaborativa (Acceso GS)" [ref=e243]:
+                - paragraph [ref=e244]:
+                  - link "Curso de Especialización en Robótica colaborativa (Acceso GS)" [ref=e245] [cursor=pointer]:
+                    - /url: /que-estudiar/familias-profesionales/electricidad-electronica/ce-robotica-colaborativa.html
+              - cell "Real decreto Curso de Especialización en Robótica colaborativa (Acceso GS) Modificación" [ref=e246]:
+                - list [ref=e247]:
+                  - listitem [ref=e248]:
+                    - link "Real decreto Curso de Especialización en Robótica colaborativa (Acceso GS)" [ref=e249] [cursor=pointer]:
+                      - /url: https://boe.es/diario_boe/txt.php?id=BOE-A-2022-18596
+                  - listitem [ref=e250]:
+                    - link "Modificación Real decreto Curso de Especialización en Robótica colaborativa (Acceso GS)" [ref=e251] [cursor=pointer]:
+                      - /url: https://www.boe.es/eli/es/rd/2024/05/21/497
+                      - text: Modificación
+              - cell "No definido" [ref=e252]:
+                - text: "-"
+                - generic [ref=e253]: No definido
+              - cell "Currículos CCAA Curso de Especialización en Robótica colaborativa (Acceso GS)" [ref=e254]:
+                - link "Currículos CCAA Curso de Especialización en Robótica colaborativa (Acceso GS)" [ref=e255] [cursor=pointer]:
+                  - /url: /que-estudiar/familias-profesionales/electricidad-electronica/ce-robotica-colaborativa/curriculos-ccaa.html
+              - cell "No definido" [ref=e256]:
+                - text: "-"
+                - generic [ref=e257]: No definido
+              - cell "Dónde estudiar Curso de Especialización en Robótica colaborativa (Acceso GS)" [ref=e258]:
+                - link "Dónde estudiar Curso de Especialización en Robótica colaborativa (Acceso GS)" [ref=e259] [cursor=pointer]:
+                  - /url: https://www.educacion.gob.es/centros/buscarCentros?ensenanzaFP=124_1003
+            - row "Curso de Especialización en Sistemas de señalización y telecomunicaciones ferroviarias (Acceso GS) Real decreto Modificación No definido Currículos CCAA Perfiles profesionales Dónde estudiar" [ref=e260]:
+              - cell "Curso de Especialización en Sistemas de señalización y telecomunicaciones ferroviarias (Acceso GS)" [ref=e261]:
+                - paragraph [ref=e262]:
+                  - link "Curso de Especialización en Sistemas de señalización y telecomunicaciones ferroviarias (Acceso GS)" [ref=e263] [cursor=pointer]:
+                    - /url: /que-estudiar/familias-profesionales/electricidad-electronica/ce-sistemas-senalizacion-ferroviaria.html
+              - cell "Real decreto Curso de Especialización en Sistemas de señalización y telecomunicaciones ferroviarias (Acceso GS) Modificación" [ref=e264]:
+                - list [ref=e265]:
+                  - listitem [ref=e266]:
+                    - link "Real decreto Curso de Especialización en Sistemas de señalización y telecomunicaciones ferroviarias (Acceso GS)" [ref=e267] [cursor=pointer]:
+                      - /url: https://www.boe.es/diario_boe/txt.php?id=BOE-A-2021-5947
+                  - listitem [ref=e268]:
+                    - link "Modificación Real decreto Curso de Especialización en Sistemas de señalización y telecomunicaciones ferroviarias (Acceso GS)" [ref=e269] [cursor=pointer]:
+                      - /url: https://www.boe.es/eli/es/rd/2024/05/21/497
+                      - text: Modificación
+              - cell "No definido" [ref=e270]:
+                - text: "-"
+                - generic [ref=e271]: No definido
+              - cell "Currículos CCAA Curso de Especialización en Sistemas de señalización y telecomunicaciones ferroviarias (Acceso GS)" [ref=e272]:
+                - link "Currículos CCAA Curso de Especialización en Sistemas de señalización y telecomunicaciones ferroviarias (Acceso GS)" [ref=e273] [cursor=pointer]:
+                  - /url: /que-estudiar/familias-profesionales/electricidad-electronica/ce-sistemas-senalizacion-ferroviaria/curriculos-ccaa.html
+              - cell "Perfiles profesionales Curso de Especialización en Sistemas de señalización y telecomunicaciones ferroviarias (Acceso GS)" [ref=e274]:
+                - link "Perfiles profesionales Curso de Especialización en Sistemas de señalización y telecomunicaciones ferroviarias (Acceso GS)" [ref=e275] [cursor=pointer]:
+                  - /url: /dam/jcr:53e7974a-5874-49da-9ad3-0c5011eecb27/curso-de-especializaci-n-en-sistemas-de-se-alizaci-n.pdf
+              - cell "Dónde estudiar Curso de Especialización en Sistemas de señalización y telecomunicaciones ferroviarias (Acceso GS)" [ref=e276]:
+                - link "Dónde estudiar Curso de Especialización en Sistemas de señalización y telecomunicaciones ferroviarias (Acceso GS)" [ref=e277] [cursor=pointer]:
+                  - /url: https://www.educacion.gob.es/centros/buscarCentros?ensenanzaFP=124_1002
+            - row "Logotipo Energía y Agua Curso de especialización en Auditoría energética (Acceso GS) Real decreto Modificación No definido Currículos CCAA Perfiles profesionales Dónde estudiar" [ref=e278]:
+              - rowheader "Logotipo Energía y Agua" [ref=e279]:
+                - img "Logotipo Energía y Agua" [ref=e280]
+              - cell "Curso de especialización en Auditoría energética (Acceso GS)" [ref=e281]:
+                - paragraph [ref=e282]:
+                  - link "Curso de especialización en Auditoría energética (Acceso GS)" [ref=e283] [cursor=pointer]:
+                    - /url: /que-estudiar/familias-profesionales/energia-agua/ce-auditoria-energetica.html
+              - cell "Real decreto Curso de especialización en Auditoría energética (Acceso GS) Modificación" [ref=e284]:
+                - list [ref=e285]:
+                  - listitem [ref=e286]:
+                    - link "Real decreto Curso de especialización en Auditoría energética (Acceso GS)" [ref=e287] [cursor=pointer]:
+                      - /url: https://www.boe.es/eli/es/rd/2022/10/31/921
+                  - listitem [ref=e288]:
+                    - link "Modificación Real decreto Curso de especialización en Auditoría energética (Acceso GS)" [ref=e289] [cursor=pointer]:
+                      - /url: https://www.boe.es/eli/es/rd/2024/05/21/497
+                      - text: Modificación
+              - cell "No definido" [ref=e290]:
+                - text: "-"
+                - generic [ref=e291]: No definido
+              - cell "Currículos CCAA Curso de especialización en Auditoría energética (Acceso GS)" [ref=e292]:
+                - link "Currículos CCAA Curso de especialización en Auditoría energética (Acceso GS)" [ref=e293] [cursor=pointer]:
+                  - /url: /que-estudiar/familias-profesionales/energia-agua/ce-auditoria-energetica/curriculos-ccaa.html
+              - cell "Perfiles profesionales Curso de especialización en Auditoría energética (Acceso GS)" [ref=e294]:
+                - link "Perfiles profesionales Curso de especialización en Auditoría energética (Acceso GS)" [ref=e295] [cursor=pointer]:
+                  - /url: /dam/jcr:72cce556-8bc0-4157-9382-c9d8e201b5f0/curso-de-especializaci-n-en-auditor-a-energ-tica--ac.pdf
+              - cell "Dónde estudiar Curso de especialización en Auditoría energética (Acceso GS)" [ref=e296]:
+                - link "Dónde estudiar Curso de especialización en Auditoría energética (Acceso GS)" [ref=e297] [cursor=pointer]:
+                  - /url: https://www.educacion.gob.es/centros/buscarCentros?ensenanzaFP=124_1101
+            - row "Logotipo Fabricación Mecánica Curso de Especialización en Fabricación aditiva (Acceso GS) Real decreto Modificación Corrección No definido Currículos CCAA Perfiles profesionales Dónde estudiar" [ref=e298]:
+              - rowheader "Logotipo Fabricación Mecánica" [ref=e299]:
+                - img "Logotipo Fabricación Mecánica" [ref=e300]
+              - cell "Curso de Especialización en Fabricación aditiva (Acceso GS)" [ref=e301]:
+                - paragraph [ref=e302]:
+                  - link "Curso de Especialización en Fabricación aditiva (Acceso GS)" [ref=e303] [cursor=pointer]:
+                    - /url: /que-estudiar/familias-profesionales/fabricacion-mecanica/ce-fabricacion-aditiva.html
+              - cell "Real decreto Curso de Especialización en Fabricación aditiva (Acceso GS) Modificación Corrección" [ref=e304]:
+                - list [ref=e305]:
+                  - listitem [ref=e306]:
+                    - link "Real decreto Curso de Especialización en Fabricación aditiva (Acceso GS)" [ref=e307] [cursor=pointer]:
+                      - /url: https://www.boe.es/diario_boe/txt.php?id=BOE-A-2021-8974
+                  - listitem [ref=e308]:
+                    - link "Modificación Real decreto Curso de Especialización en Fabricación aditiva (Acceso GS)" [ref=e309] [cursor=pointer]:
+                      - /url: https://www.boe.es/eli/es/rd/2024/05/21/497
+                      - text: Modificación
+                  - listitem [ref=e310]:
+                    - link "Corrección Real decreto Curso de Especialización en Fabricación aditiva (Acceso GS)" [ref=e311] [cursor=pointer]:
+                      - /url: https://www.boe.es/eli/es/rd/2024/05/21/497/corrigendum/20250523
+                      - text: Corrección
+              - cell "No definido" [ref=e312]:
+                - text: "-"
+                - generic [ref=e313]: No definido
+              - cell "Currículos CCAA Curso de Especialización en Fabricación aditiva (Acceso GS)" [ref=e314]:
+                - link "Currículos CCAA Curso de Especialización en Fabricación aditiva (Acceso GS)" [ref=e315] [cursor=pointer]:
+                  - /url: /que-estudiar/familias-profesionales/fabricacion-mecanica/ce-fabricacion-aditiva/curriculos-ccaa.html
+              - cell "Perfiles profesionales Curso de Especialización en Fabricación aditiva (Acceso GS)" [ref=e316]:
+                - link "Perfiles profesionales Curso de Especialización en Fabricación aditiva (Acceso GS)" [ref=e317] [cursor=pointer]:
+                  - /url: /dam/jcr:c6a9a6b2-769e-4b4d-a4e7-ba418d092ce1/curso-de-especializaci-n-en-fabricaci-n-aditiva--acc.pdf
+              - cell "Dónde estudiar Curso de Especialización en Fabricación aditiva (Acceso GS)" [ref=e318]:
+                - link "Dónde estudiar Curso de Especialización en Fabricación aditiva (Acceso GS)" [ref=e319] [cursor=pointer]:
+                  - /url: https://www.educacion.gob.es/centros/buscarCentros?ensenanzaFP=124_0801
+            - row "Curso de especialización en Materiales compuestos en la industria aeroespacial (Acceso GS) Real decreto Modificación Corrección No definido Currículos CCAA Perfiles profesionales Dónde estudiar" [ref=e320]:
+              - cell "Curso de especialización en Materiales compuestos en la industria aeroespacial (Acceso GS)" [ref=e321]:
+                - paragraph [ref=e322]:
+                  - link "Curso de especialización en Materiales compuestos en la industria aeroespacial (Acceso GS)" [ref=e323] [cursor=pointer]:
+                    - /url: /que-estudiar/familias-profesionales/fabricacion-mecanica/ce-materiales-compuestos-industria-aeroespacial.html
+              - cell "Real decreto Curso de especialización en Materiales compuestos en la industria aeroespacial (Acceso GS) Modificación Corrección" [ref=e324]:
+                - list [ref=e325]:
+                  - listitem [ref=e326]:
+                    - link "Real decreto Curso de especialización en Materiales compuestos en la industria aeroespacial (Acceso GS)" [ref=e327] [cursor=pointer]:
+                      - /url: https://www.boe.es/diario_boe/txt.php?id=BOE-A-2022-1056
+                  - listitem [ref=e328]:
+                    - link "Modificación Real decreto Curso de especialización en Materiales compuestos en la industria aeroespacial (Acceso GS)" [ref=e329] [cursor=pointer]:
+                      - /url: https://www.boe.es/eli/es/rd/2024/05/21/497
+                      - text: Modificación
+                  - listitem [ref=e330]:
+                    - link "Corrección Real decreto Curso de especialización en Materiales compuestos en la industria aeroespacial (Acceso GS)" [ref=e331] [cursor=pointer]:
+                      - /url: https://www.boe.es/diario_boe/txt.php?id=BOE-A-2022-2119
+                      - text: Corrección
+              - cell "No definido" [ref=e332]:
+                - text: "-"
+                - generic [ref=e333]: No definido
+              - cell "Currículos CCAA Curso de especialización en Materiales compuestos en la industria aeroespacial (Acceso GS)" [ref=e334]:
+                - link "Currículos CCAA Curso de especialización en Materiales compuestos en la industria aeroespacial (Acceso GS)" [ref=e335] [cursor=pointer]:
+                  - /url: /que-estudiar/familias-profesionales/fabricacion-mecanica/ce-materiales-compuestos-industria-aeroespacial/curriculos-ccaa.html
+              - cell "Perfiles profesionales Curso de especialización en Materiales compuestos en la industria aeroespacial (Acceso GS)" [ref=e336]:
+                - link "Perfiles profesionales Curso de especialización en Materiales compuestos en la industria aeroespacial (Acceso GS)" [ref=e337] [cursor=pointer]:
+                  - /url: /dam/jcr:2f3caec4-ecbb-423c-be21-6e5db430738b/curso-de-especializaci-n-en-materiales-compuestos-en.pdf
+              - cell "Dónde estudiar Curso de especialización en Materiales compuestos en la industria aeroespacial (Acceso GS)" [ref=e338]:
+                - link "Dónde estudiar Curso de especialización en Materiales compuestos en la industria aeroespacial (Acceso GS)" [ref=e339] [cursor=pointer]:
+                  - /url: https://www.educacion.gob.es/centros/buscarCentros?ensenanzaFP=124_0802
+            - row "Logotipo Hostelería y Turismo Coordinación del Personal en Reuniones Profesionales, Congresos, Ferias, Exposiciones y Eventos (Acceso GM) Real decreto No definido Currículos CCAA Perfiles profesionales Dónde estudiar" [ref=e340]:
+              - rowheader "Logotipo Hostelería y Turismo" [ref=e341]:
+                - img "Logotipo Hostelería y Turismo" [ref=e342]
+              - cell "Coordinación del Personal en Reuniones Profesionales, Congresos, Ferias, Exposiciones y Eventos (Acceso GM)" [ref=e343]:
+                - paragraph [ref=e344]:
+                  - link "Coordinación del Personal en Reuniones Profesionales, Congresos, Ferias, Exposiciones y Eventos (Acceso GM)" [ref=e345] [cursor=pointer]:
+                    - /url: /que-estudiar/familias-profesionales/hosteleria-turismo/ce-coordinacion-personal-reuniones-profesionales.html
+              - cell "Real decreto Coordinación del Personal en Reuniones Profesionales, Congresos, Ferias, Exposiciones y Eventos (Acceso GM)" [ref=e346]:
+                - link "Real decreto Coordinación del Personal en Reuniones Profesionales, Congresos, Ferias, Exposiciones y Eventos (Acceso GM)" [ref=e347] [cursor=pointer]:
+                  - /url: https://www.boe.es/eli/es/rd/2024/07/23/711
+              - cell "No definido" [ref=e348]:
+                - text: "-"
+                - generic [ref=e349]: No definido
+              - cell "Currículos CCAA Coordinación del Personal en Reuniones Profesionales, Congresos, Ferias, Exposiciones y Eventos (Acceso GM)" [ref=e350]:
+                - link "Currículos CCAA Coordinación del Personal en Reuniones Profesionales, Congresos, Ferias, Exposiciones y Eventos (Acceso GM)" [ref=e351] [cursor=pointer]:
+                  - /url: /que-estudiar/familias-profesionales/hosteleria-turismo/ce-coordinacion-personal-reuniones-profesionales/curriculos-ccaa.html
+              - cell "Perfiles profesionales Coordinación del Personal en Reuniones Profesionales, Congresos, Ferias, Exposiciones y Eventos (Acceso GM)" [ref=e352]:
+                - link "Perfiles profesionales Coordinación del Personal en Reuniones Profesionales, Congresos, Ferias, Exposiciones y Eventos (Acceso GM)" [ref=e353] [cursor=pointer]:
+                  - /url: /dam/jcr:4c9a9297-0d24-45cb-a284-d9dbd3d569e6/perfiles-profesionales-coordinacion-del-personal-en-reuniones-profesionales-congresos-ferias-exposiciones-y-eventos.pdf
+              - cell "Dónde estudiar Coordinación del Personal en Reuniones Profesionales, Congresos, Ferias, Exposiciones y Eventos (Acceso GM)" [ref=e354]:
+                - link "Dónde estudiar Coordinación del Personal en Reuniones Profesionales, Congresos, Ferias, Exposiciones y Eventos (Acceso GM)" [ref=e355] [cursor=pointer]:
+                  - /url: https://www.educacion.gob.es/centros/buscarCentros?ensenanzaFP=125_2402
+            - row "Curso de Especialización en Maestría de corte y cata de jamón y paleta curados (Acceso GM) Real decreto No definido No definido No definido No definido" [ref=e356]:
+              - cell "Curso de Especialización en Maestría de corte y cata de jamón y paleta curados (Acceso GM)" [ref=e357]:
+                - paragraph [ref=e358]:
+                  - link "Curso de Especialización en Maestría de corte y cata de jamón y paleta curados (Acceso GM)" [ref=e359] [cursor=pointer]:
+                    - /url: /que-estudiar/familias-profesionales/hosteleria-turismo/ce-maestria-corte-y-cata-de-jamon-y-paleta-curados.html
+              - cell "Real decreto Curso de Especialización en Maestría de corte y cata de jamón y paleta curados (Acceso GM)" [ref=e360]:
+                - link "Real decreto Curso de Especialización en Maestría de corte y cata de jamón y paleta curados (Acceso GM)" [ref=e361] [cursor=pointer]:
+                  - /url: https://www.boe.es/boe/dias/2026/02/12/pdfs/BOE-A-2026-3208.pdf
+              - cell "No definido" [ref=e362]:
+                - text: "-"
+                - generic [ref=e363]: No definido
+              - cell "No definido" [ref=e364]:
+                - text: "-"
+                - generic [ref=e365]: No definido
+              - cell "No definido" [ref=e366]:
+                - text: "-"
+                - generic [ref=e367]: No definido
+              - cell "No definido" [ref=e368]:
+                - text: "-"
+                - generic [ref=e369]: No definido
+            - row "Curso de Especialización en Panadería y bollería artesanales (Acceso GM) Real decreto Modificación Corrección No definido Currículos CCAA Perfiles profesionales Dónde estudiar" [ref=e370]:
+              - cell "Curso de Especialización en Panadería y bollería artesanales (Acceso GM)" [ref=e371]:
+                - paragraph [ref=e372]:
+                  - link "Curso de Especialización en Panadería y bollería artesanales (Acceso GM)" [ref=e373] [cursor=pointer]:
+                    - /url: /que-estudiar/familias-profesionales/hosteleria-turismo/ce-panaderia-bolleria-artesanal.html
+              - cell "Real decreto Curso de Especialización en Panadería y bollería artesanales (Acceso GM) Modificación Corrección" [ref=e374]:
+                - list [ref=e375]:
+                  - listitem [ref=e376]:
+                    - link "Real decreto Curso de Especialización en Panadería y bollería artesanales (Acceso GM)" [ref=e377] [cursor=pointer]:
+                      - /url: https://www.boe.es/diario_boe/txt.php?id=BOE-A-2020-4966
+                  - listitem [ref=e378]:
+                    - link "Modificación Real decreto Curso de Especialización en Panadería y bollería artesanales (Acceso GM)" [ref=e379] [cursor=pointer]:
+                      - /url: https://www.boe.es/eli/es/rd/2024/05/21/497
+                      - text: Modificación
+                  - listitem [ref=e380]:
+                    - link "Corrección Real decreto Curso de Especialización en Panadería y bollería artesanales (Acceso GM)" [ref=e381] [cursor=pointer]:
+                      - /url: https://www.boe.es/eli/es/rd/2020/04/07/482/corrigendum/20210525
+                      - text: Corrección
+              - cell "No definido" [ref=e382]:
+                - text: "-"
+                - generic [ref=e383]: No definido
+              - cell "Currículos CCAA Curso de Especialización en Panadería y bollería artesanales (Acceso GM)" [ref=e384]:
+                - link "Currículos CCAA Curso de Especialización en Panadería y bollería artesanales (Acceso GM)" [ref=e385] [cursor=pointer]:
+                  - /url: /que-estudiar/familias-profesionales/hosteleria-turismo/ce-panaderia-bolleria-artesanal/curriculos-ccaa.html
+              - cell "Perfiles profesionales Curso de Especialización en Panadería y bollería artesanales (Acceso GM)" [ref=e386]:
+                - link "Perfiles profesionales Curso de Especialización en Panadería y bollería artesanales (Acceso GM)" [ref=e387] [cursor=pointer]:
+                  - /url: /dam/jcr:8353a098-86e7-4b31-9cc4-7c9bc6cd90f3/curso-de-especializaci-n-en-panader-a-y-boller-a-art.pdf
+              - cell "Dónde estudiar Curso de Especialización en Panadería y bollería artesanales (Acceso GM)" [ref=e388]:
+                - link "Dónde estudiar Curso de Especialización en Panadería y bollería artesanales (Acceso GM)" [ref=e389] [cursor=pointer]:
+                  - /url: https://www.educacion.gob.es/centros/buscarCentros?ensenanzaFP=125_2401
+            - row "Curso de especialización en Turismo micológico (Acceso GS) Real decreto No definido No definido No definido No definido" [ref=e390]:
+              - cell "Curso de especialización en Turismo micológico (Acceso GS)" [ref=e391]:
+                - paragraph [ref=e392]:
+                  - link "Curso de especialización en Turismo micológico (Acceso GS)" [ref=e393] [cursor=pointer]:
+                    - /url: /que-estudiar/familias-profesionales/hosteleria-turismo/ce-turismo-micologico.html
+              - cell "Real decreto Curso de especialización en Turismo micológico (Acceso GS)" [ref=e394]:
+                - link "Real decreto Curso de especialización en Turismo micológico (Acceso GS)" [ref=e395] [cursor=pointer]:
+                  - /url: https://www.boe.es/boe/dias/2026/02/28/pdfs/BOE-A-2026-4674.pdf
+              - cell "No definido" [ref=e396]:
+                - text: "-"
+                - generic [ref=e397]: No definido
+              - cell "No definido" [ref=e398]:
+                - text: "-"
+                - generic [ref=e399]: No definido
+              - cell "No definido" [ref=e400]:
+                - text: "-"
+                - generic [ref=e401]: No definido
+              - cell "No definido" [ref=e402]:
+                - text: "-"
+                - generic [ref=e403]: No definido
+            - row "Logotipo Imagen y Sonido Curso de Especialización en Audiodescripción y subtitulación (Acceso GS) Real decreto Modificación Actualización No definido Currículos CCAA Perfiles profesionales Dónde estudiar" [ref=e404]:
+              - rowheader "Logotipo Imagen y Sonido" [ref=e405]:
+                - img "Logotipo Imagen y Sonido"
+              - cell "Curso de Especialización en Audiodescripción y subtitulación (Acceso GS)" [ref=e406]:
+                - paragraph [ref=e407]:
+                  - link "Curso de Especialización en Audiodescripción y subtitulación (Acceso GS)" [ref=e408] [cursor=pointer]:
+                    - /url: /que-estudiar/familias-profesionales/imagen-sonido/ce-audiodescripcion-subtitulacion.html
+              - cell "Real decreto Curso de Especialización en Audiodescripción y subtitulación (Acceso GS) Modificación Actualización" [ref=e409]:
+                - list [ref=e410]:
+                  - listitem [ref=e411]:
+                    - link "Real decreto Curso de Especialización en Audiodescripción y subtitulación (Acceso GS)" [ref=e412] [cursor=pointer]:
+                      - /url: https://boe.es/diario_boe/txt.php?id=BOE-A-2019-4153
+                  - listitem [ref=e413]:
+                    - link "Modificación Real decreto Curso de Especialización en Audiodescripción y subtitulación (Acceso GS)" [ref=e414] [cursor=pointer]:
+                      - /url: https://www.boe.es/eli/es/rd/2020/04/07/481
+                      - text: Modificación
+                  - listitem [ref=e415]:
+                    - link "Actualización Real decreto Curso de Especialización en Audiodescripción y subtitulación (Acceso GS)" [ref=e416] [cursor=pointer]:
+                      - /url: https://www.boe.es/eli/es/rd/2024/05/21/497
+                      - text: Actualización
+              - cell "No definido" [ref=e417]:
+                - text: "-"
+                - generic [ref=e418]: No definido
+              - cell "Currículos CCAA Curso de Especialización en Audiodescripción y subtitulación (Acceso GS)" [ref=e419]:
+                - link "Currículos CCAA Curso de Especialización en Audiodescripción y subtitulación (Acceso GS)" [ref=e420] [cursor=pointer]:
+                  - /url: /que-estudiar/familias-profesionales/imagen-sonido/ce-audiodescripcion-subtitulacion/curriculos-ccaa.html
+              - cell "Perfiles profesionales Curso de Especialización en Audiodescripción y subtitulación (Acceso GS)" [ref=e421]:
+                - link "Perfiles profesionales Curso de Especialización en Audiodescripción y subtitulación (Acceso GS)" [ref=e422] [cursor=pointer]:
+                  - /url: /dam/jcr:58e18ee4-cc26-4367-b56a-1ebddb67c49a/curso-de-especializaci-n-en-audiodescripci-n-y-subti.pdf
+              - cell "Dónde estudiar Curso de Especialización en Audiodescripción y subtitulación (Acceso GS)" [ref=e423]:
+                - link "Dónde estudiar Curso de Especialización en Audiodescripción y subtitulación (Acceso GS)" [ref=e424] [cursor=pointer]:
+                  - /url: https://www.educacion.gob.es/centros/buscarCentros?ensenanzaFP=124_1901
+            - row "Logotipo Industrias Alimentarias Curso de especialización en Tecnología y gestión quesera (Acceso GS) Real decreto No definido Currículos CCAA Perfiles profesionales Dónde estudiar" [ref=e425]:
+              - rowheader "Logotipo Industrias Alimentarias" [ref=e426]:
+                - img "Logotipo Industrias Alimentarias"
+              - cell "Curso de especialización en Tecnología y gestión quesera (Acceso GS)" [ref=e427]:
+                - paragraph [ref=e428]:
+                  - link "Curso de especialización en Tecnología y gestión quesera (Acceso GS)" [ref=e429] [cursor=pointer]:
+                    - /url: /que-estudiar/familias-profesionales/industrias-alimentarias/ce-tecnologia-gestion-quesera.html
+              - cell "Real decreto Curso de especialización en Tecnología y gestión quesera (Acceso GS)" [ref=e430]:
+                - link "Real decreto Curso de especialización en Tecnología y gestión quesera (Acceso GS)" [ref=e431] [cursor=pointer]:
+                  - /url: https://www.boe.es/diario_boe/txt.php?id=BOE-A-2024-21708
+              - cell "No definido" [ref=e432]:
+                - text: "-"
+                - generic [ref=e433]: No definido
+              - cell "Currículos CCAA Curso de especialización en Tecnología y gestión quesera (Acceso GS)" [ref=e434]:
+                - link "Currículos CCAA Curso de especialización en Tecnología y gestión quesera (Acceso GS)" [ref=e435] [cursor=pointer]:
+                  - /url: /que-estudiar/familias-profesionales/industrias-alimentarias/ce-tecnologia-gestion-quesera/curriculos-ccaa.html
+              - cell "Perfiles profesionales Curso de especialización en Tecnología y gestión quesera (Acceso GS)" [ref=e436]:
+                - link "Perfiles profesionales Curso de especialización en Tecnología y gestión quesera (Acceso GS)" [ref=e437] [cursor=pointer]:
+                  - /url: /dam/jcr:ae28d31d-b3c6-4981-adca-08d4330f1b6f/perfiles-profesionales-tecnologia-y-gestion-quesera.pdf
+              - cell "Dónde estudiar Curso de especialización en Tecnología y gestión quesera (Acceso GS)" [ref=e438]:
+                - link "Dónde estudiar Curso de especialización en Tecnología y gestión quesera (Acceso GS)" [ref=e439] [cursor=pointer]:
+                  - /url: https://www.educacion.gob.es/centros/buscarCentros?ensenanzaFP=124_0301
+            - row "Logotipo Informática y Comunicaciones Curso de Especialización en Ciberseguridad en Entornos de las Tecnologías de la Información (Acceso GS) Real decreto Modificación No definido Currículos CCAA Perfiles profesionales Dónde estudiar" [ref=e440]:
+              - rowheader "Logotipo Informática y Comunicaciones" [ref=e441]:
+                - img "Logotipo Informática y Comunicaciones"
+              - cell "Curso de Especialización en Ciberseguridad en Entornos de las Tecnologías de la Información (Acceso GS)" [ref=e442]:
+                - paragraph [ref=e443]:
+                  - link "Curso de Especialización en Ciberseguridad en Entornos de las Tecnologías de la Información (Acceso GS)" [ref=e444] [cursor=pointer]:
+                    - /url: /que-estudiar/familias-profesionales/informatica-comunicaciones/ce-ciberseguridad-entornos-tecnologias-informacion.html
+              - cell "Real decreto Curso de Especialización en Ciberseguridad en Entornos de las Tecnologías de la Información (Acceso GS) Modificación" [ref=e445]:
+                - list [ref=e446]:
+                  - listitem [ref=e447]:
+                    - link "Real decreto Curso de Especialización en Ciberseguridad en Entornos de las Tecnologías de la Información (Acceso GS)" [ref=e448] [cursor=pointer]:
+                      - /url: https://www.boe.es/diario_boe/txt.php?id=BOE-A-2020-4963
+                  - listitem [ref=e449]:
+                    - link "Modificación Real decreto Curso de Especialización en Ciberseguridad en Entornos de las Tecnologías de la Información (Acceso GS)" [ref=e450] [cursor=pointer]:
+                      - /url: https://www.boe.es/eli/es/rd/2024/05/21/497
+                      - text: Modificación
+              - cell "No definido" [ref=e451]:
+                - text: "-"
+                - generic [ref=e452]: No definido
+              - cell "Currículos CCAA Curso de Especialización en Ciberseguridad en Entornos de las Tecnologías de la Información (Acceso GS)" [ref=e453]:
+                - link "Currículos CCAA Curso de Especialización en Ciberseguridad en Entornos de las Tecnologías de la Información (Acceso GS)" [ref=e454] [cursor=pointer]:
+                  - /url: /que-estudiar/familias-profesionales/informatica-comunicaciones/ce-ciberseguridad-entornos-tecnologias-informacion/curriculos-ccaa.html
+              - cell "Perfiles profesionales Curso de Especialización en Ciberseguridad en Entornos de las Tecnologías de la Información (Acceso GS)" [ref=e455]:
+                - link "Perfiles profesionales Curso de Especialización en Ciberseguridad en Entornos de las Tecnologías de la Información (Acceso GS)" [ref=e456] [cursor=pointer]:
+                  - /url: /dam/jcr:5b719494-f6d7-4b35-a0c3-12109248ee51/curso-de-especializaci-n-en-ciberseguridad--ifc.pdf
+              - cell "Dónde estudiar Curso de Especialización en Ciberseguridad en Entornos de las Tecnologías de la Información (Acceso GS)" [ref=e457]:
+                - link "Dónde estudiar Curso de Especialización en Ciberseguridad en Entornos de las Tecnologías de la Información (Acceso GS)" [ref=e458] [cursor=pointer]:
+                  - /url: https://www.educacion.gob.es/centros/buscarCentros?ensenanzaFP=124_2001
+            - row "Curso de Especialización en Desarrollo de aplicaciones en lenguaje Python (Acceso GS) Real decreto No definido Currículos CCAA Perfiles profesionales Dónde estudiar" [ref=e459]:
+              - cell "Curso de Especialización en Desarrollo de aplicaciones en lenguaje Python (Acceso GS)" [ref=e460]:
+                - paragraph [ref=e461]:
+                  - link "Curso de Especialización en Desarrollo de aplicaciones en lenguaje Python (Acceso GS)" [ref=e462] [cursor=pointer]:
+                    - /url: /que-estudiar/familias-profesionales/informatica-comunicaciones/ce-lenguaje-phyton.html
+              - cell "Real decreto Curso de Especialización en Desarrollo de aplicaciones en lenguaje Python (Acceso GS)" [ref=e463]:
+                - link "Real decreto Curso de Especialización en Desarrollo de aplicaciones en lenguaje Python (Acceso GS)" [ref=e464] [cursor=pointer]:
+                  - /url: https://www.boe.es/diario_boe/txt.php?id=BOE-A-2024-12503
+              - cell "No definido" [ref=e465]:
+                - text: "-"
+                - generic [ref=e466]: No definido
+              - cell "Currículos CCAA Curso de Especialización en Desarrollo de aplicaciones en lenguaje Python (Acceso GS)" [ref=e467]:
+                - link "Currículos CCAA Curso de Especialización en Desarrollo de aplicaciones en lenguaje Python (Acceso GS)" [ref=e468] [cursor=pointer]:
+                  - /url: /que-estudiar/familias-profesionales/informatica-comunicaciones/ce-lenguaje-phyton/curriculos-ccaa.html
+              - cell "Perfiles profesionales Curso de Especialización en Desarrollo de aplicaciones en lenguaje Python (Acceso GS)" [ref=e469]:
+                - link "Perfiles profesionales Curso de Especialización en Desarrollo de aplicaciones en lenguaje Python (Acceso GS)" [ref=e470] [cursor=pointer]:
+                  - /url: /dam/jcr:019bad30-8501-4713-bb46-c9c6204b4b5d/perfiles-profesionales-desarrollo-de-aplicaciones-en-lenguaje-python.pdf
+              - cell "Dónde estudiar Curso de Especialización en Desarrollo de aplicaciones en lenguaje Python (Acceso GS)" [ref=e471]:
+                - link "Dónde estudiar Curso de Especialización en Desarrollo de aplicaciones en lenguaje Python (Acceso GS)" [ref=e472] [cursor=pointer]:
+                  - /url: https://www.educacion.gob.es/centros/buscarCentros?ensenanzaFP=124_2004
+            - row "Curso de Especialización en Desarrollo de videojuegos y realidad virtual (Acceso GS) Real decreto Modificación No definido Currículos CCAA Perfiles profesionales Dónde estudiar" [ref=e473]:
+              - cell "Curso de Especialización en Desarrollo de videojuegos y realidad virtual (Acceso GS)" [ref=e474]:
+                - paragraph [ref=e475]:
+                  - link "Curso de Especialización en Desarrollo de videojuegos y realidad virtual (Acceso GS)" [ref=e476] [cursor=pointer]:
+                    - /url: /que-estudiar/familias-profesionales/informatica-comunicaciones/ce-desarrollo-videojuegos-realidad-virtual.html
+              - cell "Real decreto Curso de Especialización en Desarrollo de videojuegos y realidad virtual (Acceso GS) Modificación" [ref=e477]:
+                - list [ref=e478]:
+                  - listitem [ref=e479]:
+                    - link "Real decreto Curso de Especialización en Desarrollo de videojuegos y realidad virtual (Acceso GS)" [ref=e480] [cursor=pointer]:
+                      - /url: "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2021-7555 "
+                  - listitem [ref=e481]:
+                    - link "Modificación Real decreto Curso de Especialización en Desarrollo de videojuegos y realidad virtual (Acceso GS)" [ref=e482] [cursor=pointer]:
+                      - /url: https://www.boe.es/eli/es/rd/2024/05/21/497
+                      - text: Modificación
+              - cell "No definido" [ref=e483]:
+                - text: "-"
+                - generic [ref=e484]: No definido
+              - cell "Currículos CCAA Curso de Especialización en Desarrollo de videojuegos y realidad virtual (Acceso GS)" [ref=e485]:
+                - link "Currículos CCAA Curso de Especialización en Desarrollo de videojuegos y realidad virtual (Acceso GS)" [ref=e486] [cursor=pointer]:
+                  - /url: /que-estudiar/familias-profesionales/informatica-comunicaciones/ce-desarrollo-videojuegos-realidad-virtual/curriculos-ccaa.html
+              - cell "Perfiles profesionales Curso de Especialización en Desarrollo de videojuegos y realidad virtual (Acceso GS)" [ref=e487]:
+                - link "Perfiles profesionales Curso de Especialización en Desarrollo de videojuegos y realidad virtual (Acceso GS)" [ref=e488] [cursor=pointer]:
+                  - /url: /dam/jcr:70c0e89f-4889-455d-a51a-eb7c9d545adf/curso-de-especializaci-n-en-desarrollo-de-videojuego.pdf
+              - cell "Dónde estudiar Curso de Especialización en Desarrollo de videojuegos y realidad virtual (Acceso GS)" [ref=e489]:
+                - link "Dónde estudiar Curso de Especialización en Desarrollo de videojuegos y realidad virtual (Acceso GS)" [ref=e490] [cursor=pointer]:
+                  - /url: https://www.educacion.gob.es/centros/buscarCentros?ensenanzaFP=124_2002
+            - row "Curso de Especialización en Despliegue de Productos Software en Contenedores (Acceso GS) Real decreto No definido No definido No definido No definido" [ref=e491]:
+              - cell "Curso de Especialización en Despliegue de Productos Software en Contenedores (Acceso GS)" [ref=e492]:
+                - paragraph [ref=e493]:
+                  - link "Curso de Especialización en Despliegue de Productos Software en Contenedores (Acceso GS)" [ref=e494] [cursor=pointer]:
+                    - /url: /que-estudiar/familias-profesionales/informatica-comunicaciones/ce-despliegue-productos-software-en-contenedores.html
+              - cell "Real decreto Curso de Especialización en Despliegue de Productos Software en Contenedores (Acceso GS)" [ref=e495]:
+                - link "Real decreto Curso de Especialización en Despliegue de Productos Software en Contenedores (Acceso GS)" [ref=e496] [cursor=pointer]:
+                  - /url: https://www.boe.es/boe/dias/2026/02/28/pdfs/BOE-A-2026-4672.pdf
+              - cell "No definido" [ref=e497]:
+                - text: "-"
+                - generic [ref=e498]: No definido
+              - cell "No definido" [ref=e499]:
+                - text: "-"
+                - generic [ref=e500]: No definido
+              - cell "No definido" [ref=e501]:
+                - text: "-"
+                - generic [ref=e502]: No definido
+              - cell "No definido" [ref=e503]:
+                - text: "-"
+                - generic [ref=e504]: No definido
+            - row "Curso de Especialización en Inteligencia Artificial y Big Data (Acceso GS) Real decreto Modificación No definido Currículos CCAA Perfiles profesionales Dónde estudiar" [ref=e505]:
+              - cell "Curso de Especialización en Inteligencia Artificial y Big Data (Acceso GS)" [ref=e506]:
+                - paragraph [ref=e507]:
+                  - link "Curso de Especialización en Inteligencia Artificial y Big Data (Acceso GS)" [ref=e508] [cursor=pointer]:
+                    - /url: /que-estudiar/familias-profesionales/informatica-comunicaciones/ce-inteligencia-artificial-bigdata.html
+              - cell "Real decreto Curso de Especialización en Inteligencia Artificial y Big Data (Acceso GS) Modificación" [ref=e509]:
+                - list [ref=e510]:
+                  - listitem [ref=e511]:
+                    - link "Real decreto Curso de Especialización en Inteligencia Artificial y Big Data (Acceso GS)" [ref=e512] [cursor=pointer]:
+                      - /url: https://www.boe.es/diario_boe/txt.php?id=BOE-A-2021-7686
+                  - listitem [ref=e513]:
+                    - link "Modificación Real decreto Curso de Especialización en Inteligencia Artificial y Big Data (Acceso GS)" [ref=e514] [cursor=pointer]:
+                      - /url: https://www.boe.es/eli/es/rd/2024/05/21/497
+                      - text: Modificación
+              - cell "No definido" [ref=e515]:
+                - text: "-"
+                - generic [ref=e516]: No definido
+              - cell "Currículos CCAA Curso de Especialización en Inteligencia Artificial y Big Data (Acceso GS)" [ref=e517]:
+                - link "Currículos CCAA Curso de Especialización en Inteligencia Artificial y Big Data (Acceso GS)" [ref=e518] [cursor=pointer]:
+                  - /url: /que-estudiar/familias-profesionales/informatica-comunicaciones/ce-inteligencia-artificial-bigdata/curriculos-ccaa.html
+              - cell "Perfiles profesionales Curso de Especialización en Inteligencia Artificial y Big Data (Acceso GS)" [ref=e519]:
+                - link "Perfiles profesionales Curso de Especialización en Inteligencia Artificial y Big Data (Acceso GS)" [ref=e520] [cursor=pointer]:
+                  - /url: /dam/jcr:a30d7de0-a417-4ce4-b00e-61a5a0d4e04b/curso-de-especializaci-n-en-inteligencia-artificial-.pdf
+              - cell "Dónde estudiar Curso de Especialización en Inteligencia Artificial y Big Data (Acceso GS)" [ref=e521]:
+                - link "Dónde estudiar Curso de Especialización en Inteligencia Artificial y Big Data (Acceso GS)" [ref=e522] [cursor=pointer]:
+                  - /url: https://www.educacion.gob.es/centros/buscarCentros?ensenanzaFP=124_2003
+            - row "Curso de Especialización en Recursos y Servicios en la Nube (Acceso GS) Real decreto No definido No definido No definido No definido" [ref=e523]:
+              - cell "Curso de Especialización en Recursos y Servicios en la Nube (Acceso GS)" [ref=e524]:
+                - paragraph [ref=e525]:
+                  - link "Curso de Especialización en Recursos y Servicios en la Nube (Acceso GS)" [ref=e526] [cursor=pointer]:
+                    - /url: /que-estudiar/familias-profesionales/informatica-comunicaciones/ce-recursos-servicios-en-la-nube.html
+              - cell "Real decreto Curso de Especialización en Recursos y Servicios en la Nube (Acceso GS)" [ref=e527]:
+                - link "Real decreto Curso de Especialización en Recursos y Servicios en la Nube (Acceso GS)" [ref=e528] [cursor=pointer]:
+                  - /url: https://www.boe.es/boe/dias/2026/02/28/pdfs/BOE-A-2026-4673.pdf
+              - cell "No definido" [ref=e529]:
+                - text: "-"
+                - generic [ref=e530]: No definido
+              - cell "No definido" [ref=e531]:
+                - text: "-"
+                - generic [ref=e532]: No definido
+              - cell "No definido" [ref=e533]:
+                - text: "-"
+                - generic [ref=e534]: No definido
+              - cell "No definido" [ref=e535]:
+                - text: "-"
+                - generic [ref=e536]: No definido
+            - row "Logotipo Instalación y Mantenimiento Curso de Especialización en Digitalización del Mantenimiento Industrial (Acceso GS) Real decreto Modificación No definido Currículos CCAA Perfiles profesionales Dónde estudiar" [ref=e537]:
+              - rowheader "Logotipo Instalación y Mantenimiento" [ref=e538]:
+                - img "Logotipo Instalación y Mantenimiento"
+              - cell "Curso de Especialización en Digitalización del Mantenimiento Industrial (Acceso GS)" [ref=e539]:
+                - paragraph [ref=e540]:
+                  - link "Curso de Especialización en Digitalización del Mantenimiento Industrial (Acceso GS)" [ref=e541] [cursor=pointer]:
+                    - /url: /que-estudiar/familias-profesionales/instalacion-mantenimiento/ce-digita-mante-industrial.html
+              - cell "Real decreto Curso de Especialización en Digitalización del Mantenimiento Industrial (Acceso GS) Modificación" [ref=e542]:
+                - list [ref=e543]:
+                  - listitem [ref=e544]:
+                    - link "Real decreto Curso de Especialización en Digitalización del Mantenimiento Industrial (Acceso GS)" [ref=e545] [cursor=pointer]:
+                      - /url: https://www.boe.es/diario_boe/txt.php?id=BOE-A-2020-4964
+                  - listitem [ref=e546]:
+                    - link "Modificación Real decreto Curso de Especialización en Digitalización del Mantenimiento Industrial (Acceso GS)" [ref=e547] [cursor=pointer]:
+                      - /url: https://www.boe.es/eli/es/rd/2024/05/21/497
+                      - text: Modificación
+              - cell "No definido" [ref=e548]:
+                - text: "-"
+                - generic [ref=e549]: No definido
+              - cell "Currículos CCAA Curso de Especialización en Digitalización del Mantenimiento Industrial (Acceso GS)" [ref=e550]:
+                - link "Currículos CCAA Curso de Especialización en Digitalización del Mantenimiento Industrial (Acceso GS)" [ref=e551] [cursor=pointer]:
+                  - /url: /que-estudiar/familias-profesionales/instalacion-mantenimiento/ce-digita-mante-industrial/curriculos-ccaa.html
+              - cell "Perfiles profesionales Curso de Especialización en Digitalización del Mantenimiento Industrial (Acceso GS)" [ref=e552]:
+                - link "Perfiles profesionales Curso de Especialización en Digitalización del Mantenimiento Industrial (Acceso GS)" [ref=e553] [cursor=pointer]:
+                  - /url: /dam/jcr:3b1cb34f-546b-4faf-bb13-691e1b0d4458/curso-de-especializaci-n-en-digitalizaci-n-del-mante.pdf
+              - cell "Dónde estudiar Curso de Especialización en Digitalización del Mantenimiento Industrial (Acceso GS)" [ref=e554]:
+                - link "Dónde estudiar Curso de Especialización en Digitalización del Mantenimiento Industrial (Acceso GS)" [ref=e555] [cursor=pointer]:
+                  - /url: https://www.educacion.gob.es/centros/buscarCentros?ensenanzaFP=124_0901
+            - row "Curso de Especialización en Fabricación Inteligente (Acceso GS) Real decreto Modificación No definido Currículos CCAA Perfiles profesionales Dónde estudiar" [ref=e556]:
+              - cell "Curso de Especialización en Fabricación Inteligente (Acceso GS)" [ref=e557]:
+                - paragraph [ref=e558]:
+                  - link "Curso de Especialización en Fabricación Inteligente (Acceso GS)" [ref=e559] [cursor=pointer]:
+                    - /url: /que-estudiar/familias-profesionales/instalacion-mantenimiento/ce-fabricacion-inteligente.html
+              - cell "Real decreto Curso de Especialización en Fabricación Inteligente (Acceso GS) Modificación" [ref=e560]:
+                - list [ref=e561]:
+                  - listitem [ref=e562]:
+                    - link "Real decreto Curso de Especialización en Fabricación Inteligente (Acceso GS)" [ref=e563] [cursor=pointer]:
+                      - /url: https://www.boe.es/diario_boe/txt.php?id=BOE-A-2020-4965
+                  - listitem [ref=e564]:
+                    - link "Modificación Real decreto Curso de Especialización en Fabricación Inteligente (Acceso GS)" [ref=e565] [cursor=pointer]:
+                      - /url: https://www.boe.es/eli/es/rd/2024/05/21/497
+                      - text: Modificación
+              - cell "No definido" [ref=e566]:
+                - text: "-"
+                - generic [ref=e567]: No definido
+              - cell "Currículos CCAA Curso de Especialización en Fabricación Inteligente (Acceso GS)" [ref=e568]:
+                - link "Currículos CCAA Curso de Especialización en Fabricación Inteligente (Acceso GS)" [ref=e569] [cursor=pointer]:
+                  - /url: /que-estudiar/familias-profesionales/instalacion-mantenimiento/ce-fabricacion-inteligente/curriculos-ccaa.html
+              - cell "Perfiles profesionales Curso de Especialización en Fabricación Inteligente (Acceso GS)" [ref=e570]:
+                - link "Perfiles profesionales Curso de Especialización en Fabricación Inteligente (Acceso GS)" [ref=e571] [cursor=pointer]:
+                  - /url: /dam/jcr:6b7a058e-2814-490f-a39c-a01c820d9fbf/curso-de-especializaci-n-en-fabricaci-n-inteligente-.pdf
+              - cell "Dónde estudiar Curso de Especialización en Fabricación Inteligente (Acceso GS)" [ref=e572]:
+                - link "Dónde estudiar Curso de Especialización en Fabricación Inteligente (Acceso GS)" [ref=e573] [cursor=pointer]:
+                  - /url: https://www.educacion.gob.es/centros/buscarCentros?ensenanzaFP=124_0902
+            - row "Curso de Especialización en Modelado de la información en la construcción (BIM) (Acceso GS) Real decreto Modificación No definido Currículos CCAA Perfiles profesionales Dónde estudiar" [ref=e574]:
+              - cell "Curso de Especialización en Modelado de la información en la construcción (BIM) (Acceso GS)" [ref=e575]:
+                - paragraph [ref=e576]:
+                  - link "Curso de Especialización en Modelado de la información en la construcción (BIM) (Acceso GS)" [ref=e577] [cursor=pointer]:
+                    - /url: /que-estudiar/familias-profesionales/instalacion-mantenimiento/ce-modelado-informacion-construccion.html
+              - cell "Real decreto Curso de Especialización en Modelado de la información en la construcción (BIM) (Acceso GS) Modificación" [ref=e578]:
+                - list [ref=e579]:
+                  - listitem [ref=e580]:
+                    - link "Real decreto Curso de Especialización en Modelado de la información en la construcción (BIM) (Acceso GS)" [ref=e581] [cursor=pointer]:
+                      - /url: https://www.boe.es/diario_boe/txt.php?id=BOE-A-2021-7557
+                  - listitem [ref=e582]:
+                    - link "Modificación Real decreto Curso de Especialización en Modelado de la información en la construcción (BIM) (Acceso GS)" [ref=e583] [cursor=pointer]:
+                      - /url: https://www.boe.es/eli/es/rd/2024/05/21/497
+                      - text: Modificación
+              - cell "No definido" [ref=e584]:
+                - text: "-"
+                - generic [ref=e585]: No definido
+              - cell "Currículos CCAA Curso de Especialización en Modelado de la información en la construcción (BIM) (Acceso GS)" [ref=e586]:
+                - link "Currículos CCAA Curso de Especialización en Modelado de la información en la construcción (BIM) (Acceso GS)" [ref=e587] [cursor=pointer]:
+                  - /url: /que-estudiar/familias-profesionales/instalacion-mantenimiento/ce-modelado-informacion-construccion/curriculos-ccaa.html
+              - cell "Perfiles profesionales Curso de Especialización en Modelado de la información en la construcción (BIM) (Acceso GS)" [ref=e588]:
+                - link "Perfiles profesionales Curso de Especialización en Modelado de la información en la construcción (BIM) (Acceso GS)" [ref=e589] [cursor=pointer]:
+                  - /url: /dam/jcr:4bfc0920-fd74-4289-9906-44653b9fd127/curso-de-especializaci-n-en-modelado-de-la-informaci.pdf
+              - cell "Dónde estudiar Curso de Especialización en Modelado de la información en la construcción (BIM) (Acceso GS)" [ref=e590]:
+                - link "Dónde estudiar Curso de Especialización en Modelado de la información en la construcción (BIM) (Acceso GS)" [ref=e591] [cursor=pointer]:
+                  - /url: https://www.educacion.gob.es/centros/buscarCentros?ensenanzaFP=124_0903
+            - 'row "Inteligencia Artificial y Data Curso de especialización de Aprendizaje automático: gestión de datos y entrenamiento (Acceso GS) Real decreto No definido No definido No definido No definido" [ref=e592]':
+              - rowheader "Inteligencia Artificial y Data" [ref=e593]:
+                - img "Inteligencia Artificial y Data"
+              - 'cell "Curso de especialización de Aprendizaje automático: gestión de datos y entrenamiento (Acceso GS)" [ref=e594]':
+                - paragraph [ref=e595]:
+                  - 'link "Curso de especialización de Aprendizaje automático: gestión de datos y entrenamiento (Acceso GS)" [ref=e596] [cursor=pointer]':
+                    - /url: /que-estudiar/familias-profesionales/inteligencia-artificial-data/aprendizaje-automatico-gestion-datos-entrenamiento.html
+              - 'cell "Real decreto Curso de especialización de Aprendizaje automático: gestión de datos y entrenamiento (Acceso GS)" [ref=e597]':
+                - 'link "Real decreto Curso de especialización de Aprendizaje automático: gestión de datos y entrenamiento (Acceso GS)" [ref=e598] [cursor=pointer]':
+                  - /url: "https://www.boe.es/boe/dias/2026/03/13/pdfs/BOE-A-2026-5869.pdf "
+              - cell "No definido" [ref=e599]:
+                - text: "-"
+                - generic [ref=e600]: No definido
+              - cell "No definido" [ref=e601]:
+                - text: "-"
+                - generic [ref=e602]: No definido
+              - cell "No definido" [ref=e603]:
+                - text: "-"
+                - generic [ref=e604]: No definido
+              - cell "No definido" [ref=e605]:
+                - text: "-"
+                - generic [ref=e606]: No definido
+            - 'row "Curso de especialización en Aprendizaje automático: instalación, despliegue y explotación de sistemas (Acceso GS) Real decreto No definido No definido No definido No definido" [ref=e607]':
+              - 'cell "Curso de especialización en Aprendizaje automático: instalación, despliegue y explotación de sistemas (Acceso GS)" [ref=e608]':
+                - paragraph [ref=e609]:
+                  - 'link "Curso de especialización en Aprendizaje automático: instalación, despliegue y explotación de sistemas (Acceso GS)" [ref=e610] [cursor=pointer]':
+                    - /url: /que-estudiar/familias-profesionales/inteligencia-artificial-data/aprendizaje-automatico-instalacion-despliegue.html
+              - 'cell "Real decreto Curso de especialización en Aprendizaje automático: instalación, despliegue y explotación de sistemas (Acceso GS)" [ref=e611]':
+                - 'link "Real decreto Curso de especialización en Aprendizaje automático: instalación, despliegue y explotación de sistemas (Acceso GS)" [ref=e612] [cursor=pointer]':
+                  - /url: https://www.boe.es/boe/dias/2026/03/13/pdfs/BOE-A-2026-5870.pdf
+              - cell "No definido" [ref=e613]:
+                - text: "-"
+                - generic [ref=e614]: No definido
+              - cell "No definido" [ref=e615]:
+                - text: "-"
+                - generic [ref=e616]: No definido
+              - cell "No definido" [ref=e617]:
+                - text: "-"
+                - generic [ref=e618]: No definido
+              - cell "No definido" [ref=e619]:
+                - text: "-"
+                - generic [ref=e620]: No definido
+            - row "Logotipo Química Curso de Especialización en Cultivos Celulares (Acceso GS) Real decreto Modificación Corrección Actualización No definido Currículos CCAA Perfiles profesionales Dónde estudiar" [ref=e621]:
+              - rowheader "Logotipo Química" [ref=e622]:
+                - img "Logotipo Química"
+              - cell "Curso de Especialización en Cultivos Celulares (Acceso GS)" [ref=e623]:
+                - paragraph [ref=e624]:
+                  - link "Curso de Especialización en Cultivos Celulares (Acceso GS)" [ref=e625] [cursor=pointer]:
+                    - /url: /que-estudiar/familias-profesionales/quimica/ce-cultivos-celulares.html
+              - cell "Real decreto Curso de Especialización en Cultivos Celulares (Acceso GS) Modificación Corrección Actualización" [ref=e626]:
+                - list [ref=e627]:
+                  - listitem [ref=e628]:
+                    - link "Real decreto Curso de Especialización en Cultivos Celulares (Acceso GS)" [ref=e629] [cursor=pointer]:
+                      - /url: https://boe.es/diario_boe/txt.php?id=BOE-A-2019-4152
+                  - listitem [ref=e630]:
+                    - link "Modificación Real decreto Curso de Especialización en Cultivos Celulares (Acceso GS)" [ref=e631] [cursor=pointer]:
+                      - /url: https://www.boe.es/diario_boe/txt.php?id=BOE-A-2022-1056
+                      - text: Modificación
+                  - listitem [ref=e632]:
+                    - link "Corrección Real decreto Curso de Especialización en Cultivos Celulares (Acceso GS)" [ref=e633] [cursor=pointer]:
+                      - /url: https://www.boe.es/diario_boe/txt.php?id=BOE-A-2022-2119
+                      - text: Corrección
+                  - listitem [ref=e634]:
+                    - link "Actualización Real decreto Curso de Especialización en Cultivos Celulares (Acceso GS)" [ref=e635] [cursor=pointer]:
+                      - /url: https://www.boe.es/eli/es/rd/2024/05/21/497
+                      - text: Actualización
+              - cell "No definido" [ref=e636]:
+                - text: "-"
+                - generic [ref=e637]: No definido
+              - cell "Currículos CCAA Curso de Especialización en Cultivos Celulares (Acceso GS)" [ref=e638]:
+                - link "Currículos CCAA Curso de Especialización en Cultivos Celulares (Acceso GS)" [ref=e639] [cursor=pointer]:
+                  - /url: /que-estudiar/familias-profesionales/quimica/ce-cultivos-celulares/curriculos-ccaa.html
+              - cell "Perfiles profesionales Curso de Especialización en Cultivos Celulares (Acceso GS)" [ref=e640]:
+                - link "Perfiles profesionales Curso de Especialización en Cultivos Celulares (Acceso GS)" [ref=e641] [cursor=pointer]:
+                  - /url: /dam/jcr:b46a7bea-28ea-4b23-bb5e-0e7046edb5b3/curso-de-especializaci-n-en-cultivos-celulares--acce.pdf
+              - cell "Dónde estudiar Curso de Especialización en Cultivos Celulares (Acceso GS)" [ref=e642]:
+                - link "Dónde estudiar Curso de Especialización en Cultivos Celulares (Acceso GS)" [ref=e643] [cursor=pointer]:
+                  - /url: https://www.educacion.gob.es/centros/buscarCentros?ensenanzaFP=124_0401
+            - row "Logotipo Transporte y Mantenimiento de Vehículos Curso de Especialización en Aeronaves pilotadas de forma remota-Drones (Acceso GS) Real decreto Modificación Corrección No definido Currículos CCAA Perfiles profesionales Dónde estudiar" [ref=e644]:
+              - rowheader "Logotipo Transporte y Mantenimiento de Vehículos" [ref=e645]:
+                - img "Logotipo Transporte y Mantenimiento de Vehículos"
+              - cell "Curso de Especialización en Aeronaves pilotadas de forma remota-Drones (Acceso GS)" [ref=e646]:
+                - paragraph [ref=e647]:
+                  - link "Curso de Especialización en Aeronaves pilotadas de forma remota-Drones (Acceso GS)" [ref=e648] [cursor=pointer]:
+                    - /url: /que-estudiar/familias-profesionales/transporte-mantenimiento-vehiculos/ce-aeronaves-drones.html
+              - cell "Real decreto Curso de Especialización en Aeronaves pilotadas de forma remota-Drones (Acceso GS) Modificación Corrección" [ref=e649]:
+                - list [ref=e650]:
+                  - listitem [ref=e651]:
+                    - link "Real decreto Curso de Especialización en Aeronaves pilotadas de forma remota-Drones (Acceso GS)" [ref=e652] [cursor=pointer]:
+                      - /url: https://www.boe.es/eli/es/rd/2022/05/24/393
+                  - listitem [ref=e653]:
+                    - link "Modificación Real decreto Curso de Especialización en Aeronaves pilotadas de forma remota-Drones (Acceso GS)" [ref=e654] [cursor=pointer]:
+                      - /url: https://www.boe.es/eli/es/rd/2024/05/21/497
+                      - text: Modificación
+                  - listitem [ref=e655]:
+                    - link "Corrección Real decreto Curso de Especialización en Aeronaves pilotadas de forma remota-Drones (Acceso GS)" [ref=e656] [cursor=pointer]:
+                      - /url: https://www.boe.es/eli/es/rd/2022/05/24/393/corrigendum/20220630
+                      - text: Corrección
+              - cell "No definido" [ref=e657]:
+                - text: "-"
+                - generic [ref=e658]: No definido
+              - cell "Currículos CCAA Curso de Especialización en Aeronaves pilotadas de forma remota-Drones (Acceso GS)" [ref=e659]:
+                - link "Currículos CCAA Curso de Especialización en Aeronaves pilotadas de forma remota-Drones (Acceso GS)" [ref=e660] [cursor=pointer]:
+                  - /url: /que-estudiar/familias-profesionales/transporte-mantenimiento-vehiculos/ce-aeronaves-drones/curriculos-ccaa.html
+              - cell "Perfiles profesionales Curso de Especialización en Aeronaves pilotadas de forma remota-Drones (Acceso GS)" [ref=e661]:
+                - link "Perfiles profesionales Curso de Especialización en Aeronaves pilotadas de forma remota-Drones (Acceso GS)" [ref=e662] [cursor=pointer]:
+                  - /url: /dam/jcr:e39826a4-2350-464a-8633-3d5147142d66/curso-de-especializaci-n-en-aeronaves-pilotadas-de-f.pdf
+              - cell "Dónde estudiar Curso de Especialización en Aeronaves pilotadas de forma remota-Drones (Acceso GS)" [ref=e663]:
+                - link "Dónde estudiar Curso de Especialización en Aeronaves pilotadas de forma remota-Drones (Acceso GS)" [ref=e664] [cursor=pointer]:
+                  - /url: https://www.educacion.gob.es/centros/buscarCentros?ensenanzaFP=124_1203
+            - row "Curso de Especialización en Inspección técnica y peritación de siniestros en vehículos (Acceso GS) Real decreto No definido Currículos CCAA Perfiles profesionales Dónde estudiar" [ref=e665]:
+              - cell "Curso de Especialización en Inspección técnica y peritación de siniestros en vehículos (Acceso GS)" [ref=e666]:
+                - paragraph [ref=e667]:
+                  - link "Curso de Especialización en Inspección técnica y peritación de siniestros en vehículos (Acceso GS)" [ref=e668] [cursor=pointer]:
+                    - /url: /que-estudiar/familias-profesionales/transporte-mantenimiento-vehiculos/ce-inspeccion-tecnica-peritacion-siniestro.html
+              - cell "Real decreto Curso de Especialización en Inspección técnica y peritación de siniestros en vehículos (Acceso GS)" [ref=e669]:
+                - link "Real decreto Curso de Especialización en Inspección técnica y peritación de siniestros en vehículos (Acceso GS)" [ref=e670] [cursor=pointer]:
+                  - /url: https://www.boe.es/diario_boe/txt.php?id=BOE-A-2024-21706
+              - cell "No definido" [ref=e671]:
+                - text: "-"
+                - generic [ref=e672]: No definido
+              - cell "Currículos CCAA Curso de Especialización en Inspección técnica y peritación de siniestros en vehículos (Acceso GS)" [ref=e673]:
+                - link "Currículos CCAA Curso de Especialización en Inspección técnica y peritación de siniestros en vehículos (Acceso GS)" [ref=e674] [cursor=pointer]:
+                  - /url: /que-estudiar/familias-profesionales/transporte-mantenimiento-vehiculos/ce-inspeccion-tecnica-peritacion-siniestro/curriculos-ccaa.html
+              - cell "Perfiles profesionales Curso de Especialización en Inspección técnica y peritación de siniestros en vehículos (Acceso GS)" [ref=e675]:
+                - link "Perfiles profesionales Curso de Especialización en Inspección técnica y peritación de siniestros en vehículos (Acceso GS)" [ref=e676] [cursor=pointer]:
+                  - /url: /dam/jcr:77acd096-ac39-48e5-835d-518bed8e9f58/perfiles-profesionales-inspeccion-tecnica-y-peritacion-de-siniestros-en-vehiculos.pdf
+              - cell "Dónde estudiar Curso de Especialización en Inspección técnica y peritación de siniestros en vehículos (Acceso GS)" [ref=e677]:
+                - link "Dónde estudiar Curso de Especialización en Inspección técnica y peritación de siniestros en vehículos (Acceso GS)" [ref=e678] [cursor=pointer]:
+                  - /url: https://www.educacion.gob.es/centros/buscarCentros?ensenanzaFP=124_1204
+            - row "Curso de Especialización en Mantenimiento avanzado de sistemas de material rodante ferroviario (Acceso GS) Real decreto Modificación No definido Currículos CCAA Perfiles profesionales Dónde estudiar" [ref=e679]:
+              - cell "Curso de Especialización en Mantenimiento avanzado de sistemas de material rodante ferroviario (Acceso GS)" [ref=e680]:
+                - paragraph [ref=e681]:
+                  - link "Curso de Especialización en Mantenimiento avanzado de sistemas de material rodante ferroviario (Acceso GS)" [ref=e682] [cursor=pointer]:
+                    - /url: /que-estudiar/familias-profesionales/transporte-mantenimiento-vehiculos/ce-mtmo-material-rodante-ferroviario.html
+              - cell "Real decreto Curso de Especialización en Mantenimiento avanzado de sistemas de material rodante ferroviario (Acceso GS) Modificación" [ref=e683]:
+                - list [ref=e684]:
+                  - listitem [ref=e685]:
+                    - link "Real decreto Curso de Especialización en Mantenimiento avanzado de sistemas de material rodante ferroviario (Acceso GS)" [ref=e686] [cursor=pointer]:
+                      - /url: https://www.boe.es/diario_boe/txt.php?id=BOE-A-2021-5948
+                  - listitem [ref=e687]:
+                    - link "Modificación Real decreto Curso de Especialización en Mantenimiento avanzado de sistemas de material rodante ferroviario (Acceso GS)" [ref=e688] [cursor=pointer]:
+                      - /url: https://www.boe.es/eli/es/rd/2024/05/21/497
+                      - text: Modificación
+              - cell "No definido" [ref=e689]:
+                - text: "-"
+                - generic [ref=e690]: No definido
+              - cell "Currículos CCAA Curso de Especialización en Mantenimiento avanzado de sistemas de material rodante ferroviario (Acceso GS)" [ref=e691]:
+                - link "Currículos CCAA Curso de Especialización en Mantenimiento avanzado de sistemas de material rodante ferroviario (Acceso GS)" [ref=e692] [cursor=pointer]:
+                  - /url: /que-estudiar/familias-profesionales/transporte-mantenimiento-vehiculos/ce-mtmo-material-rodante-ferroviario/curriculos-ccaa.html
+              - cell "Perfiles profesionales Curso de Especialización en Mantenimiento avanzado de sistemas de material rodante ferroviario (Acceso GS)" [ref=e693]:
+                - link "Perfiles profesionales Curso de Especialización en Mantenimiento avanzado de sistemas de material rodante ferroviario (Acceso GS)" [ref=e694] [cursor=pointer]:
+                  - /url: /dam/jcr:2b2ac7ab-a1f2-4dd1-8ee5-f4db7e7a4739/curso-de-especializaci-n-en-mantenimiento-avanzado-d.pdf
+              - cell "Dónde estudiar Curso de Especialización en Mantenimiento avanzado de sistemas de material rodante ferroviario (Acceso GS)" [ref=e695]:
+                - link "Dónde estudiar Curso de Especialización en Mantenimiento avanzado de sistemas de material rodante ferroviario (Acceso GS)" [ref=e696] [cursor=pointer]:
+                  - /url: https://www.educacion.gob.es/centros/buscarCentros?ensenanzaFP=124_1201
+            - row "Curso de Especialización en Mantenimiento de vehículos híbridos y eléctricos (Acceso GM) Real decreto Modificación Corrección No definido Currículos CCAA Perfiles profesionales Dónde estudiar" [ref=e697]:
+              - cell "Curso de Especialización en Mantenimiento de vehículos híbridos y eléctricos (Acceso GM)" [ref=e698]:
+                - paragraph [ref=e699]:
+                  - link "Curso de Especialización en Mantenimiento de vehículos híbridos y eléctricos (Acceso GM)" [ref=e700] [cursor=pointer]:
+                    - /url: /que-estudiar/familias-profesionales/transporte-mantenimiento-vehiculos/ce-mantenimiento-vehiculos-electricos-hibridos.html
+              - cell "Real decreto Curso de Especialización en Mantenimiento de vehículos híbridos y eléctricos (Acceso GM) Modificación Corrección" [ref=e701]:
+                - list [ref=e702]:
+                  - listitem [ref=e703]:
+                    - link "Real decreto Curso de Especialización en Mantenimiento de vehículos híbridos y eléctricos (Acceso GM)" [ref=e704] [cursor=pointer]:
+                      - /url: https://www.boe.es/diario_boe/txt.php?id=BOE-A-2021-7687
+                  - listitem [ref=e705]:
+                    - link "Modificación Real decreto Curso de Especialización en Mantenimiento de vehículos híbridos y eléctricos (Acceso GM)" [ref=e706] [cursor=pointer]:
+                      - /url: https://www.boe.es/eli/es/rd/2024/05/21/497
+                      - text: Modificación
+                  - listitem [ref=e707]:
+                    - link "Corrección Real decreto Curso de Especialización en Mantenimiento de vehículos híbridos y eléctricos (Acceso GM)" [ref=e708] [cursor=pointer]:
+                      - /url: https://www.boe.es/eli/es/rd/2021/04/20/281/corrigendum/20210521
+                      - text: Corrección
+              - cell "No definido" [ref=e709]:
+                - text: "-"
+                - generic [ref=e710]: No definido
+              - cell "Currículos CCAA Curso de Especialización en Mantenimiento de vehículos híbridos y eléctricos (Acceso GM)" [ref=e711]:
+                - link "Currículos CCAA Curso de Especialización en Mantenimiento de vehículos híbridos y eléctricos (Acceso GM)" [ref=e712] [cursor=pointer]:
+                  - /url: /que-estudiar/familias-profesionales/transporte-mantenimiento-vehiculos/ce-mantenimiento-vehiculos-electricos-hibridos/curriculos-ccaa.html
+              - cell "Perfiles profesionales Curso de Especialización en Mantenimiento de vehículos híbridos y eléctricos (Acceso GM)" [ref=e713]:
+                - link "Perfiles profesionales Curso de Especialización en Mantenimiento de vehículos híbridos y eléctricos (Acceso GM)" [ref=e714] [cursor=pointer]:
+                  - /url: /dam/jcr:99268e4d-6fd2-4871-8e68-3e05cab8a8cb/curso-de-especializaci-n-en-mantenimiento-de-veh-cul.pdf
+              - cell "Dónde estudiar Curso de Especialización en Mantenimiento de vehículos híbridos y eléctricos (Acceso GM)" [ref=e715]:
+                - link "Dónde estudiar Curso de Especialización en Mantenimiento de vehículos híbridos y eléctricos (Acceso GM)" [ref=e716] [cursor=pointer]:
+                  - /url: https://www.educacion.gob.es/centros/buscarCentros?ensenanzaFP=125_1201
+            - row "Curso de Especialización en Mantenimiento y seguridad en sistemas de vehículos híbridos y eléctricos (Acceso GS) Real decreto Modificación No definido Currículos CCAA Perfiles profesionales Dónde estudiar" [ref=e717]:
+              - cell "Curso de Especialización en Mantenimiento y seguridad en sistemas de vehículos híbridos y eléctricos (Acceso GS)" [ref=e718]:
+                - paragraph [ref=e719]:
+                  - link "Curso de Especialización en Mantenimiento y seguridad en sistemas de vehículos híbridos y eléctricos (Acceso GS)" [ref=e720] [cursor=pointer]:
+                    - /url: /que-estudiar/familias-profesionales/transporte-mantenimiento-vehiculos/ce-mantenimiento-seguridad-hibridos-electricos.html
+              - cell "Real decreto Curso de Especialización en Mantenimiento y seguridad en sistemas de vehículos híbridos y eléctricos (Acceso GS) Modificación" [ref=e721]:
+                - list [ref=e722]:
+                  - listitem [ref=e723]:
+                    - link "Real decreto Curso de Especialización en Mantenimiento y seguridad en sistemas de vehículos híbridos y eléctricos (Acceso GS)" [ref=e724] [cursor=pointer]:
+                      - /url: "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2022-2057 "
+                  - listitem [ref=e725]:
+                    - link "Modificación Real decreto Curso de Especialización en Mantenimiento y seguridad en sistemas de vehículos híbridos y eléctricos (Acceso GS)" [ref=e726] [cursor=pointer]:
+                      - /url: https://www.boe.es/eli/es/rd/2024/05/21/497
+                      - text: Modificación
+              - cell "No definido" [ref=e727]:
+                - text: "-"
+                - generic [ref=e728]: No definido
+              - cell "Currículos CCAA Curso de Especialización en Mantenimiento y seguridad en sistemas de vehículos híbridos y eléctricos (Acceso GS)" [ref=e729]:
+                - link "Currículos CCAA Curso de Especialización en Mantenimiento y seguridad en sistemas de vehículos híbridos y eléctricos (Acceso GS)" [ref=e730] [cursor=pointer]:
+                  - /url: /que-estudiar/familias-profesionales/transporte-mantenimiento-vehiculos/ce-mantenimiento-seguridad-hibridos-electricos/curriculos-ccaa.html
+              - cell "Perfiles profesionales Curso de Especialización en Mantenimiento y seguridad en sistemas de vehículos híbridos y eléctricos (Acceso GS)" [ref=e731]:
+                - link "Perfiles profesionales Curso de Especialización en Mantenimiento y seguridad en sistemas de vehículos híbridos y eléctricos (Acceso GS)" [ref=e732] [cursor=pointer]:
+                  - /url: /dam/jcr:23f92c42-deb6-4dc7-978d-db06a10ff051/curso-de-especializaci-n-en-mantenimiento-y-segurida.pdf
+              - cell "Dónde estudiar Curso de Especialización en Mantenimiento y seguridad en sistemas de vehículos híbridos y eléctricos (Acceso GS)" [ref=e733]:
+                - link "Dónde estudiar Curso de Especialización en Mantenimiento y seguridad en sistemas de vehículos híbridos y eléctricos (Acceso GS)" [ref=e734] [cursor=pointer]:
+                  - /url: https://www.educacion.gob.es/centros/buscarCentros?ensenanzaFP=124_1202
+    - contentinfo [ref=e736]:
+      - generic [ref=e737]:
+        - generic [ref=e738]:
+          - paragraph [ref=e740]:
+            - text: La formación
+            - text: a tu alcance
+            - text: para mejorar el futuro
+          - generic [ref=e741]:
+            - generic [ref=e742]:
+              - list [ref=e743]:
+                - listitem [ref=e744]:
+                  - link "Preguntas frecuentes" [ref=e745] [cursor=pointer]:
+                    - /url: /comunes/faq.html
+                - listitem [ref=e746]:
+                  - link "Contacto" [ref=e747] [cursor=pointer]:
+                    - /url: /comunes/contacto.html
+              - list [ref=e748]:
+                - listitem [ref=e749]:
+                  - link "X. Externo, se abre en ventana nueva." [ref=e750] [cursor=pointer]:
+                    - /url: https://x.com/todofp
+            - paragraph [ref=e751]: © Formación Profesional - Todo FP
+            - paragraph [ref=e752]: "NIPO: 164-26-002-1"
+        - generic [ref=e754]:
+          - paragraph [ref=e756]: © Ministerio de Educación, Formación Profesional y Deportes - Gobierno de España
+          - list [ref=e758]:
+            - listitem [ref=e759]:
+              - link "Mapa Web" [ref=e760] [cursor=pointer]:
+                - /url: /comunes/mapaweb.html
+            - listitem [ref=e761]:
+              - link "Accesibilidad" [ref=e762] [cursor=pointer]:
+                - /url: /comunes/accesibilidad.html
+            - listitem [ref=e763]:
+              - link "Aviso Legal" [ref=e764] [cursor=pointer]:
+                - /url: /comunes/aviso-legal.html
+    - alertdialog "Política de cookies" [ref=e765]:
+      - generic [ref=e766]:
+        - paragraph [ref=e767]: Esta web utiliza cookies propias para facilitar la navegación y cookies de terceros para obtener estadísticas de uso y satisfacción.
+        - paragraph [ref=e768]:
+          - text: Puede obtener más información en el apartado "Cookies" de nuestro
+          - link "aviso legal" [ref=e769] [cursor=pointer]:
+            - /url: /comunes/aviso-legal.html#cookies
+          - text: .
+        - generic [ref=e770]:
+          - button "Aceptar" [ref=e771] [cursor=pointer]
+          - button "Rechazar" [ref=e772] [cursor=pointer]

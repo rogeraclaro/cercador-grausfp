@@ -1,0 +1,141 @@
+- generic [ref=e2]:
+  - banner [ref=e3]:
+    - link "Logo Portal TodoFP" [ref=e6] [cursor=pointer]:
+      - /url: https://todofp.es/inicio.html
+      - img "Logo Portal TodoFP" [ref=e7]
+    - generic [ref=e8]:
+      - link "Logo Ministerial" [ref=e9] [cursor=pointer]:
+        - /url: https://www.educacionyfp.gob.es/portada.html
+        - img "Logo Ministerial" [ref=e10]
+      - list [ref=e12]:
+        - listitem [ref=e13]:
+          - link "Sobre FP" [ref=e14] [cursor=pointer]:
+            - /url: https://www.todofp.es/sobre-fp.html
+        - listitem [ref=e15]:
+          - link "¿Qué estudiar?" [ref=e16] [cursor=pointer]:
+            - /url: https://www.todofp.es/que-estudiar.html
+        - listitem [ref=e17]:
+          - link "Acreditación de Competencias" [ref=e18] [cursor=pointer]:
+            - /url: https://www.todofp.es/acreditacion-de-competencias.html
+        - listitem [ref=e19]:
+          - link "Acceso a FP" [ref=e20] [cursor=pointer]:
+            - /url: https://www.todofp.es/como-cuando-y-donde-estudiar.html
+        - listitem [ref=e21]:
+          - link "Trámites" [ref=e22] [cursor=pointer]:
+            - /url: https://www.todofp.es/convalidaciones-equivalencias-homologaciones.html
+        - listitem [ref=e23]:
+          - link "Orientación" [ref=e24] [cursor=pointer]:
+            - /url: https://www.todofp.es/orientacion-profesional.html
+        - listitem [ref=e25]:
+          - link "Docentes" [ref=e26] [cursor=pointer]:
+            - /url: https://www.todofp.es/comunidad-docente.html
+  - generic [ref=e27]:
+    - list [ref=e29]:
+      - listitem [ref=e30]:
+        - link "Inicio>" [ref=e31] [cursor=pointer]:
+          - /url: ./
+      - listitem [ref=e32]: Buscador
+    - heading "Certificados Profesionales" [level=1] [ref=e33]
+    - generic [ref=e34]:
+      - generic [ref=e36]:
+        - paragraph [ref=e38]: "Si quieres cursar un certificado profesional puedes buscar el que más se adapte a ti. Accede a la ficha completa del certificado y a los ciclos formativos de FP asociados. Introduce uno o varios de los siguientes campos:"
+        - list [ref=e40]:
+          - listitem [ref=e41]: "Código (por ejemplo: MAMD0110)"
+          - listitem [ref=e42]: Nombre del certificado (es suficiente con una palabra contenida en la denominación)
+          - listitem [ref=e43]: "Familia Profesional (por ejemplo: Edificación y Obra Civil)"
+          - listitem [ref=e44]: Nivel (1, 2 ó 3)
+        - paragraph [ref=e45]:
+          - text: Si ya has cursado un certificado profesional y quieres seguir estudiando un Ciclo Formativo de FP, consulta el apartado "
+          - link "Ciclos FP" [ref=e46] [cursor=pointer]:
+            - /url: https://todofp.es/como-cuando-y-donde-estudiar/acceso-fp-desde-fp/como-accedo-a-fp.html
+          - text: "\" para orientarte sobre los módulos profesionales que te pueden convalidar aportando tu certificado. Información Orientativa. Recuerda que para poder estudiar un certificado debes cumplir con uno de los requisitos de acceso que establece la normativa vigente."
+      - group [ref=e49]:
+        - generic [ref=e50]:
+          - heading "Buscador" [level=2] [ref=e51]
+          - link "Repertorio Certificados Profesionales" [ref=e52] [cursor=pointer]:
+            - /url: https://www.todofp.es/dam/jcr:8f2a81fd-baa8-4e46-b4c5-e92c08103c4f/repertoriocertificadosprofesionales.pdf
+            - text: Repertorio Certificados Profesionales
+            - img [ref=e53]
+        - generic [ref=e55]:
+          - text: Código
+          - textbox "Código" [ref=e56]
+          - text: Nombre del certificado
+          - textbox "Nombre del certificado" [ref=e57]:
+            - /placeholder: Busque por palabra o por título completo
+          - text: Familia Profesional
+          - combobox "Familia Profesional" [ref=e58]:
+            - option "Selecciona una opción..." [selected]
+            - option "Actividades Físicas y Deportivas"
+            - option "Administración y Gestión"
+            - option "Agraria"
+            - option "Artes Gráficas"
+            - option "Artes y Artesanías"
+            - option "Comercio y Marketing"
+            - option "Edificación y Obra Civil"
+            - option "Electricidad y Electrónica"
+            - option "Energía y Agua"
+            - option "Fabricación Mecánica"
+            - option "Hostelería y Turismo"
+            - option "Imagen Personal"
+            - option "Imagen y Sonido"
+            - option "Industrias Alimentarias"
+            - option "Industrias Extractivas"
+            - option "Informática y Comunicaciones"
+            - option "Instalación y Mantenimiento"
+            - option "Madera, Mueble y Corcho"
+            - option "Marítimo Pesquera"
+            - option "Química"
+            - option "Sanidad"
+            - option "Seguridad y Medio Ambiente"
+            - option "Servicios Socioculturales y a la Comunidad"
+            - option "Textil, Confección y Piel"
+            - option "Transporte y Mantenimiento de Vehículos"
+            - option "Vidrio y Cerámica"
+          - text: Nivel
+          - combobox [ref=e59]:
+            - option "Selecciona una opción..." [selected]
+            - option "1"
+            - option "2"
+            - option "3"
+          - button "Buscar" [ref=e60] [cursor=pointer]
+          - link "Limpiar filtros" [ref=e61] [cursor=pointer]:
+            - /url: buscador
+    - generic [ref=e62]:
+      - link "Ir a la página anterior":
+        - /url: "#"
+      - list
+  - contentinfo [ref=e63]:
+    - generic [ref=e64]:
+      - generic [ref=e65]:
+        - generic [ref=e66]:
+          - text: Fórmate sin rodeos.
+          - generic [ref=e67]: Y sal a trabajar de lo
+          - text: que te encanta.
+        - list [ref=e69]:
+          - listitem [ref=e70]:
+            - link "Todo FP" [ref=e71] [cursor=pointer]:
+              - /url: https://www.todofp.es
+          - listitem [ref=e72]:
+            - link "Preguntas frecuentes" [ref=e73] [cursor=pointer]:
+              - /url: https://www.todofp.es/comunes/faq.html
+          - listitem [ref=e74]:
+            - link "Contacto" [ref=e75] [cursor=pointer]:
+              - /url: https://todofp.es/comunes/contacto.html
+          - listitem [ref=e76]:
+            - link "Ciclos formativos" [ref=e77] [cursor=pointer]:
+              - /url: https://www.todofp.es/que-estudiar/ciclos.html
+      - generic [ref=e78]:
+        - list [ref=e80]:
+          - listitem [ref=e81]:
+            - link "acceso twitter" [ref=e82] [cursor=pointer]:
+              - /url: https://twitter.com/todofp
+              - img "acceso twitter" [ref=e83]
+        - paragraph [ref=e85]: Formación profesional - Todo FP
+    - generic [ref=e86]:
+      - link "Ministerio de Educación, Formación Profesional y Deportes - Gobierno de España" [ref=e87] [cursor=pointer]:
+        - /url: https://www.educacionyfp.gob.es/
+        - generic [ref=e88]: Ministerio de Educación, Formación Profesional y Deportes - Gobierno de España
+      - list [ref=e90]:
+        - listitem [ref=e91]:
+          - link "Accesibilidad" [ref=e92] [cursor=pointer]:
+            - /url: https://www.todofp.es/comunes/accesibilidad.html

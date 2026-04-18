@@ -1,0 +1,9 @@
+[     399ms] [LOG] codigo  @ https://www.todofp.es/buscadorcertificados/buscador:138
+[     400ms] [LOG] denominacion  @ https://www.todofp.es/buscadorcertificados/buscador:140
+[     400ms] [LOG] familia 0 @ https://www.todofp.es/buscadorcertificados/buscador:142
+[     400ms] [LOG] nivel undefined @ https://www.todofp.es/buscadorcertificados/buscador:144
+[   22887ms] [LOG] buscar @ https://www.todofp.es/buscadorcertificados/buscador:179
+[   23106ms] [LOG] codigo  @ https://www.todofp.es/buscadorcertificados/busquedaCP:138
+[   23106ms] [LOG] denominacion  @ https://www.todofp.es/buscadorcertificados/busquedaCP:140
+[   23106ms] [LOG] familia 0 @ https://www.todofp.es/buscadorcertificados/busquedaCP:142
+[   23106ms] [LOG] nivel undefined @ https://www.todofp.es/buscadorcertificados/busquedaCP:144

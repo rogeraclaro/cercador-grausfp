@@ -1,0 +1,331 @@
+- generic [ref=e2]:
+  - banner [ref=e3]:
+    - link "Logo Portal TodoFP" [ref=e6] [cursor=pointer]:
+      - /url: https://todofp.es/inicio.html
+      - img "Logo Portal TodoFP" [ref=e7]
+    - generic [ref=e8]:
+      - link "Logo Ministerial" [ref=e9] [cursor=pointer]:
+        - /url: https://www.educacionyfp.gob.es/portada.html
+        - img "Logo Ministerial" [ref=e10]
+      - list [ref=e12]:
+        - listitem [ref=e13]:
+          - link "Sobre FP" [ref=e14] [cursor=pointer]:
+            - /url: https://www.todofp.es/sobre-fp.html
+        - listitem [ref=e15]:
+          - link "¿Qué estudiar?" [ref=e16] [cursor=pointer]:
+            - /url: https://www.todofp.es/que-estudiar.html
+        - listitem [ref=e17]:
+          - link "Acreditación de Competencias" [ref=e18] [cursor=pointer]:
+            - /url: https://www.todofp.es/acreditacion-de-competencias.html
+        - listitem [ref=e19]:
+          - link "Acceso a FP" [ref=e20] [cursor=pointer]:
+            - /url: https://www.todofp.es/como-cuando-y-donde-estudiar.html
+        - listitem [ref=e21]:
+          - link "Trámites" [ref=e22] [cursor=pointer]:
+            - /url: https://www.todofp.es/convalidaciones-equivalencias-homologaciones.html
+        - listitem [ref=e23]:
+          - link "Orientación" [ref=e24] [cursor=pointer]:
+            - /url: https://www.todofp.es/orientacion-profesional.html
+        - listitem [ref=e25]:
+          - link "Docentes" [ref=e26] [cursor=pointer]:
+            - /url: https://www.todofp.es/comunidad-docente.html
+  - generic [ref=e27]:
+    - list [ref=e29]:
+      - listitem [ref=e30]:
+        - link "Inicio>" [ref=e31] [cursor=pointer]:
+          - /url: ./
+      - listitem [ref=e32]: Buscador
+    - heading "Certificados Profesionales" [level=1] [ref=e33]
+    - generic [ref=e34]:
+      - generic [ref=e36]:
+        - paragraph [ref=e38]: "Si quieres cursar un certificado profesional puedes buscar el que más se adapte a ti. Accede a la ficha completa del certificado y a los ciclos formativos de FP asociados. Introduce uno o varios de los siguientes campos:"
+        - list [ref=e40]:
+          - listitem [ref=e41]: "Código (por ejemplo: MAMD0110)"
+          - listitem [ref=e42]: Nombre del certificado (es suficiente con una palabra contenida en la denominación)
+          - listitem [ref=e43]: "Familia Profesional (por ejemplo: Edificación y Obra Civil)"
+          - listitem [ref=e44]: Nivel (1, 2 ó 3)
+        - paragraph [ref=e45]:
+          - text: Si ya has cursado un certificado profesional y quieres seguir estudiando un Ciclo Formativo de FP, consulta el apartado "
+          - link "Ciclos FP" [ref=e46] [cursor=pointer]:
+            - /url: https://todofp.es/como-cuando-y-donde-estudiar/acceso-fp-desde-fp/como-accedo-a-fp.html
+          - text: "\" para orientarte sobre los módulos profesionales que te pueden convalidar aportando tu certificado. Información Orientativa. Recuerda que para poder estudiar un certificado debes cumplir con uno de los requisitos de acceso que establece la normativa vigente."
+      - group [ref=e49]:
+        - generic [ref=e50]:
+          - heading "Buscador" [level=2] [ref=e51]
+          - link "Repertorio Certificados Profesionales" [ref=e52] [cursor=pointer]:
+            - /url: https://www.todofp.es/dam/jcr:8f2a81fd-baa8-4e46-b4c5-e92c08103c4f/repertoriocertificadosprofesionales.pdf
+            - text: Repertorio Certificados Profesionales
+            - img [ref=e53]
+        - generic [ref=e55]:
+          - text: Código
+          - textbox "Código" [ref=e56]
+          - text: Nombre del certificado
+          - textbox "Nombre del certificado" [ref=e57]:
+            - /placeholder: Busque por palabra o por título completo
+          - text: Familia Profesional
+          - combobox "Familia Profesional" [ref=e58]:
+            - option "Selecciona una opción..." [selected]
+            - option "Actividades Físicas y Deportivas"
+            - option "Administración y Gestión"
+            - option "Agraria"
+            - option "Artes Gráficas"
+            - option "Artes y Artesanías"
+            - option "Comercio y Marketing"
+            - option "Edificación y Obra Civil"
+            - option "Electricidad y Electrónica"
+            - option "Energía y Agua"
+            - option "Fabricación Mecánica"
+            - option "Hostelería y Turismo"
+            - option "Imagen Personal"
+            - option "Imagen y Sonido"
+            - option "Industrias Alimentarias"
+            - option "Industrias Extractivas"
+            - option "Informática y Comunicaciones"
+            - option "Instalación y Mantenimiento"
+            - option "Madera, Mueble y Corcho"
+            - option "Marítimo Pesquera"
+            - option "Química"
+            - option "Sanidad"
+            - option "Seguridad y Medio Ambiente"
+            - option "Servicios Socioculturales y a la Comunidad"
+            - option "Textil, Confección y Piel"
+            - option "Transporte y Mantenimiento de Vehículos"
+            - option "Vidrio y Cerámica"
+          - text: Nivel
+          - combobox [ref=e59]:
+            - option "Selecciona una opción..." [selected]
+            - option "1"
+            - option "2"
+            - option "3"
+          - button "Buscar" [ref=e60] [cursor=pointer]
+          - link "Limpiar filtros" [ref=e61] [cursor=pointer]:
+            - /url: buscador
+      - generic [ref=e62]:
+        - table [ref=e63]:
+          - rowgroup [ref=e64]:
+            - row "Nivel Código Certificado Duración Ficha Ciclos FP Dónde estudiar" [ref=e65]:
+              - columnheader "Nivel" [ref=e66]:
+                - paragraph [ref=e67]: Nivel
+              - columnheader "Código" [ref=e68]:
+                - paragraph [ref=e69]: Código
+              - columnheader "Certificado" [ref=e70]:
+                - paragraph [ref=e71]: Certificado
+              - columnheader "Duración" [ref=e72]:
+                - paragraph [ref=e73]: Duración
+              - columnheader "Ficha" [ref=e74]:
+                - paragraph [ref=e75]: Ficha
+              - columnheader "Ciclos FP" [ref=e76]:
+                - paragraph [ref=e77]: Ciclos FP
+              - columnheader "Dónde estudiar" [ref=e78]:
+                - paragraph [ref=e79]: Dónde estudiar
+          - rowgroup [ref=e80]:
+            - row "1 COML0110 Actividades auxiliares de almacén 210 horas Submit" [ref=e81]:
+              - cell "1" [ref=e82]:
+                - paragraph [ref=e83]: "1"
+              - cell "COML0110" [ref=e84]
+              - cell "Actividades auxiliares de almacén" [ref=e85]
+              - cell "210 horas" [ref=e86]:
+                - paragraph [ref=e87]: 210 horas
+              - cell [ref=e88]:
+                - paragraph [ref=e89]:
+                  - img [ref=e91] [cursor=pointer]
+              - cell "Submit" [ref=e92]:
+                - paragraph [ref=e93]:
+                  - button "Submit" [ref=e94] [cursor=pointer]
+              - cell [ref=e95]:
+                - paragraph [ref=e96]:
+                  - img [ref=e98] [cursor=pointer]
+            - row "1 MAPN0109 Actividades auxiliares de apoyo al buque en puerto 220 horas Submit" [ref=e99]:
+              - cell "1" [ref=e100]:
+                - paragraph [ref=e101]: "1"
+              - cell "MAPN0109" [ref=e102]
+              - cell "Actividades auxiliares de apoyo al buque en puerto" [ref=e103]
+              - cell "220 horas" [ref=e104]:
+                - paragraph [ref=e105]: 220 horas
+              - cell [ref=e106]:
+                - paragraph [ref=e107]:
+                  - img [ref=e109] [cursor=pointer]
+              - cell "Submit" [ref=e110]:
+                - paragraph [ref=e111]:
+                  - button "Submit"
+              - cell [ref=e112]:
+                - paragraph [ref=e113]:
+                  - img [ref=e115] [cursor=pointer]
+            - row "1 COMT0211 Actividades auxiliares de comercio 270 horas Submit" [ref=e116]:
+              - cell "1" [ref=e117]:
+                - paragraph [ref=e118]: "1"
+              - cell "COMT0211" [ref=e119]
+              - cell "Actividades auxiliares de comercio" [ref=e120]
+              - cell "270 horas" [ref=e121]:
+                - paragraph [ref=e122]: 270 horas
+              - cell [ref=e123]:
+                - paragraph [ref=e124]:
+                  - img [ref=e126] [cursor=pointer]
+              - cell "Submit" [ref=e127]:
+                - paragraph [ref=e128]:
+                  - button "Submit" [ref=e129] [cursor=pointer]
+              - cell [ref=e130]:
+                - paragraph [ref=e131]:
+                  - img [ref=e133] [cursor=pointer]
+            - row "1 MAPN0512 Actividades auxiliares de mantenimiento de máquinas, equipos e instalaciones del buque 430 horas Submit" [ref=e134]:
+              - cell "1" [ref=e135]:
+                - paragraph [ref=e136]: "1"
+              - cell "MAPN0512" [ref=e137]
+              - cell "Actividades auxiliares de mantenimiento de máquinas, equipos e instalaciones del buque" [ref=e138]
+              - cell "430 horas" [ref=e139]:
+                - paragraph [ref=e140]: 430 horas
+              - cell [ref=e141]:
+                - paragraph [ref=e142]:
+                  - img [ref=e144] [cursor=pointer]
+              - cell "Submit" [ref=e145]:
+                - paragraph [ref=e146]:
+                  - button "Submit" [ref=e147] [cursor=pointer]
+              - cell [ref=e148]:
+                - paragraph [ref=e149]:
+                  - img [ref=e151] [cursor=pointer]
+            - row "1 AGAX0208 Actividades auxiliares en agricultura 370 horas Submit" [ref=e152]:
+              - cell "1" [ref=e153]:
+                - paragraph [ref=e154]: "1"
+              - cell "AGAX0208" [ref=e155]
+              - cell "Actividades auxiliares en agricultura" [ref=e156]
+              - cell "370 horas" [ref=e157]:
+                - paragraph [ref=e158]: 370 horas
+              - cell [ref=e159]:
+                - paragraph [ref=e160]:
+                  - img [ref=e162] [cursor=pointer]
+              - cell "Submit" [ref=e163]:
+                - paragraph [ref=e164]:
+                  - button "Submit" [ref=e165] [cursor=pointer]
+              - cell [ref=e166]:
+                - paragraph [ref=e167]:
+                  - img [ref=e169] [cursor=pointer]
+            - row "1 AGAR0209 Actividades auxiliares en aprovechamientos forestales 270 horas Submit" [ref=e170]:
+              - cell "1" [ref=e171]:
+                - paragraph [ref=e172]: "1"
+              - cell "AGAR0209" [ref=e173]
+              - cell "Actividades auxiliares en aprovechamientos forestales" [ref=e174]
+              - cell "270 horas" [ref=e175]:
+                - paragraph [ref=e176]: 270 horas
+              - cell [ref=e177]:
+                - paragraph [ref=e178]:
+                  - img [ref=e180] [cursor=pointer]
+              - cell "Submit" [ref=e181]:
+                - paragraph [ref=e182]:
+                  - button "Submit" [ref=e183] [cursor=pointer]
+              - cell [ref=e184]:
+                - paragraph [ref=e185]:
+                  - img [ref=e187] [cursor=pointer]
+            - row "1 AGAR0309 Actividades auxiliares en conservación y mejora de montes 270 horas Submit" [ref=e188]:
+              - cell "1" [ref=e189]:
+                - paragraph [ref=e190]: "1"
+              - cell "AGAR0309" [ref=e191]
+              - cell "Actividades auxiliares en conservación y mejora de montes" [ref=e192]
+              - cell "270 horas" [ref=e193]:
+                - paragraph [ref=e194]: 270 horas
+              - cell [ref=e195]:
+                - paragraph [ref=e196]:
+                  - img [ref=e198] [cursor=pointer]
+              - cell "Submit" [ref=e199]:
+                - paragraph [ref=e200]:
+                  - button "Submit" [ref=e201] [cursor=pointer]
+              - cell [ref=e202]:
+                - paragraph [ref=e203]:
+                  - img [ref=e205] [cursor=pointer]
+            - row "1 AGAJ0108 Actividades auxiliares en floristería 390 horas Submit" [ref=e206]:
+              - cell "1" [ref=e207]:
+                - paragraph [ref=e208]: "1"
+              - cell "AGAJ0108" [ref=e209]
+              - cell "Actividades auxiliares en floristería" [ref=e210]
+              - cell "390 horas" [ref=e211]:
+                - paragraph [ref=e212]: 390 horas
+              - cell [ref=e213]:
+                - paragraph [ref=e214]:
+                  - img [ref=e216] [cursor=pointer]
+              - cell "Submit" [ref=e217]:
+                - paragraph [ref=e218]:
+                  - button "Submit"
+              - cell [ref=e219]:
+                - paragraph [ref=e220]:
+                  - img [ref=e222] [cursor=pointer]
+            - row "1 AGAX0108 Actividades auxiliares en ganadería 510 horas Submit" [ref=e223]:
+              - cell "1" [ref=e224]:
+                - paragraph [ref=e225]: "1"
+              - cell "AGAX0108" [ref=e226]
+              - cell "Actividades auxiliares en ganadería" [ref=e227]
+              - cell "510 horas" [ref=e228]:
+                - paragraph [ref=e229]: 510 horas
+              - cell [ref=e230]:
+                - paragraph [ref=e231]:
+                  - img [ref=e233] [cursor=pointer]
+              - cell "Submit" [ref=e234]:
+                - paragraph [ref=e235]:
+                  - button "Submit" [ref=e236] [cursor=pointer]
+              - cell [ref=e237]:
+                - paragraph [ref=e238]:
+                  - img [ref=e240] [cursor=pointer]
+            - row "1 AGAO0108 Actividades auxiliares en viveros, jardines y centros de jardinería 330 horas Submit" [ref=e241]:
+              - cell "1" [ref=e242]:
+                - paragraph [ref=e243]: "1"
+              - cell "AGAO0108" [ref=e244]
+              - cell "Actividades auxiliares en viveros, jardines y centros de jardinería" [ref=e245]
+              - cell "330 horas" [ref=e246]:
+                - paragraph [ref=e247]: 330 horas
+              - cell [ref=e248]:
+                - paragraph [ref=e249]:
+                  - img [ref=e251] [cursor=pointer]
+              - cell "Submit" [ref=e252]:
+                - paragraph [ref=e253]:
+                  - button "Submit" [ref=e254] [cursor=pointer]
+              - cell [ref=e255]:
+                - paragraph [ref=e256]:
+                  - img [ref=e258] [cursor=pointer]
+        - generic [ref=e259]:
+          - generic [ref=e260]: Mostrando 0 - 10 resultados de 588
+          - generic [ref=e261]:
+            - button [ref=e262]:
+              - img [ref=e263]
+            - button [ref=e265]:
+              - img [ref=e266]
+            - button [ref=e268]:
+              - img [ref=e269]
+            - button [ref=e271]:
+              - img [ref=e272]
+    - generic [ref=e274]:
+      - link "Ir a la página anterior":
+        - /url: "#"
+      - list
+  - contentinfo [ref=e275]:
+    - generic [ref=e276]:
+      - generic [ref=e277]:
+        - generic [ref=e278]:
+          - text: Fórmate sin rodeos.
+          - generic [ref=e279]: Y sal a trabajar de lo
+          - text: que te encanta.
+        - list [ref=e281]:
+          - listitem [ref=e282]:
+            - link "Todo FP" [ref=e283] [cursor=pointer]:
+              - /url: https://www.todofp.es
+          - listitem [ref=e284]:
+            - link "Preguntas frecuentes" [ref=e285] [cursor=pointer]:
+              - /url: https://www.todofp.es/comunes/faq.html
+          - listitem [ref=e286]:
+            - link "Contacto" [ref=e287] [cursor=pointer]:
+              - /url: https://todofp.es/comunes/contacto.html
+          - listitem [ref=e288]:
+            - link "Ciclos formativos" [ref=e289] [cursor=pointer]:
+              - /url: https://www.todofp.es/que-estudiar/ciclos.html
+      - generic [ref=e290]:
+        - list [ref=e292]:
+          - listitem [ref=e293]:
+            - link "acceso twitter" [ref=e294] [cursor=pointer]:
+              - /url: https://twitter.com/todofp
+              - img "acceso twitter" [ref=e295]
+        - paragraph [ref=e297]: Formación profesional - Todo FP
+    - generic [ref=e298]:
+      - link "Ministerio de Educación, Formación Profesional y Deportes - Gobierno de España" [ref=e299] [cursor=pointer]:
+        - /url: https://www.educacionyfp.gob.es/
+        - generic [ref=e300]: Ministerio de Educación, Formación Profesional y Deportes - Gobierno de España
+      - list [ref=e302]:
+        - listitem [ref=e303]:
+          - link "Accesibilidad" [ref=e304] [cursor=pointer]:
+            - /url: https://www.todofp.es/comunes/accesibilidad.html
