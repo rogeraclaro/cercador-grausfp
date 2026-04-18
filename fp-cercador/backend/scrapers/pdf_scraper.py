@@ -47,6 +47,10 @@ PREFIX_MAP = {
     'TCP': 'Textil, Confección y Piel',
     'TMV': 'Transporte y Mantenimiento de Vehículos',
     'VIC': 'Vidrio y Cerámica',
+    # Famílies del pla antic (Certificats de Professionalitat / LOGSE)
+    'MSP': 'Mantenimiento y Servicios a la Producción',
+    # Família IA i Data (Grado E) — imatge amb alt sense prefix "Logotipo "
+    'IAD': 'Inteligencia Artificial y Data',
 }
 
 # ---------------------------------------------------------------------------
