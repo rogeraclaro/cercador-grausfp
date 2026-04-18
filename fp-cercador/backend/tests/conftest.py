@@ -1,5 +1,12 @@
 """Fixtures compartides per als tests de pdf_scraper."""
+import os
+
 import pytest
+
+# Garanteix que ADMIN_TOKEN estigui definit abans que cap mòdul importi app.py,
+# evitant que el valor capturat a nivell de mòdul quedi buit si l'entorn no el
+# defineix (WR-05: ADMIN_TOKEN capturat en temps d'import a app.py).
+os.environ.setdefault("ADMIN_TOKEN", "test-token")
 
 
 @pytest.fixture
