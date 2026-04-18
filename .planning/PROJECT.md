@@ -15,16 +15,15 @@ Un únic cercador que consolida tota l'oferta FP espanyola (Grados A–E) en tem
 - [x] Scraper de PDFs per als Grados A, B, C (pdfplumber) amb detecció de família, nivell i pla antic — Validated in Phase 02
 - [x] Scraper HTML per als Grados D (Básico, Medio, Superior) i E (Cursos d'Especialització) — Validated in Phase 03
 - [x] Generació de `data/ofertes.json` amb el schema definit (id, grado, nivel, familia, codigo, denominacion, plan_antiguo, observaciones) — Validated in Phase 03 (12.374 registres, 0 desconeguts)
+- [x] API Flask amb endpoints: GET /api/ofertes, POST /api/admin/refresh (protegit per token), GET /api/refresh-status, GET /health — Validated in Phase 04
+- [x] Execució del refresh en thread separat (no bloquejant), estat idle/running/done/error — Validated in Phase 04
+- [x] CORS habilitat, ADMIN_TOKEN via .env, comparació hmac.compare_digest — Validated in Phase 04
 
 ### Active
 
-- [ ] API Flask amb endpoints: GET /api/ofertes, POST /api/admin/refresh (protegit per token), GET /api/refresh-status, GET /health
-- [ ] API Flask amb endpoints: GET /api/ofertes, POST /api/admin/refresh (protegit per token), GET /api/refresh-status, GET /health
-- [ ] Execució del refresh en thread separat (no bloquejant), amb estat idle/running/done/error
 - [ ] Frontend estàtic sense dependències externes amb cerca en temps real (filtre simultani per text, grado, família, nivell, pla antic)
 - [ ] Taula de resultats amb comptador dinàmic, badge "Pla antic" i scroll vertical (fins a 1.500 registres fluïts)
 - [ ] Panell admin al client: input token + polling d'estat cada 3s + resum final
-- [ ] CORS habilitat, ADMIN_TOKEN via .env, .gitignore correcte
 
 ### Out of Scope
 
