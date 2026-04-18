@@ -47,8 +47,12 @@ PREFIX_MAP = {
     'TCP': 'Textil, Confección y Piel',
     'TMV': 'Transporte y Mantenimiento de Vehículos',
     'VIC': 'Vidrio y Cerámica',
-    # Famílies del pla antic (Certificats de Professionalitat / LOGSE)
+    # Famílies del pla antic / LOGSE / HTML-only
+    'ART': 'Artesanía',
     'MSP': 'Mantenimiento y Servicios a la Producción',
+    'SAN': 'Sanidad',
+    'UF': 'Certificados de Profesionalidad',
+    'MF': 'Certificados de Profesionalidad',
     # Família IA i Data (Grado E) — imatge amb alt sense prefix "Logotipo "
     'IAD': 'Inteligencia Artificial y Data',
 }
@@ -161,7 +165,17 @@ def _extract_records(pdf_path: str, grado_letter: str, nivel_fn) -> list[dict]:
                 if code_cell and code_cell not in records:
                     is_old = '(Plan antiguo)' in code_cell
                     clean_code = code_cell.replace(' (Plan antiguo)', '').strip()
-                    prefix = clean_code.split('_')[0] if '_' in clean_code else ''
+                    # Codis nous: 'AFD_A_...' → primary='AFD'. Codis antics: 'MF2268_2' →
+                    # primary='MF2268', 'UF0297' → primary='UF0297'. Extreure prefix alfabètic
+                    # i provar progressivament des de la longitud màxima fins a 2 caràcters.
+                    primary = clean_code.split('_')[0]
+                    m = re.match(r'^([A-Z]+)', primary)
+                    alpha = m.group(1) if m else ''
+                    prefix = ''
+                    for length in range(len(alpha), 1, -1):
+                        if alpha[:length] in PREFIX_MAP:
+                            prefix = alpha[:length]
+                            break
                     familia = PREFIX_MAP.get(prefix)
 
                     if not familia:
