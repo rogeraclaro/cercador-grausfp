@@ -119,8 +119,14 @@ def admin_refresh():
         finally:
             refresh_state._lock.release()
 
-    t = threading.Thread(target=_run, daemon=True)
-    t.start()
+    try:
+        t = threading.Thread(target=_run, daemon=True)
+        t.start()
+    except Exception as exc:
+        refresh_state._lock.release()
+        logger.error("Could not start refresh thread: %s", exc)
+        return jsonify({"error": "Could not start refresh"}), 500
+
     return jsonify({"status": "started"}), 200
 
 
