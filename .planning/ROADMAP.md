@@ -80,9 +80,9 @@ Plans:
   5. `GET /api/refresh-status` returns the correct state (idle/running/done/error) with last_run, total, by_grado, duration_seconds, and errors
 **Plans**: 3 plans
 Plans:
-- [ ] 04-01-PLAN.md — TDD RED: refresh_state.py + test_api.py amb 9 tests per a tots els endpoints
-- [ ] 04-02-PLAN.md — Implementació GREEN: app.py complet amb totes les rutes Flask
-- [ ] 04-03-PLAN.md — Integració real: curl verification + checkpoint humà del refresh en background
+- [x] 04-01-PLAN.md — TDD RED: refresh_state.py + test_api.py amb 9 tests per a tots els endpoints
+- [x] 04-02-PLAN.md — Implementació GREEN: app.py complet amb totes les rutes Flask
+- [x] 04-03-PLAN.md — Integració real: curl verification + checkpoint humà del refresh en background
 
 ### Phase 5: Frontend — Cercador
 **Goal**: Users can search the full FP catalog in real time from a static HTML page with no external dependencies
