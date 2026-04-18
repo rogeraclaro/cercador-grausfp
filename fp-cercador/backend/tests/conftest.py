@@ -140,7 +140,7 @@ def minimal_html_alias_imagen_y_sonido():
 
 @pytest.fixture
 def minimal_html_unknown_family():
-    """HTML mínim amb família no canònica ('Mantenimiento y Servicios a la Producción') — produirà familia='Desconeguda' + warning."""
+    """HTML mínim amb família completament desconeguda ('Família Inexistent XYZ') — produirà familia='Desconeguda' + warning."""
     return """
     <html><body><table>
       <thead><tr class="cols">
@@ -150,7 +150,7 @@ def minimal_html_unknown_family():
       <tbody>
         <tr class="fpgs">
           <th rowspan="1" headers="familia" id="fam99">
-            <img alt="Logotipo Mantenimiento y Servicios a la Producción" src="#">
+            <img alt="Logotipo Família Inexistent XYZ" src="#">
           </th>
           <td headers="titulacion fam99">
             <p><a id="tit-prevencion-riesgos" href="#">Prevención de Riesgos Profesionales</a></p>
