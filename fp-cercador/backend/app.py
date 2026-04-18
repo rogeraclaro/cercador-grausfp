@@ -77,8 +77,12 @@ def get_ofertes():
     """API-01 / API-02: Retorna tots els registres de ofertes.json o 503 si no existeix."""
     if not os.path.exists(DATA_PATH):
         return jsonify({"error": "Data not available. Run /api/admin/refresh first."}), 503
-    with open(DATA_PATH, "r", encoding="utf-8") as f:
-        data = json.load(f)
+    try:
+        with open(DATA_PATH, "r", encoding="utf-8") as f:
+            data = json.load(f)
+    except json.JSONDecodeError as exc:
+        logger.error("ofertes.json is corrupt: %s", exc)
+        return jsonify({"error": "Data file is corrupt. Run /api/admin/refresh."}), 503
     return jsonify(data), 200
 
 
