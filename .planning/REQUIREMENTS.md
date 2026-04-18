@@ -34,7 +34,7 @@
 - [ ] **DATA-01**: El pipeline genera `backend/data/ofertes.json` amb el schema definit (id, grado, nivel, familia, codigo, denominacion, plan_antiguo, observaciones)
 - [ ] **DATA-02**: Els IDs són correlatius i únics a tot el fitxer
 - [ ] **DATA-03**: El fitxer consolida els Grados A, B, C, D i E en un únic array
-- [ ] **DATA-04**: El volum generat és d'aproximadament 800–900 registres totals
+- [ ] **DATA-04**: El volum generat és d'aproximadament 12.000–12.500 registres totals (actualitzat 2026-04-18: execució real retorna 12.374 registres; estimació original de 800–900 era incorrecta per omissió dels Grados A/B/C complets)
 
 ### API Flask
 

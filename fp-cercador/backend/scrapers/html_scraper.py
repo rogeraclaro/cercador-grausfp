@@ -73,11 +73,15 @@ HTML_FAMILY_ALIASES: dict[str, str] = {
 
 def _build_fam_map(soup: BeautifulSoup) -> dict:
     """
-    Retorna {fam_id: nom_canonic} per a cada <th headers='familia'> amb <img alt='Logotipo ...'>.
+    Retorna {fam_id: nom_canonic} per a cada <th headers='familia'> amb <img>.
 
     Construeix el map UNICAMENT de <th headers='familia'>. Això ignora
     automàticament el logo de capçalera <img alt='Logotipo de TodoFP'> i
     qualsevol altra imatge fora de la taula principal.
+
+    Accepta dos formats d'atribut alt:
+      - "Logotipo <NomFamília>" (format habitual Grados D)
+      - "<NomFamília>" sense prefix (detectat a Grado E, p.ex. 'Inteligencia Artificial y Data')
     """
     fam_map: dict = {}
     for th in soup.find_all('th', attrs={'headers': 'familia'}):
@@ -86,9 +90,13 @@ def _build_fam_map(soup: BeautifulSoup) -> dict:
         if not img:
             continue
         alt = img.get('alt', '')
-        if not alt.startswith('Logotipo '):
+        if not alt:
             continue
-        raw_name = alt[len('Logotipo '):].strip()
+        # Extreu el nom de família: elimina el prefix "Logotipo " si present.
+        if alt.startswith('Logotipo '):
+            raw_name = alt[len('Logotipo '):].strip()
+        else:
+            raw_name = alt.strip()
         canonical = HTML_FAMILY_ALIASES.get(raw_name, raw_name)
         # Només incloem al mapa si el nom és canònic (valor de PREFIX_MAP).
         # Si no ho és, _extract_titols produirà 'Desconeguda' + warning (D-08).

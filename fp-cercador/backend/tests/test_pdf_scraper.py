@@ -25,8 +25,8 @@ from scrapers.pdf_scraper import (
 # ---------------------------------------------------------------------------
 
 def test_prefix_map_completeness():
-    """PREFIX_MAP ha de tenir exactament 24 entrades."""
-    assert len(PREFIX_MAP) == 24
+    """PREFIX_MAP ha de tenir exactament 30 entrades (24 nou pla + 6 pla antic/LOGSE/HTML)."""
+    assert len(PREFIX_MAP) == 30
 
 
 def test_prefix_map_afd():
