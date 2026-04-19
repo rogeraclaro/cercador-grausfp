@@ -85,7 +85,7 @@ Plans:
 - [x] 04-03-PLAN.md — Integració real: curl verification + checkpoint humà del refresh en background
 
 ### Phase 5: Frontend — Cercador
-**Goal**: Users can search the full FP catalog in real time from a static HTML page with no external dependencies
+**Goal**: Users can search the full FP catalog in real time from a static HTML page with Alpine.js via CDN
 **Depends on**: Phase 4
 **Requirements**: SRCH-01, SRCH-02, SRCH-03, SRCH-04, SRCH-05, SRCH-06, SRCH-07, SRCH-08, SRCH-09, SRCH-10
 **Success Criteria** (what must be TRUE):
@@ -94,8 +94,10 @@ Plans:
   3. The "Ocultar pla antic" checkbox is active by default and correctly shows/hides old-plan records
   4. Each row with `plan_antiguo: true` displays a visible "Pla antic" badge
   5. The live counter shows the correct number of matching results after every filter change, and the table scrolls fluidly through up to 1.500 records
-**Plans**: TBD
-**UI hint**: yes
+**Plans**: 2 plans
+Plans:
+- [ ] 05-01-PLAN.md — index.html complet: Alpine.js data layer + HTML template + CSS inline (Wave 1)
+- [ ] 05-02-PLAN.md — Verificació estructural automatitzada + checkpoint humà funcional al navegador (Wave 2)
 
 ### Phase 6: Frontend — Admin Panel
 **Goal**: An operator can trigger a full data refresh from the browser and monitor its progress without leaving the page
@@ -121,5 +123,5 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
 | 2. PDF Scrapers (Grados A, B, C) | 2/3 | In progress | - |
 | 3. HTML Scrapers + Data Pipeline | 3/3 | Complete | 2026-04-18 |
 | 4. Flask API | 0/3 | Planned | - |
-| 5. Frontend — Cercador | 0/? | Not started | - |
+| 5. Frontend — Cercador | 0/2 | Planned | - |
 | 6. Frontend — Admin Panel | 0/? | Not started | - |
