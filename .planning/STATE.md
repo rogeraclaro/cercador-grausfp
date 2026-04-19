@@ -87,6 +87,12 @@ Recent decisions affecting current work:
 
 None yet.
 
+### Quick Tasks Completed
+
+| # | Descripció | Data | Commit | Directori |
+|---|------------|------|--------|-----------|
+| 260419-wm | Preparar deploy VPS Contabo + CloudPanel (gunicorn, systemd, nginx, API_BASE dinàmica) | 2026-04-19 | 43267db | [260419-wm-deploy-vps-contabo-cloudpanel](.planning/quick/260419-wm-deploy-vps-contabo-cloudpanel/) |
+
 ### Blockers/Concerns
 
 - PDFs requereixen headers `Referer` i `User-Agent` — cal verificar que todofp.es no canvia la política d'accés durant el desenvolupament.
