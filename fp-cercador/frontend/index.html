@@ -179,6 +179,25 @@
     @media (max-width: 640px) {
       .filter-row { flex-direction: column; }
     }
+
+    .results-table th.sortable {
+      cursor: pointer;
+      user-select: none;
+    }
+    .results-table th.sortable:hover {
+      background: #e5e7eb;
+    }
+    .sort-indicator {
+      display: inline-block;
+      margin-left: 4px;
+      font-size: 10px;
+      color: #6b7280;
+      width: 10px;
+      text-align: center;
+    }
+    .results-table th.sort-active .sort-indicator {
+      color: #2563eb;
+    }
   </style>
   <script>
     /* API_BASE: localhost en dev, origen sense port en prod (nginx fa proxy a /api/* → :5001) */
@@ -368,8 +387,20 @@
         <caption class="sr-only">Resultats del cercador FP Espanya</caption>
         <thead>
           <tr>
-            <th scope="col">Denominació</th>
-            <th scope="col">Codi</th>
+            <th scope="col" class="sortable"
+                :class="{ 'sort-active': sortCol === 'denominacion' }"
+                @click="sortBy('denominacion')"
+                :aria-sort="sortCol === 'denominacion' ? (sortDir === 1 ? 'ascending' : 'descending') : 'none'">
+              Denominació<span class="sort-indicator" aria-hidden="true"
+                x-text="sortCol === 'denominacion' ? (sortDir === 1 ? '▲' : '▼') : '⇅'"></span>
+            </th>
+            <th scope="col" class="sortable"
+                :class="{ 'sort-active': sortCol === 'codigo' }"
+                @click="sortBy('codigo')"
+                :aria-sort="sortCol === 'codigo' ? (sortDir === 1 ? 'ascending' : 'descending') : 'none'">
+              Codi<span class="sort-indicator" aria-hidden="true"
+                x-text="sortCol === 'codigo' ? (sortDir === 1 ? '▲' : '▼') : '⇅'"></span>
+            </th>
             <th scope="col">Família</th>
             <th scope="col">Grado</th>
             <th scope="col">Nivell</th>
