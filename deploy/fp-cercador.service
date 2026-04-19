@@ -10,7 +10,7 @@ Environment="PATH=/var/www/fp-cercador/venv/bin"
 EnvironmentFile=/var/www/fp-cercador/fp-cercador/backend/.env
 ExecStart=/var/www/fp-cercador/venv/bin/gunicorn \
     --workers 2 \
-    --bind 127.0.0.1:5001 \
+    --bind 127.0.0.1:8033 \
     --timeout 120 \
     --access-logfile /var/log/fp-cercador/access.log \
     --error-logfile /var/log/fp-cercador/error.log \

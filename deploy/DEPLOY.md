@@ -48,7 +48,7 @@ systemctl enable fp-cercador
 systemctl start fp-cercador
 # Verificar:
 systemctl status fp-cercador
-curl http://127.0.0.1:5001/health
+curl http://127.0.0.1:8033/health
 ```
 
 ## 6. Configurar nginx a CloudPanel
@@ -73,7 +73,7 @@ nginx -t && systemctl reload nginx
 
 ```bash
 # Backend directe
-curl http://127.0.0.1:5001/health
+curl http://127.0.0.1:8033/health
 # Frontend via nginx
 curl https://DOMINI_AQUI/
 # API via nginx proxy
