@@ -62,8 +62,29 @@ PREFIX_MAP = {
 # ---------------------------------------------------------------------------
 
 
-def _nivel_grado_a(code: str, is_old_plan: bool) -> None:
-    """Grado A no té distinció de nivel (nou pla ni pla antic)."""
+def _nivel_grado_a(code: str, is_old_plan: bool) -> int | None:
+    """
+    Grado A nou pla (FAM_A_NNNN_XX): dedueix el nivell del segment numèric NNNN
+    seguint els rangs del Catàleg Nacional de Qualificacions Professionals (CNCP):
+      1–999   → Nivel 1
+      1000–1999 → Nivel 2
+      2000+   → Nivel 3
+
+    Pla antic (codis UF/MF): retorna None (no deduïble sense taula externa).
+    """
+    if is_old_plan:
+        return None
+    parts = code.split('_')
+    if len(parts) >= 3:
+        try:
+            n = int(parts[2])
+            if n <= 999:
+                return 1
+            if n <= 1999:
+                return 2
+            return 3
+        except ValueError:
+            pass
     return None
 
 

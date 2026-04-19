@@ -95,11 +95,23 @@ def test_plan_antiguo_mf_code():
 # test_nivel_grado_a (PDF-03)
 # ---------------------------------------------------------------------------
 
-def test_nivel_grado_a_new():
-    assert _nivel_grado_a('AFD_A_3003_01', False) is None
+def test_nivel_grado_a_new_nivel1():
+    """Codi nou pla amb NNNN 1–999 → Nivel 1."""
+    assert _nivel_grado_a('AFD_A_0020_04', False) == 1
+
+
+def test_nivel_grado_a_new_nivel2():
+    """Codi nou pla amb NNNN 1000–1999 → Nivel 2."""
+    assert _nivel_grado_a('AFD_A_1319_04', False) == 2
+
+
+def test_nivel_grado_a_new_nivel3():
+    """Codi nou pla amb NNNN 2000+ → Nivel 3."""
+    assert _nivel_grado_a('AFD_A_3003_01', False) == 3
 
 
 def test_nivel_grado_a_old():
+    """Codi pla antic (UF) → None (no deduïble sense taula externa)."""
     assert _nivel_grado_a('UF0297', True) is None
 
 
@@ -232,6 +244,29 @@ def test_record_schema_grado_c():
     assert rec['nivel'] == 1
     assert rec['plan_antiguo'] is False
     assert rec['familia'] == 'Actividades Físicas y Deportivas'
+
+
+def test_record_schema_grado_a_nivel():
+    """Taula simulada de Grado A → nivell deduït del segment NNNN."""
+    mock_page = MagicMock()
+    mock_page.extract_table.return_value = [
+        ['AFD_A_3003_01', 'Clasificación de tareas administrativas', '', ''],
+    ]
+
+    mock_pdf = MagicMock()
+    mock_pdf.pages = [MagicMock()] * 5 + [mock_page]
+    for page in mock_pdf.pages[:5]:
+        page.extract_table.return_value = None
+    mock_pdf.__enter__ = lambda s: mock_pdf
+    mock_pdf.__exit__ = MagicMock(return_value=False)
+
+    with patch('scrapers.pdf_scraper.pdfplumber.open', return_value=mock_pdf):
+        records = _extract_records('dummy.pdf', 'A', _nivel_grado_a)
+
+    assert len(records) == 1
+    rec = records[0]
+    assert rec['nivel'] == 3  # 3003 >= 2000 → Nivel 3
+    assert rec['plan_antiguo'] is False
 
 
 # ---------------------------------------------------------------------------
