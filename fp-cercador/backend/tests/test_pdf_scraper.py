@@ -119,8 +119,16 @@ def test_nivel_grado_a_old():
 # test_nivel_grado_b (PDF-03)
 # ---------------------------------------------------------------------------
 
-def test_nivel_grado_b_new():
-    assert _nivel_grado_b('AFD_B_3003', False) is None
+def test_nivel_grado_b_new_nivel1():
+    assert _nivel_grado_b('AFD_B_0500', False) == 1
+
+
+def test_nivel_grado_b_new_nivel2():
+    assert _nivel_grado_b('AFD_B_1500', False) == 2
+
+
+def test_nivel_grado_b_new_nivel3():
+    assert _nivel_grado_b('AFD_B_3003', False) == 3
 
 
 def test_nivel_grado_b_old_2():

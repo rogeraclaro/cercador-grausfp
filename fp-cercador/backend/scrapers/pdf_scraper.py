@@ -89,10 +89,22 @@ def _nivel_grado_a(code: str, is_old_plan: bool) -> int | None:
 
 
 def _nivel_grado_b(code: str, is_old_plan: bool) -> int | None:
-    """Grado B nou pla: nivel=None. Pla antic: extreure sufix _N (1, 2 o 3)."""
+    """Grado B nou pla (FAM_B_NNNN): dedueix el nivell del segment CNCP NNNN.
+    Pla antic: extreure sufix _N (1, 2 o 3)."""
     if is_old_plan:
         m = re.search(r'_([123])$', code)
         return int(m.group(1)) if m else None
+    parts = code.split('_')
+    if len(parts) >= 3:
+        try:
+            n = int(parts[2])
+            if n < 1000:
+                return 1
+            if n < 2000:
+                return 2
+            return 3
+        except ValueError:
+            pass
     return None
 
 
