@@ -181,7 +181,10 @@
     }
   </style>
   <script>
-    const API_BASE = 'http://localhost:5001'; /* D-09 — port 5001: AirPlay ocupa el 5000 al Mac */
+    /* API_BASE: localhost en dev, origen sense port en prod (nginx fa proxy a /api/* → :5001) */
+    const API_BASE = window.location.hostname === 'localhost'
+      ? 'http://localhost:5001'
+      : '';
     document.addEventListener('alpine:init', () => {
       Alpine.data('cercador', () => ({
         state: 'loading',
