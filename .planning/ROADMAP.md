@@ -16,7 +16,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [ ] **Phase 2: PDF Scrapers (Grados A, B, C)** - Download and parse the 3 official PDFs into structured records
 - [ ] **Phase 3: HTML Scrapers + Data Pipeline (Grados D, E)** - Scrape ministry HTML pages and consolidate all data into ofertes.json
 - [ ] **Phase 4: Flask API** - Expose the data via REST endpoints with async refresh and token-protected admin
-- [ ] **Phase 5: Frontend — Cercador** - Static search UI with real-time filtering across all 5 Grados
+- [x] **Phase 5: Frontend — Cercador** - Static search UI with real-time filtering across all 5 Grados (completed 2026-04-19)
 - [ ] **Phase 6: Frontend — Admin Panel** - Admin token panel with refresh trigger and live status polling
 
 ## Phase Details
@@ -96,8 +96,8 @@ Plans:
   5. The live counter shows the correct number of matching results after every filter change, and the table scrolls fluidly through up to 1.500 records
 **Plans**: 2 plans
 Plans:
-- [ ] 05-01-PLAN.md — index.html complet: Alpine.js data layer + HTML template + CSS inline (Wave 1)
-- [ ] 05-02-PLAN.md — Verificació estructural automatitzada + checkpoint humà funcional al navegador (Wave 2)
+- [x] 05-01-PLAN.md — index.html complet: Alpine.js data layer + HTML template + CSS inline (Wave 1)
+- [x] 05-02-PLAN.md — Verificació estructural automatitzada + checkpoint humà funcional al navegador (Wave 2)
 
 ### Phase 6: Frontend — Admin Panel
 **Goal**: An operator can trigger a full data refresh from the browser and monitor its progress without leaving the page
@@ -123,5 +123,5 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
 | 2. PDF Scrapers (Grados A, B, C) | 2/3 | In progress | - |
 | 3. HTML Scrapers + Data Pipeline | 3/3 | Complete | 2026-04-18 |
 | 4. Flask API | 0/3 | Planned | - |
-| 5. Frontend — Cercador | 0/2 | Planned | - |
+| 5. Frontend — Cercador | 2/2 | Complete | 2026-04-19 |
 | 6. Frontend — Admin Panel | 0/? | Not started | - |

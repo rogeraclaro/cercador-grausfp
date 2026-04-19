@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Phase 05 planificada, llesta per executar
-last_updated: "2026-04-19T00:00:00.000Z"
+stopped_at: Phase 05 completada — llesta per planificar Phase 06
+last_updated: "2026-04-19T12:00:00.000Z"
 last_activity: 2026-04-19
 progress:
   total_phases: 6
-  completed_phases: 4
+  completed_phases: 5
   total_plans: 13
-  completed_plans: 11
-  percent: 67
+  completed_plans: 13
+  percent: 83
 ---
 
 # Project State
@@ -21,16 +21,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-04-16)
 
 **Core value:** Un únic cercador que consolida tota l'oferta FP espanyola (Grados A–E) en temps real, filtrable per grado, família professional, nivell i text lliure.
-**Current focus:** Phase 05 — frontend-cercador
+**Current focus:** Phase 06 — admin-panel
 
 ## Current Position
 
 Phase: 5
-Plan: Ready to execute
-Status: Ready to execute (2 plans, 2 waves)
+Plan: Complete
+Status: Phase 05 completada (2026-04-19) — 2/2 plans, verificació aprovada
 Last activity: 2026-04-19
 
-Progress: [███████░░░] 67% (Fases 01, 02, 03, 04 completades; 05 planificada)
+Progress: [█████████░] 83% (Fases 01, 02, 03, 04, 05 completades; 06 pendent)
 
 ## Performance Metrics
 
