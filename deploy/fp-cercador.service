@@ -1,0 +1,22 @@
+[Unit]
+Description=Cercador FP España — Flask backend
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/var/www/fp-cercador/fp-cercador/backend
+Environment="PATH=/var/www/fp-cercador/venv/bin"
+EnvironmentFile=/var/www/fp-cercador/fp-cercador/backend/.env
+ExecStart=/var/www/fp-cercador/venv/bin/gunicorn \
+    --workers 2 \
+    --bind 127.0.0.1:5001 \
+    --timeout 120 \
+    --access-logfile /var/log/fp-cercador/access.log \
+    --error-logfile /var/log/fp-cercador/error.log \
+    app:app
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
