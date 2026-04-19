@@ -92,6 +92,7 @@ None yet.
 | # | Descripció | Data | Commit | Directori |
 |---|------------|------|--------|-----------|
 | 260419-wm | Preparar deploy VPS Contabo + CloudPanel (gunicorn, systemd, nginx, API_BASE dinàmica) | 2026-04-19 | 43267db | [260419-wm-deploy-vps-contabo-cloudpanel](.planning/quick/260419-wm-deploy-vps-contabo-cloudpanel/) |
+| 260419-b3 | Ordenació tri-estat per click a capçaleres Denominació i Codi de la taula de resultats | 2026-04-19 | 1206227 | [260419-b3-ordenacio-columnes-taula](.planning/quick/260419-b3-ordenacio-columnes-taula/) |
 
 ### Blockers/Concerns
 
@@ -105,6 +106,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-19T11:31:53.623Z
-Stopped at: context exhaustion at 90% (2026-04-19)
+Last session: 2026-04-19T16:21:26Z
+Stopped at: Completed quick 260419-b3-PLAN.md
 Resume file: None
