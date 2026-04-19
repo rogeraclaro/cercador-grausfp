@@ -55,7 +55,7 @@ curl http://127.0.0.1:8033/health
 
 **Opció A (recomanada) — via CloudPanel UI:**
 1. CloudPanel > Sites > Add Site > Static Site (o PHP si no hi ha opció estàtica)
-2. Document Root: `/var/www/fp-cercador/fp-cercador/frontend`
+2. Document Root: `/home/masellas-grausfp/htdocs/grausfp.masellas.info/fp-cercador/frontend`
 3. Afegir el block `location /api/` i `location /health` des del fitxer
    `deploy/nginx-cloudpanel.conf` a la config nginx del site.
 4. CloudPanel > SSL/TLS > Let's Encrypt (activar HTTPS)
@@ -101,7 +101,7 @@ tail -f /var/log/fp-cercador/error.log
 ## Actualitzar el codi
 
 ```bash
-cd /var/www/fp-cercador
+cd /home/masellas-grausfp/htdocs/grausfp.masellas.info
 git pull
 source venv/bin/activate
 pip install -r fp-cercador/backend/requirements.txt

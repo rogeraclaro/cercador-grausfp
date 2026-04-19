@@ -5,10 +5,10 @@ After=network.target
 [Service]
 Type=simple
 User=root
-WorkingDirectory=/var/www/fp-cercador/fp-cercador/backend
-Environment="PATH=/var/www/fp-cercador/venv/bin"
-EnvironmentFile=/var/www/fp-cercador/fp-cercador/backend/.env
-ExecStart=/var/www/fp-cercador/venv/bin/gunicorn \
+WorkingDirectory=/home/masellas-grausfp/htdocs/grausfp.masellas.info/fp-cercador/backend
+Environment="PATH=/home/masellas-grausfp/htdocs/grausfp.masellas.info/venv/bin"
+EnvironmentFile=/home/masellas-grausfp/htdocs/grausfp.masellas.info/fp-cercador/backend/.env
+ExecStart=/home/masellas-grausfp/htdocs/grausfp.masellas.info/venv/bin/gunicorn \
     --workers 2 \
     --bind 127.0.0.1:8033 \
     --timeout 120 \
