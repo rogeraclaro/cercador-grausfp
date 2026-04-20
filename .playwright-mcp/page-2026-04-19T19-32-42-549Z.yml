@@ -1,0 +1,157 @@
+- generic [active]:
+  - generic:
+    - generic [ref=e5]: Carregant dades
+    - generic [ref=e6]:
+      - generic [ref=e8]: MENTRESTANT A BARCELONA...
+      - generic [ref=e9]:
+        - generic [ref=e12] [cursor=pointer]: Escull el 1er paràmetre
+        - generic [ref=e16] [cursor=pointer]: Escull el 2n paràmetre
+      - generic [ref=e18]:
+        - generic [ref=e19]: SÈRIE TEMPORAL
+        - generic [ref=e20] [cursor=pointer]: "2008"
+        - generic [ref=e21] [cursor=pointer]: "2009"
+        - generic [ref=e22] [cursor=pointer]: "2010"
+        - generic [ref=e23] [cursor=pointer]: "2011"
+        - generic [ref=e24] [cursor=pointer]: "2012"
+        - generic [ref=e25] [cursor=pointer]: "2013"
+      - generic [ref=e26]:
+        - text: AQUEST ÉS EL MAPA DE LA BARCELONA QUE TENIM, UNA CIUTAT CADA COP MÉS POLARITZADA, en la que molta gent hi viu i treballa en condicions indignes TOT I SER UNA CIUTAT AMB PROU RECURSOS I PLENA DE POTENCIALITATS, amb un teixit social i una capacitat creativa excepcionals.
+        - text: El Govern de CiU té una part important de responsabilitat en aquesta deriva mercantilitzadora. Perquè no ha tingut un projecte propi de ciutat i perquè ha afavorit interessos privats que poca cosa tenen a veure amb el bé comú.
+        - text: BARCELONA EN COMÚ vol governar per revertir aquesta situació. Per això, proposem un PLA DE XOC ambiciós i alhora factible.
+        - text: "DESCOBREIX EL NOSTRE PLA PER ACONSEGUIR LA BARCELONA QUE VOLEM, navegant pels diferents aspectes de la nostra realitat: l’atur, la distribució de la renda, la pressió turística... tot allò que dibuixa el plànol del nostre present i ens assenyala el camí a seguir demà."
+      - table [ref=e28]:
+        - rowgroup [ref=e29]:
+          - row "Min. Màx." [ref=e30]:
+            - cell "Min." [ref=e31]:
+              - generic [ref=e32]: Min.
+            - cell "Màx." [ref=e33]:
+              - generic [ref=e34]: Màx.
+          - row [ref=e35]:
+            - cell [ref=e36]:
+              - img [ref=e37]
+      - generic [ref=e38]:
+        - generic [ref=e112] [cursor=pointer]: MONTBAU
+        - generic [ref=e113] [cursor=pointer]: CANYELLES
+        - generic [ref=e114] [cursor=pointer]: TORRE BARÓ
+        - generic [ref=e115] [cursor=pointer]: CIUTAT MERIDIANA
+        - generic [ref=e116] [cursor=pointer]: VALLBONA
+        - generic [ref=e117] [cursor=pointer]: ROQUETES
+        - generic [ref=e118] [cursor=pointer]: LA GUINEUETA
+        - generic [ref=e119] [cursor=pointer]: HORTA
+        - generic [ref=e120] [cursor=pointer]: VALL D'HEBRON
+        - generic [ref=e121] [cursor=pointer]: SANT GENÍS DELS AGUDELLS
+        - generic [ref=e122] [cursor=pointer]: TRINITAT VELLA
+        - generic [ref=e123] [cursor=pointer]: TRINITAT NOVA
+        - generic [ref=e124] [cursor=pointer]: VERDUN
+        - generic [ref=e126] [cursor=pointer]:
+          - text: VILAPICINA
+          - text: I LA TORRE LLOBETA
+        - generic [ref=e127] [cursor=pointer]: CAN PEGUERA
+        - generic [ref=e128] [cursor=pointer]: LA CLOTA
+        - generic [ref=e130] [cursor=pointer]:
+          - text: VALLVIDRERA,
+          - text: EL TIBIDABO I LES PLANES
+        - generic [ref=e131] [cursor=pointer]: TEIXONERA
+        - generic [ref=e132] [cursor=pointer]: LA PROSPERITAT
+        - generic [ref=e133] [cursor=pointer]: PORTA
+        - generic [ref=e135] [cursor=pointer]:
+          - text: TURÓ
+          - text: DE LA PEIRA
+        - generic [ref=e137] [cursor=pointer]:
+          - text: FONT
+          - text: D'EN FARGUES
+        - generic [ref=e138] [cursor=pointer]: EL CARMEL
+        - generic [ref=e140] [cursor=pointer]:
+          - text: VALLCARCA
+          - text: I ELS PENITENTS
+        - generic [ref=e141] [cursor=pointer]: EL COLL
+        - generic [ref=e142] [cursor=pointer]: SARRIÀ
+        - generic [ref=e143] [cursor=pointer]: PEDRALBES
+        - generic [ref=e144] [cursor=pointer]: BARÓ DE VIVER
+        - generic [ref=e145] [cursor=pointer]: SANT ANDREU
+        - generic [ref=e147] [cursor=pointer]:
+          - text: EL CONGRÉS
+          - text: I ELS INDIANS
+        - generic [ref=e148] [cursor=pointer]: CAN BARÓ
+        - generic [ref=e149] [cursor=pointer]: GUINARDÓ
+        - generic [ref=e150] [cursor=pointer]: LA SALUT
+        - generic [ref=e151] [cursor=pointer]: LES TRES TORRES
+        - generic [ref=e153] [cursor=pointer]:
+          - text: SANT GERVASI
+          - text: LA BONANOVA
+        - generic [ref=e155] [cursor=pointer]:
+          - text: EL PUTXET
+          - text: I EL FARRÓ
+        - generic [ref=e157] [cursor=pointer]:
+          - text: MATERNITAT
+          - text: I SANT RAMON
+        - generic [ref=e158] [cursor=pointer]: EL BON PASTOR
+        - generic [ref=e159] [cursor=pointer]: LA SAGRERA
+        - generic [ref=e160] [cursor=pointer]: NAVAS
+        - generic [ref=e161] [cursor=pointer]: CAMP DE L'ARPA DEL CLOT
+        - generic [ref=e163] [cursor=pointer]:
+          - text: VILA
+          - text: DE GRÀCIA
+        - generic [ref=e165] [cursor=pointer]:
+          - text: CAMP D'EN GRASSOT
+          - text: I GRÀCIA NOVA
+        - generic [ref=e166] [cursor=pointer]: BAIX GUINARDÓ
+        - generic [ref=e167] [cursor=pointer]: SANTS-BADAL
+        - generic [ref=e168] [cursor=pointer]: SANTS
+        - generic [ref=e169] [cursor=pointer]: LES CORTS
+        - generic [ref=e170] [cursor=pointer]: SANT GERVASI GALVANY
+        - generic [ref=e171] [cursor=pointer]: CLOT
+        - generic [ref=e173] [cursor=pointer]:
+          - text: SANT MARTÍ
+          - text: DE PROVENÇALS
+        - generic [ref=e175] [cursor=pointer]:
+          - text: LA VERNEDA
+          - text: I LA PAU
+        - generic [ref=e176] [cursor=pointer]: SAGRADA FAMILIA
+        - generic [ref=e177] [cursor=pointer]: DRETA DE L'EIXAMPLE
+        - generic [ref=e178] [cursor=pointer]: ANTIGA ESQUERRA DE L'EIXAMPLE
+        - generic [ref=e180] [cursor=pointer]:
+          - text: NOVA ESQUERRA
+          - text: DE L'EIXAMPLE
+        - generic [ref=e181] [cursor=pointer]: HOSTAFRANCS
+        - generic [ref=e182] [cursor=pointer]: LA BORDETA
+        - generic [ref=e184] [cursor=pointer]:
+          - text: PARC I LA LLACUNA
+          - text: DEL POBLENOU
+        - generic [ref=e186] [cursor=pointer]:
+          - text: EL BESÒS I
+          - text: EL MARESME
+        - generic [ref=e188] [cursor=pointer]:
+          - text: PROVENÇALS
+          - text: DEL POBLENOU
+        - generic [ref=e190] [cursor=pointer]:
+          - text: S. PERE, S. CATERINA
+          - text: I LA RIBERA
+        - generic [ref=e191] [cursor=pointer]: FORT PIENC
+        - generic [ref=e192] [cursor=pointer]: SANT ANTONI
+        - generic [ref=e193] [cursor=pointer]: RAVAL
+        - generic [ref=e194] [cursor=pointer]: BARRI GÒTIC
+        - generic [ref=e195] [cursor=pointer]: MARINA DEL PORT
+        - generic [ref=e197] [cursor=pointer]:
+          - text: FONT DE
+          - text: LA GUATLLA
+        - generic [ref=e198] [cursor=pointer]: POBLENOU
+        - generic [ref=e200] [cursor=pointer]:
+          - text: DIAGONAL MAR I
+          - text: EL FRONT MARÍTIM
+          - text: DEL POBLENOU
+        - generic [ref=e202] [cursor=pointer]:
+          - text: VILA OLÍMPICA
+          - text: DEL POBLENOU
+        - generic [ref=e203] [cursor=pointer]: BARCELONETA
+        - generic [ref=e204] [cursor=pointer]: POBLE SEC
+        - generic [ref=e206] [cursor=pointer]:
+          - text: MARINA
+          - text: DEL PRAT VERMELL
+      - generic [ref=e280] [cursor=pointer]: Esborra
+      - generic [ref=e281] [cursor=pointer]: Esborra
+      - generic [ref=e282]: "* Si voleu veure amb més detall les dades de cada barri feu-hi click a sobre"
+  - generic [ref=e284]:
+    - text: "Aquesta visualització inclou les taules que veus a sota i les fonts d'on han sortit les dades. Si vols contribuïr-hi aportant noves dimensions contacta'ns i les inclourem:"
+    - link "analisi.guanyem@gmail.com" [ref=e285] [cursor=pointer]:
+      - /url: mailto:analisi.guanyem@gmail.com?subject=Open Data ciutadà

@@ -4,6 +4,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="author" content="Roger Masellas">
+  <meta name="description" content="Cercador de graus de formació professional">
+  <meta name="copyright" content="Roger Masellas, 2026">
   <title>Cercador Graus FP</title>
   <style>
     *,
@@ -19,7 +22,7 @@
         Helvetica, Arial, sans-serif;
       font-size: 14px;
       color: #111827;
-      background: #ffffff;
+      background: #f69c8c;
     }
 
     .page-container {
@@ -32,7 +35,8 @@
       font-size: 20px;
       font-weight: 600;
       line-height: 1.2;
-      margin-bottom: 24px;
+      margin-bottom: 40px;
+      margin-top: 40px;
     }
 
     .filter-row {
@@ -76,7 +80,7 @@
       margin-bottom: 16px;
       font-size: 12px;
       font-weight: 600;
-      color: #6b7280;
+      color: #000;
     }
 
     .controls-row label {
@@ -89,14 +93,14 @@
     .results-table {
       width: 100%;
       border-collapse: collapse;
-      font-size: 14px;
+      font-size: 13px;
     }
 
     .results-table th {
       background: #f3f4f6;
       text-align: left;
       padding: 8px 12px;
-      font-size: 12px;
+      font-size: 14px;
       font-weight: 600;
       border-bottom: 1px solid #d1d5db;
     }
@@ -105,6 +109,12 @@
       padding: 8px 12px;
       border-bottom: 1px solid #f3f4f6;
       vertical-align: middle;
+      background: #FCDED9;
+    }
+
+    .results-table td.nom-grau {
+      min-width: 380px;
+      max-width: 310px;
     }
 
     .results-table tr:nth-child(even) td {
@@ -450,7 +460,7 @@
           <!-- Files de dades: x-for sobre pagedRecords (max 50 tr al DOM - SRCH-09) -->
           <template x-for="row in pagedRecords" :key="row.id">
             <tr>
-              <td>
+              <td class="nom-grau">
                 <!-- x-text escapa HTML mai x-html (seguretat XSS) -->
                 <span x-text="row.denominacion"></span>
                 <!-- Badge Pla antic (D-08): inline a Denominació, no columna separada -->
