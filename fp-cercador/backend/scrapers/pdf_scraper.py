@@ -175,7 +175,7 @@ def _extract_records(pdf_path: str, grado_letter: str, nivel_fn) -> list[dict]:
     és malformada, en lloc de fallar tot el PDF.
     """
     records: dict = {}  # code_cell -> dict (garanteix unicitat)
-    new_code_re = re.compile(rf\'^[A-Z]{{2,4}}_{grado_letter}_\\d\')
+    new_code_re = re.compile(rf'^[A-Z]{{2,4}}_{grado_letter}_\d')
 
     with pdfplumber.open(pdf_path) as pdf:
         for page in pdf.pages[5:]:  # skip pàgines 1–5 (índex 0–4)
@@ -184,7 +184,7 @@ def _extract_records(pdf_path: str, grado_letter: str, nivel_fn) -> list[dict]:
                 table = page.extract_table()
             except Exception as exc:  # T-02-01: pàgina malformada → warning + continuar
                 logger.warning(
-                    f\"Error extraient taula d\'una pàgina del PDF \'{pdf_path}\': {exc}\"
+                    f"Error extraient taula d'una pàgina del PDF '{pdf_path}': {exc}"
                 )
                 continue
 
@@ -197,15 +197,15 @@ def _extract_records(pdf_path: str, grado_letter: str, nivel_fn) -> list[dict]:
                 code_cell, denom_cell, obs_parts = _parse_row(row, new_code_re)
 
                 if code_cell and code_cell not in records:
-                    is_old = \'(Plan antiguo)\' in code_cell
-                    clean_code = code_cell.replace(\' (Plan antiguo)\', \'\').strip()
+                    is_old = '(Plan antiguo)' in code_cell
+                    clean_code = code_cell.replace(' (Plan antiguo)', '').strip()
                     # Codis nous: \'AFD_A_...\' → primary=\'AFD\'. Codis antics: \'MF2268_2\' →
                     # primary=\'MF2268\', \'UF0297\' → primary=\'UF0297\'. Extreure prefix alfabètic
                     # i provar progressivament des de la longitud màxima fins a 2 caràcters.
-                    primary = clean_code.split(\'_\')[0]
-                    m = re.match(r\'^([A-Z]+)\', primary)
-                    alpha = m.group(1) if m else \'\'
-                    prefix = \'\'
+                    primary = clean_code.split('_')[0]
+                    m = re.match(r'^([A-Z]+)', primary)
+                    alpha = m.group(1) if m else ''
+                    prefix = ''
                     for length in range(len(alpha), 1, -1):
                         if alpha[:length] in PREFIX_MAP:
                             prefix = alpha[:length]
@@ -214,13 +214,14 @@ def _extract_records(pdf_path: str, grado_letter: str, nivel_fn) -> list[dict]:
 
                     if not familia:
                         logger.warning(
-                            f\"Família desconeguda per prefix \'{prefix}\' al codi \'{clean_code}\'\"\n                        )
+                            f"Família desconeguda per prefix '{prefix}' al codi '{clean_code}'"
                         familia = \'Desconeguda\'
 
                     records[code_cell] = {
-                        \'codigo\': clean_code,
-                        \'denominacion\': denom_cell or \'\',
-                        \'observaciones\': \' \'.join(obs_parts),\n                        \'familia\': familia,
+                        'codigo': clean_code,
+                        'denominacion': denom_cell or '',
+                        'observaciones': ' '.join(obs_parts),
+                        'familia': familia,
                         \'nivel\': page_level if grado_letter == \'B\' else nivel_fn(clean_code, is_old), # Aplica nivell de pàgina per Grau B, altrament usa funció
                         \'plan_antiguo\': is_old,
                     }
@@ -228,10 +229,10 @@ def _extract_records(pdf_path: str, grado_letter: str, nivel_fn) -> list[dict]:
     return list(records.values())
 
 def _get_nivel_from_page(page) -> int | None:
-    \"\"\"
+    """
     Intenta extreure el nivell (1, 2 o 3) del text de la pàgina.
     Cerca el patró "/Nivel [1-3]" a la part superior dreta de la pàgina.
-    \"\"\"
+    """
     try:
         # Definir una àrea de cerca a la part superior dreta de la pàgina
         # Assumim que la pàgina té un format consistent.
@@ -241,11 +242,11 @@ def _get_nivel_from_page(page) -> int | None:
         bbox_area = (x0, y0, x1, y1)
         text = page.crop(bbox_area).extract_text()
 
-        match = re.search(r\'/Nivel\s+(\\d)\', text)
+        match = re.search(r'/Nivel\s+(\d)', text)
         if match:
             return int(match.group(1))
     except Exception as exc:
-        logger.debug(f\"No s\'ha pogut extreure el nivell de la pàgina: {exc}\")
+        logger.debug(f"No s'ha pogut extreure el nivell de la pàgina: {exc}")
     return None
 
 
