@@ -29,9 +29,17 @@ deactivate
 
 ```bash
 cp fp-cercador/backend/.env.example fp-cercador/backend/.env
-# Editar .env i posar el valor real d'ADMIN_TOKEN
 nano fp-cercador/backend/.env
 ```
+
+El `.env` ha de contenir:
+
+```
+ADMIN_TOKEN=<token-segur-aleatori>
+BUSCADOR_COOKIES=JSESSIONID=<valor>; __Host-todofp.es=<valor>
+```
+
+Per obtenir `BUSCADOR_COOKIES` → veure la secció **"Renovar les cookies del buscador"** al final d'aquest document.
 
 ## 4. Crear directori de logs
 
@@ -80,7 +88,12 @@ curl https://DOMINI_AQUI/
 curl https://DOMINI_AQUI/api/ofertes | head -c 200
 ```
 
-## 8. Primer refresh de dades
+## 8. Dades inicials i refresh
+
+`data/ofertes.json` **ja està inclòs al repositori** — després d'un `git pull` el frontend
+mostra les dades immediatament sense necessitat de cap refresh.
+
+Per regenerar les dades al VPS (si vols dades més recents o has actualitzat `BUSCADOR_COOKIES`):
 
 ```bash
 curl -X POST https://DOMINI_AQUI/api/admin/refresh \
@@ -88,6 +101,8 @@ curl -X POST https://DOMINI_AQUI/api/admin/refresh \
 # Monitorar progrés:
 curl https://DOMINI_AQUI/api/refresh-status
 ```
+
+**Nota:** El refresh triga ~4s i requereix `BUSCADOR_COOKIES` vàlides al `.env`.
 
 ## Gestió del servei
 
@@ -108,3 +123,50 @@ pip install -r fp-cercador/backend/requirements.txt
 deactivate
 systemctl restart fp-cercador
 ```
+
+---
+
+## Renovar les cookies del buscador (quan caduca la sessió)
+
+L'API del buscador de todofp.es autentica via **cookie de sessió** (`JSESSIONID`).
+Quan caduca (el pipeline retorna HTML en lloc de JSON), cal renovar-la:
+
+### Passos per obtenir les cookies noves
+
+1. Obre **https://www.todofp.es/buscadorgradosfp/buscador** al navegador
+2. Obre **DevTools** (F12) → pestanya **Network** → filtre **Fetch/XHR**
+3. Resol el **reCAPTCHA** que apareix a la pàgina
+4. Als 3 selects (Grado, Família, Nivell), tria qualsevol opció a cadascun i fes clic a **Buscar**
+5. A la pestanya Network apareixerà una petició `buscadorGeneralA` — fes clic dret → **Copy → Copy as cURL**
+6. Del cURL copiat, localitza el valor de `-b '...'` — és la cadena de cookies:
+   ```
+   JSESSIONID=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX; __Host-todofp.es=YYYY...
+   ```
+
+### Actualitzar al VPS
+
+```bash
+nano /home/masellas-grausfp/htdocs/grausfp.masellas.info/fp-cercador/backend/.env
+# Substituir la línia BUSCADOR_COOKIES= pel nou valor
+```
+
+```
+BUSCADOR_COOKIES=JSESSIONID=XXXXXXXX; __Host-todofp.es=YYYY...
+```
+
+No cal reiniciar el servei — el pipeline llegeix `.env` a cada execució.
+
+### Verificar que funciona
+
+```bash
+curl -X POST https://grausfp.masellas.info/api/admin/refresh \
+  -H "Authorization: Bearer <ADMIN_TOKEN>"
+```
+
+Ha de retornar JSON amb `total` ~12.768 i `errors: []`.
+
+### Freqüència de caducitat
+
+La sessió dura mentre el servidor de todofp.es mantingui el `JSESSIONID` actiu.
+En pràctica caduca en dies/setmanes. Si el frontend mostra 0 resultats o el refresh
+falla, renovar les cookies seguint els passos anteriors.
