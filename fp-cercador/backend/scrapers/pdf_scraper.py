@@ -168,8 +168,10 @@ def _extract_records(pdf_path: str, grado_letter: str, nivel_fn) -> list[dict]:
     Extreu registres d'un PDF de Grado X.
 
     Les pàgines 0–4 (portada/intro) s'ignoren; el parsing comença a l'índex 5.
-    Usa un diccionari keyed per code_cell per evitar duplicats entre pàgines
-    (Pitfall 4 del RESEARCH.md): conserva únicament el primer occurrence.
+    Codis nous: deduplicats per code_cell (primer occurrence).
+    Codis de pla antic (is_old): deduplicats per (code_cell, familia_de_pagina),
+    permetent que el mateix codi aparegui en múltiples famílies si el PDF el
+    llista en pàgines de famílies distintes.
 
     T-02-01: cada pàgina s'envolta en try/except per continuar si una pàgina
     és malformada, en lloc de fallar tot el PDF.
@@ -179,7 +181,8 @@ def _extract_records(pdf_path: str, grado_letter: str, nivel_fn) -> list[dict]:
 
     with pdfplumber.open(pdf_path) as pdf:
         for page in pdf.pages[5:]:  # skip pàgines 1–5 (índex 0–4)
-            page_level = _get_nivel_from_page(page) # Nou: extreure nivell de la pàgina
+            page_level = _get_nivel_from_page(page)
+            page_familia = _get_familia_from_page(page)
             try:
                 table = page.extract_table()
             except Exception as exc:  # T-02-01: pàgina malformada → warning + continuar
@@ -196,35 +199,38 @@ def _extract_records(pdf_path: str, grado_letter: str, nivel_fn) -> list[dict]:
                     continue
                 code_cell, denom_cell, obs_parts = _parse_row(row, new_code_re)
 
-                if code_cell and code_cell not in records:
+                if code_cell:
                     is_old = '(Plan antiguo)' in code_cell
-                    clean_code = code_cell.replace(' (Plan antiguo)', '').strip()
-                    # Codis nous: \'AFD_A_...\' → primary=\'AFD\'. Codis antics: \'MF2268_2\' →
-                    # primary=\'MF2268\', \'UF0297\' → primary=\'UF0297\'. Extreure prefix alfabètic
-                    # i provar progressivament des de la longitud màxima fins a 2 caràcters.
-                    primary = clean_code.split('_')[0]
-                    m = re.match(r'^([A-Z]+)', primary)
-                    alpha = m.group(1) if m else ''
-                    prefix = ''
-                    for length in range(len(alpha), 1, -1):
-                        if alpha[:length] in PREFIX_MAP:
-                            prefix = alpha[:length]
-                            break
-                    familia = PREFIX_MAP.get(prefix)
+                    dedup_key = (code_cell, page_familia or '') if is_old else code_cell
+                    if dedup_key not in records:
+                        clean_code = code_cell.replace(' (Plan antiguo)', '').strip()
+                        primary = clean_code.split('_')[0]
+                        m = re.match(r'^([A-Z]+)', primary)
+                        alpha = m.group(1) if m else ''
+                        prefix = ''
+                        for length in range(len(alpha), 1, -1):
+                            if alpha[:length] in PREFIX_MAP:
+                                prefix = alpha[:length]
+                                break
 
-                    if not familia:
-                        logger.warning(
-                            f"Família desconeguda per prefix '{prefix}' al codi '{clean_code}'"
-                        familia = \'Desconeguda\'
+                        if is_old:
+                            familia = page_familia or PREFIX_MAP.get(prefix, 'Desconeguda')
+                        else:
+                            familia = PREFIX_MAP.get(prefix)
+                            if not familia:
+                                logger.warning(
+                                    f"Família desconeguda per prefix '{prefix}' al codi '{clean_code}'"
+                                )
+                                familia = 'Desconeguda'
 
-                    records[code_cell] = {
-                        'codigo': clean_code,
-                        'denominacion': denom_cell or '',
-                        'observaciones': ' '.join(obs_parts),
-                        'familia': familia,
-                        \'nivel\': page_level if grado_letter == \'B\' else nivel_fn(clean_code, is_old), # Aplica nivell de pàgina per Grau B, altrament usa funció
-                        \'plan_antiguo\': is_old,
-                    }
+                        records[dedup_key] = {
+                            'codigo': clean_code,
+                            'denominacion': denom_cell or '',
+                            'observaciones': ' '.join(obs_parts),
+                            'familia': familia,
+                            'nivel': page_level if (grado_letter == 'B' or is_old) else nivel_fn(clean_code, is_old),
+                            'plan_antiguo': is_old,
+                        }
 
     return list(records.values())
 
@@ -247,6 +253,23 @@ def _get_nivel_from_page(page) -> int | None:
             return int(match.group(1))
     except Exception as exc:
         logger.debug(f"No s'ha pogut extreure el nivell de la pàgina: {exc}")
+    return None
+
+
+def _get_familia_from_page(page) -> str | None:
+    """
+    Intenta extreure la família professional del capçal superior esquerre de la pàgina.
+    Cerca el text sota l'etiqueta 'Familia Profesional' / 'Familia profesional'.
+    Usat per als codis de pla antic (is_old=True) on la família no és deduïble del prefix.
+    """
+    try:
+        bbox = (0, 0, page.width * 0.55, 100)
+        text = page.crop(bbox).extract_text() or ''
+        m = re.search(r'[Ff]amilia\s+[Pp]rofesional\s*[\n\r]\s*(.+)', text)
+        if m:
+            return m.group(1).strip()
+    except Exception as exc:
+        logger.debug(f"No s'ha pogut extreure la família de la pàgina: {exc}")
     return None
 
 
