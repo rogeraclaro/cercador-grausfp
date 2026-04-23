@@ -4,9 +4,15 @@ buscador_scraper.py — Scraping de l'API del Buscador de Graus FP (todofp.es).
 Fa 9 crides GET (3 grados × 3 nivells) i retorna tots els registres A, B i C
 amb família i nivell correctes, incloent codis de pla antic (UF/MF).
 
-Requereix BUSCADOR_UUID a .env — UUID obtingut resolent el reCAPTCHA del buscador.
-Si caduca: obrir https://www.todofp.es/buscadorgradosfp/buscador, resoldre captcha,
-copiar UUID de la variable `uuid` a la consola del navegador i actualitzar .env.
+Requereix BUSCADOR_COOKIES a .env — valor de la capçalera Cookie obtingut del
+navegador després de resoldre el reCAPTCHA del buscador:
+  1. Obrir https://www.todofp.es/buscadorgradosfp/buscador
+  2. Resoldre el reCAPTCHA
+  3. Fer una cerca (triant opcions als selects i clicant Buscar)
+  4. DevTools → Network → Fetch/XHR → clic dret sobre buscadorGeneralA → Copy as cURL
+  5. Copiar el valor de -b '...' i posar-lo com a BUSCADOR_COOKIES=... al .env
+
+Si la sessió caduca, el pipeline retornarà HTML. Repetir els passos anteriors.
 
 Cada registre retornat té exactament:
   {codigo, denominacion, familia, nivel, plan_antiguo, observaciones}
@@ -45,18 +51,18 @@ def _is_old_plan(codigo: str) -> bool:
     return not bool(_NEW_CODE_RE.match(codigo))
 
 
-def _fetch(grado: str, nivel: str, uuid: str, timeout: int = 30) -> list[dict]:
-    url = f"{BASE_URL}/{_ENDPOINTS[grado]}?nivel={nivel}&idFamilia=&grado={grado}&uuid={uuid}"
-    resp = requests.get(url, headers=HEADERS, timeout=timeout)
+def _fetch(grado: str, nivel: str, cookies: str, timeout: int = 30) -> list[dict]:
+    url = f"{BASE_URL}/{_ENDPOINTS[grado]}?nivel={nivel}&idFamilia=&grado={grado}&uuid="
+    headers = {**HEADERS, "Cookie": cookies}
+    resp = requests.get(url, headers=headers, timeout=timeout)
     resp.raise_for_status()
     try:
         data = resp.json()
     except ValueError:
         raise RuntimeError(
             f"El servidor ha retornat HTML en lloc de JSON (Grado {grado} nivel {nivel}). "
-            "El BUSCADOR_UUID ha caducat. Visita https://www.todofp.es/buscadorgradosfp/buscador, "
-            "resol el captcha, copia la variable `uuid` de la consola del navegador "
-            "i actualitza BUSCADOR_UUID al fitxer .env."
+            "La sessió BUSCADOR_COOKIES ha caducat. Segueix les instruccions del docstring "
+            "per obtenir les cookies noves i actualitza BUSCADOR_COOKIES al fitxer .env."
         )
     if not isinstance(data, list):
         raise RuntimeError(f"Resposta inesperada de l'API per Grado {grado} nivel {nivel}: {type(data)}")
@@ -76,15 +82,15 @@ def _map_record(item: dict) -> dict:
 
 def parse_grado(grado: str) -> list[dict]:
     """Retorna tots els registres d'un grado (A, B o C) fent 3 crides per nivell."""
-    uuid = os.environ.get('BUSCADOR_UUID', '')
-    if not uuid:
+    cookies = os.environ.get('BUSCADOR_COOKIES', '')
+    if not cookies:
         raise RuntimeError(
-            "BUSCADOR_UUID no configurat. Visita https://www.todofp.es/buscadorgradosfp/buscador, "
-            "resol el captcha i afegeix BUSCADOR_UUID=<uuid> al fitxer .env."
+            "BUSCADOR_COOKIES no configurat. Segueix les instruccions del docstring "
+            "per obtenir les cookies del navegador i afegeix BUSCADOR_COOKIES=<valor> al fitxer .env."
         )
     records = []
     for nivel in ['1', '2', '3']:
-        items = _fetch(grado, nivel, uuid)
+        items = _fetch(grado, nivel, cookies)
         records.extend(_map_record(r) for r in items)
         logger.info(f"Grado {grado} nivel {nivel}: {len(items)} registres")
     return records
