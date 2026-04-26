@@ -213,19 +213,23 @@
         <summary>‹ Com obtenir les cookies?</summary>
         <ol style="padding-left: 20px; font-size: 13px; line-height: 1.6;">
           <li>Obre el buscador oficial: <a href="https://www.todofp.es/buscadorgradosfp/buscador" target="_blank" rel="noopener">todofp.es/buscadorgradosfp/buscador</a></li>
-          <li>Resol el reCAPTCHA i fes una cerca qualsevol perquè s'estableixi la sessió.</li>
-          <li>Obre les DevTools (F12) → pestanya <strong>Network</strong>.</li>
-          <li>Repeteix la cerca i busca una crida XHR al buscador.</li>
-          <li>Click dret sobre la crida → <strong>Copy → Copy as cURL</strong>.</li>
-          <li>Del cURL copiat, extreu només la capçalera <code>-H 'Cookie: ...'</code>.</li>
-          <li>D'aquesta cadena, conserva NOMÉS dues cookies separades per <code>;</code>:
+          <li>Resol el reCAPTCHA si en surt.</li>
+          <li>Fes <strong>una</strong> cerca (selecciona qualsevol opció als desplegables → Buscar) per activar la sessió.</li>
+          <li>Obre DevTools (F12) → pestanya <strong>Application</strong> (a Firefox: <strong>Storage</strong>).</li>
+          <li>A l'esquerra: <strong>Storage → Cookies → https://www.todofp.es</strong></li>
+          <li>Copia els valors actuals (columna "Value") de:
             <ul>
-              <li><code>JSESSIONID=XXXXXXXX</code></li>
-              <li><code>__Host-todofp.es=YYYY...</code></li>
+              <li><code>JSESSIONID</code></li>
+              <li><code>__Host-todofp.es</code></li>
             </ul>
           </li>
-          <li>Enganxa el resultat al camp de dalt i clica <strong>Guardar</strong>.</li>
+          <li>Construeix la cadena: <code>JSESSIONID=&lt;valor1&gt;; __Host-todofp.es=&lt;valor2&gt;</code></li>
+          <li><strong>NO facis més cerques ni interactuïs amb la pàgina</strong> (cada cerca rota el JSESSIONID i invalida les cookies copiades).</li>
+          <li>Enganxa al camp de dalt → Guardar → immediatament Refresh.</li>
         </ol>
+        <p style="font-size:12px;color:var(--warm);margin-top:8px;">
+          ⚠️ <strong>Important:</strong> NO usis "Copy as cURL" del Network tab. Això captura el header Cookie de la petició anterior, que ja està invalidat per la rotació de sessió del servidor.
+        </p>
       </details>
       <button id="cookies-btn">Guardar</button>
       <div id="cookies-status"></div>

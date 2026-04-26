@@ -133,15 +133,21 @@ Quan caduca (el pipeline retorna HTML en lloc de JSON), cal renovar-la:
 
 ### Passos per obtenir les cookies noves
 
+⚠️ **Important:** todofp.es rota el `JSESSIONID` després de cada petició. "Copy as cURL" del Network tab captura el `Cookie` que es va **enviar** en aquella petició — un valor que el servidor ja ha invalidat per la rotació. Cal copiar les cookies **actuals** del cookie jar del navegador (Application tab), no del Network tab.
+
 1. Obre **https://www.todofp.es/buscadorgradosfp/buscador** al navegador
-2. Obre **DevTools** (F12) → pestanya **Network** → filtre **Fetch/XHR**
-3. Resol el **reCAPTCHA** que apareix a la pàgina
-4. Als 3 selects (Grado, Família, Nivell), tria qualsevol opció a cadascun i fes clic a **Buscar**
-5. A la pestanya Network apareixerà una petició `buscadorGeneralA` — fes clic dret → **Copy → Copy as cURL**
-6. Del cURL copiat, localitza el valor de `-b '...'` — és la cadena de cookies:
+2. Resol el **reCAPTCHA** si apareix
+3. Fes **una** cerca (selecciona qualsevol opció als 3 selects → **Buscar**) per activar la sessió
+4. Obre **DevTools** (F12) → pestanya **Application** (Firefox: **Storage**)
+5. A l'esquerra: **Storage → Cookies → https://www.todofp.es**
+6. Copia els valors actuals (columna "Value") de:
+   - `JSESSIONID`
+   - `__Host-todofp.es`
+7. Construeix la cadena:
    ```
-   JSESSIONID=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX; __Host-todofp.es=YYYY...
+   JSESSIONID=<valor1>; __Host-todofp.es=<valor2>
    ```
+8. **NO interactuïs més amb la pàgina del buscador** (cada cerca/clic pot rotar les cookies i invalidar les que has copiat). Enganxa al panell admin i fes Refresh immediatament.
 
 ### Actualitzar des del panell d'administració (recomanat — Fase 6)
 
