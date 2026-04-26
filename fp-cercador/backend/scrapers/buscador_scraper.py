@@ -51,10 +51,9 @@ def _is_old_plan(codigo: str) -> bool:
     return not bool(_NEW_CODE_RE.match(codigo))
 
 
-def _fetch(grado: str, nivel: str, cookies: str, timeout: int = 30) -> list[dict]:
+def _fetch(session: requests.Session, grado: str, nivel: str, timeout: int = 30) -> list[dict]:
     url = f"{BASE_URL}/{_ENDPOINTS[grado]}?nivel={nivel}&idFamilia=&grado={grado}&uuid="
-    headers = {**HEADERS, "Cookie": cookies}
-    resp = requests.get(url, headers=headers, timeout=timeout)
+    resp = session.get(url, timeout=timeout)
     resp.raise_for_status()
     try:
         data = resp.json()
@@ -77,20 +76,30 @@ def _map_record(item: dict) -> dict:
         'nivel': item.get('nivel'),
         'plan_antiguo': _is_old_plan(item['codigo']),
         'observaciones': '',
+        'ficha_id': item.get('id'),
     }
 
 
 def parse_grado(grado: str) -> list[dict]:
     """Retorna tots els registres d'un grado (A, B o C) fent 3 crides per nivell."""
-    cookies = os.environ.get('BUSCADOR_COOKIES', '')
-    if not cookies:
+    cookie_str = os.environ.get('BUSCADOR_COOKIES', '')
+    if not cookie_str:
         raise RuntimeError(
             "BUSCADOR_COOKIES no configurat. Segueix les instruccions del docstring "
             "per obtenir les cookies del navegador i afegeix BUSCADOR_COOKIES=<valor> al fitxer .env."
         )
+    # Usa Session per propagar cookies actualitzades entre crida i crida (el servidor
+    # pot rotar __Host-todofp.es via Set-Cookie a cada resposta).
+    session = requests.Session()
+    session.headers.update(HEADERS)
+    for pair in cookie_str.split(';'):
+        pair = pair.strip()
+        if '=' in pair:
+            name, _, value = pair.partition('=')
+            session.cookies.set(name.strip(), value.strip())
     records = []
     for nivel in ['1', '2', '3']:
-        items = _fetch(grado, nivel, cookies)
+        items = _fetch(session, grado, nivel)
         records.extend(_map_record(r) for r in items)
         logger.info(f"Grado {grado} nivel {nivel}: {len(items)} registres")
     return records
