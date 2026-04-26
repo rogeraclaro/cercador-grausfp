@@ -5,6 +5,7 @@ Rutes:
   GET    /health                       → {"status": "ok"} (sense auth)
   GET    /api/ofertes                  → array JSON dels registres (200) o 503 si no hi ha dades
   GET    /api/refresh-status           → estat del darrer refresh (idle/running/done/error)
+  GET    /api/refresh-history          → historial de refreshos (sense auth, màx 20 entrades)
   POST   /api/admin/refresh            → llança el pipeline en background (requereix Bearer token)
   POST   /api/admin/update-cookies     → actualitza BUSCADOR_COOKIES al .env (Phase 6, D-02)
   GET    /api/admin/scheduler          → retorna config scheduler periòdic (Phase 6, D-08)
@@ -53,6 +54,12 @@ ENV_PATH = os.path.normpath(
     os.path.join(os.path.dirname(__file__), ".env")
 )
 
+HISTORY_PATH = os.path.normpath(
+    os.path.join(os.path.dirname(__file__), "data", "refresh_history.json")
+)
+
+HISTORY_MAX = 20
+
 app = Flask(__name__)
 CORS(app)
 
@@ -73,6 +80,39 @@ def _check_auth(req) -> bool:
         return False
     provided = auth[7:]
     return hmac.compare_digest(provided, ADMIN_TOKEN)
+
+
+# ---------------------------------------------------------------------------
+# Helper historial de refreshos
+# ---------------------------------------------------------------------------
+
+
+def _append_history(result: dict) -> None:
+    """Afegeix una entrada a refresh_history.json (màx HISTORY_MAX entrades)."""
+    import tempfile
+    entry = {
+        "ts": datetime.now(timezone.utc).isoformat(),
+        "total": result.get("total"),
+        "by_grado": result.get("by_grado"),
+        "duration_seconds": result.get("duration_seconds"),
+    }
+    history = []
+    if os.path.exists(HISTORY_PATH):
+        try:
+            with open(HISTORY_PATH, "r", encoding="utf-8") as f:
+                history = json.load(f)
+        except (json.JSONDecodeError, OSError):
+            history = []
+    history.insert(0, entry)
+    history = history[:HISTORY_MAX]
+    dir_path = os.path.dirname(HISTORY_PATH)
+    os.makedirs(dir_path, exist_ok=True)
+    with tempfile.NamedTemporaryFile(
+        mode="w", encoding="utf-8", dir=dir_path, delete=False
+    ) as tmp:
+        json.dump(history, tmp, ensure_ascii=False)
+        tmp_path = tmp.name
+    os.replace(tmp_path, HISTORY_PATH)
 
 
 # ---------------------------------------------------------------------------
@@ -136,6 +176,19 @@ def refresh_status():
     return jsonify(refresh_state.get_state()), 200
 
 
+@app.route("/api/refresh-history")
+def refresh_history():
+    """Retorna l'historial de refreshos (públic, sense auth)."""
+    if not os.path.exists(HISTORY_PATH):
+        return jsonify([]), 200
+    try:
+        with open(HISTORY_PATH, "r", encoding="utf-8") as f:
+            data = json.load(f)
+    except (json.JSONDecodeError, OSError):
+        return jsonify([]), 200
+    return jsonify(data), 200
+
+
 @app.route("/api/admin/refresh", methods=["POST"])
 def admin_refresh():
     """API-03 / API-04 / API-05: Llança el pipeline en background si el token és vàlid."""
@@ -168,6 +221,10 @@ def admin_refresh():
                 duration_seconds=result["duration_seconds"],
                 errors=result["errors"],
             )
+            try:
+                _append_history(result)
+            except Exception as exc_h:
+                logger.error("Could not write refresh history: %s", exc_h)
         except Exception as exc:
             logger.error("Pipeline refresh failed: %s", exc)
             refresh_state.set_state(status="error", errors=[str(exc)])

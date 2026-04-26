@@ -303,10 +303,12 @@
 
     .results-table td.col-grau {
       font-weight: 500;
+      min-width: 85px;
     }
 
     .results-table td.col-niv {
       color: var(--warm);
+      min-width: 95px;
     }
 
     .results-table td.col-fam {
@@ -315,10 +317,15 @@
       white-space: nowrap;
       overflow: hidden;
       max-width: 22rem;
+      min-width: 190px;
     }
 
     .results-table tbody tr:hover td {
       background: var(--warm2);
+    }
+
+    .results-table tbody tr.row-link {
+      cursor: pointer;
     }
 
     .results-table tbody tr:last-child td {
@@ -569,7 +576,7 @@
         filterGrado: '',
         filterFamilia: '',
         filterNivel: '',
-        hideOld: true,
+        hideOld: false,
 
         currentPage: 1,
         pageSize: 50,
@@ -608,8 +615,8 @@
             const col = this.sortCol;
             const dir = this.sortDir;
             result.sort((a, b) => {
-              const va = (a[col] ?? '').toLowerCase();
-              const vb = (b[col] ?? '').toLowerCase();
+              const va = String(a[col] ?? '').toLowerCase();
+              const vb = String(b[col] ?? '').toLowerCase();
               return va < vb ? -dir : va > vb ? dir : 0;
             });
           }
@@ -785,9 +792,27 @@
                 <span class="sort-indicator" aria-hidden="true"
                   x-text="sortCol === 'codigo' ? (sortDir === 1 ? '▲' : '▼') : '▲'"></span>
               </th>
-              <th scope="col" class="col-fam">Família professional</th>
-              <th scope="col" class="col-grau">Grau</th>
-              <th scope="col" class="col-niv">Nivell</th>
+              <th scope="col" class="sortable col-fam" :class="{ 'sort-active': sortCol === 'familia' }"
+                @click="sortBy('familia')"
+                :aria-sort="sortCol === 'familia' ? (sortDir === 1 ? 'ascending' : 'descending') : 'none'">
+                Família professional
+                <span class="sort-indicator" aria-hidden="true"
+                  x-text="sortCol === 'familia' ? (sortDir === 1 ? '▲' : '▼') : '▲'"></span>
+              </th>
+              <th scope="col" class="sortable col-grau" :class="{ 'sort-active': sortCol === 'grado' }"
+                @click="sortBy('grado')"
+                :aria-sort="sortCol === 'grado' ? (sortDir === 1 ? 'ascending' : 'descending') : 'none'">
+                Grau
+                <span class="sort-indicator" aria-hidden="true"
+                  x-text="sortCol === 'grado' ? (sortDir === 1 ? '▲' : '▼') : '▲'"></span>
+              </th>
+              <th scope="col" class="sortable col-niv" :class="{ 'sort-active': sortCol === 'nivel' }"
+                @click="sortBy('nivel')"
+                :aria-sort="sortCol === 'nivel' ? (sortDir === 1 ? 'ascending' : 'descending') : 'none'">
+                Nivell
+                <span class="sort-indicator" aria-hidden="true"
+                  x-text="sortCol === 'nivel' ? (sortDir === 1 ? '▲' : '▼') : '▲'"></span>
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -797,7 +822,14 @@
               </tr>
             </template>
             <template x-for="row in pagedRecords" :key="row.id">
-              <tr>
+              <tr :class="{ 'row-link': (row.grado === 'C' && row.plan_antiguo) || (['A','B','C'].includes(row.grado) && row.ficha_id) }"
+                @click="
+                  row.grado === 'C' && row.plan_antiguo
+                    ? window.open('https://www.todofp.es/buscadorcertificados/fichaCP?codCertificado=' + row.codigo, '_blank')
+                    : ['A','B','C'].includes(row.grado) && row.ficha_id
+                      ? window.open('https://www.todofp.es/buscadorgradosfp/ficha?grado=' + row.grado + '&id=' + row.ficha_id, '_blank')
+                      : null
+                ">
                 <td class="col-nom">
                   <span x-text="row.denominacion"></span>
                   <span x-show="row.plan_antiguo" class="badge-old">Pla antic</span>
@@ -839,6 +871,10 @@
     </div>
 
   </div><!-- /x-data -->
+
+  <footer style="border-top:1px solid var(--border); padding:20px 48px; text-align:right;">
+    <a href="historial.html" style="font-size:13px; color:var(--warm); text-decoration:none;">Historial d'actualitzacions</a>
+  </footer>
 </body>
 
 </html>
