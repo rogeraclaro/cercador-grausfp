@@ -2,9 +2,499 @@
 <html lang="ca">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Cercador FP — Administració</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=DM+Serif+Display:ital@0;1&family=Geist+Mono:wght@400;500&display=swap"
+    rel="stylesheet">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --dark: #1c1410;
+      --warm: #8a7060;
+      --warm2: #f5ece2;
+      --border: #e8ddd4;
+      --bg: #fdf8f2;
+      --white: #ffffff;
+    }
+
+    body {
+      font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 14px;
+      color: var(--dark);
+      background: var(--bg);
+    }
+
+    /* ── Top bar ── */
+    .topbar { background: var(--dark); padding: 0 48px; }
+    .topbar-inner { display: flex; align-items: center; height: 52px; }
+    .topbar-logo {
+      font-family: 'DM Serif Display', serif;
+      color: var(--white);
+      font-size: 20px;
+      letter-spacing: -0.3px;
+    }
+
+    /* ── Spinner ── */
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .spinner {
+      display: inline-block;
+      width: 18px; height: 18px;
+      border: 2px solid var(--border);
+      border-top-color: var(--dark);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      vertical-align: middle;
+      margin-right: 8px;
+    }
+
+    /* ── Error state ── */
+    .error-state { background: #fee2e2; color: #991b1b; padding: 16px; border-radius: 6px; }
+
+    /* ── Admin layout ── */
+    .container { max-width: 800px; margin: 0 auto; padding: 32px 48px 64px; }
+
+    h1 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 36px;
+      font-weight: 400;
+      margin-bottom: 32px;
+    }
+
+    .section {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+
+    .section h2 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 22px;
+      font-weight: 400;
+      margin-bottom: 16px;
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      color: var(--warm);
+      margin-bottom: 6px;
+    }
+
+    input[type="password"],
+    input[type="text"],
+    input[type="number"],
+    textarea,
+    select {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      font-family: inherit;
+      font-size: 14px;
+      background: var(--bg);
+      color: var(--dark);
+    }
+
+    textarea {
+      font-family: 'Geist Mono', monospace;
+      font-size: 12px;
+      min-height: 80px;
+      resize: vertical;
+    }
+
+    button {
+      background: var(--dark);
+      color: var(--white);
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 500;
+      margin-top: 12px;
+    }
+
+    button:hover { opacity: 0.9; }
+    button:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .status-msg {
+      margin-top: 16px;
+      padding: 12px 14px;
+      border-radius: 4px;
+      font-size: 13px;
+    }
+
+    .status-msg.info  { background: var(--warm2); color: var(--dark); }
+    .status-msg.success { background: #d1fae5; color: #065f46; }
+    .status-msg.error { background: #fee2e2; color: #991b1b; }
+
+    .by-grado-table {
+      width: 100%;
+      margin-top: 12px;
+      border-collapse: collapse;
+    }
+
+    .by-grado-table th,
+    .by-grado-table td {
+      text-align: left;
+      padding: 6px 10px;
+      border-bottom: 1px solid var(--border);
+      font-size: 13px;
+    }
+
+    details { margin-top: 12px; }
+
+    summary {
+      cursor: pointer;
+      color: var(--warm);
+      font-size: 13px;
+      user-select: none;
+      padding: 6px 0;
+    }
+
+    summary:hover { color: var(--dark); }
+    details[open] summary { color: var(--dark); margin-bottom: 12px; }
+
+    .form-row {
+      display: flex;
+      gap: 12px;
+      align-items: flex-end;
+      flex-wrap: wrap;
+    }
+
+    .form-row > div { flex: 1; min-width: 120px; }
+
+    .next-run {
+      margin-top: 12px;
+      font-size: 13px;
+      color: var(--warm);
+      font-family: 'Geist Mono', monospace;
+    }
+  </style>
 </head>
 <body>
-  <!-- TODO: Phase 6 -->
+
+  <header class="topbar">
+    <div class="topbar-inner">
+      <span class="topbar-logo">GrausFP</span>
+    </div>
+  </header>
+
+  <main class="container">
+    <h1>Administració</h1>
+
+    <!-- ── Secció 1: Refresh manual ── -->
+    <section class="section" id="section-refresh">
+      <h2>Refresh manual</h2>
+      <label for="token-input">ADMIN_TOKEN</label>
+      <input id="token-input" type="password" autocomplete="off" placeholder="Enganxa el token">
+      <button id="refresh-btn">Actualitzar dades</button>
+      <div id="refresh-status"></div>
+    </section>
+
+    <!-- ── Secció 2: Cookies del buscador ── -->
+    <section class="section" id="section-cookies">
+      <h2>Cookies del buscador</h2>
+      <p style="color: var(--warm); font-size: 13px; margin-bottom: 12px;">
+        Enganxa el valor de la capçalera <code>Cookie</code> del buscador (només
+        <code>JSESSIONID</code> i <code>__Host-todofp.es</code>). El servei les
+        aplicarà al proper refresh sense reiniciar.
+      </p>
+      <textarea id="cookies-input" placeholder="JSESSIONID=...; __Host-todofp.es=..."></textarea>
+      <details>
+        <summary>‹ Com obtenir les cookies?</summary>
+        <ol style="padding-left: 20px; font-size: 13px; line-height: 1.6;">
+          <li>Obre el buscador oficial: <a href="https://www.buscadorgradosfp.educacionfpydeportes.gob.es/" target="_blank" rel="noopener">buscadorgradosfp.educacionfpydeportes.gob.es</a></li>
+          <li>Resol el reCAPTCHA i fes una cerca qualsevol perquè s'estableixi la sessió.</li>
+          <li>Obre les DevTools (F12) → pestanya <strong>Network</strong>.</li>
+          <li>Repeteix la cerca i busca una crida XHR al buscador.</li>
+          <li>Click dret sobre la crida → <strong>Copy → Copy as cURL</strong>.</li>
+          <li>Del cURL copiat, extreu només la capçalera <code>-H 'Cookie: ...'</code>.</li>
+          <li>D'aquesta cadena, conserva NOMÉS dues cookies separades per <code>;</code>:
+            <ul>
+              <li><code>JSESSIONID=XXXXXXXX</code></li>
+              <li><code>__Host-todofp.es=YYYY...</code></li>
+            </ul>
+          </li>
+          <li>Enganxa el resultat al camp de dalt i clica <strong>Guardar</strong>.</li>
+        </ol>
+      </details>
+      <button id="cookies-btn">Guardar</button>
+      <div id="cookies-status"></div>
+    </section>
+
+    <!-- ── Secció 3: Refresh periòdic ── -->
+    <section class="section" id="section-scheduler">
+      <h2>Refresh periòdic</h2>
+      <p style="color: var(--warm); font-size: 13px; margin-bottom: 12px;">
+        Programa un refresh automàtic recurrent. Necessita el token introduït a la
+        secció de Refresh manual.
+      </p>
+      <button id="sched-load-btn" style="background: var(--warm); margin-top: 0;">Carregar config actual</button>
+      <div id="sched-form" style="display:none; margin-top: 16px;">
+        <label><input type="checkbox" id="sched-enabled" style="width:auto; margin-right: 8px;"> Activat</label>
+        <div class="form-row" style="margin-top: 12px;">
+          <div>
+            <label for="sched-day">Dia</label>
+            <select id="sched-day">
+              <option value="*">Cada dia</option>
+              <option value="mon">Dilluns</option>
+              <option value="tue">Dimarts</option>
+              <option value="wed">Dimecres</option>
+              <option value="thu">Dijous</option>
+              <option value="fri">Divendres</option>
+              <option value="sat">Dissabte</option>
+              <option value="sun">Diumenge</option>
+            </select>
+          </div>
+          <div>
+            <label for="sched-hour">Hora</label>
+            <input id="sched-hour" type="number" min="0" max="23" value="3">
+          </div>
+          <div>
+            <label for="sched-min">Minut</label>
+            <input id="sched-min" type="number" min="0" max="59" value="0">
+          </div>
+        </div>
+        <div class="next-run" id="sched-next"></div>
+        <button id="sched-save-btn">Desar config</button>
+        <button id="sched-disable-btn" style="background: var(--warm); margin-left: 8px;">Desactivar</button>
+      </div>
+      <div id="sched-status"></div>
+    </section>
+  </main>
+
+  <script>
+    const API_BASE = window.location.hostname === 'localhost'
+      ? 'http://localhost:5001'
+      : '';
+
+    // ADMN-08: el token viu només en memòria (input DOM). No es persisteix mai.
+    function getToken() {
+      return document.getElementById('token-input').value.trim();
+    }
+
+    // ── Refresh manual ───────────────────────────────────────
+    const refreshBtn = document.getElementById('refresh-btn');
+    const statusEl = document.getElementById('refresh-status');
+    let pollTimer = null;
+
+    function setStatus(html, kind = 'info') {
+      statusEl.innerHTML = `<div class="status-msg ${kind}">${html}</div>`;
+    }
+
+    function clearStatus() { statusEl.innerHTML = ''; }
+
+    function stopPolling() {
+      if (pollTimer !== null) { clearInterval(pollTimer); pollTimer = null; }
+    }
+
+    function escapeHtml(s) {
+      return String(s).replace(/[&<>"']/g, c => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+      }[c]));
+    }
+
+    function renderDone(state) {
+      const rows = state.by_grado
+        ? Object.entries(state.by_grado)
+            .map(([g, n]) => `<tr><td>Grado ${g}</td><td>${n}</td></tr>`).join('')
+        : '';
+      setStatus(`
+        <strong>Refresh completat.</strong><br>
+        Total: ${state.total} registres<br>
+        Durada: ${state.duration_seconds} s
+        ${rows ? `<table class="by-grado-table"><thead><tr><th>Grado</th><th>Registres</th></tr></thead><tbody>${rows}</tbody></table>` : ''}
+      `, 'success');
+    }
+
+    function renderError(state) {
+      const errs = (state.errors || []).map(e => `<li>${escapeHtml(e)}</li>`).join('');
+      setStatus(`<strong>Refresh fallat.</strong><ul style="margin-top:8px;padding-left:20px;">${errs || '<li>(sense detalls)</li>'}</ul>`, 'error');
+    }
+
+    async function pollOnce() {
+      try {
+        const res = await fetch(API_BASE + '/api/refresh-status');
+        if (!res.ok) { setStatus('Error consultant l\'estat (HTTP ' + res.status + ')', 'error'); stopPolling(); return; }
+        const state = await res.json();
+        if (state.status === 'running') {
+          setStatus('<span class="spinner"></span> Actualitzant…', 'info');
+        } else if (state.status === 'done') {
+          stopPolling();
+          renderDone(state);
+          refreshBtn.disabled = false;
+        } else if (state.status === 'error') {
+          stopPolling();
+          renderError(state);
+          refreshBtn.disabled = false;
+        }
+      } catch (e) {
+        setStatus('Error de connexió en consultar estat', 'error');
+        stopPolling();
+        refreshBtn.disabled = false;
+      }
+    }
+
+    refreshBtn.addEventListener('click', async () => {
+      const token = getToken();
+      if (!token) { setStatus('Introdueix el token.', 'error'); return; }
+      refreshBtn.disabled = true;
+      setStatus('Iniciant refresh…', 'info');
+      try {
+        const res = await fetch(API_BASE + '/api/admin/refresh', {
+          method: 'POST',
+          headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
+        });
+        if (res.status === 401) { setStatus('Token incorrecte.', 'error'); refreshBtn.disabled = false; return; }
+        if (res.status === 409) { setStatus('Ja hi ha un refresh en curs.', 'error'); refreshBtn.disabled = false; return; }
+        if (!res.ok) { setStatus('Error inesperat (HTTP ' + res.status + ')', 'error'); refreshBtn.disabled = false; return; }
+        // 200 → poll cada 3 s (ADMN-04)
+        pollOnce();
+        pollTimer = setInterval(pollOnce, 3000);
+      } catch (e) {
+        setStatus('Error de connexió.', 'error');
+        refreshBtn.disabled = false;
+      }
+    });
+
+    // ── Cookies ─────────────────────────────────────────────
+    const cookiesBtn = document.getElementById('cookies-btn');
+    const cookiesInput = document.getElementById('cookies-input');
+    const cookiesStatusEl = document.getElementById('cookies-status');
+
+    function setCookiesStatus(msg, kind = 'info') {
+      cookiesStatusEl.innerHTML = `<div class="status-msg ${kind}">${msg}</div>`;
+    }
+
+    cookiesBtn.addEventListener('click', async () => {
+      const token = getToken();
+      const value = cookiesInput.value.trim();
+      if (!token) { setCookiesStatus('Introdueix el token a la secció de Refresh manual.', 'error'); return; }
+      if (!value) { setCookiesStatus('Enganxa primer les cookies.', 'error'); return; }
+      cookiesBtn.disabled = true;
+      try {
+        const res = await fetch(API_BASE + '/api/admin/update-cookies', {
+          method: 'POST',
+          headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ cookies: value }),
+        });
+        if (res.status === 200) {
+          setCookiesStatus('Cookies guardades correctament. S\'aplicaran al proper refresh.', 'success');
+          cookiesInput.value = '';
+        } else if (res.status === 400) {
+          setCookiesStatus('Format invàlid: ha de contenir JSESSIONID=…', 'error');
+        } else if (res.status === 401) {
+          setCookiesStatus('Token incorrecte.', 'error');
+        } else if (res.status === 500) {
+          setCookiesStatus('Error escrivint .env al servidor.', 'error');
+        } else {
+          setCookiesStatus('Error inesperat (HTTP ' + res.status + ')', 'error');
+        }
+      } catch (e) {
+        setCookiesStatus('Error de connexió.', 'error');
+      } finally {
+        cookiesBtn.disabled = false;
+      }
+    });
+
+    // ── Scheduler ───────────────────────────────────────────
+    const schedLoadBtn = document.getElementById('sched-load-btn');
+    const schedForm = document.getElementById('sched-form');
+    const schedEnabled = document.getElementById('sched-enabled');
+    const schedDay = document.getElementById('sched-day');
+    const schedHour = document.getElementById('sched-hour');
+    const schedMin = document.getElementById('sched-min');
+    const schedNext = document.getElementById('sched-next');
+    const schedSaveBtn = document.getElementById('sched-save-btn');
+    const schedDisableBtn = document.getElementById('sched-disable-btn');
+    const schedStatusEl = document.getElementById('sched-status');
+
+    function setSchedStatus(msg, kind = 'info') {
+      schedStatusEl.innerHTML = `<div class="status-msg ${kind}">${msg}</div>`;
+    }
+
+    function applyConfigToForm(cfg) {
+      schedEnabled.checked = !!cfg.enabled;
+      schedDay.value = cfg.day_of_week || 'mon';
+      schedHour.value = cfg.hour ?? 3;
+      schedMin.value = cfg.minute ?? 0;
+      schedNext.textContent = cfg.next_run
+        ? 'Propera execució: ' + new Date(cfg.next_run).toLocaleString('ca-ES')
+        : (cfg.enabled ? 'Propera execució: (calculant…)' : 'Propera execució: —');
+    }
+
+    schedLoadBtn.addEventListener('click', async () => {
+      const token = getToken();
+      if (!token) { setSchedStatus('Introdueix el token a la secció de Refresh manual.', 'error'); return; }
+      try {
+        const res = await fetch(API_BASE + '/api/admin/scheduler', {
+          headers: { 'Authorization': 'Bearer ' + token },
+        });
+        if (res.status === 401) { setSchedStatus('Token incorrecte.', 'error'); return; }
+        if (!res.ok) { setSchedStatus('Error carregant config (HTTP ' + res.status + ')', 'error'); return; }
+        const cfg = await res.json();
+        applyConfigToForm(cfg);
+        schedForm.style.display = 'block';
+        setSchedStatus('Config carregada.', 'info');
+      } catch (e) { setSchedStatus('Error de connexió.', 'error'); }
+    });
+
+    schedSaveBtn.addEventListener('click', async () => {
+      const token = getToken();
+      if (!token) { setSchedStatus('Introdueix el token.', 'error'); return; }
+      const body = {
+        enabled: schedEnabled.checked,
+        day_of_week: schedDay.value,
+        hour: parseInt(schedHour.value, 10),
+        minute: parseInt(schedMin.value, 10),
+      };
+      schedSaveBtn.disabled = true;
+      try {
+        const res = await fetch(API_BASE + '/api/admin/scheduler', {
+          method: 'POST',
+          headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
+          body: JSON.stringify(body),
+        });
+        if (res.status === 401) { setSchedStatus('Token incorrecte.', 'error'); return; }
+        if (res.status === 400) {
+          const err = await res.json().catch(() => ({}));
+          setSchedStatus('Config invàlida: ' + (err.error || ''), 'error'); return;
+        }
+        if (!res.ok) { setSchedStatus('Error inesperat (HTTP ' + res.status + ')', 'error'); return; }
+        const cfg = await res.json();
+        applyConfigToForm(cfg);
+        setSchedStatus('Config guardada.', 'success');
+      } catch (e) { setSchedStatus('Error de connexió.', 'error'); }
+      finally { schedSaveBtn.disabled = false; }
+    });
+
+    schedDisableBtn.addEventListener('click', async () => {
+      const token = getToken();
+      if (!token) { setSchedStatus('Introdueix el token.', 'error'); return; }
+      if (!confirm('Desactivar el refresh periòdic?')) return;
+      schedDisableBtn.disabled = true;
+      try {
+        const res = await fetch(API_BASE + '/api/admin/scheduler', {
+          method: 'DELETE',
+          headers: { 'Authorization': 'Bearer ' + token },
+        });
+        if (res.status === 401) { setSchedStatus('Token incorrecte.', 'error'); return; }
+        if (!res.ok) { setSchedStatus('Error desactivant (HTTP ' + res.status + ')', 'error'); return; }
+        schedEnabled.checked = false;
+        schedNext.textContent = 'Propera execució: —';
+        setSchedStatus('Scheduler desactivat.', 'success');
+      } catch (e) { setSchedStatus('Error de connexió.', 'error'); }
+      finally { schedDisableBtn.disabled = false; }
+    });
+  </script>
 </body>
 </html>
