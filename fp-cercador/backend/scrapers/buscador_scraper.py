@@ -52,6 +52,31 @@ def _is_old_plan(codigo: str) -> bool:
     return not bool(_NEW_CODE_RE.match(codigo))
 
 
+_FAILURE_DUMP_PATH = os.path.normpath(
+    os.path.join(os.path.dirname(__file__), "..", "data", "last_failure.html")
+)
+
+
+def _dump_failure(resp, grado: str, nivel: str, sent_headers: dict) -> dict:
+    """Guarda la resposta sencera i retorna un diccionari amb metadades clau."""
+    snippet = (resp.text or "")[:500]
+    try:
+        os.makedirs(os.path.dirname(_FAILURE_DUMP_PATH), exist_ok=True)
+        with open(_FAILURE_DUMP_PATH, "w", encoding="utf-8") as f:
+            f.write(f"<!-- Grado {grado} nivel {nivel} | status {resp.status_code} -->\n")
+            f.write(f"<!-- Sent UA: {sent_headers.get('User-Agent', '')} -->\n")
+            f.write(resp.text or "")
+    except OSError as exc:
+        logger.error("No s'ha pogut guardar last_failure.html: %s", exc)
+    return {
+        "status": resp.status_code,
+        "content_type": resp.headers.get("Content-Type", ""),
+        "set_cookie": resp.headers.get("Set-Cookie", ""),
+        "location": resp.headers.get("Location", ""),
+        "snippet": snippet,
+    }
+
+
 def _fetch(grado: str, nivel: str, cookies: str, timeout: int = 30) -> list[dict]:
     url = f"{BASE_URL}/{_ENDPOINTS[grado]}?nivel={nivel}&idFamilia=&grado={grado}&uuid="
     headers = {**HEADERS, "Cookie": cookies}
@@ -60,10 +85,14 @@ def _fetch(grado: str, nivel: str, cookies: str, timeout: int = 30) -> list[dict
     try:
         data = resp.json()
     except ValueError:
+        info = _dump_failure(resp, grado, nivel, headers)
         raise RuntimeError(
-            f"El servidor ha retornat HTML en lloc de JSON (Grado {grado} nivel {nivel}). "
-            "La sessió BUSCADOR_COOKIES ha caducat. Segueix les instruccions del docstring "
-            "per obtenir les cookies noves i actualitza BUSCADOR_COOKIES al fitxer .env."
+            f"Resposta no-JSON per Grado {grado} nivel {nivel} | "
+            f"HTTP {info['status']} | Content-Type: {info['content_type']} | "
+            f"Set-Cookie: {info['set_cookie'][:120]} | "
+            f"Location: {info['location']} | "
+            f"UA enviat: {headers.get('User-Agent', '')[:80]} | "
+            f"Snippet: {info['snippet']}"
         )
     if not isinstance(data, list):
         raise RuntimeError(f"Resposta inesperada de l'API per Grado {grado} nivel {nivel}: {type(data)}")
