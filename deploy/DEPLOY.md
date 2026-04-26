@@ -143,18 +143,27 @@ Quan caduca (el pipeline retorna HTML en lloc de JSON), cal renovar-la:
    JSESSIONID=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX; __Host-todofp.es=YYYY...
    ```
 
-### Actualitzar al VPS
+### Actualitzar des del panell d'administració (recomanat — Fase 6)
+
+1. Obre `https://DOMINI_AQUI/admin.html` al navegador.
+2. Introdueix l'`ADMIN_TOKEN` al camp de la secció **Refresh manual**.
+3. A la secció **Cookies del buscador**, enganxa el valor `JSESSIONID=…; __Host-todofp.es=…` (les instruccions detallades estan dins el desplegable «Com obtenir les cookies?»).
+4. Clica **Guardar**. Veuràs «Cookies guardades correctament». El proper refresh aplicarà el nou valor sense reiniciar el servei.
+
+> El token només viu a la memòria del navegador; en tancar la pestanya s'esborra (no es guarda a localStorage).
+
+### Alternativa: actualitzar manualment per SSH
 
 ```bash
 nano /home/masellas-grausfp/htdocs/grausfp.masellas.info/fp-cercador/backend/.env
-# Substituir la línia BUSCADOR_COOKIES= pel nou valor
+# Substituir la línia BUSCADOR_COOKIES=
 ```
 
-```
-BUSCADOR_COOKIES=JSESSIONID=XXXXXXXX; __Host-todofp.es=YYYY...
-```
+A partir de la Fase 6 **ja no cal `systemctl restart fp-cercador`** — el pipeline crida `load_dotenv(override=True)` a cada execució i recarrega el `.env` automàticament.
 
-No cal reiniciar el servei — el pipeline llegeix `.env` a cada execució.
+### Refresh periòdic (opcional)
+
+Al mateix `/admin.html`, la secció **Refresh periòdic** permet programar un refresh automàtic recurrent (dia de la setmana + hora). La config es persisteix a `backend/data/scheduler.json` i Flask la reprograma a l'arrencada.
 
 ### Verificar que funciona
 
