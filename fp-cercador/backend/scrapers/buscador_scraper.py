@@ -89,20 +89,27 @@ def _parse_cookie_string(s: str) -> dict:
     return result
 
 
-def _fetch(session: requests.Session, grado: str, nivel: str, timeout: int = 30) -> list[dict]:
+def _fetch(grado: str, nivel: str, cookie_jar: dict, timeout: int = 30) -> list[dict]:
+    """Fa una crida. Després de la resposta, actualitza cookie_jar amb el Set-Cookie."""
     url = f"{BASE_URL}/{_ENDPOINTS[grado]}?nivel={nivel}&idFamilia=&grado={grado}&uuid="
-    resp = session.get(url, timeout=timeout)
+    cookie_header = "; ".join(f"{k}={v}" for k, v in cookie_jar.items())
+    headers = {**HEADERS, "Cookie": cookie_header}
+    resp = requests.get(url, headers=headers, timeout=timeout)
     resp.raise_for_status()
+    # Actualitza el cookie_jar amb les cookies retornades pel servidor.
+    for c in resp.cookies:
+        cookie_jar[c.name] = c.value
     try:
         data = resp.json()
     except ValueError:
-        info = _dump_failure(resp, grado, nivel, dict(session.headers))
+        info = _dump_failure(resp, grado, nivel, headers)
         raise RuntimeError(
             f"Resposta no-JSON per Grado {grado} nivel {nivel} | "
             f"HTTP {info['status']} | Content-Type: {info['content_type']} | "
             f"Set-Cookie: {info['set_cookie'][:120]} | "
             f"Location: {info['location']} | "
-            f"UA enviat: {session.headers.get('User-Agent', '')[:80]} | "
+            f"UA enviat: {headers.get('User-Agent', '')[:80]} | "
+            f"Cookie enviat: {cookie_header[:120]} | "
             f"Snippet: {info['snippet']}"
         )
     if not isinstance(data, list):
@@ -123,11 +130,11 @@ def _map_record(item: dict) -> dict:
 
 
 def parse_buscador_all() -> dict:
-    """Scraping de A, B i C amb una única requests.Session per propagar Set-Cookie.
+    """Scraping de A, B i C tractant la rotació de JSESSIONID manualment.
 
     todofp.es rota el JSESSIONID després de cada petició exitosa (defensa
-    anti-session-fixation). Cal una Session compartida perquè les 9 crides
-    actualitzin automàticament les cookies del jar.
+    anti-session-fixation). Mantenim un cookie_jar dict que s'actualitza des
+    del Set-Cookie de cada resposta i el reenviem com a header Cookie.
     """
     load_dotenv(override=True)
     cookies_str = os.environ.get('BUSCADOR_COOKIES', '')
@@ -136,16 +143,13 @@ def parse_buscador_all() -> dict:
             "BUSCADOR_COOKIES no configurat. Segueix les instruccions del docstring "
             "per obtenir les cookies del navegador i afegeix BUSCADOR_COOKIES=<valor> al fitxer .env."
         )
-    session = requests.Session()
-    session.headers.update(HEADERS)
-    for name, value in _parse_cookie_string(cookies_str).items():
-        session.cookies.set(name, value, domain='www.todofp.es', path='/')
+    cookie_jar = _parse_cookie_string(cookies_str)
 
     result = {}
     for grado in ['A', 'B', 'C']:
         records = []
         for nivel in ['1', '2', '3']:
-            items = _fetch(session, grado, nivel)
+            items = _fetch(grado, nivel, cookie_jar)
             records.extend(_map_record(r) for r in items)
             logger.info(f"Grado {grado} nivel {nivel}: {len(items)} registres")
         result[grado] = records
