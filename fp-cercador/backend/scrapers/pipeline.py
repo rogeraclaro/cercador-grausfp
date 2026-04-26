@@ -20,6 +20,8 @@ import os
 import tempfile
 import time
 
+from dotenv import load_dotenv
+
 from scrapers.buscador_scraper import parse_grado
 from scrapers.html_scraper import (
     parse_grado_d_basico,
@@ -94,6 +96,10 @@ def run() -> dict:
         "duration_seconds": float,
     }
     """
+    # D-01 (Phase 6): Recarrega .env perquè un BUSCADOR_COOKIES actualitzat
+    # via /api/admin/update-cookies prengui efecte sense reiniciar el servei.
+    load_dotenv(override=True)
+
     start = time.time()
 
     all_records: list = []
