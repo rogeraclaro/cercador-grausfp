@@ -24,6 +24,7 @@ import re
 import logging
 
 import requests
+from dotenv import load_dotenv
 
 logger = logging.getLogger(__name__)
 
@@ -83,6 +84,7 @@ def _map_record(item: dict) -> dict:
 
 def parse_grado(grado: str) -> list[dict]:
     """Retorna tots els registres d'un grado (A, B o C) fent 3 crides per nivell."""
+    load_dotenv(override=True)
     cookies = os.environ.get('BUSCADOR_COOKIES', '')
     if not cookies:
         raise RuntimeError(
