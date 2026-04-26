@@ -23,6 +23,7 @@ import hmac
 import json
 import logging
 import os
+import re
 import threading
 from datetime import datetime, timezone
 
@@ -192,7 +193,9 @@ def admin_update_cookies():
     if not _check_auth(request):
         return jsonify({"error": "Unauthorized"}), 401
     body = request.get_json(silent=True) or {}
-    cookies = (body.get("cookies") or "").strip()
+    raw = (body.get("cookies") or "").strip()
+    # Alguns terminals escapen ! com ! en copiar cURL; normalitzar abans de guardar.
+    cookies = re.sub(r'\\u([0-9a-fA-F]{4})', lambda m: chr(int(m.group(1), 16)), raw)
     if "JSESSIONID=" not in cookies:
         return jsonify({"error": "Invalid cookies format"}), 400
     try:
