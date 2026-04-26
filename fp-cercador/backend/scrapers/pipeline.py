@@ -22,7 +22,7 @@ import time
 
 from dotenv import load_dotenv
 
-from scrapers.buscador_scraper import parse_grado
+from scrapers.buscador_scraper import parse_buscador_all
 from scrapers.html_scraper import (
     parse_grado_d_basico,
     parse_grado_d_medio,
@@ -105,8 +105,11 @@ def run() -> dict:
     all_records: list = []
     by_grado: dict = {}
 
+    # Una sola Session compartida per A/B/C — todofp.es rota JSESSIONID a cada
+    # resposta i la Session propaga les cookies actualitzades (D-Phase6 fix).
+    buscador_data = parse_buscador_all()
     for grado_letter in ['A', 'B', 'C']:
-        records = parse_grado(grado_letter)  # D-01: excepció propagada si falla
+        records = buscador_data[grado_letter]
         for r in records:
             r['grado'] = grado_letter
         by_grado[grado_letter] = len(records)

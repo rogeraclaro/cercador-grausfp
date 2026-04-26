@@ -77,21 +77,32 @@ def _dump_failure(resp, grado: str, nivel: str, sent_headers: dict) -> dict:
     }
 
 
-def _fetch(grado: str, nivel: str, cookies: str, timeout: int = 30) -> list[dict]:
+def _parse_cookie_string(s: str) -> dict:
+    """Converteix 'name1=value1; name2=value2' en {name1: value1, name2: value2}."""
+    result = {}
+    for part in s.split(";"):
+        part = part.strip()
+        if not part or "=" not in part:
+            continue
+        name, value = part.split("=", 1)
+        result[name.strip()] = value.strip()
+    return result
+
+
+def _fetch(session: requests.Session, grado: str, nivel: str, timeout: int = 30) -> list[dict]:
     url = f"{BASE_URL}/{_ENDPOINTS[grado]}?nivel={nivel}&idFamilia=&grado={grado}&uuid="
-    headers = {**HEADERS, "Cookie": cookies}
-    resp = requests.get(url, headers=headers, timeout=timeout)
+    resp = session.get(url, timeout=timeout)
     resp.raise_for_status()
     try:
         data = resp.json()
     except ValueError:
-        info = _dump_failure(resp, grado, nivel, headers)
+        info = _dump_failure(resp, grado, nivel, dict(session.headers))
         raise RuntimeError(
             f"Resposta no-JSON per Grado {grado} nivel {nivel} | "
             f"HTTP {info['status']} | Content-Type: {info['content_type']} | "
             f"Set-Cookie: {info['set_cookie'][:120]} | "
             f"Location: {info['location']} | "
-            f"UA enviat: {headers.get('User-Agent', '')[:80]} | "
+            f"UA enviat: {session.headers.get('User-Agent', '')[:80]} | "
             f"Snippet: {info['snippet']}"
         )
     if not isinstance(data, list):
@@ -111,18 +122,36 @@ def _map_record(item: dict) -> dict:
     }
 
 
-def parse_grado(grado: str) -> list[dict]:
-    """Retorna tots els registres d'un grado (A, B o C) fent 3 crides per nivell."""
+def parse_buscador_all() -> dict:
+    """Scraping de A, B i C amb una única requests.Session per propagar Set-Cookie.
+
+    todofp.es rota el JSESSIONID després de cada petició exitosa (defensa
+    anti-session-fixation). Cal una Session compartida perquè les 9 crides
+    actualitzin automàticament les cookies del jar.
+    """
     load_dotenv(override=True)
-    cookies = os.environ.get('BUSCADOR_COOKIES', '')
-    if not cookies:
+    cookies_str = os.environ.get('BUSCADOR_COOKIES', '')
+    if not cookies_str:
         raise RuntimeError(
             "BUSCADOR_COOKIES no configurat. Segueix les instruccions del docstring "
             "per obtenir les cookies del navegador i afegeix BUSCADOR_COOKIES=<valor> al fitxer .env."
         )
-    records = []
-    for nivel in ['1', '2', '3']:
-        items = _fetch(grado, nivel, cookies)
-        records.extend(_map_record(r) for r in items)
-        logger.info(f"Grado {grado} nivel {nivel}: {len(items)} registres")
-    return records
+    session = requests.Session()
+    session.headers.update(HEADERS)
+    for name, value in _parse_cookie_string(cookies_str).items():
+        session.cookies.set(name, value, domain='www.todofp.es', path='/')
+
+    result = {}
+    for grado in ['A', 'B', 'C']:
+        records = []
+        for nivel in ['1', '2', '3']:
+            items = _fetch(session, grado, nivel)
+            records.extend(_map_record(r) for r in items)
+            logger.info(f"Grado {grado} nivel {nivel}: {len(items)} registres")
+        result[grado] = records
+    return result
+
+
+def parse_grado(grado: str) -> list[dict]:
+    """Compatibilitat: scraping d'un sol grado. Internament usa parse_buscador_all."""
+    return parse_buscador_all()[grado]
