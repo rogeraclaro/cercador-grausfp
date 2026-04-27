@@ -109,7 +109,11 @@ Plans:
   3. On success (200), the panel polls `GET /api/refresh-status` every 3 seconds and shows "Actualitzant..." while running
   4. When status becomes "done", the panel displays total records, per-Grado breakdown, and duration in seconds
   5. When status becomes "error", the panel displays the detailed error messages; the token is never saved to localStorage or any persistent storage
-**Plans**: TBD
+**Plans**: 3 plans
+Plans:
+- [ ] 06-01-PLAN.md — Backend: bug fix refresh + endpoints update-cookies + scheduler + scheduler_service.py + load_dotenv a pipeline
+- [ ] 06-02-PLAN.md — Frontend: admin.html complet (refresh manual + cookies + scheduler) amb estil de index.html
+- [ ] 06-03-PLAN.md — Docs DEPLOY.md actualitzat + checkpoint humà end-to-end al navegador
 **UI hint**: yes
 
 ## Progress

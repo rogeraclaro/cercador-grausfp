@@ -1,0 +1,104 @@
+- generic [active] [ref=e1]:
+  - banner:
+    - navigation [ref=e2]:
+      - generic [ref=e4]:
+        - img "Escudo del MEFP" [ref=e6]
+        - img "Spanish Flag" [ref=e8]
+  - main [ref=e9]:
+    - generic [ref=e10]:
+      - img "Familias" [ref=e12]
+      - heading "Buscador de ofertas formativas" [level=2] [ref=e14]
+      - generic [ref=e16]:
+        - paragraph [ref=e17]: 1. Completa el captcha
+        - paragraph [ref=e18]: 2. Selecciona el nivel y familia profesional (obligatorio)
+        - paragraph [ref=e19]: 3. Haz click en "Buscar"
+        - paragraph [ref=e20]: "4. Consejo: filtra tu búsqueda por palabra clave en el campo \"Filtrar\""
+      - generic [ref=e21]:
+        - generic [ref=e22]:
+          - generic [ref=e23]: Grado
+          - combobox "Grado" [ref=e24]:
+            - option [selected]
+            - option
+            - option
+            - option
+        - generic [ref=e25]:
+          - generic [ref=e26]: Nivel
+          - combobox "Nivel" [disabled] [ref=e27]:
+            - option "Selecciona..." [selected]
+            - option "1"
+            - option "2"
+            - option "3"
+        - generic [ref=e28]:
+          - generic [ref=e29]: Familia
+          - combobox [disabled] [ref=e30]:
+            - option "Selecciona..." [selected]
+            - option "Actividades Físicas y Deportivas"
+            - option "Administración y Gestión"
+            - option "Agraria"
+            - option "Artes Gráficas"
+            - option "Artes y Artesanías"
+            - option "Comercio y Marketing"
+            - option "Competencias Transversales"
+            - option "Edificación y Obra Civil"
+            - option "Electricidad y Electrónica"
+            - option "Energía y Agua"
+            - option "Fabricación Mecánica"
+            - option "Hostelería y Turismo"
+            - option "Imagen Personal"
+            - option "Imagen y Sonido"
+            - option "Industrias Alimentarias"
+            - option "Industrias Extractivas"
+            - option "Informática y Comunicaciones"
+            - option "Instalación y Mantenimiento"
+            - option "Inteligencia Artificial y Data"
+            - option "Madera, Mueble y Corcho"
+            - option "Mantenimiento y Servicios a la Producción"
+            - option "Marítimo - Pesquera"
+            - option "Química"
+            - option "Sanidad"
+            - option "Seguridad y Medio Ambiente"
+            - option "Servicios Socioculturales y a la Comunidad"
+            - option "Textil, Confección y Piel"
+            - option "Transporte y Mantenimiento de Vehículos"
+            - option "Vidrio y Cerámica"
+        - generic [ref=e31]:
+          - button "Buscar" [disabled]
+      - generic [ref=e34]:
+        - generic [ref=e38]:
+          - generic [ref=e39]: "Filtrar:"
+          - searchbox "Filtrar:" [ref=e40]
+        - table [ref=e43]:
+          - rowgroup [ref=e51]:
+            - 'row "Grado: Activate to invert sorting Nivel: Activate to sort Código: Activate to sort Denominación: Activate to sort Familia: Activate to sort Ficha / Continuar Formación: Activate to sort" [ref=e52]':
+              - 'columnheader "Grado: Activate to invert sorting" [ref=e53] [cursor=pointer]':
+                - button "Grado" [ref=e54]
+              - 'columnheader "Nivel: Activate to sort" [ref=e56] [cursor=pointer]':
+                - button "Nivel" [ref=e57]
+              - 'columnheader "Código: Activate to sort" [ref=e59] [cursor=pointer]':
+                - button "Código" [ref=e60]
+              - 'columnheader "Denominación: Activate to sort" [ref=e62] [cursor=pointer]':
+                - button "Denominación" [ref=e63]
+              - 'columnheader "Familia: Activate to sort" [ref=e65] [cursor=pointer]':
+                - button "Familia" [ref=e66]
+              - 'columnheader "Ficha / Continuar Formación: Activate to sort" [ref=e68] [cursor=pointer]':
+                - button "Ficha / Continuar Formación" [ref=e69]
+          - rowgroup [ref=e71]:
+            - row "Pendiente de buscar" [ref=e72]:
+              - cell "Pendiente de buscar" [ref=e73]
+          - rowgroup
+        - list [ref=e78]:
+          - listitem [ref=e79]:
+            - generic "First": Primero
+          - listitem [ref=e80]:
+            - generic "Previous": «
+          - listitem [ref=e81]:
+            - generic "Next": »
+          - listitem [ref=e82]:
+            - generic "Last": Último
+    - generic [ref=e85]:
+      - separator [ref=e86]
+      - generic [ref=e87]:
+        - link "Aviso legal" [ref=e88] [cursor=pointer]:
+          - /url: /buscadorgradosfp/avisoLegal/ES
+        - text: "| © Ministerio de Educación, Formación Profesional y Deportes - Gobierno de España"
+        - generic [ref=e89]: V. 1.2.0

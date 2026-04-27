@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: verifying
+status: executing
 stopped_at: context exhaustion at 90% (2026-04-23)
-last_updated: "2026-04-23T22:28:49.661Z"
-last_activity: 2026-04-19
+last_updated: "2026-04-26T08:02:56.385Z"
+last_activity: 2026-04-26 -- Phase --phase execution started
 progress:
   total_phases: 6
   completed_phases: 5
-  total_plans: 13
-  completed_plans: 13
-  percent: 100
+  total_plans: 16
+  completed_plans: 15
+  percent: 94
 ---
 
 # Project State
@@ -21,14 +21,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-04-16)
 
 **Core value:** Un únic cercador que consolida tota l'oferta FP espanyola (Grados A–E) en temps real, filtrable per grado, família professional, nivell i text lliure.
-**Current focus:** Phase 06 — admin-panel
+**Current focus:** Phase --phase — 06
 
 ## Current Position
 
-Phase: 5
-Plan: Complete
-Status: Phase 05 completada (2026-04-19) — 2/2 plans, verificació aprovada
-Last activity: 2026-04-19
+Phase: --phase (06) — EXECUTING
+Plan: 1 of --name
+Status: Executing Phase --phase
+Last activity: 2026-04-26 -- Phase --phase execution started
 
 Progress: [█████████░] 83% (Fases 01, 02, 03, 04, 05 completades; 06 pendent)
 
@@ -109,3 +109,5 @@ None yet.
 Last session: 2026-04-23T22:28:49.653Z
 Stopped at: context exhaustion at 90% (2026-04-23)
 Resume file: None
+
+**Planned Phase:** 06 (Frontend — Admin Panel) — 3 plans — 2026-04-25T22:25:59.909Z
