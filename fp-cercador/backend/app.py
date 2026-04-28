@@ -87,6 +87,39 @@ def _check_auth(req) -> bool:
 # ---------------------------------------------------------------------------
 
 
+def _compute_changes(curr: dict, prev: dict) -> dict:
+    """Calcula les diferències entre el refresh actual i l'anterior."""
+    prev_families = set(prev.get("families") or [])
+    curr_families = set(curr.get("families") or [])
+    prev_by_grado = prev.get("by_grado") or {}
+    curr_by_grado = curr.get("by_grado") or {}
+
+    new_families = sorted(curr_families - prev_families)
+    removed_families = sorted(prev_families - curr_families)
+    all_grados = set(curr_by_grado) | set(prev_by_grado)
+    grado_deltas = {
+        g: (curr_by_grado.get(g) or 0) - (prev_by_grado.get(g) or 0)
+        for g in sorted(all_grados)
+        if (curr_by_grado.get(g) or 0) != (prev_by_grado.get(g) or 0)
+    }
+    total_delta = (curr.get("total") or 0) - (prev.get("total") or 0)
+
+    prev_denoms = set(prev.get("denominacions") or [])
+    curr_denoms = set(curr.get("denominacions") or [])
+    new_denominacions = sorted(curr_denoms - prev_denoms)
+    removed_denominacions = sorted(prev_denoms - curr_denoms)
+
+    return {
+        "new_families": new_families,
+        "removed_families": removed_families,
+        "grado_deltas": grado_deltas,
+        "total_delta": total_delta,
+        "new_denominacions": new_denominacions,
+        "removed_denominacions": removed_denominacions,
+        "has_changes": bool(new_families or removed_families or grado_deltas or new_denominacions or removed_denominacions),
+    }
+
+
 def _append_history(result: dict) -> None:
     """Afegeix una entrada a refresh_history.json (màx HISTORY_MAX entrades)."""
     import tempfile
@@ -94,6 +127,9 @@ def _append_history(result: dict) -> None:
         "ts": datetime.now(timezone.utc).isoformat(),
         "total": result.get("total"),
         "by_grado": result.get("by_grado"),
+        "families": result.get("families", []),
+        "denominacions": result.get("denominacions", []),
+        "unknown_families": result.get("unknown_families", []),
         "duration_seconds": result.get("duration_seconds"),
     }
     history = []
@@ -103,6 +139,9 @@ def _append_history(result: dict) -> None:
                 history = json.load(f)
         except (json.JSONDecodeError, OSError):
             history = []
+
+    entry["changes"] = _compute_changes(entry, history[0]) if history else None
+
     history.insert(0, entry)
     history = history[:HISTORY_MAX]
     dir_path = os.path.dirname(HISTORY_PATH)

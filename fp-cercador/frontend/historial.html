@@ -85,6 +85,15 @@
     .results-table th.col-num { text-align: center; width: 50px; }
     .results-table th.col-grado { text-align: center; width: 80px; }
     .results-table th.col-dur { text-align: right; width: 90px; }
+    .results-table th.col-changes { width: 260px; }
+
+    .changes-list { list-style: none; padding: 0; margin: 0; font-size: 12px; line-height: 1.7; }
+    .changes-list .new  { color: #166534; }
+    .changes-list .gone { color: #991b1b; }
+    .changes-list .delta { color: var(--warm); }
+    .changes-list .warn  { color: #92400e; }
+    .no-changes { color: var(--warm); font-style: italic; font-size: 12px; }
+    .first-entry { color: var(--warm); font-size: 12px; }
 
     .results-table td {
       padding: 13px 16px;
@@ -197,6 +206,37 @@
           `<th class="col-grado" scope="col">Grau ${g}</th>`
         ).join('');
 
+        function renderChanges(entry) {
+          const c = entry.changes;
+          if (c === null || c === undefined) {
+            return '<span class="first-entry">Primer registre</span>';
+          }
+          if (!c.has_changes && !(entry.unknown_families?.length)) {
+            return '<span class="no-changes">Sense canvis</span>';
+          }
+          const items = [];
+          for (const f of (c.new_families || [])) {
+            items.push(`<li class="new">+ Família: ${f}</li>`);
+          }
+          for (const f of (c.removed_families || [])) {
+            items.push(`<li class="gone">− Família: ${f}</li>`);
+          }
+          for (const [g, d] of Object.entries(c.grado_deltas || {})) {
+            const sign = d > 0 ? '+' : '';
+            items.push(`<li class="delta">Grau ${g}: ${sign}${d}</li>`);
+          }
+          for (const d of (c.new_denominacions || [])) {
+            items.push(`<li class="new">+ ${d}</li>`);
+          }
+          for (const d of (c.removed_denominacions || [])) {
+            items.push(`<li class="gone">− ${d}</li>`);
+          }
+          for (const f of (entry.unknown_families || [])) {
+            items.push(`<li class="warn">⚠ Família nova: ${f}</li>`);
+          }
+          return `<ul class="changes-list">${items.join('')}</ul>`;
+        }
+
         const rows = history.map((entry, i) => {
           const gradoCells = graus.map(g => {
             const n = entry.by_grado?.[g];
@@ -208,6 +248,7 @@
             <td class="col-total">${entry.total ?? '—'}</td>
             ${gradoCells}
             <td class="col-dur">${entry.duration_seconds != null ? entry.duration_seconds + ' s' : '—'}</td>
+            <td>${renderChanges(entry)}</td>
           </tr>`;
         }).join('');
 
@@ -221,6 +262,7 @@
                   <th scope="col">Total</th>
                   ${gradoCols}
                   <th class="col-dur" scope="col">Durada</th>
+                  <th class="col-changes" scope="col">Novetats</th>
                 </tr>
               </thead>
               <tbody>${rows}</tbody>

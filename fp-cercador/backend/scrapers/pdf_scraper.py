@@ -48,13 +48,25 @@ PREFIX_MAP = {
     'TMV': 'Transporte y Mantenimiento de Vehículos',
     'VIC': 'Vidrio y Cerámica',
     # Famílies del pla antic / LOGSE / HTML-only
-    'ART': 'Artesanía',
+    'ART': 'Artes y Artesanías',
     'MSP': 'Mantenimiento y Servicios a la Producción',
     'SAN': 'Sanidad',
     'UF': 'Certificados de Profesionalidad',
     'MF': 'Certificados de Profesionalidad',
     # Família IA i Data (Grado E) — imatge amb alt sense prefix "Logotipo "
     'IAD': 'Inteligencia Artificial y Data',
+}
+
+# Mapeig de noms no canònics → nom canònic de PREFIX_MAP.
+# S'aplica a pipeline.py sobre tots els registres (A–E) per garantir
+# que cap font divergent produeixi duplicats al selector de famílies.
+FAMILY_ALIASES: dict[str, str] = {
+    "Artesanía": "Artes y Artesanías",
+    "Artes y Artesanias": "Artes y Artesanías",
+    "Imagen y Sonido": "Imagen y Espectáculos",
+    "Maritimo-Pesquera": "Marítimo-Pesquera",
+    "Maritimo - Pesquera": "Marítimo-Pesquera",
+    "Marítimo - Pesquera": "Marítimo-Pesquera",
 }
 
 # ---------------------------------------------------------------------------

@@ -23,6 +23,7 @@ import time
 from dotenv import load_dotenv
 
 from scrapers.buscador_scraper import parse_buscador_all
+from scrapers.pdf_scraper import FAMILY_ALIASES, PREFIX_MAP
 from scrapers.html_scraper import (
     parse_grado_d_basico,
     parse_grado_d_medio,
@@ -140,15 +141,31 @@ def run() -> dict:
     by_grado['D'] = html_by_grado['D']
     by_grado['E'] = html_by_grado['E']
 
+    # Normalitza noms de família per garantir unicitat entre fonts (A–E).
+    for record in all_records:
+        record['familia'] = FAMILY_ALIASES.get(record['familia'], record['familia'])
+
+    # Detecta famílies desconegudes (no al catàleg canònic).
+    _known = set(PREFIX_MAP.values())
+    _unknown = {r['familia'] for r in all_records if r['familia'] not in _known}
+    for fam in sorted(_unknown):
+        logger.warning("Família nova detectada al refresh: %r — afegeix-la a FAMILY_ALIASES o PREFIX_MAP", fam)
+
     # Afegir id seqüencial 1-based
     for i, record in enumerate(all_records, start=1):
         record['id'] = i
 
     _write_atomic(all_records, DATA_PATH)
 
+    families = sorted({r['familia'] for r in all_records if r['familia'] != 'Desconeguda'})
+    denominacions = sorted({r['denominacion'] for r in all_records if r.get('denominacion')})
+
     return {
         "total": len(all_records),
         "by_grado": by_grado,
+        "families": families,
+        "denominacions": denominacions,
         "errors": [],
+        "unknown_families": sorted(_unknown),
         "duration_seconds": round(time.time() - start, 2),
     }

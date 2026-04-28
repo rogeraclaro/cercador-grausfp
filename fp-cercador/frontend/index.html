@@ -588,12 +588,21 @@
             const res = await fetch(API_BASE + '/api/ofertes');
             if (!res.ok) { this.state = 'error'; return; }
             const data = await res.json();
+            const FAMILIA_ALIASES = {
+              'Artesan\u00eda': 'Artes y Artesan\u00edas',
+              'Artes y Artesanias': 'Artes y Artesan\u00edas',
+              'Imagen y Sonido': 'Imagen y Espect\u00e1culos',
+              'Maritimo-Pesquera': 'Mar\u00edtimo-Pesquera',
+              'Maritimo - Pesquera': 'Mar\u00edtimo-Pesquera',
+              'Mar\u00edtimo - Pesquera': 'Mar\u00edtimo-Pesquera',
+            };
             this.allRecords = data.map(r => ({
               ...r,
+              familia: FAMILIA_ALIASES[r.familia] ?? r.familia,
               _normDen: (r.denominacion || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase(),
               _normCod: (r.codigo || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
             }));
-            this.families = [...new Set(data.map(r => r.familia))].sort();
+            this.families = [...new Set(this.allRecords.map(r => r.familia))].sort();
             this.state = 'ready';
           } catch (e) {
             this.state = 'error';

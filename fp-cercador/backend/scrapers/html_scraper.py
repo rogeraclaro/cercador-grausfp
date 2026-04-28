@@ -33,7 +33,7 @@ import logging
 import requests
 from bs4 import BeautifulSoup
 
-from scrapers.pdf_scraper import PREFIX_MAP
+from scrapers.pdf_scraper import FAMILY_ALIASES, PREFIX_MAP
 
 logger = logging.getLogger(__name__)
 
@@ -55,15 +55,9 @@ HEADERS = {
     ),
 }
 
-# Mapeig de noms de família HTML que NO coincideixen literalment amb PREFIX_MAP
-# de pdf_scraper.py. Detectats durant recerca (03-RESEARCH.md §Mapeig de Famílies).
-# difflib produeix matches incorrectes en aquests 2 casos; el dict explícit és
-# determinista. Si apareixen més anomalies en execució real, el warning de
-# 'Desconeguda' a _extract_titols ho evidenciarà als logs.
-HTML_FAMILY_ALIASES: dict[str, str] = {
-    "Imagen y Sonido": "Imagen y Espectáculos",
-    "Artes y Artesanias": "Artesanía",
-}
+# HTML_FAMILY_ALIASES és ara FAMILY_ALIASES importat de pdf_scraper.py.
+# El conservem com a àlies local per no trencar cap codi extern que l'importi.
+HTML_FAMILY_ALIASES = FAMILY_ALIASES
 
 
 # ---------------------------------------------------------------------------
