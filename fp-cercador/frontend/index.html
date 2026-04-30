@@ -831,13 +831,15 @@
               </tr>
             </template>
             <template x-for="row in pagedRecords" :key="row.id">
-              <tr :class="{ 'row-link': (row.grado === 'C' && row.plan_antiguo) || (['A','B','C'].includes(row.grado) && row.ficha_id) }"
+              <tr :class="{ 'row-link': (row.grado === 'C' && row.plan_antiguo) || (['A','B','C'].includes(row.grado) && row.ficha_id) || (['D','E'].includes(row.grado) && row.ficha_url) }"
                 @click="
                   row.grado === 'C' && row.plan_antiguo
                     ? window.open('https://www.todofp.es/buscadorcertificados/fichaCP?codCertificado=' + row.codigo, '_blank')
                     : ['A','B','C'].includes(row.grado) && row.ficha_id
                       ? window.open('https://www.todofp.es/buscadorgradosfp/ficha?grado=' + row.grado + '&id=' + row.ficha_id, '_blank')
-                      : null
+                      : ['D','E'].includes(row.grado) && row.ficha_url
+                        ? window.open(row.ficha_url, '_blank')
+                        : null
                 ">
                 <td class="col-nom">
                   <span x-text="row.denominacion"></span>

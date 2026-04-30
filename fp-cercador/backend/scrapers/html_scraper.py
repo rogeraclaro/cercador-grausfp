@@ -132,6 +132,7 @@ def _extract_titols(soup: BeautifulSoup, fam_map: dict, nivel, grado: str) -> li
             )
             familia = 'Desconeguda'
 
+        href = a.get('href', '')
         records.append({
             'denominacion': a.get_text(strip=True),
             'familia': familia,
@@ -139,6 +140,7 @@ def _extract_titols(soup: BeautifulSoup, fam_map: dict, nivel, grado: str) -> li
             'codigo': None,
             'plan_antiguo': False,
             'observaciones': '',
+            'ficha_url': ('https://www.todofp.es' + href) if href else None,
         })
     return records
 
