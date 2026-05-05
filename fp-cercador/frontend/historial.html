@@ -87,18 +87,45 @@
     .results-table th.col-dur { text-align: right; width: 90px; }
     .results-table th.col-changes { width: 260px; }
 
-    .changes-list { list-style: none; padding: 0; margin: 0; font-size: 12px; line-height: 1.7; }
+    .changes-list { list-style: none; padding: 0; margin: 4px 0 0; font-size: 12px; line-height: 1.7; }
     .changes-list .new  { color: #166534; }
     .changes-list .gone { color: #991b1b; }
-    .changes-list .delta { color: var(--warm); }
     .changes-list .warn  { color: #92400e; }
     .no-changes { color: var(--warm); font-style: italic; font-size: 12px; }
     .first-entry { color: var(--warm); font-size: 12px; }
 
+    .changes-summary { display: flex; flex-wrap: wrap; gap: 4px; }
+    .chip {
+      border-radius: 4px; padding: 2px 8px;
+      font-size: 11px; font-weight: 600; white-space: nowrap;
+      border: none; cursor: default; font-family: inherit;
+    }
+    .chip.clickable { cursor: pointer; }
+    .chip.clickable:hover { filter: brightness(0.92); }
+    .chip.active { outline: 2px solid currentColor; outline-offset: 1px; }
+    .chip-new  { background: #dcfce7; color: #166534; }
+    .chip-gone { background: #fee2e2; color: #991b1b; }
+    .chip-neutral { background: var(--warm2); color: var(--warm); }
+
+    .acc-row td {
+      background: #f9f4ee;
+      border-bottom: 1px solid var(--border);
+      padding: 0;
+    }
+    .acc-row-inner {
+      padding: 12px 48px 16px;
+      display: flex; flex-wrap: wrap; gap: 6px 24px;
+    }
+    .acc-row-inner ul { list-style: none; padding: 0; margin: 0; min-width: 260px; flex: 1 1 260px; }
+    .acc-row-inner ul li { font-size: 12px; line-height: 1.8; }
+    .acc-row-inner ul li.new  { color: #166534; }
+    .acc-row-inner ul li.gone { color: #991b1b; }
+    .acc-row-title { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--warm); margin-bottom: 4px; }
+
     .results-table td {
       padding: 13px 16px;
       border-bottom: 1px solid var(--border);
-      vertical-align: middle;
+      vertical-align: top;
     }
 
     .results-table td.col-num { text-align: center; color: var(--warm); font-size: 13px; }
@@ -181,6 +208,25 @@
   <script>
     const API_BASE = window.location.hostname === 'localhost' ? 'http://localhost:5001' : '';
 
+    function toggleGradoAcc(rowId, grado) {
+      const tr = document.getElementById(`acc-${rowId}-${grado}`);
+      const chip = document.querySelector(`[data-row="${rowId}"][data-grado="${grado}"]`);
+      if (!tr) return;
+      const opening = tr.hidden;
+      tr.hidden = !opening;
+      chip.classList.toggle('active', opening);
+    }
+
+    function toggleSharedAcc(rowId) {
+      const tr = document.getElementById(`acc-${rowId}-shared`);
+      if (!tr) return;
+      const opening = tr.hidden;
+      tr.hidden = !opening;
+      document.querySelectorAll(`[data-row="${rowId}"][data-grado="shared"]`).forEach(chip => {
+        chip.classList.toggle('active', opening);
+      });
+    }
+
     function formatDate(iso) {
       const d = new Date(iso);
       return d.toLocaleString('ca-ES', {
@@ -206,38 +252,71 @@
           `<th class="col-grado" scope="col">Grau ${g}</th>`
         ).join('');
 
-        function renderChanges(entry) {
+        let _rowId = 0;
+
+        function renderNovetats(entry, rowId) {
           const c = entry.changes;
-          if (c === null || c === undefined) {
-            return '<span class="first-entry">Primer registre</span>';
-          }
-          if (!c.has_changes && !(entry.unknown_families?.length)) {
-            return '<span class="no-changes">Sense canvis</span>';
-          }
-          const items = [];
-          for (const f of (c.new_families || [])) {
-            items.push(`<li class="new">+ Família: ${f}</li>`);
-          }
-          for (const f of (c.removed_families || [])) {
-            items.push(`<li class="gone">− Família: ${f}</li>`);
-          }
+          if (c === null || c === undefined) return '<span class="first-entry">Primer registre</span>';
+          if (!c.has_changes && !(entry.unknown_families?.length)) return '<span class="no-changes">Sense canvis</span>';
+
+          // Entrada antiga: té grado_deltas però sense new_by_grado/removed_by_grado;
+          // tots els chips obren un únic accordion compartit amb new/removed_denominacions.
+          const isLegacy = !c.new_by_grado && !c.removed_by_grado &&
+            (c.new_denominacions?.length || c.removed_denominacions?.length);
+
+          const chips = [];
           for (const [g, d] of Object.entries(c.grado_deltas || {})) {
             const sign = d > 0 ? '+' : '';
-            items.push(`<li class="delta">Grau ${g}: ${sign}${d}</li>`);
+            const cls = d > 0 ? 'chip-new' : d < 0 ? 'chip-gone' : 'chip-neutral';
+            if (isLegacy) {
+              chips.push(`<button class="chip ${cls} clickable" data-row="${rowId}" data-grado="shared" onclick="toggleSharedAcc(${rowId})">Grau ${g}: ${sign}${d}</button>`);
+            } else {
+              const hasDetail = (c.new_by_grado?.[g]?.length || c.removed_by_grado?.[g]?.length);
+              if (hasDetail) {
+                chips.push(`<button class="chip ${cls} clickable" data-row="${rowId}" data-grado="${g}" onclick="toggleGradoAcc(${rowId},'${g}')">Grau ${g}: ${sign}${d}</button>`);
+              } else {
+                chips.push(`<span class="chip ${cls}">Grau ${g}: ${sign}${d}</span>`);
+              }
+            }
           }
-          for (const d of (c.new_denominacions || [])) {
-            items.push(`<li class="new">+ ${d}</li>`);
-          }
-          for (const d of (c.removed_denominacions || [])) {
-            items.push(`<li class="gone">− ${d}</li>`);
-          }
-          for (const f of (entry.unknown_families || [])) {
-            items.push(`<li class="warn">⚠ Família nova: ${f}</li>`);
-          }
-          return `<ul class="changes-list">${items.join('')}</ul>`;
+          return `<div class="changes-summary">${chips.join('')}</div>`;
         }
 
+        function renderAccRows(entry, rowId, colCount) {
+          const c = entry.changes;
+          if (!c) return '';
+
+          // Entrada antiga: accordion compartit amb totes les denominacions planes.
+          const isLegacy = !c.new_by_grado && !c.removed_by_grado &&
+            (c.new_denominacions?.length || c.removed_denominacions?.length);
+          if (isLegacy) {
+            const added   = c.new_denominacions || [];
+            const removed = c.removed_denominacions || [];
+            const addedHtml   = added.length   ? `<ul><p class="acc-row-title">+ Nous (${added.length})</p>${added.map(d=>`<li class="new">+ ${d}</li>`).join('')}</ul>` : '';
+            const removedHtml = removed.length ? `<ul><p class="acc-row-title">− Eliminats (${removed.length})</p>${removed.map(d=>`<li class="gone">− ${d}</li>`).join('')}</ul>` : '';
+            return `<tr class="acc-row" id="acc-${rowId}-shared" hidden>
+              <td colspan="${colCount}"><div class="acc-row-inner">${addedHtml}${removedHtml}</div></td>
+            </tr>`;
+          }
+
+          // Entrada nova: accordion per grado (funciona per A, B, C, D i E).
+          const rows = [];
+          for (const g of Object.keys(c.grado_deltas || {})) {
+            const added   = c.new_by_grado?.[g] || [];
+            const removed = c.removed_by_grado?.[g] || [];
+            if (!added.length && !removed.length) continue;
+            const addedHtml  = added.length  ? `<ul><p class="acc-row-title">+ Nous (${added.length})</p>${added.map(d=>`<li class="new">+ ${d}</li>`).join('')}</ul>` : '';
+            const removedHtml= removed.length ? `<ul><p class="acc-row-title">− Eliminats (${removed.length})</p>${removed.map(d=>`<li class="gone">− ${d}</li>`).join('')}</ul>` : '';
+            rows.push(`<tr class="acc-row" id="acc-${rowId}-${g}" hidden>
+              <td colspan="${colCount}"><div class="acc-row-inner">${addedHtml}${removedHtml}</div></td>
+            </tr>`);
+          }
+          return rows.join('');
+        }
+
+        const colCount = 2 + graus.length + 3; // # + data + total + graus + dur + novetats
         const rows = history.map((entry, i) => {
+          const rowId = ++_rowId;
           const gradoCells = graus.map(g => {
             const n = entry.by_grado?.[g];
             return `<td class="col-grado">${n != null ? n : '—'}</td>`;
@@ -248,8 +327,8 @@
             <td class="col-total">${entry.total ?? '—'}</td>
             ${gradoCells}
             <td class="col-dur">${entry.duration_seconds != null ? entry.duration_seconds + ' s' : '—'}</td>
-            <td>${renderChanges(entry)}</td>
-          </tr>`;
+            <td>${renderNovetats(entry, rowId)}</td>
+          </tr>${renderAccRows(entry, rowId, colCount)}`;
         }).join('');
 
         main.innerHTML = `

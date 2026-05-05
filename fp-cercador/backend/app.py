@@ -109,6 +109,16 @@ def _compute_changes(curr: dict, prev: dict) -> dict:
     new_denominacions = sorted(curr_denoms - prev_denoms)
     removed_denominacions = sorted(prev_denoms - curr_denoms)
 
+    new_by_grado = {}
+    removed_by_grado = {}
+    curr_dbg = curr.get("denominacions_by_grado") or {}
+    prev_dbg = prev.get("denominacions_by_grado") or {}
+    for g in sorted(set(curr_dbg) | set(prev_dbg)):
+        added = sorted(set(curr_dbg.get(g) or []) - set(prev_dbg.get(g) or []))
+        gone  = sorted(set(prev_dbg.get(g) or []) - set(curr_dbg.get(g) or []))
+        if added: new_by_grado[g] = added
+        if gone:  removed_by_grado[g] = gone
+
     return {
         "new_families": new_families,
         "removed_families": removed_families,
@@ -116,6 +126,8 @@ def _compute_changes(curr: dict, prev: dict) -> dict:
         "total_delta": total_delta,
         "new_denominacions": new_denominacions,
         "removed_denominacions": removed_denominacions,
+        "new_by_grado": new_by_grado,
+        "removed_by_grado": removed_by_grado,
         "has_changes": bool(new_families or removed_families or grado_deltas or new_denominacions or removed_denominacions),
     }
 
@@ -129,6 +141,7 @@ def _append_history(result: dict) -> None:
         "by_grado": result.get("by_grado"),
         "families": result.get("families", []),
         "denominacions": result.get("denominacions", []),
+        "denominacions_by_grado": result.get("denominacions_by_grado", {}),
         "unknown_families": result.get("unknown_families", []),
         "duration_seconds": result.get("duration_seconds"),
     }
