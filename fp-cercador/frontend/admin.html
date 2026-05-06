@@ -200,42 +200,8 @@
       <div id="refresh-status"></div>
     </section>
 
-    <!-- ── Secció 2: Cookies del buscador ── -->
-    <section class="section" id="section-cookies">
-      <h2>Cookies del buscador</h2>
-      <p style="color: var(--warm); font-size: 13px; margin-bottom: 12px;">
-        Enganxa el valor de la capçalera <code>Cookie</code> del buscador (només
-        <code>JSESSIONID</code> i <code>__Host-todofp.es</code>). El servei les
-        aplicarà al proper refresh sense reiniciar.
-      </p>
-      <textarea id="cookies-input" placeholder="JSESSIONID=...; __Host-todofp.es=..."></textarea>
-      <details>
-        <summary>‹ Com obtenir les cookies?</summary>
-        <ol style="padding-left: 20px; font-size: 13px; line-height: 1.6;">
-          <li>Obre el buscador oficial: <a href="https://www.todofp.es/buscadorgradosfp/buscador" target="_blank" rel="noopener">todofp.es/buscadorgradosfp/buscador</a></li>
-          <li>Resol el reCAPTCHA si en surt.</li>
-          <li>Fes <strong>una</strong> cerca (selecciona qualsevol opció als desplegables → Buscar) per activar la sessió.</li>
-          <li>Obre DevTools (F12) → pestanya <strong>Application</strong> (a Firefox: <strong>Storage</strong>).</li>
-          <li>A l'esquerra: <strong>Storage → Cookies → https://www.todofp.es</strong></li>
-          <li>Copia els valors actuals (columna "Value") de:
-            <ul>
-              <li><code>JSESSIONID</code></li>
-              <li><code>__Host-todofp.es</code></li>
-            </ul>
-          </li>
-          <li>Construeix la cadena: <code>JSESSIONID=&lt;valor1&gt;; __Host-todofp.es=&lt;valor2&gt;</code></li>
-          <li><strong>NO facis més cerques ni interactuïs amb la pàgina</strong> (cada cerca rota el JSESSIONID i invalida les cookies copiades).</li>
-          <li>Enganxa al camp de dalt → Guardar → immediatament Refresh.</li>
-        </ol>
-        <p style="font-size:12px;color:var(--warm);margin-top:8px;">
-          ⚠️ <strong>Important:</strong> NO usis "Copy as cURL" del Network tab. Això captura el header Cookie de la petició anterior, que ja està invalidat per la rotació de sessió del servidor.
-        </p>
-      </details>
-      <button id="cookies-btn">Guardar</button>
-      <div id="cookies-status"></div>
-    </section>
+    <!-- ── Secció 2: Refresh periòdic ── -->
 
-    <!-- ── Secció 3: Refresh periòdic ── -->
     <section class="section" id="section-scheduler">
       <h2>Refresh periòdic</h2>
       <p style="color: var(--warm); font-size: 13px; margin-bottom: 12px;">
@@ -277,7 +243,9 @@
   </main>
 
   <script>
-    const API_BASE = window.location.hostname === 'localhost'
+    // hostname=='' quan s'obre per file://. Tractem-ho com a localhost perquè
+    // file:// + servidor local és un escenari de desenvolupament habitual.
+    const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '')
       ? 'http://localhost:5001'
       : '';
 
@@ -367,46 +335,6 @@
       } catch (e) {
         setStatus('Error de connexió.', 'error');
         refreshBtn.disabled = false;
-      }
-    });
-
-    // ── Cookies ─────────────────────────────────────────────
-    const cookiesBtn = document.getElementById('cookies-btn');
-    const cookiesInput = document.getElementById('cookies-input');
-    const cookiesStatusEl = document.getElementById('cookies-status');
-
-    function setCookiesStatus(msg, kind = 'info') {
-      cookiesStatusEl.innerHTML = `<div class="status-msg ${kind}">${msg}</div>`;
-    }
-
-    cookiesBtn.addEventListener('click', async () => {
-      const token = getToken();
-      const value = cookiesInput.value.trim();
-      if (!token) { setCookiesStatus('Introdueix el token a la secció de Refresh manual.', 'error'); return; }
-      if (!value) { setCookiesStatus('Enganxa primer les cookies.', 'error'); return; }
-      cookiesBtn.disabled = true;
-      try {
-        const res = await fetch(API_BASE + '/api/admin/update-cookies', {
-          method: 'POST',
-          headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
-          body: JSON.stringify({ cookies: value }),
-        });
-        if (res.status === 200) {
-          setCookiesStatus('Cookies guardades correctament. S\'aplicaran al proper refresh.', 'success');
-          cookiesInput.value = '';
-        } else if (res.status === 400) {
-          setCookiesStatus('Format invàlid: ha de contenir JSESSIONID=…', 'error');
-        } else if (res.status === 401) {
-          setCookiesStatus('Token incorrecte.', 'error');
-        } else if (res.status === 500) {
-          setCookiesStatus('Error escrivint .env al servidor.', 'error');
-        } else {
-          setCookiesStatus('Error inesperat (HTTP ' + res.status + ')', 'error');
-        }
-      } catch (e) {
-        setCookiesStatus('Error de connexió.', 'error');
-      } finally {
-        cookiesBtn.disabled = false;
       }
     });
 

@@ -7,7 +7,6 @@ Rutes:
   GET    /api/refresh-status           → estat del darrer refresh (idle/running/done/error)
   GET    /api/refresh-history          → historial de refreshos (sense auth, màx 20 entrades)
   POST   /api/admin/refresh            → llança el pipeline en background (requereix Bearer token)
-  POST   /api/admin/update-cookies     → actualitza BUSCADOR_COOKIES al .env (Phase 6, D-02)
   GET    /api/admin/scheduler          → retorna config scheduler periòdic (Phase 6, D-08)
   POST   /api/admin/scheduler          → actualitza config scheduler (Phase 6, D-08)
   DELETE /api/admin/scheduler          → desactiva scheduler (Phase 6, D-08)
@@ -24,7 +23,6 @@ import hmac
 import json
 import logging
 import os
-import re
 import threading
 from datetime import datetime, timezone
 
@@ -48,10 +46,6 @@ if not ADMIN_TOKEN:
 
 DATA_PATH = os.path.normpath(
     os.path.join(os.path.dirname(__file__), "data", "ofertes.json")
-)
-
-ENV_PATH = os.path.normpath(
-    os.path.join(os.path.dirname(__file__), ".env")
 )
 
 HISTORY_PATH = os.path.normpath(
@@ -168,36 +162,6 @@ def _append_history(result: dict) -> None:
 
 
 # ---------------------------------------------------------------------------
-# Helper escriptura atòmica al .env (D-02)
-# ---------------------------------------------------------------------------
-
-
-def _write_env_value(key: str, value: str, env_path: str = ENV_PATH) -> None:
-    """Actualitza o afegeix KEY=value al .env de forma atòmica (os.replace)."""
-    import tempfile
-    lines = []
-    if os.path.exists(env_path):
-        with open(env_path, "r", encoding="utf-8") as f:
-            lines = f.readlines()
-    new_line = f"{key}={value}\n"
-    found = False
-    for i, line in enumerate(lines):
-        if line.startswith(f"{key}="):
-            lines[i] = new_line
-            found = True
-            break
-    if not found:
-        lines.append(new_line)
-    dir_path = os.path.dirname(env_path) or "."
-    with tempfile.NamedTemporaryFile(
-        mode="w", encoding="utf-8", dir=dir_path, delete=False
-    ) as tmp:
-        tmp.writelines(lines)
-        tmp_path = tmp.name
-    os.replace(tmp_path, env_path)
-
-
-# ---------------------------------------------------------------------------
 # Rutes
 # ---------------------------------------------------------------------------
 
@@ -294,26 +258,6 @@ def admin_refresh():
         return jsonify({"error": "Could not start refresh"}), 500
 
     return jsonify({"status": "started"}), 200
-
-
-@app.route("/api/admin/update-cookies", methods=["POST"])
-def admin_update_cookies():
-    """D-02: Actualitza BUSCADOR_COOKIES al .env sense restart."""
-    if not _check_auth(request):
-        return jsonify({"error": "Unauthorized"}), 401
-    body = request.get_json(silent=True) or {}
-    raw = (body.get("cookies") or "").strip()
-    # Alguns terminals escapen ! com ! en copiar cURL; normalitzar abans de guardar.
-    cookies = re.sub(r'\\u([0-9a-fA-F]{4})', lambda m: chr(int(m.group(1), 16)), raw)
-    if "JSESSIONID=" not in cookies:
-        return jsonify({"error": "Invalid cookies format"}), 400
-    try:
-        _write_env_value("BUSCADOR_COOKIES", cookies)
-        os.environ["BUSCADOR_COOKIES"] = cookies
-    except OSError as exc:
-        logger.error("update-cookies write failed: %s", exc)
-        return jsonify({"error": "Could not write .env"}), 500
-    return jsonify({"status": "ok"}), 200
 
 
 @app.route("/api/admin/scheduler", methods=["GET"])

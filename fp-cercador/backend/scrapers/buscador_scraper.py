@@ -1,21 +1,24 @@
 """
 buscador_scraper.py — Scraping de l'API del Buscador de Graus FP (todofp.es).
 
-Fa 9 crides GET (3 grados × 3 nivells) i retorna tots els registres A, B i C
-amb família i nivell correctes, incloent codis de pla antic (UF/MF).
+Flow auto-cookies (sense captcha, sense intervenció humana):
+  1. GET https://www.todofp.es/buscadorgradosfp/buscador
+     → el servidor retorna l'HTML de la pàgina i emet JSESSIONID + __Host-todofp.es
+  2. 9 GETs (3 grados × 3 nivells) a buscadorGeneralA|B|C reusant la Session
+     → l'API retorna JSON amb tots els registres
 
-Requereix BUSCADOR_COOKIES a .env — valor de la capçalera Cookie obtingut del
-navegador després de resoldre el reCAPTCHA del buscador:
-  1. Obrir https://www.todofp.es/buscadorgradosfp/buscador
-  2. Resoldre el reCAPTCHA
-  3. Fer una cerca (triant opcions als selects i clicant Buscar)
-  4. DevTools → Network → Fetch/XHR → clic dret sobre buscadorGeneralA → Copy as cURL
-  5. Copiar el valor de -b '...' i posar-lo com a BUSCADOR_COOKIES=... al .env
+Per què el captcha no és necessari:
+  El captcha és client-side (variable JS `mostrarCaptcha=false`, comptador `times`
+  en una sola pàgina, max 50). Cada execució del scraper és una sessió nova de
+  Python, així que el comptador mai s'incrementa al servidor. El uuid pot anar
+  buit a la query string i la API el accepta.
 
-Si la sessió caduca, el pipeline retornarà HTML. Repetir els passos anteriors.
+Si en algun moment el servidor canvia i exigeix el captcha de veritat, la
+resposta serà HTML i `_dump_failure` desarà el cos sencer a data/last_failure.html
+per a diagnòstic.
 
 Cada registre retornat té exactament:
-  {codigo, denominacion, familia, nivel, plan_antiguo, observaciones}
+  {codigo, denominacion, familia, nivel, plan_antiguo, observaciones, ficha_id}
 
 Camp 'id' i 'grado' els afegeix pipeline.py, NO aquest mòdul.
 """
@@ -24,11 +27,11 @@ import re
 import logging
 
 import requests
-from dotenv import load_dotenv
 
 logger = logging.getLogger(__name__)
 
 BASE_URL = 'https://www.todofp.es/buscadorgradosfp'
+BOOTSTRAP_URL = f'{BASE_URL}/buscador'
 
 HEADERS = {
     "User-Agent": (
@@ -36,7 +39,7 @@ HEADERS = {
         "AppleWebKit/537.36 (KHTML, like Gecko) "
         "Chrome/124.0.0.0 Safari/537.36"
     ),
-    "Referer": "https://www.todofp.es/buscadorgradosfp/buscador",
+    "Referer": BOOTSTRAP_URL,
 }
 
 _ENDPOINTS = {
@@ -57,59 +60,49 @@ _FAILURE_DUMP_PATH = os.path.normpath(
 )
 
 
-def _dump_failure(resp, grado: str, nivel: str, sent_headers: dict) -> dict:
-    """Guarda la resposta sencera i retorna un diccionari amb metadades clau."""
+def _dump_failure(resp, context: str) -> dict:
+    """Guarda la resposta sencera i retorna metadades clau per al missatge d'error."""
     snippet = (resp.text or "")[:500]
     try:
         os.makedirs(os.path.dirname(_FAILURE_DUMP_PATH), exist_ok=True)
         with open(_FAILURE_DUMP_PATH, "w", encoding="utf-8") as f:
-            f.write(f"<!-- Grado {grado} nivel {nivel} | status {resp.status_code} -->\n")
-            f.write(f"<!-- Sent UA: {sent_headers.get('User-Agent', '')} -->\n")
+            f.write(f"<!-- {context} | status {resp.status_code} -->\n")
             f.write(resp.text or "")
     except OSError as exc:
         logger.error("No s'ha pogut guardar last_failure.html: %s", exc)
     return {
         "status": resp.status_code,
         "content_type": resp.headers.get("Content-Type", ""),
-        "set_cookie": resp.headers.get("Set-Cookie", ""),
-        "location": resp.headers.get("Location", ""),
         "snippet": snippet,
     }
 
 
-def _parse_cookie_string(s: str) -> dict:
-    """Converteix 'name1=value1; name2=value2' en {name1: value1, name2: value2}."""
-    result = {}
-    for part in s.split(";"):
-        part = part.strip()
-        if not part or "=" not in part:
-            continue
-        name, value = part.split("=", 1)
-        result[name.strip()] = value.strip()
-    return result
-
-
-def _fetch(grado: str, nivel: str, cookie_jar: dict, timeout: int = 30) -> list[dict]:
-    """Fa una crida. Després de la resposta, actualitza cookie_jar amb el Set-Cookie."""
-    url = f"{BASE_URL}/{_ENDPOINTS[grado]}?nivel={nivel}&idFamilia=&grado={grado}&uuid="
-    cookie_header = "; ".join(f"{k}={v}" for k, v in cookie_jar.items())
-    headers = {**HEADERS, "Cookie": cookie_header}
-    resp = requests.get(url, headers=headers, timeout=timeout)
+def _bootstrap_session(timeout: int = 30) -> requests.Session:
+    """GET inicial a /buscador per obtenir cookies fresques (JSESSIONID + __Host-todofp.es)."""
+    session = requests.Session()
+    session.headers.update(HEADERS)
+    resp = session.get(BOOTSTRAP_URL, timeout=timeout)
     resp.raise_for_status()
-    # Actualitza el cookie_jar amb les cookies retornades pel servidor.
-    for c in resp.cookies:
-        cookie_jar[c.name] = c.value
+    if 'JSESSIONID' not in session.cookies:
+        info = _dump_failure(resp, "bootstrap GET /buscador")
+        raise RuntimeError(
+            f"Bootstrap no ha retornat JSESSIONID | HTTP {info['status']} | "
+            f"Content-Type: {info['content_type']} | Snippet: {info['snippet']}"
+        )
+    return session
+
+
+def _fetch(session: requests.Session, grado: str, nivel: str, timeout: int = 30) -> list[dict]:
+    url = f"{BASE_URL}/{_ENDPOINTS[grado]}?nivel={nivel}&idFamilia=&grado={grado}&uuid="
+    resp = session.get(url, timeout=timeout)
+    resp.raise_for_status()
     try:
         data = resp.json()
     except ValueError:
-        info = _dump_failure(resp, grado, nivel, headers)
+        info = _dump_failure(resp, f"Grado {grado} nivel {nivel}")
         raise RuntimeError(
             f"Resposta no-JSON per Grado {grado} nivel {nivel} | "
             f"HTTP {info['status']} | Content-Type: {info['content_type']} | "
-            f"Set-Cookie: {info['set_cookie'][:120]} | "
-            f"Location: {info['location']} | "
-            f"UA enviat: {headers.get('User-Agent', '')[:80]} | "
-            f"Cookie enviat: {cookie_header[:120]} | "
             f"Snippet: {info['snippet']}"
         )
     if not isinstance(data, list):
@@ -130,26 +123,14 @@ def _map_record(item: dict) -> dict:
 
 
 def parse_buscador_all() -> dict:
-    """Scraping de A, B i C tractant la rotació de JSESSIONID manualment.
-
-    todofp.es rota el JSESSIONID després de cada petició exitosa (defensa
-    anti-session-fixation). Mantenim un cookie_jar dict que s'actualitza des
-    del Set-Cookie de cada resposta i el reenviem com a header Cookie.
-    """
-    load_dotenv(override=True)
-    cookies_str = os.environ.get('BUSCADOR_COOKIES', '')
-    if not cookies_str:
-        raise RuntimeError(
-            "BUSCADOR_COOKIES no configurat. Segueix les instruccions del docstring "
-            "per obtenir les cookies del navegador i afegeix BUSCADOR_COOKIES=<valor> al fitxer .env."
-        )
-    cookie_jar = _parse_cookie_string(cookies_str)
+    """Scraping de A, B i C amb cookies obtingudes automàticament del bootstrap."""
+    session = _bootstrap_session()
 
     result = {}
     for grado in ['A', 'B', 'C']:
         records = []
         for nivel in ['1', '2', '3']:
-            items = _fetch(grado, nivel, cookie_jar)
+            items = _fetch(session, grado, nivel)
             records.extend(_map_record(r) for r in items)
             logger.info(f"Grado {grado} nivel {nivel}: {len(items)} registres")
         result[grado] = records
