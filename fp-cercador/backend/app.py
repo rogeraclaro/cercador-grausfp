@@ -6,6 +6,7 @@ Rutes:
   GET    /api/ofertes                  → array JSON dels registres (200) o 503 si no hi ha dades
   GET    /api/refresh-status           → estat del darrer refresh (idle/running/done/error)
   GET    /api/refresh-history          → historial de refreshos (sense auth, màx 20 entrades)
+  GET    /api/next-refresh             → data del proper refresh programat (sense auth)
   POST   /api/admin/refresh            → llança el pipeline en background (requereix Bearer token)
   GET    /api/admin/scheduler          → retorna config scheduler periòdic (Phase 6, D-08)
   POST   /api/admin/scheduler          → actualitza config scheduler (Phase 6, D-08)
@@ -258,6 +259,13 @@ def admin_refresh():
         return jsonify({"error": "Could not start refresh"}), 500
 
     return jsonify({"status": "started"}), 200
+
+
+@app.route("/api/next-refresh")
+def next_refresh():
+    """Retorna la data del proper refresh programat (públic, sense auth)."""
+    next_run = scheduler_service.get_next_run_iso()
+    return jsonify({"next_run": next_run}), 200
 
 
 @app.route("/api/admin/scheduler", methods=["GET"])
