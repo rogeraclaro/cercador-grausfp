@@ -106,7 +106,7 @@ def test_html_family_aliases_contains_known_exceptions():
     assert 'Imagen y Sonido' in HTML_FAMILY_ALIASES
     assert HTML_FAMILY_ALIASES['Imagen y Sonido'] == 'Imagen y Espectáculos'
     assert 'Artes y Artesanias' in HTML_FAMILY_ALIASES
-    assert HTML_FAMILY_ALIASES['Artes y Artesanias'] == 'Artesanía'
+    assert HTML_FAMILY_ALIASES['Artes y Artesanias'] == 'Artes y Artesanías'
 
 
 def test_family_unknown_becomes_desconeguda_and_warns(minimal_html_unknown_family, caplog):
