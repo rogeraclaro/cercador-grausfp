@@ -12,7 +12,7 @@ amb quins prerequisits i quins passos manuals calen al servidor.
 
 | Plan | Títol | Priority | Effort | Depends on | Status |
 |------|-------|----------|--------|------------|--------|
-| 001 | Aïllar tests de dades reals + netejar historial contaminat | P1 | S | — | TODO |
+| 001 | Aïllar tests de dades reals + netejar historial contaminat | P1 | S | — | DONE |
 | 002 | Reparar la suite de tests (arquitectura actual) | P1 | M | 001 | TODO |
 | 003 | Eliminar pdf_scraper mort i pdfplumber | P2 | S | 002 | TODO |
 | 004 | gunicorn a 1 worker + threads | P1 | S | — | TODO |
