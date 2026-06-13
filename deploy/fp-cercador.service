@@ -9,7 +9,8 @@ WorkingDirectory=/home/masellas-grausfp/htdocs/grausfp.masellas.info/fp-cercador
 Environment="PATH=/home/masellas-grausfp/htdocs/grausfp.masellas.info/venv/bin"
 EnvironmentFile=/home/masellas-grausfp/htdocs/grausfp.masellas.info/fp-cercador/backend/.env
 ExecStart=/home/masellas-grausfp/htdocs/grausfp.masellas.info/venv/bin/gunicorn \
-    --workers 2 \
+    --workers 1 \
+    --threads 4 \
     --bind 127.0.0.1:8033 \
     --timeout 120 \
     --access-logfile /var/log/fp-cercador/access.log \

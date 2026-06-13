@@ -59,6 +59,12 @@ systemctl status fp-cercador
 curl http://127.0.0.1:8033/health
 ```
 
+> **Important — no apugis `--workers`**: el backend manté l'scheduler
+> (APScheduler), el lock de refresh i l'estat de `/api/refresh-status` en
+> memòria del procés. Amb més d'un worker, el refresh programat s'executaria
+> duplicat i l'estat seria inconsistent entre workers. Per absorbir més
+> trànsit, apuja `--threads`, no `--workers`.
+
 ## 6. Configurar nginx a CloudPanel
 
 **Opció A (recomanada) — via CloudPanel UI:**
