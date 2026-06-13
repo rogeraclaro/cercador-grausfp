@@ -887,7 +887,9 @@
                 <td colspan="5">Cap resultat coincideix amb els filtres aplicats.</td>
               </tr>
             </template>
-            <template x-for="row in pagedRecords" :key="row.id">
+          </tbody>
+          <template x-for="row in pagedRecords" :key="row.id">
+            <tbody>
               <tr :class="{ 'row-link': (row.grado === 'C' && row.plan_antiguo) || (['A','B','C'].includes(row.grado) && row.ficha_id) || (['D','E'].includes(row.grado) && row.ficha_url) }"
                 @click="
                   row.grado === 'C' && row.plan_antiguo
@@ -907,7 +909,7 @@
                 <td class="col-grau" x-text="row.grado"></td>
                 <td class="col-niv" x-text="row.nivel ?? '—'"></td>
               </tr>
-              <tr x-show="expandedId === row.id && row.grado === 'C' && row.plan_antiguo" x-cloak>
+              <tr x-show="expandedId === row.id && row.grado === 'C' && row.plan_antiguo">
                 <td colspan="5" class="detall-certificat">
                   <div class="detall-inner">
                     <span class="detall-hores" x-show="row.duracion_horas" x-text="row.duracion_horas + ' h.'"></span>
@@ -918,8 +920,8 @@
                   </div>
                 </td>
               </tr>
-            </template>
-          </tbody>
+            </tbody>
+          </template>
         </table>
       </div><!-- /table-wrap -->
 
