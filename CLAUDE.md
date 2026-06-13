@@ -9,7 +9,7 @@ Aplicació web per cercar l'oferta formativa completa del Sistema de Formació P
 
 ### Constraints
 
-- **Tech Stack**: Flask + HTML/CSS/JS vanilla — sense frameworks frontend; requisit explícit del propietari
+- **Tech Stack**: Flask + HTML/CSS/JS vanilla — sense frameworks frontend; requisit explícit del propietari. Excepció acceptada: Alpine.js 3.x (vendoritzat a `frontend/vendor/`, sense CDN) per a la reactivitat d'`index.html`. No afegir-ne cap altre.
 - **Dependencies**: pdfplumber, requests, beautifulsoup4, flask-cors, python-dotenv — cap altra
 - **PDFs**: requereixen headers `Referer` i `User-Agent` per descarregar des de todofp.es
 - **Rendiment**: el cercador ha de ser fluid fins a 1.500 registres sense paginació
