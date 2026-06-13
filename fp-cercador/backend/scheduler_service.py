@@ -15,6 +15,7 @@ from typing import Optional
 
 from apscheduler.schedulers.background import BackgroundScheduler
 
+import history
 import refresh_state
 from scrapers import pipeline
 
@@ -115,6 +116,10 @@ def _scheduled_refresh() -> None:
             duration_seconds=result["duration_seconds"],
             errors=result["errors"],
         )
+        try:
+            history.append(result)
+        except Exception as exc_h:
+            logger.error("Could not write refresh history: %s", exc_h)
     except Exception as exc:
         logger.error("scheduled_refresh failed: %s", exc)
         refresh_state.set_state(status="error", errors=[str(exc)])

@@ -49,8 +49,8 @@ def reset_refresh_state():
 @pytest.fixture(autouse=True)
 def isolate_history(tmp_path, monkeypatch):
     """Evita que els tests escriguin a backend/data/refresh_history.json real."""
-    import app
-    monkeypatch.setattr(app, "HISTORY_PATH", str(tmp_path / "refresh_history.json"))
+    import history
+    monkeypatch.setattr(history, "HISTORY_PATH", str(tmp_path / "refresh_history.json"))
 
 
 @pytest.fixture
