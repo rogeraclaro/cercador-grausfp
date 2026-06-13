@@ -83,18 +83,25 @@ def health():
     return jsonify({"status": "ok"}), 200
 
 
+_ofertes_cache = {"mtime": None, "body": None}
+
+
 @app.route("/api/ofertes")
 def get_ofertes():
-    """API-01 / API-02: Retorna tots els registres de ofertes.json o 503 si no existeix."""
+    """API-01 / API-02: Retorna tots els registres (cache en memòria per mtime)."""
     if not os.path.exists(DATA_PATH):
         return jsonify({"error": "Data not available. Run /api/admin/refresh first."}), 503
     try:
-        with open(DATA_PATH, "r", encoding="utf-8") as f:
-            data = json.load(f)
-    except json.JSONDecodeError as exc:
-        logger.error("ofertes.json is corrupt: %s", exc)
+        mtime = os.path.getmtime(DATA_PATH)
+        if _ofertes_cache["mtime"] != mtime:
+            with open(DATA_PATH, "r", encoding="utf-8") as f:
+                body = f.read()
+            json.loads(body)  # valida abans de cachejar
+            _ofertes_cache.update(mtime=mtime, body=body)
+        return app.response_class(_ofertes_cache["body"], mimetype="application/json")
+    except (OSError, json.JSONDecodeError) as exc:
+        logger.error("ofertes.json unreadable: %s", exc)
         return jsonify({"error": "Data file is corrupt. Run /api/admin/refresh."}), 503
-    return jsonify(data), 200
 
 
 @app.route("/api/refresh-status")

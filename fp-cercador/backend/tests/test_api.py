@@ -77,12 +77,14 @@ def test_health(client):
 # API-01: GET /api/ofertes — 200 quan el fitxer existeix
 # ---------------------------------------------------------------------------
 
-def test_ofertes_200(client):
+def test_ofertes_200(client, monkeypatch):
     """API-01: GET /api/ofertes retorna 200 i una llista JSON quan ofertes.json existeix."""
-    fake_data = [{"id": 1, "denominacion": "Test", "grado": "A"}]
+    import app as flask_app_module
+    monkeypatch.setattr(flask_app_module, "_ofertes_cache", {"mtime": None, "body": None})
+    fake_body = '[{"id": 1, "denominacion": "Test", "grado": "A"}]'
     with mock.patch(PATCH_OS_PATH_EXISTS, return_value=True), \
-         mock.patch("app.json.load", return_value=fake_data), \
-         mock.patch("builtins.open", mock.mock_open(read_data="[]")):
+         mock.patch("app.os.path.getmtime", return_value=1.0), \
+         mock.patch("builtins.open", mock.mock_open(read_data=fake_body)):
         r = client.get("/api/ofertes")
     assert r.status_code == 200
     data = r.get_json()
