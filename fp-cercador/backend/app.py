@@ -24,9 +24,12 @@ import hmac
 import json
 import logging
 import os
+import re
 import threading
 from datetime import datetime, timezone
 
+import requests
+from bs4 import BeautifulSoup
 from dotenv import load_dotenv
 from flask import Flask, jsonify, request
 from flask_cors import CORS
@@ -227,6 +230,70 @@ def scheduler_delete():
         logger.error("scheduler delete failed: %s", exc)
         return jsonify({"error": "Could not disable scheduler"}), 500
     return jsonify({"status": "disabled"}), 200
+
+
+# ---------------------------------------------------------------------------
+# Endpoint on-demand: fitxa BOE d'un Grado C LOE
+# ---------------------------------------------------------------------------
+
+_CERT_BASE = 'https://www.todofp.es/buscadorcertificados'
+_CODIGO_RE = re.compile(r'^[A-Z0-9_]{4,20}$')
+
+
+@app.route('/api/certificado/<string:codigo>')
+def get_certificado_detail(codigo):
+    """Retorna url_boe per a un Grado C LOE (plan_antiguo=True). Fa POST a fichaCP on-demand."""
+    if not _CODIGO_RE.match(codigo):
+        return jsonify({'error': 'Codi invàlid'}), 400
+
+    if not os.path.exists(DATA_PATH):
+        return jsonify({'error': 'Data not available. Run /api/admin/refresh first.'}), 503
+
+    try:
+        with open(DATA_PATH, 'r', encoding='utf-8') as f:
+            ofertes = json.load(f)
+    except (OSError, json.JSONDecodeError) as exc:
+        logger.error("get_certificado_detail: no s'ha pogut llegir ofertes.json: %s", exc)
+        return jsonify({'error': 'Data file is corrupt.'}), 503
+
+    record = next(
+        (r for r in ofertes if r.get('codigo') == codigo and r.get('plan_antiguo')),
+        None
+    )
+    if not record:
+        return jsonify({'error': 'Certificat no trobat o no és pla antic'}), 404
+
+    cert_id = record.get('cert_id_buscador')
+    if not cert_id:
+        return jsonify({'error': 'cert_id_buscador no disponible (cal fer un refresh)'}), 404
+
+    try:
+        session = requests.Session()
+        session.headers.update({
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+            'Referer': _CERT_BASE + '/buscador',
+        })
+        session.get(_CERT_BASE + '/buscador', timeout=10)
+
+        data = {
+            'certificadoID': str(cert_id),
+            'limite': '0', 'paso': '10', 'total': '1',
+            'codigo': codigo, 'denominacion': '', 'familia': '0',
+            'nivelFiltro': '0', 'origen': 'busquedaCP',
+        }
+        resp = session.post(_CERT_BASE + '/fichaCP', data=data, timeout=15)
+        resp.raise_for_status()
+
+        soup = BeautifulSoup(resp.text, 'html.parser')
+        boe_link = soup.find('a', class_='enlace-ficha-boe',
+                             href=re.compile(r'boe\.es'))
+        url_boe = boe_link['href'] if boe_link else None
+
+        return jsonify({'codigo': codigo, 'url_boe': url_boe})
+
+    except Exception as exc:
+        logger.error("get_certificado_detail: error cridant fichaCP per %s: %s", codigo, exc)
+        return jsonify({'error': str(exc)}), 502
 
 
 # ---------------------------------------------------------------------------

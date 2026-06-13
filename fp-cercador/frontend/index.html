@@ -559,6 +559,48 @@
         flex-wrap: wrap;
       }
     }
+
+    /* ── Detall Grado C expandible ── */
+    .detall-certificat {
+      background: var(--warm2);
+      border-bottom: 1px solid var(--border);
+      padding: 0;
+    }
+
+    .detall-inner {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 10px 16px;
+    }
+
+    .detall-inner .detall-hores {
+      font-size: 13px;
+      color: var(--warm);
+      margin-right: 4px;
+    }
+
+    .btn-doc {
+      display: inline-block;
+      padding: 5px 12px;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      background: var(--white);
+      color: var(--dark);
+      font-size: 12px;
+      font-family: inherit;
+      cursor: pointer;
+      text-decoration: none;
+      line-height: 1.4;
+      transition: background 0.15s;
+    }
+
+    .btn-doc:hover {
+      background: var(--border);
+    }
+
+    [x-cloak] { display: none !important; }
   </style>
 
   <script>
@@ -582,6 +624,7 @@
         pageSize: 50,
         sortCol: '',
         sortDir: 0,
+        expandedId: null,
 
         async init() {
           try {
@@ -692,6 +735,20 @@
         setGrado(g) {
           this.filterGrado = this.filterGrado === g ? '' : g;
           this.resetPage();
+        },
+
+        async fetchBoe(codigo) {
+          try {
+            const res = await fetch(API_BASE + '/api/certificado/' + codigo);
+            const data = await res.json();
+            if (data.url_boe) {
+              window.open(data.url_boe, '_blank');
+            } else {
+              alert('URL del BOE no disponible per a aquest certificat.');
+            }
+          } catch (e) {
+            alert('Error en obtenir el BOE: ' + e.message);
+          }
         }
       }));
     });
@@ -834,7 +891,7 @@
               <tr :class="{ 'row-link': (row.grado === 'C' && row.plan_antiguo) || (['A','B','C'].includes(row.grado) && row.ficha_id) || (['D','E'].includes(row.grado) && row.ficha_url) }"
                 @click="
                   row.grado === 'C' && row.plan_antiguo
-                    ? window.open('https://www.todofp.es/buscadorcertificados/fichaCP?codCertificado=' + row.codigo, '_blank')
+                    ? (expandedId = (expandedId === row.id ? null : row.id))
                     : ['A','B','C'].includes(row.grado) && row.ficha_id
                       ? window.open('https://www.todofp.es/buscadorgradosfp/ficha?grado=' + row.grado + '&id=' + row.ficha_id, '_blank')
                       : ['D','E'].includes(row.grado) && row.ficha_url
@@ -849,6 +906,17 @@
                 <td class="col-fam" x-text="row.familia"></td>
                 <td class="col-grau" x-text="row.grado"></td>
                 <td class="col-niv" x-text="row.nivel ?? '—'"></td>
+              </tr>
+              <tr x-show="expandedId === row.id && row.grado === 'C' && row.plan_antiguo" x-cloak>
+                <td colspan="5" class="detall-certificat">
+                  <div class="detall-inner">
+                    <span class="detall-hores" x-show="row.duracion_horas" x-text="row.duracion_horas + ' h.'"></span>
+                    <a :href="row.url_anexo_pdf" target="_blank" rel="noopener" class="btn-doc">Annexe PDF</a>
+                    <a :href="row.url_europass_es" target="_blank" rel="noopener" class="btn-doc">Europass ES</a>
+                    <a :href="row.url_europass_en" target="_blank" rel="noopener" class="btn-doc">Europass EN</a>
+                    <button @click.stop="fetchBoe(row.codigo)" class="btn-doc">BOE / RD</button>
+                  </div>
+                </td>
               </tr>
             </template>
           </tbody>

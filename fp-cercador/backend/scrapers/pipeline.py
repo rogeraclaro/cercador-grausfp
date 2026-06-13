@@ -141,6 +141,19 @@ def run() -> dict:
     by_grado['D'] = html_by_grado['D']
     by_grado['E'] = html_by_grado['E']
 
+    # Enriquiment Grado C LOE (plan_antiguo=True) amb dades del buscador de certificats
+    try:
+        from scrapers.certificados_scraper import fetch_all as fetch_certificados, enrich_record
+        cert_data = fetch_certificados()
+        for record in all_records:
+            if record.get('grado') == 'C' and record.get('plan_antiguo'):
+                enrichment = cert_data.get(record['codigo'])
+                if enrichment:
+                    record.update(enrich_record(record, enrichment))
+        logger.info("Enriquiment Grado C: %d certificats processats", len(cert_data))
+    except Exception as exc:
+        logger.warning("Enriquiment Grado C fallat (continua sense dades extra): %s", exc)
+
     # Normalitza noms de família per garantir unicitat entre fonts (A–E).
     for record in all_records:
         record['familia'] = FAMILY_ALIASES.get(record['familia'], record['familia'])
