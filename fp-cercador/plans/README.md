@@ -18,7 +18,7 @@ amb quins prerequisits i quins passos manuals calen al servidor.
 | 004 | gunicorn a 1 worker + threads | P1 | S | — | DONE |
 | 005 | El refresh programat escriu historial (history.py) | P1 | S | 001 | DONE |
 | 006 | Aprimar historial (11,5 MB → KB), gzip, cache ofertes | P2 | M | 005 | DONE |
-| 007 | Debug de Flask fora per defecte | P2 | S | — | TODO |
+| 007 | Debug de Flask fora per defecte | P2 | S | — | DONE |
 | 008 | Eliminar 6 variants mortes del frontend | P2 | S | — | TODO |
 | 009 | Escapar dades scrapejades a historial.html | P2 | S | — | TODO |
 | 010 | Treure artefactes de dades del git | P2 | S | 001 (recomanat) | TODO |

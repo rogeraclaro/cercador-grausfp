@@ -9,3 +9,5 @@ espanyol (Grados A–E).
 2. Edita `backend/.env` i assigna un valor segur a `ADMIN_TOKEN`
 3. Instal·la les dependències: `pip install -r backend/requirements.txt`
 4. Arrenca el servidor: `cd backend && python app.py`
+   (per a desenvolupament amb autoreload i debugger: `FLASK_DEBUG=1 python app.py` —
+   no ho facis mai en un servidor exposat)
