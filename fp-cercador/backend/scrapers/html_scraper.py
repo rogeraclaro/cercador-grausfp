@@ -33,7 +33,7 @@ import logging
 import requests
 from bs4 import BeautifulSoup
 
-from scrapers.pdf_scraper import FAMILY_ALIASES, PREFIX_MAP
+from scrapers.families import FAMILY_ALIASES, PREFIX_MAP
 
 logger = logging.getLogger(__name__)
 
@@ -55,7 +55,7 @@ HEADERS = {
     ),
 }
 
-# HTML_FAMILY_ALIASES és ara FAMILY_ALIASES importat de pdf_scraper.py.
+# HTML_FAMILY_ALIASES és ara FAMILY_ALIASES importat de families.py.
 # El conservem com a àlies local per no trencar cap codi extern que l'importi.
 HTML_FAMILY_ALIASES = FAMILY_ALIASES
 

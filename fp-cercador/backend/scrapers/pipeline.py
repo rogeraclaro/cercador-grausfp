@@ -23,7 +23,7 @@ import time
 from dotenv import load_dotenv
 
 from scrapers.buscador_scraper import parse_buscador_all
-from scrapers.pdf_scraper import FAMILY_ALIASES, PREFIX_MAP
+from scrapers.families import FAMILY_ALIASES, PREFIX_MAP
 from scrapers.html_scraper import (
     parse_grado_d_basico,
     parse_grado_d_medio,
