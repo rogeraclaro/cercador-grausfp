@@ -19,8 +19,8 @@ amb quins prerequisits i quins passos manuals calen al servidor.
 | 005 | El refresh programat escriu historial (history.py) | P1 | S | 001 | DONE |
 | 006 | Aprimar historial (11,5 MB → KB), gzip, cache ofertes | P2 | M | 005 | DONE |
 | 007 | Debug de Flask fora per defecte | P2 | S | — | DONE |
-| 008 | Eliminar 6 variants mortes del frontend | P2 | S | — | TODO |
-| 009 | Escapar dades scrapejades a historial.html | P2 | S | — | TODO |
+| 008 | Eliminar 6 variants mortes del frontend | P2 | S | — | DONE |
+| 009 | Escapar dades scrapejades a historial.html | P2 | S | — | DONE |
 | 010 | Treure artefactes de dades del git | P2 | S | 001 (recomanat) | TODO |
 | 011 | Actualitzar documentació obsoleta (cookies/UUID) | P3 | S | 007 (i millor després de 003, 004, 006, 010) | TODO |
 | 012 | Vendoritzar Alpine.js (treure CDN) | P3 | S | — | TODO |

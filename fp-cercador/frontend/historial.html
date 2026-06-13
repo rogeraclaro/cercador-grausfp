@@ -227,6 +227,11 @@
       });
     }
 
+    function esc(s) {
+      return String(s).replace(/[&<>"']/g, c =>
+        ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    }
+
     function formatDate(iso) {
       const d = new Date(iso);
       return d.toLocaleString('ca-ES', {
@@ -292,8 +297,8 @@
           if (isLegacy) {
             const added   = c.new_denominacions || [];
             const removed = c.removed_denominacions || [];
-            const addedHtml   = added.length   ? `<ul><p class="acc-row-title">+ Nous (${added.length})</p>${added.map(d=>`<li class="new">+ ${d}</li>`).join('')}</ul>` : '';
-            const removedHtml = removed.length ? `<ul><p class="acc-row-title">− Eliminats (${removed.length})</p>${removed.map(d=>`<li class="gone">− ${d}</li>`).join('')}</ul>` : '';
+            const addedHtml   = added.length   ? `<ul><p class="acc-row-title">+ Nous (${added.length})</p>${added.map(d=>`<li class="new">+ ${esc(d)}</li>`).join('')}</ul>` : '';
+            const removedHtml = removed.length ? `<ul><p class="acc-row-title">− Eliminats (${removed.length})</p>${removed.map(d=>`<li class="gone">− ${esc(d)}</li>`).join('')}</ul>` : '';
             return `<tr class="acc-row" id="acc-${rowId}-shared" hidden>
               <td colspan="${colCount}"><div class="acc-row-inner">${addedHtml}${removedHtml}</div></td>
             </tr>`;
@@ -305,8 +310,8 @@
             const added   = c.new_by_grado?.[g] || [];
             const removed = c.removed_by_grado?.[g] || [];
             if (!added.length && !removed.length) continue;
-            const addedHtml  = added.length  ? `<ul><p class="acc-row-title">+ Nous (${added.length})</p>${added.map(d=>`<li class="new">+ ${d}</li>`).join('')}</ul>` : '';
-            const removedHtml= removed.length ? `<ul><p class="acc-row-title">− Eliminats (${removed.length})</p>${removed.map(d=>`<li class="gone">− ${d}</li>`).join('')}</ul>` : '';
+            const addedHtml  = added.length  ? `<ul><p class="acc-row-title">+ Nous (${added.length})</p>${added.map(d=>`<li class="new">+ ${esc(d)}</li>`).join('')}</ul>` : '';
+            const removedHtml= removed.length ? `<ul><p class="acc-row-title">− Eliminats (${removed.length})</p>${removed.map(d=>`<li class="gone">− ${esc(d)}</li>`).join('')}</ul>` : '';
             rows.push(`<tr class="acc-row" id="acc-${rowId}-${g}" hidden>
               <td colspan="${colCount}"><div class="acc-row-inner">${addedHtml}${removedHtml}</div></td>
             </tr>`);
