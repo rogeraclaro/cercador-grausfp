@@ -21,7 +21,7 @@ amb quins prerequisits i quins passos manuals calen al servidor.
 | 007 | Debug de Flask fora per defecte | P2 | S | — | DONE |
 | 008 | Eliminar 6 variants mortes del frontend | P2 | S | — | DONE |
 | 009 | Escapar dades scrapejades a historial.html | P2 | S | — | DONE |
-| 010 | Treure artefactes de dades del git | P2 | S | 001 (recomanat) | TODO |
+| 010 | Treure artefactes de dades del git | P2 | S | 001 (recomanat) | DONE |
 | 011 | Actualitzar documentació obsoleta (cookies/UUID) | P3 | S | 007 (i millor després de 003, 004, 006, 010) | TODO |
 | 012 | Vendoritzar Alpine.js (treure CDN) | P3 | S | — | TODO |
 | 013 | [SPIKE opcional] Dades extra Grado C | P3 | M | — | TODO |
