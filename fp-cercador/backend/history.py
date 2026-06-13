@@ -15,7 +15,31 @@ logger = logging.getLogger(__name__)
 HISTORY_PATH = os.path.normpath(
     os.path.join(os.path.dirname(__file__), "data", "refresh_history.json")
 )
+SNAPSHOT_PATH = os.path.normpath(
+    os.path.join(os.path.dirname(__file__), "data", "last_snapshot.json")
+)
 HISTORY_MAX = 20
+
+
+def _load_json(path: str):
+    """Retorna el contingut JSON del fitxer o None si no existeix o és invàlid."""
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except (OSError, json.JSONDecodeError):
+        return None
+
+
+def _write_atomic(data, path: str) -> None:
+    """Escriu data com JSON al path de forma atòmica (tempfile + os.replace)."""
+    dir_path = os.path.dirname(path)
+    os.makedirs(dir_path, exist_ok=True)
+    with tempfile.NamedTemporaryFile(
+        mode="w", encoding="utf-8", dir=dir_path, delete=False
+    ) as tmp:
+        json.dump(data, tmp, ensure_ascii=False)
+        tmp_path = tmp.name
+    os.replace(tmp_path, path)
 
 
 def compute_changes(curr: dict, prev: dict) -> dict:
@@ -64,34 +88,30 @@ def compute_changes(curr: dict, prev: dict) -> dict:
 
 
 def append(result: dict) -> None:
-    """Afegeix una entrada a refresh_history.json (màx HISTORY_MAX entrades)."""
-    entry = {
-        "ts": datetime.now(timezone.utc).isoformat(),
+    """Afegeix una entrada SLIM a l'historial i actualitza l'snapshot.
+
+    L'snapshot (last_snapshot.json) guarda les llistes completes del
+    darrer refresh — només serveixen per diffejar el refresh següent.
+    Les entrades de l'historial només porten el resum + changes.
+    """
+    full = {
         "total": result.get("total"),
         "by_grado": result.get("by_grado"),
         "families": result.get("families", []),
         "denominacions": result.get("denominacions", []),
         "denominacions_by_grado": result.get("denominacions_by_grado", {}),
+    }
+    prev = _load_json(SNAPSHOT_PATH)
+    entry = {
+        "ts": datetime.now(timezone.utc).isoformat(),
+        "total": result.get("total"),
+        "by_grado": result.get("by_grado"),
         "unknown_families": result.get("unknown_families", []),
         "duration_seconds": result.get("duration_seconds"),
+        "changes": compute_changes(full, prev) if prev else None,
     }
-    history = []
-    if os.path.exists(HISTORY_PATH):
-        try:
-            with open(HISTORY_PATH, "r", encoding="utf-8") as f:
-                history = json.load(f)
-        except (json.JSONDecodeError, OSError):
-            history = []
-
-    entry["changes"] = compute_changes(entry, history[0]) if history else None
-
+    history = _load_json(HISTORY_PATH) or []
     history.insert(0, entry)
     history = history[:HISTORY_MAX]
-    dir_path = os.path.dirname(HISTORY_PATH)
-    os.makedirs(dir_path, exist_ok=True)
-    with tempfile.NamedTemporaryFile(
-        mode="w", encoding="utf-8", dir=dir_path, delete=False
-    ) as tmp:
-        json.dump(history, tmp, ensure_ascii=False)
-        tmp_path = tmp.name
-    os.replace(tmp_path, HISTORY_PATH)
+    _write_atomic(history, HISTORY_PATH)
+    _write_atomic(full, SNAPSHOT_PATH)
