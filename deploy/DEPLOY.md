@@ -83,6 +83,10 @@ ln -s /etc/nginx/sites-available/fp-cercador.conf /etc/nginx/sites-enabled/
 nginx -t && systemctl reload nginx
 ```
 
+> **Nota (pla 006 — gzip):** `nginx-cloudpanel.conf` inclou directives `gzip` per
+> comprimir respostes JSON del proxy. Després d'aplicar el fitxer al VPS, recarrega
+> nginx: `nginx -t && systemctl reload nginx`.
+
 ## 7. Verificació final
 
 ```bash
