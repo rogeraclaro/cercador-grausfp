@@ -36,10 +36,7 @@ El `.env` ha de contenir:
 
 ```
 ADMIN_TOKEN=<token-segur-aleatori>
-BUSCADOR_COOKIES=JSESSIONID=<valor>; __Host-todofp.es=<valor>
 ```
-
-Per obtenir `BUSCADOR_COOKIES` → veure la secció **"Renovar les cookies del buscador"** al final d'aquest document.
 
 ## 4. Crear directori de logs
 
@@ -100,10 +97,11 @@ curl https://DOMINI_AQUI/api/ofertes | head -c 200
 
 ## 8. Dades inicials i refresh
 
-`data/ofertes.json` **ja està inclòs al repositori** — després d'un `git pull` el frontend
-mostra les dades immediatament sense necessitat de cap refresh.
+> **Nota**: `backend/data/` no està versionat. En un desplegament nou,
+> `/api/ofertes` retornarà 503 fins que llancis el primer refresh des del
+> panell admin (o via `POST /api/admin/refresh`).
 
-Per regenerar les dades al VPS (si vols dades més recents o has actualitzat `BUSCADOR_COOKIES`):
+Per generar les dades al VPS:
 
 ```bash
 curl -X POST https://DOMINI_AQUI/api/admin/refresh \
@@ -112,7 +110,7 @@ curl -X POST https://DOMINI_AQUI/api/admin/refresh \
 curl https://DOMINI_AQUI/api/refresh-status
 ```
 
-**Nota:** El refresh triga ~4s i requereix `BUSCADOR_COOKIES` vàlides al `.env`.
+**Nota:** El refresh triga ~4s.
 
 ## Gestió del servei
 
@@ -136,62 +134,11 @@ systemctl restart fp-cercador
 
 ---
 
-## Renovar les cookies del buscador (quan caduca la sessió)
+## Sobre les cookies del buscador
 
-L'API del buscador de todofp.es autentica via **cookie de sessió** (`JSESSIONID`).
-Quan caduca (el pipeline retorna HTML en lloc de JSON), cal renovar-la:
-
-### Passos per obtenir les cookies noves
-
-⚠️ **Important:** todofp.es rota el `JSESSIONID` després de cada petició. "Copy as cURL" del Network tab captura el `Cookie` que es va **enviar** en aquella petició — un valor que el servidor ja ha invalidat per la rotació. Cal copiar les cookies **actuals** del cookie jar del navegador (Application tab), no del Network tab.
-
-1. Obre **https://www.todofp.es/buscadorgradosfp/buscador** al navegador
-2. Resol el **reCAPTCHA** si apareix
-3. Fes **una** cerca (selecciona qualsevol opció als 3 selects → **Buscar**) per activar la sessió
-4. Obre **DevTools** (F12) → pestanya **Application** (Firefox: **Storage**)
-5. A l'esquerra: **Storage → Cookies → https://www.todofp.es**
-6. Copia els valors actuals (columna "Value") de:
-   - `JSESSIONID`
-   - `__Host-todofp.es`
-7. Construeix la cadena:
-   ```
-   JSESSIONID=<valor1>; __Host-todofp.es=<valor2>
-   ```
-8. **NO interactuïs més amb la pàgina del buscador** (cada cerca/clic pot rotar les cookies i invalidar les que has copiat). Enganxa al panell admin i fes Refresh immediatament.
-
-### Actualitzar des del panell d'administració (recomanat — Fase 6)
-
-1. Obre `https://DOMINI_AQUI/admin.html` al navegador.
-2. Introdueix l'`ADMIN_TOKEN` al camp de la secció **Refresh manual**.
-3. A la secció **Cookies del buscador**, enganxa el valor `JSESSIONID=…; __Host-todofp.es=…` (les instruccions detallades estan dins el desplegable «Com obtenir les cookies?»).
-4. Clica **Guardar**. Veuràs «Cookies guardades correctament». El proper refresh aplicarà el nou valor sense reiniciar el servei.
-
-> El token només viu a la memòria del navegador; en tancar la pestanya s'esborra (no es guarda a localStorage).
-
-### Alternativa: actualitzar manualment per SSH
-
-```bash
-nano /home/masellas-grausfp/htdocs/grausfp.masellas.info/fp-cercador/backend/.env
-# Substituir la línia BUSCADOR_COOKIES=
-```
-
-A partir de la Fase 6 **ja no cal `systemctl restart fp-cercador`** — el pipeline crida `load_dotenv(override=True)` a cada execució i recarrega el `.env` automàticament.
-
-### Refresh periòdic (opcional)
-
-Al mateix `/admin.html`, la secció **Refresh periòdic** permet programar un refresh automàtic recurrent (dia de la setmana + hora). La config es persisteix a `backend/data/scheduler.json` i Flask la reprograma a l'arrencada.
-
-### Verificar que funciona
-
-```bash
-curl -X POST https://grausfp.masellas.info/api/admin/refresh \
-  -H "Authorization: Bearer <ADMIN_TOKEN>"
-```
-
-Ha de retornar JSON amb `total` ~12.768 i `errors: []`.
-
-### Freqüència de caducitat
-
-La sessió dura mentre el servidor de todofp.es mantingui el `JSESSIONID` actiu.
-En pràctica caduca en dies/setmanes. Si el frontend mostra 0 resultats o el refresh
-falla, renovar les cookies seguint els passos anteriors.
+Des del refactor auto-cookies (maig 2026), el scraper obté les cookies
+automàticament amb un GET de bootstrap a
+`https://www.todofp.es/buscadorgradosfp/buscador` a cada refresh.
+No cal configurar res. Si el refresh falla amb "Bootstrap no ha retornat
+JSESSIONID", inspecciona `backend/data/last_failure.html` per veure la
+resposta del servidor.

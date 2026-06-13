@@ -11,7 +11,7 @@ Decisions aplicades:
   D-09: app.py NO s'ha de tocar; aquest mòdul és independent de Flask
 
 Grados A, B, C: API REST del Buscador de Graus FP (buscador_scraper.py).
-  Requereix BUSCADOR_UUID a .env (obtingut resolent el reCAPTCHA del buscador).
+  Cookies obtingudes automàticament via bootstrap GET (sense captcha ni config).
 Grados D, E: scraping HTML de todofp.es (html_scraper.py).
 """
 import json
@@ -97,8 +97,8 @@ def run() -> dict:
         "duration_seconds": float,
     }
     """
-    # D-01 (Phase 6): Recarrega .env perquè un BUSCADOR_COOKIES actualitzat
-    # via /api/admin/update-cookies prengui efecte sense reiniciar el servei.
+    # Recarrega .env a cada run perquè canvis de configuració (p. ex. URLs
+    # dels Grados D/E) prenguin efecte sense reiniciar el servei.
     load_dotenv(override=True)
 
     start = time.time()
