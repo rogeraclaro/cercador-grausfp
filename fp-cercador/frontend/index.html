@@ -661,12 +661,6 @@
 
     .centres-more { color: #888; font-size: 0.82rem; margin-top: 8px; }
     .centres-buit { color: #888; font-style: italic; font-size: 0.85rem; }
-    .btn-email {
-      background: none; border: none; padding: 0;
-      color: #1a73e8; font-size: inherit; font-family: inherit;
-      cursor: pointer; text-decoration: underline;
-    }
-    .btn-email:hover { color: #1558b0; }
   </style>
 
   <script>
@@ -1088,8 +1082,8 @@
                               <span x-text="tc(centre.direccio) || ''"></span>
                               <span x-show="centre.direccio && centre.localitat">, </span>
                               <span x-text="centre.localitat || ''"></span>
-                              <span x-show="centre.telefon"> · 📞 <span x-text="centre.telefon"></span></span>
-                              <span x-show="centre.email"> · <button class="btn-email" @click.stop="window.location.href='mailto:'+centre.email">✉ Contactar</button></span>
+                              <span x-show="centre.telefon"> · <a :href="'tel:'+centre.telefon" x-text="'📞 '+centre.telefon" style="color:inherit;text-decoration:none"></a></span>
+                              <span x-show="centre.email"> · <a :href="'mailto:'+centre.email" x-text="centre.email" style="color:inherit"></a></span>
                             </div>
                           </div>
                         </template>
