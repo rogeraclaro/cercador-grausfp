@@ -1083,6 +1083,7 @@
                               <span x-show="centre.direccio && centre.localitat">, </span>
                               <span x-text="centre.localitat || ''"></span>
                               <span x-show="centre.telefon"> · 📞 <span x-text="centre.telefon"></span></span>
+                              <span x-show="centre.email"> · <a :href="'mailto:' + centre.email" x-text="centre.email" style="color:inherit"></a></span>
                             </div>
                           </div>
                         </template>
