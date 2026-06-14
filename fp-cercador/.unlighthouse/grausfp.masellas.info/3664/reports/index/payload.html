@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="ca">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="author" content="Roger Masellas">
+  <meta name="description" content="Cercador de graus de formació professional">
+  <meta name="copyright" content="Roger Masellas, 2026">
+  <title>Cercador Graus FP</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=DM+Serif+Display:ital@0;1&family=Geist+Mono:wght@400;500&display=swap"
+    rel="stylesheet">
+
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --dark: #1c1410;
+      --warm: #8a7060;
+      --warm2: #f5ece2;
+      --border: #e8ddd4;
+      --bg: #fdf8f2;
+      --white: #ffffff;
+    }
+
+    body {
+      font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 14px;
+      color: var(--dark);
+      background: var(--bg);
+    }
+
+    /* ── Top bar ── */
+    .topbar {
+      background: var(--dark);
+      padding: 0 48px;
+    }
+
+    .topbar-inner {
+      display: flex;
+      align-items: center;
+      height: 52px;
+    }
+
+    .topbar-logo {
+      font-family: 'DM Serif Display', serif;
+      color: var(--white);
+      font-size: 20px;
+      letter-spacing: -0.3px;
+    }
+
+    /* ── Hero ── */
+    .hero {
+      border-bottom: 2px solid var(--dark);
+      padding: 40px 48px 32px;
+    }
+
+    .hero h1 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 48px;
+      font-weight: 400;
+      line-height: 1.05;
+      color: var(--dark);
+      margin-bottom: 10px;
+    }
+
+    .hero-sub {
+      font-size: 15px;
+      color: var(--warm);
+      margin-bottom: 28px;
+    }
+
+    .search-wrap {
+      position: relative;
+      max-width: 640px;
+    }
+
+    .search-wrap svg {
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      pointer-events: none;
+    }
+
+    input[type="search"] {
+      width: 100%;
+      padding: 14px 18px 14px 50px;
+      border: 2px solid var(--dark);
+      border-radius: 6px;
+      font-size: 15px;
+      font-family: inherit;
+      outline: none;
+      background: var(--white);
+      color: var(--dark);
+      letter-spacing: -0.1px;
+    }
+
+    input[type="search"]::placeholder {
+      color: #b8a898;
+    }
+
+    input[type="search"]:focus {
+      border-color: var(--dark);
+    }
+
+    /* ── Grau tabs ── */
+    .grau-tabs {
+      display: flex;
+      border-bottom: 1px solid var(--border);
+      background: var(--white);
+      overflow-x: auto;
+      padding: 0 48px;
+    }
+
+    .grau-tabs button {
+      padding: 13px 18px;
+      border: none;
+      border-bottom: 2.5px solid transparent;
+      cursor: pointer;
+      font-size: 14px;
+      font-family: inherit;
+      font-weight: 400;
+      background: transparent;
+      color: var(--warm);
+      white-space: nowrap;
+      transition: color 0.15s, border-color 0.15s;
+    }
+
+    .grau-tabs button:hover {
+      color: var(--dark);
+    }
+
+    .grau-tabs button.active {
+      border-bottom-color: var(--dark);
+      color: var(--dark);
+      font-weight: 600;
+    }
+
+    /* ── Secondary filters ── */
+    .filter-bar {
+      background: var(--warm2);
+      border-bottom: 1px solid var(--border);
+      padding: 10px 48px;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .filter-bar-label {
+      font-size: 13px;
+      color: var(--warm);
+      margin-right: 4px;
+    }
+
+    select {
+      padding: 5px 12px;
+      border-radius: 4px;
+      border: 1px solid var(--border);
+      font-size: 13px;
+      font-family: inherit;
+      color: var(--dark);
+      background: var(--white);
+      cursor: pointer;
+      outline: none;
+    }
+
+    .checkbox-label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      color: var(--dark);
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .checkbox-label input[type="checkbox"] {
+      width: 15px;
+      height: 15px;
+      accent-color: var(--dark);
+      cursor: pointer;
+    }
+
+    .clear-btn {
+      padding: 5px 12px;
+      border-radius: 4px;
+      border: 1px solid var(--border);
+      font-size: 13px;
+      font-family: inherit;
+      color: var(--warm);
+      background: var(--white);
+      cursor: pointer;
+      margin-left: auto;
+      letter-spacing: -0.1px;
+    }
+
+    .clear-btn:hover {
+      color: var(--dark);
+    }
+
+    /* ── Main content ── */
+    .content {
+      padding: 28px 48px 48px;
+    }
+
+    .results-count {
+      font-size: 13px;
+      color: var(--warm);
+      font-style: italic;
+      margin-bottom: 16px;
+    }
+
+    /* ── Table ── */
+    .results-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .results-table thead tr {
+      background: var(--warm2);
+      border-bottom: 2px solid var(--dark);
+    }
+
+    .results-table th {
+      text-align: left;
+      padding: 11px 16px;
+      font-weight: 600;
+      color: var(--dark);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      background: transparent;
+      border-bottom: none;
+    }
+
+    .results-table th.col-nom {
+      padding-left: 20px;
+    }
+
+    .results-table td.col-nom {
+      padding-left: 20px;
+    }
+
+    .results-table th.col-grau {
+      text-align: center;
+      width: 80px;
+    }
+
+    .results-table td.col-grau {
+      text-align: center;
+    }
+
+    .results-table th.col-niv {
+      text-align: center;
+      width: 80px;
+    }
+
+    .results-table td.col-niv {
+      text-align: center;
+    }
+
+    .results-table th.col-codi {
+      width: 110px;
+    }
+
+    .results-table td {
+      padding: 13px 16px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: middle;
+      background: transparent;
+    }
+
+    .results-table td.col-nom {
+      font-weight: 500;
+    }
+
+    .results-table td.col-codi {
+      font-family: 'Geist Mono', monospace;
+      font-size: 12px;
+      color: var(--warm);
+    }
+
+    .results-table td.col-fam {
+      font-size: 13px;
+      color: var(--warm);
+    }
+
+    .results-table td.col-grau {
+      font-weight: 500;
+      min-width: 85px;
+    }
+
+    .results-table td.col-niv {
+      color: var(--warm);
+      min-width: 95px;
+    }
+
+    .results-table td.col-fam {
+      font-size: 13px;
+      color: var(--warm);
+      white-space: nowrap;
+      overflow: hidden;
+      max-width: 22rem;
+      min-width: 190px;
+    }
+
+    .results-table tbody tr:hover td {
+      background: var(--warm2);
+    }
+
+    .results-table tbody tr.row-link {
+      cursor: pointer;
+    }
+
+    .results-table tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    /* Sortable headers */
+    .results-table th.sortable {
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .results-table th.sortable:hover {
+      color: var(--dark);
+      opacity: 0.8;
+    }
+
+    .sort-indicator {
+      display: inline-block;
+      margin-left: 5px;
+      font-size: 10px;
+      opacity: 0.25;
+    }
+
+    .results-table th.sort-active .sort-indicator {
+      opacity: 1;
+    }
+
+    /* Badge pla antic */
+    .badge-old {
+      display: inline-block;
+      background: #fef3c7;
+      color: #92400e;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 6px;
+      border-radius: 3px;
+      margin-left: 8px;
+      white-space: nowrap;
+      vertical-align: middle;
+    }
+
+    /* Empty / loading / error */
+    .empty-row td {
+      text-align: center;
+      color: var(--warm);
+      padding: 48px;
+      font-style: italic;
+    }
+
+    .loading-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      padding: 64px 48px;
+      color: var(--warm);
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .spinner {
+      border: 3px solid var(--border);
+      border-top-color: var(--dark);
+      border-radius: 50%;
+      width: 32px;
+      height: 32px;
+      animation: spin 0.8s linear infinite;
+    }
+
+    .error-state {
+      padding: 16px 20px;
+      background: #fee2e2;
+      color: #991b1b;
+      border-radius: 4px;
+      margin: 24px 48px;
+      font-size: 14px;
+    }
+
+    /* ── Pagination ── */
+    .pagination {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-top: 20px;
+    }
+
+    .pagination-info {
+      font-size: 13px;
+      color: var(--warm);
+    }
+
+    .pagination-controls {
+      display: flex;
+      gap: 4px;
+      align-items: center;
+    }
+
+    .pagination button {
+      min-width: 34px;
+      height: 34px;
+      padding: 0 10px;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      background: var(--white);
+      cursor: pointer;
+      font-size: 13px;
+      font-family: inherit;
+      color: var(--dark);
+      transition: background 0.12s;
+    }
+
+    .pagination button:hover {
+      background: var(--warm2);
+    }
+
+    .pagination button.active {
+      background: var(--dark);
+      color: var(--white);
+      border-color: var(--dark);
+      font-weight: 600;
+    }
+
+    .pagination button.disabled {
+      color: var(--warm);
+      cursor: default;
+      pointer-events: none;
+      opacity: 0.45;
+    }
+
+    .pagination-ellipsis {
+      padding: 0 4px;
+      color: var(--warm);
+      font-size: 13px;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    @media (max-width: 768px) {
+
+      html,
+      body,
+      [x-data] {
+        max-width: 100vw;
+        overflow-x: hidden;
+      }
+
+      .topbar {
+        padding: 0 16px;
+      }
+
+      .hero {
+        padding: 24px 16px 20px;
+      }
+
+      .hero h1 {
+        font-size: 30px;
+      }
+
+      .hero-sub {
+        font-size: 14px;
+        margin-bottom: 20px;
+      }
+
+      .search-wrap {
+        max-width: 100%;
+      }
+
+      .grau-tabs {
+        padding: 0 16px;
+      }
+
+      .grau-tabs button {
+        padding: 10px 12px;
+        font-size: 13px;
+      }
+
+      .filter-bar {
+        padding: 10px 16px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+      }
+
+      .clear-btn {
+        margin-left: 0;
+      }
+
+      .content {
+        padding: 16px 16px 32px;
+      }
+
+      /* Taula scrollable en horitzontal */
+      .table-wrap {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .results-table {
+        min-width: 560px;
+      }
+
+      .results-table th.col-nom,
+      .results-table td.col-nom {
+        padding-left: 12px;
+        min-width: 180px;
+      }
+
+      .pagination {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+      }
+
+      .pagination-controls {
+        flex-wrap: wrap;
+      }
+    }
+
+    /* ── Detall Grado C expandible ── */
+    .detall-certificat {
+      background: var(--warm2);
+      border-bottom: 1px solid var(--border);
+      padding: 0;
+    }
+
+    .detall-inner {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 10px 16px;
+    }
+
+    .detall-inner .detall-hores {
+      font-size: 13px;
+      color: var(--warm);
+      margin-right: 4px;
+    }
+
+    .btn-doc {
+      display: inline-block;
+      padding: 5px 12px;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      background: var(--white);
+      color: var(--dark);
+      font-size: 12px;
+      font-family: inherit;
+      cursor: pointer;
+      text-decoration: none;
+      line-height: 1.4;
+      transition: background 0.15s;
+    }
+
+    .btn-doc:hover {
+      background: var(--border);
+    }
+
+    [x-cloak] { display: none !important; }
+  </style>
+
+  <script>
+    const API_BASE = window.location.hostname === 'localhost'
+      ? 'http://localhost:5001'
+      : '';
+
+    document.addEventListener('alpine:init', () => {
+      Alpine.data('cercador', () => ({
+        state: 'loading',
+        allRecords: [],
+        families: [],
+
+        search: '',
+        filterGrado: '',
+        filterFamilia: '',
+        filterNivel: '',
+        hideOld: false,
+
+        currentPage: 1,
+        pageSize: 50,
+        sortCol: '',
+        sortDir: 0,
+        expandedId: null,
+
+        async init() {
+          try {
+            const res = await fetch(API_BASE + '/api/ofertes');
+            if (!res.ok) { this.state = 'error'; return; }
+            const data = await res.json();
+            const FAMILIA_ALIASES = {
+              'Artesan\u00eda': 'Artes y Artesan\u00edas',
+              'Artes y Artesanias': 'Artes y Artesan\u00edas',
+              'Imagen y Sonido': 'Imagen y Espect\u00e1culos',
+              'Maritimo-Pesquera': 'Mar\u00edtimo-Pesquera',
+              'Maritimo - Pesquera': 'Mar\u00edtimo-Pesquera',
+              'Mar\u00edtimo - Pesquera': 'Mar\u00edtimo-Pesquera',
+            };
+            this.allRecords = data.map(r => ({
+              ...r,
+              familia: FAMILIA_ALIASES[r.familia] ?? r.familia,
+              _normDen: (r.denominacion || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase(),
+              _normCod: (r.codigo || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
+            }));
+            this.families = [...new Set(this.allRecords.map(r => r.familia))].sort();
+            this.state = 'ready';
+          } catch (e) {
+            this.state = 'error';
+          }
+        },
+
+        get filteredRecords() {
+          const q = this.search.normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+          const result = this.allRecords.filter(r => {
+            if (this.hideOld && r.plan_antiguo) return false;
+            if (this.filterGrado && r.grado !== this.filterGrado) return false;
+            if (this.filterFamilia && r.familia !== this.filterFamilia) return false;
+            if (this.filterNivel && r.nivel !== parseInt(this.filterNivel)) return false;
+            if (q && !r._normDen.includes(q) && !r._normCod.includes(q)) return false;
+            return true;
+          });
+          if (this.sortDir !== 0) {
+            const col = this.sortCol;
+            const dir = this.sortDir;
+            result.sort((a, b) => {
+              const va = String(a[col] ?? '').toLowerCase();
+              const vb = String(b[col] ?? '').toLowerCase();
+              return va < vb ? -dir : va > vb ? dir : 0;
+            });
+          }
+          return result;
+        },
+
+        get filteredCount() { return this.filteredRecords.length; },
+
+        get pagedRecords() {
+          const start = (this.currentPage - 1) * this.pageSize;
+          return this.filteredRecords.slice(start, start + this.pageSize);
+        },
+
+        get totalPages() {
+          return Math.ceil(this.filteredRecords.length / this.pageSize);
+        },
+
+        get paginationStart() {
+          return (this.currentPage - 1) * this.pageSize + 1;
+        },
+
+        get paginationEnd() {
+          return Math.min(this.currentPage * this.pageSize, this.filteredCount);
+        },
+
+        buildPagination() {
+          const c = this.currentPage, m = this.totalPages, delta = 2;
+          if (m <= 1) return [];
+          const left = c - delta, right = c + delta + 1;
+          const range = [], result = [];
+          let l;
+          for (let i = 1; i <= m; i++) {
+            if (i === 1 || i === m || (i >= left && i < right)) range.push(i);
+          }
+          for (const i of range) {
+            if (l) {
+              if (i - l === 2) result.push({ type: 'page', n: l + 1 });
+              else if (i - l !== 1) result.push({ type: 'ellipsis' });
+            }
+            result.push({ type: 'page', n: i });
+            l = i;
+          }
+          return result;
+        },
+
+        goToPage(n) {
+          if (n < 1 || n > this.totalPages) return;
+          this.currentPage = n;
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        },
+
+        resetPage() { this.currentPage = 1; },
+
+        sortBy(col) {
+          if (this.sortCol !== col) {
+            this.sortCol = col; this.sortDir = 1;
+          } else {
+            if (this.sortDir === 1) this.sortDir = -1;
+            else { this.sortCol = ''; this.sortDir = 0; }
+          }
+          this.resetPage();
+        },
+
+        setGrado(g) {
+          this.filterGrado = this.filterGrado === g ? '' : g;
+          this.resetPage();
+        },
+
+        async fetchBoe(codigo) {
+          try {
+            const res = await fetch(API_BASE + '/api/certificado/' + codigo);
+            const data = await res.json();
+            if (data.url_boe) {
+              window.open(data.url_boe, '_blank');
+            } else {
+              alert('URL del BOE no disponible per a aquest certificat.');
+            }
+          } catch (e) {
+            alert('Error en obtenir el BOE: ' + e.message);
+          }
+        }
+      }));
+    });
+  </script>
+  <script defer src="vendor/alpinejs-3.15.11.min.js"></script>
+  <link rel="alternate" type="application/rss+xml" title="Cercador FP España — Novetats" href="/api/feed.rss">
+</head>
+
+<body>
+  <div x-data="cercador">
+
+    <!-- Top bar -->
+    <div class="topbar">
+      <div class="topbar-inner">
+        <span class="topbar-logo">GrausFP</span>
+      </div>
+    </div>
+
+    <!-- Hero / Search -->
+    <div class="hero">
+      <h1>Formació<br><em>Professional</em></h1>
+      <p class="hero-sub">Explora els graus disponibles a l'estat espanyol</p>
+      <div class="search-wrap">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2.5"
+          stroke-linecap="round">
+          <circle cx="11" cy="11" r="8" />
+          <path d="m21 21-4.35-4.35" />
+        </svg>
+        <label for="search" class="sr-only">Cerca</label>
+        <input type="search" id="search" x-model.debounce.250ms="search" @input="resetPage()"
+          placeholder="Cerca per denominació o codi..." autocomplete="off">
+      </div>
+    </div>
+
+    <!-- Grau tabs -->
+    <div class="grau-tabs" role="tablist" aria-label="Filtre per grau">
+      <button :class="{ active: filterGrado === '' }" @click="filterGrado=''; resetPage()">Tots els graus</button>
+      <template x-for="g in ['A','B','C','D','E']" :key="g">
+        <button :class="{ active: filterGrado === g }" @click="setGrado(g)" x-text="'Grau ' + g"></button>
+      </template>
+    </div>
+
+    <!-- Secondary filter bar -->
+    <div class="filter-bar">
+      <span class="filter-bar-label">Filtrar per:</span>
+
+      <label for="filter-familia" class="sr-only">Família</label>
+      <select id="filter-familia" x-model="filterFamilia" @change="resetPage()">
+        <option value="">Totes les famílies</option>
+        <template x-for="fam in families" :key="fam">
+          <option :value="fam" x-text="fam"></option>
+        </template>
+      </select>
+
+      <label for="filter-nivel" class="sr-only">Nivell</label>
+      <select id="filter-nivel" x-model="filterNivel" @change="resetPage()">
+        <option value="">Tots els nivells</option>
+        <option value="1">Nivell 1</option>
+        <option value="2">Nivell 2</option>
+        <option value="3">Nivell 3</option>
+      </select>
+
+      <label class="checkbox-label">
+        <input type="checkbox" x-model="hideOld" @change="resetPage()">
+        Ocultar pla antic
+      </label>
+
+      <button class="clear-btn" x-show="search || filterGrado || filterFamilia || filterNivel || !hideOld"
+        @click="search=''; filterGrado=''; filterFamilia=''; filterNivel=''; hideOld=true; resetPage()">
+        Esborrar filtres ×
+      </button>
+    </div>
+
+    <!-- Loading -->
+    <div x-show="state === 'loading'" class="loading-state" role="status">
+      <div class="spinner"></div>
+      <p>Carregant dades del catàleg FP...</p>
+    </div>
+
+    <!-- Error -->
+    <div x-show="state === 'error'" class="error-state" role="alert">
+      ⚠️ Les dades del catàleg no estan disponibles. Contacteu l'administrador del sistema.
+    </div>
+
+    <!-- Main content -->
+    <div x-show="state === 'ready'" class="content">
+
+      <p class="results-count"
+        x-text="filteredCount === 0 ? 'Cap resultat coincideix amb els filtres aplicats' : (filteredCount === 1 ? '1 resultat trobat' : filteredCount + ' resultats trobats')">
+      </p>
+
+      <div class="table-wrap">
+        <table class="results-table" id="results-table">
+          <caption class="sr-only">Resultats del cercador de Graus FP</caption>
+          <thead>
+            <tr>
+              <th scope="col" class="sortable col-nom" :class="{ 'sort-active': sortCol === 'denominacion' }"
+                @click="sortBy('denominacion')"
+                :aria-sort="sortCol === 'denominacion' ? (sortDir === 1 ? 'ascending' : 'descending') : 'none'">
+                Denominació
+                <span class="sort-indicator" aria-hidden="true"
+                  x-text="sortCol === 'denominacion' ? (sortDir === 1 ? '▲' : '▼') : '▲'"></span>
+              </th>
+              <th scope="col" class="sortable col-codi" :class="{ 'sort-active': sortCol === 'codigo' }"
+                @click="sortBy('codigo')"
+                :aria-sort="sortCol === 'codigo' ? (sortDir === 1 ? 'ascending' : 'descending') : 'none'">
+                Codi
+                <span class="sort-indicator" aria-hidden="true"
+                  x-text="sortCol === 'codigo' ? (sortDir === 1 ? '▲' : '▼') : '▲'"></span>
+              </th>
+              <th scope="col" class="sortable col-fam" :class="{ 'sort-active': sortCol === 'familia' }"
+                @click="sortBy('familia')"
+                :aria-sort="sortCol === 'familia' ? (sortDir === 1 ? 'ascending' : 'descending') : 'none'">
+                Família professional
+                <span class="sort-indicator" aria-hidden="true"
+                  x-text="sortCol === 'familia' ? (sortDir === 1 ? '▲' : '▼') : '▲'"></span>
+              </th>
+              <th scope="col" class="sortable col-grau" :class="{ 'sort-active': sortCol === 'grado' }"
+                @click="sortBy('grado')"
+                :aria-sort="sortCol === 'grado' ? (sortDir === 1 ? 'ascending' : 'descending') : 'none'">
+                Grau
+                <span class="sort-indicator" aria-hidden="true"
+                  x-text="sortCol === 'grado' ? (sortDir === 1 ? '▲' : '▼') : '▲'"></span>
+              </th>
+              <th scope="col" class="sortable col-niv" :class="{ 'sort-active': sortCol === 'nivel' }"
+                @click="sortBy('nivel')"
+                :aria-sort="sortCol === 'nivel' ? (sortDir === 1 ? 'ascending' : 'descending') : 'none'">
+                Nivell
+                <span class="sort-indicator" aria-hidden="true"
+                  x-text="sortCol === 'nivel' ? (sortDir === 1 ? '▲' : '▼') : '▲'"></span>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <template x-if="filteredCount === 0">
+              <tr class="empty-row">
+                <td colspan="5">Cap resultat coincideix amb els filtres aplicats.</td>
+              </tr>
+            </template>
+          </tbody>
+          <template x-for="row in pagedRecords" :key="row.id">
+            <tbody>
+              <tr :class="{ 'row-link': (row.grado === 'C' && row.plan_antiguo) || (['A','B','C'].includes(row.grado) && row.ficha_id) || (['D','E'].includes(row.grado) && row.ficha_url) }"
+                @click="
+                  row.grado === 'C' && row.plan_antiguo
+                    ? (expandedId = (expandedId === row.id ? null : row.id))
+                    : ['A','B','C'].includes(row.grado) && row.ficha_id
+                      ? window.open('https://www.todofp.es/buscadorgradosfp/ficha?grado=' + row.grado + '&id=' + row.ficha_id, '_blank')
+                      : ['D','E'].includes(row.grado) && row.ficha_url
+                        ? window.open(row.ficha_url, '_blank')
+                        : null
+                ">
+                <td class="col-nom">
+                  <span x-text="row.denominacion"></span>
+                  <span x-show="row.plan_antiguo" class="badge-old">Pla antic</span>
+                </td>
+                <td class="col-codi" x-text="row.codigo ?? '—'"></td>
+                <td class="col-fam" x-text="row.familia"></td>
+                <td class="col-grau" x-text="row.grado"></td>
+                <td class="col-niv" x-text="row.nivel ?? '—'"></td>
+              </tr>
+              <tr x-show="expandedId === row.id && row.grado === 'C' && row.plan_antiguo">
+                <td colspan="5" class="detall-certificat">
+                  <div class="detall-inner">
+                    <span class="detall-hores" x-show="row.duracion_horas" x-text="row.duracion_horas + ' h.'"></span>
+                    <a :href="row.url_anexo_pdf" target="_blank" rel="noopener" class="btn-doc">Annexe PDF</a>
+                    <a :href="row.url_europass_es" target="_blank" rel="noopener" class="btn-doc">Europass ES</a>
+                    <a :href="row.url_europass_en" target="_blank" rel="noopener" class="btn-doc">Europass EN</a>
+                    <button @click.stop="fetchBoe(row.codigo)" class="btn-doc">BOE / RD</button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </template>
+        </table>
+      </div><!-- /table-wrap -->
+
+      <!-- Pagination -->
+      <nav class="pagination" aria-label="Paginació de resultats" x-show="totalPages > 1">
+        <span class="pagination-info"
+          x-text="'Mostrant ' + paginationStart + '–' + paginationEnd + ' de ' + filteredCount">
+        </span>
+        <div class="pagination-controls">
+          <button @click="goToPage(currentPage - 1)" :class="{ disabled: currentPage === 1 }"
+            :aria-disabled="currentPage === 1">← Anterior</button>
+
+          <template x-for="item in buildPagination()" :key="JSON.stringify(item)">
+            <template x-if="item.type === 'page'">
+              <button @click="goToPage(item.n)" :aria-current="item.n === currentPage ? 'page' : false"
+                :aria-label="'Pàgina ' + item.n" :class="{ active: item.n === currentPage }" x-text="item.n"></button>
+            </template>
+            <template x-if="item.type === 'ellipsis'">
+              <span class="pagination-ellipsis">…</span>
+            </template>
+          </template>
+
+          <button @click="goToPage(currentPage + 1)" :class="{ disabled: currentPage === totalPages }"
+            :aria-disabled="currentPage === totalPages">Següent →</button>
+        </div>
+      </nav>
+
+    </div>
+
+  </div><!-- /x-data -->
+
+  <footer style="border-top:1px solid var(--border); padding:20px 48px; text-align:right;">
+    <a href="historial.html" style="font-size:13px; color:var(--warm); text-decoration:none;">Historial d'actualitzacions</a>
+  </footer>
+</body>
+
+</html>

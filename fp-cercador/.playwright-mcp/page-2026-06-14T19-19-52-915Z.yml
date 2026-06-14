@@ -1,0 +1,131 @@
+- generic [ref=e1]:
+  - generic [ref=e2]:
+    - generic [ref=e5]: GrausFP
+    - generic [ref=e6]:
+      - heading "Formació Professional" [level=1] [ref=e7]:
+        - text: Formació
+        - emphasis [ref=e8]: Professional
+      - paragraph [ref=e9]: Explora els graus disponibles a l'estat espanyol
+      - generic [ref=e10]:
+        - img
+        - generic [ref=e11]: Cerca
+        - searchbox "Cerca" [ref=e12]: gestión administrativa
+    - tablist "Filtre per grau" [ref=e13]:
+      - button "Tots els graus" [ref=e14] [cursor=pointer]
+      - button "Grau A" [ref=e15] [cursor=pointer]
+      - button "Grau B" [ref=e16] [cursor=pointer]
+      - button "Grau C" [active] [ref=e17] [cursor=pointer]
+      - button "Grau D" [ref=e18] [cursor=pointer]
+      - button "Grau E" [ref=e19] [cursor=pointer]
+    - generic [ref=e20]:
+      - generic [ref=e21]: "Filtrar per:"
+      - generic [ref=e22]: Família
+      - combobox "Família" [ref=e23] [cursor=pointer]:
+        - option "Totes les famílies" [selected]
+        - option "Actividades Físicas y Deportivas"
+        - option "Administración y Gestión"
+        - option "Agraria"
+        - option "Artes Gráficas"
+        - option "Artes y Artesanías"
+        - option "Comercio y Marketing"
+        - option "Edificación y Obra Civil"
+        - option "Electricidad y Electrónica"
+        - option "Energía y Agua"
+        - option "Fabricación Mecánica"
+        - option "Hostelería y Turismo"
+        - option "Imagen Personal"
+        - option "Imagen y Espectáculos"
+        - option "Industrias Alimentarias"
+        - option "Industrias Extractivas"
+        - option "Informática y Comunicaciones"
+        - option "Instalación y Mantenimiento"
+        - option "Inteligencia Artificial y Data"
+        - option "Madera, Mueble y Corcho"
+        - option "Mantenimiento y Servicios a la Producción"
+        - option "Marítimo-Pesquera"
+        - option "Química"
+        - option "Sanidad"
+        - option "Seguridad y Medio Ambiente"
+        - option "Servicios Socioculturales y a la Comunidad"
+        - option "Textil, Confección y Piel"
+        - option "Transporte y Mantenimiento de Vehículos"
+        - option "Vidrio y Cerámica"
+      - generic [ref=e24]: Nivell
+      - combobox "Nivell" [ref=e25] [cursor=pointer]:
+        - option "Tots els nivells" [selected]
+        - option "Nivell 1"
+        - option "Nivell 2"
+        - option "Nivell 3"
+      - generic [ref=e26] [cursor=pointer]:
+        - checkbox "Ocultar pla antic" [ref=e27]
+        - text: Ocultar pla antic
+      - button "Esborrar filtres ×" [ref=e28] [cursor=pointer]
+    - generic [ref=e34]:
+      - paragraph [ref=e35]: 5 resultats trobats
+      - table "Resultats del cercador de Graus FP" [ref=e37]:
+        - caption [ref=e38]: Resultats del cercador de Graus FP
+        - rowgroup [ref=e39]:
+          - row "Denominació Codi Família professional Grau Nivell" [ref=e40]:
+            - columnheader "Denominació" [ref=e41] [cursor=pointer]:
+              - text: Denominació
+              - generic [ref=e42]: ▲
+            - columnheader "Codi" [ref=e43] [cursor=pointer]:
+              - text: Codi
+              - generic [ref=e44]: ▲
+            - columnheader "Família professional" [ref=e45] [cursor=pointer]:
+              - text: Família professional
+              - generic [ref=e46]: ▲
+            - columnheader "Grau" [ref=e47] [cursor=pointer]:
+              - text: Grau
+              - generic [ref=e48]: ▲
+            - columnheader "Nivell" [ref=e49] [cursor=pointer]:
+              - text: Nivell
+              - generic [ref=e50]: ▲
+        - rowgroup
+        - rowgroup [ref=e409]:
+          - row "Actividades de gestión administrativa Pla antic 4113 centres ADGD0308 Administración y Gestión C 2" [ref=e410] [cursor=pointer]:
+            - cell "Actividades de gestión administrativa Pla antic 4113 centres" [ref=e411]:
+              - text: Actividades de gestión administrativa
+              - generic [ref=e412]: Pla antic
+              - text: 4113 centres
+            - cell "ADGD0308" [ref=e413]
+            - cell "Administración y Gestión" [ref=e414]
+            - cell "C" [ref=e415]
+            - cell "2" [ref=e416]
+        - rowgroup [ref=e417]:
+          - row "Asistencia a la dirección en la gestión administrativa y comercial ADG_C_003_5B Administración y Gestión C 3" [ref=e418] [cursor=pointer]:
+            - cell "Asistencia a la dirección en la gestión administrativa y comercial" [ref=e419]
+            - cell "ADG_C_003_5B" [ref=e420]
+            - cell "Administración y Gestión" [ref=e421]
+            - cell "C" [ref=e422]
+            - cell "3" [ref=e423]
+        - rowgroup [ref=e424]:
+          - row "Gestión contable y gestión administrativa para auditoría Pla antic 2960 centres ADGD0108 Administración y Gestión C 3" [ref=e425] [cursor=pointer]:
+            - cell "Gestión contable y gestión administrativa para auditoría Pla antic 2960 centres" [ref=e426]:
+              - text: Gestión contable y gestión administrativa para auditoría
+              - generic [ref=e427]: Pla antic
+              - text: 2960 centres
+            - cell "ADGD0108" [ref=e428]
+            - cell "Administración y Gestión" [ref=e429]
+            - cell "C" [ref=e430]
+            - cell "3" [ref=e431]
+        - rowgroup [ref=e432]:
+          - row "Gestión administrativa del transporte internacional COM_C_005_5B Comercio y Marketing C 3" [ref=e433] [cursor=pointer]:
+            - cell "Gestión administrativa del transporte internacional" [ref=e434]
+            - cell "COM_C_005_5B" [ref=e435]
+            - cell "Comercio y Marketing" [ref=e436]
+            - cell "C" [ref=e437]
+            - cell "3" [ref=e438]
+        - rowgroup [ref=e439]:
+          - row "Gestión administrativa y financiera del comercio internacional Pla antic 1948 centres COMT0210 Comercio y Marketing C 3" [ref=e440] [cursor=pointer]:
+            - cell "Gestión administrativa y financiera del comercio internacional Pla antic 1948 centres" [ref=e441]:
+              - text: Gestión administrativa y financiera del comercio internacional
+              - generic [ref=e442]: Pla antic
+              - text: 1948 centres
+            - cell "COMT0210" [ref=e443]
+            - cell "Comercio y Marketing" [ref=e444]
+            - cell "C" [ref=e445]
+            - cell "3" [ref=e446]
+  - contentinfo [ref=e32]:
+    - link "Historial d'actualitzacions" [ref=e33] [cursor=pointer]:
+      - /url: historial.html

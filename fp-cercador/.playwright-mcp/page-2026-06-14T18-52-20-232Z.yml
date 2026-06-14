@@ -1,0 +1,458 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - generic [ref=e5]: GrausFP
+    - generic [ref=e6]:
+      - heading "Formació Professional" [level=1] [ref=e7]:
+        - text: Formació
+        - emphasis [ref=e8]: Professional
+      - paragraph [ref=e9]: Explora els graus disponibles a l'estat espanyol
+      - generic [ref=e10]:
+        - img
+        - generic [ref=e11]: Cerca
+        - searchbox "Cerca" [ref=e12]: gestión administrativa
+    - tablist "Filtre per grau" [ref=e13]:
+      - button "Tots els graus" [ref=e14] [cursor=pointer]
+      - button "Grau A" [ref=e15] [cursor=pointer]
+      - button "Grau B" [ref=e16] [cursor=pointer]
+      - button "Grau C" [ref=e17] [cursor=pointer]
+      - button "Grau D" [ref=e18] [cursor=pointer]
+      - button "Grau E" [ref=e19] [cursor=pointer]
+    - generic [ref=e20]:
+      - generic [ref=e21]: "Filtrar per:"
+      - generic [ref=e22]: Família
+      - combobox "Família" [ref=e23] [cursor=pointer]:
+        - option "Totes les famílies" [selected]
+        - option "Actividades Físicas y Deportivas"
+        - option "Administración y Gestión"
+        - option "Agraria"
+        - option "Artes Gráficas"
+        - option "Artes y Artesanías"
+        - option "Comercio y Marketing"
+        - option "Edificación y Obra Civil"
+        - option "Electricidad y Electrónica"
+        - option "Energía y Agua"
+        - option "Fabricación Mecánica"
+        - option "Hostelería y Turismo"
+        - option "Imagen Personal"
+        - option "Imagen y Espectáculos"
+        - option "Industrias Alimentarias"
+        - option "Industrias Extractivas"
+        - option "Informática y Comunicaciones"
+        - option "Instalación y Mantenimiento"
+        - option "Inteligencia Artificial y Data"
+        - option "Madera, Mueble y Corcho"
+        - option "Mantenimiento y Servicios a la Producción"
+        - option "Marítimo-Pesquera"
+        - option "Química"
+        - option "Sanidad"
+        - option "Seguridad y Medio Ambiente"
+        - option "Servicios Socioculturales y a la Comunidad"
+        - option "Textil, Confección y Piel"
+        - option "Transporte y Mantenimiento de Vehículos"
+        - option "Vidrio y Cerámica"
+      - generic [ref=e24]: Nivell
+      - combobox "Nivell" [ref=e25] [cursor=pointer]:
+        - option "Tots els nivells" [selected]
+        - option "Nivell 1"
+        - option "Nivell 2"
+        - option "Nivell 3"
+      - generic [ref=e26] [cursor=pointer]:
+        - checkbox "Ocultar pla antic" [ref=e27]
+        - text: Ocultar pla antic
+      - button "Esborrar filtres ×" [ref=e28] [cursor=pointer]
+    - generic [ref=e34]:
+      - paragraph [ref=e35]: 5 resultats trobats
+      - table "Resultats del cercador de Graus FP" [ref=e37]:
+        - caption [ref=e38]: Resultats del cercador de Graus FP
+        - rowgroup [ref=e39]:
+          - row "Denominació Codi Família professional Grau Nivell" [ref=e40]:
+            - columnheader "Denominació" [ref=e41] [cursor=pointer]:
+              - text: Denominació
+              - generic [ref=e42]: ▲
+            - columnheader "Codi" [ref=e43] [cursor=pointer]:
+              - text: Codi
+              - generic [ref=e44]: ▲
+            - columnheader "Família professional" [ref=e45] [cursor=pointer]:
+              - text: Família professional
+              - generic [ref=e46]: ▲
+            - columnheader "Grau" [ref=e47] [cursor=pointer]:
+              - text: Grau
+              - generic [ref=e48]: ▲
+            - columnheader "Nivell" [ref=e49] [cursor=pointer]:
+              - text: Nivell
+              - generic [ref=e50]: ▲
+        - rowgroup
+        - rowgroup [ref=e556]:
+          - row "Actividades de gestión administrativa Pla antic 4113 centres ADGD0308 Administración y Gestión C 2" [ref=e557] [cursor=pointer]:
+            - cell "Actividades de gestión administrativa Pla antic 4113 centres" [ref=e558]:
+              - text: Actividades de gestión administrativa
+              - generic [ref=e559]: Pla antic
+              - text: 4113 centres
+            - cell "ADGD0308" [ref=e560]
+            - cell "Administración y Gestión" [ref=e561]
+            - cell "C" [ref=e562]
+            - cell "2" [ref=e563]
+          - row [ref=e850]:
+            - cell [ref=e851]:
+              - generic [ref=e603]:
+                - generic [ref=e604]:
+                  - generic [ref=e605]: 4113 centres
+                  - combobox [ref=e606] [cursor=pointer]:
+                    - option "Totes"
+                    - option "ANDALUCÍA"
+                    - option "ARAGÓN"
+                    - option "CANTABRIA"
+                    - option "CASTILLA LA MANCHA"
+                    - option "CASTILLA Y LEÓN"
+                    - option "CATALUÑA"
+                    - option "CEUTA"
+                    - option "COMUNIDAD VALENCIANA"
+                    - option "EXTREMADURA"
+                    - option "GALICIA"
+                    - option "ILLES BALEARS"
+                    - option "ISLAS CANARIAS"
+                    - option "LA RIOJA"
+                    - option "MADRID"
+                    - option "MELILLA"
+                    - option "NAVARRA"
+                    - option "PAÍS VASCO" [selected]
+                    - option "PRINCIPADO DE ASTURIAS"
+                    - option "REGIÓN DE MURCIA"
+                  - button "✕" [ref=e607] [cursor=pointer]
+                - generic [ref=e608]:
+                  - generic [ref=e614]:
+                    - link "CENTRO DE ESTUDIOS ALAVA" [ref=e616] [cursor=pointer]:
+                      - /url: https://www.ceaformacion.com
+                    - generic [ref=e617]:
+                      - text: CL ALDAVE 20 , Vitoria-Gasteiz
+                      - generic [ref=e618]: · 📞 945144531
+                  - generic [ref=e619]:
+                    - link "ACADEMIA GIL" [ref=e621] [cursor=pointer]:
+                      - /url: https://www.ceam-gil.com
+                    - generic [ref=e622]:
+                      - text: CL BEATO TOMAS DE ZUMARRAGA 20 BJ , Vitoria-Gasteiz
+                      - generic [ref=e623]: · 📞 945224234
+                  - generic [ref=e624]:
+                    - generic [ref=e625]: FUNDACION FORMACION Y EMPLEO
+                    - generic [ref=e626]:
+                      - text: CL FLORIDA 42 BA , Vitoria-Gasteiz
+                      - generic [ref=e627]: · 📞 945146012
+                  - generic [ref=e628]:
+                    - link "ASESORES INFORMATICOS" [ref=e630] [cursor=pointer]:
+                      - /url: https://www.bit-asesores.com
+                    - generic [ref=e631]:
+                      - text: PZ PLAZA DE ALDAVE 2 BJ , Vitoria-Gasteiz
+                      - generic [ref=e632]: · 📞 945134888
+                  - generic [ref=e633]:
+                    - link "ASOCIACION EMPRESARIAL ASLE" [ref=e635] [cursor=pointer]:
+                      - /url: https://www.asle.es
+                    - generic [ref=e636]:
+                      - text: CL PEDRO ASUA 57 BJ , Vitoria-Gasteiz
+                      - generic [ref=e637]: · 📞 945214125
+                  - generic [ref=e638]:
+                    - link "CIFP CIUDAD JARDIN LHII" [ref=e640] [cursor=pointer]:
+                      - /url: https://www.icjardin.net
+                    - generic [ref=e641]:
+                      - text: CL ALAVA 39 , Vitoria-Gasteiz
+                      - generic [ref=e642]: · 📞 945233714
+                  - generic [ref=e643]:
+                    - link "INSTITUTO EUROPA, S.L. II" [ref=e645] [cursor=pointer]:
+                      - /url: https://www.institutoeuropa.com
+                    - generic [ref=e646]:
+                      - text: CL MANUEL IRADIER 46 BJ , Vitoria-Gasteiz
+                      - generic [ref=e647]: · 📞 945123000
+                  - generic [ref=e648]:
+                    - link "AUTOESCUELA CLAXON" [ref=e650] [cursor=pointer]:
+                      - /url: https://www.autoescuelaclaxon.com
+                    - generic [ref=e651]:
+                      - text: CL AITZGORRI, 30 , Vitoria-Gasteiz
+                      - generic [ref=e652]: · 📞 945253766
+                  - generic [ref=e653]:
+                    - link "FONDO FORMACION EUSKADI, S.L.L." [ref=e655] [cursor=pointer]:
+                      - /url: https://www.ffeuskadi.net
+                    - generic [ref=e656]:
+                      - text: CL JOSE MARDONES 8 , Vitoria-Gasteiz
+                      - generic [ref=e657]: · 📞 945276422
+                  - generic [ref=e658]:
+                    - link "CENTRO DE FORMACION EX QUO" [ref=e660] [cursor=pointer]:
+                      - /url: https://www.yahoo.es
+                    - generic [ref=e661]:
+                      - text: CL BENITO GUINEA 8 BJ , Vitoria-Gasteiz
+                      - generic [ref=e662]: · 📞 945220816
+                  - generic [ref=e663]:
+                    - link "IES LAUDIOALDE LANBIDE ESKOLA BHI" [ref=e665] [cursor=pointer]:
+                      - /url: https://www.cmfp-llodio.com
+                    - generic [ref=e666]:
+                      - text: CL VIRGEN DEL CARMEN 17 , Laudio/Llodio
+                      - generic [ref=e667]: · 📞 946720505
+                  - generic [ref=e668]:
+                    - link "EGIBIDE MOLINUEVO" [ref=e670] [cursor=pointer]:
+                      - /url: https://www.egibide.org
+                    - generic [ref=e671]:
+                      - text: CL SAN IGNACIO 6 , Vitoria-Gasteiz
+                      - generic [ref=e672]: · 📞 945010120
+                  - generic [ref=e673]:
+                    - link "UFEJ SERVICIOS A EMPRESAS S.L." [ref=e675] [cursor=pointer]:
+                      - /url: https://www.ufej.eu
+                    - generic [ref=e676]:
+                      - text: CL PLAZA UNO DE MAYO 3 , Vitoria-Gasteiz
+                      - generic [ref=e677]: · 📞 945060273
+                  - generic [ref=e678]:
+                    - link "CENTRO DE FORMACION Y ASESORAMIENTO COCI DE ALAVA" [ref=e680] [cursor=pointer]:
+                      - /url: https://www.camaradealava.com
+                    - generic [ref=e681]:
+                      - text: CL MANUEL IRADIER 17 B , Vitoria-Gasteiz
+                      - generic [ref=e682]: · 📞 945150190
+                  - generic [ref=e683]:
+                    - link "FONDO FORMACION EUSKADI-OLAGUIBEL" [ref=e685] [cursor=pointer]:
+                      - /url: https://www.ffeuskadi.net
+                    - generic [ref=e686]:
+                      - text: CL OLAGUIBEL 50 BJ , Vitoria-Gasteiz
+                      - generic [ref=e687]: · 📞 944186050
+                  - generic [ref=e688]:
+                    - generic [ref=e689]: PRESTATURIK
+                    - generic [ref=e690]:
+                      - text: CL PERU 8 BJ , Vitoria-Gasteiz
+                      - generic [ref=e691]: · 📞 945069970
+                  - generic [ref=e692]:
+                    - link "NEXO FORMACION" [ref=e694] [cursor=pointer]:
+                      - /url: https://www.nexolearning.net
+                    - generic [ref=e695]:
+                      - text: AVDA DE LOS OLMOS 1 , Vitoria-Gasteiz
+                      - generic [ref=e696]: · 📞 945354770
+                  - generic [ref=e697]:
+                    - link "KONECTIA-VITORIA" [ref=e699] [cursor=pointer]:
+                      - /url: https://www.konectia.net
+                    - generic [ref=e700]:
+                      - text: AVDA DE LOS OLMOS, 1 LOCAL D1 , Vitoria-Gasteiz
+                      - generic [ref=e701]: · 📞 944393094
+                  - generic [ref=e852]:
+                    - link "CHIP'S INFORMATICA" [ref=e854] [cursor=pointer]:
+                      - /url: https://www.grupochips.com
+                    - generic [ref=e855]:
+                      - text: CL CENTRO COMERCIAL SEMPERE 1 , Beasain
+                      - generic [ref=e856]: · 📞 943805037
+                  - generic [ref=e857]:
+                    - link "CEBANC" [ref=e859] [cursor=pointer]:
+                      - /url: https://www.cebanc.com
+                    - generic [ref=e860]:
+                      - text: PA BERIO 50 , Donostia/San Sebastián
+                      - generic [ref=e861]: · 📞 943316900
+                  - generic [ref=e862]:
+                    - link "CEI FORMACION Y ASESORAMIENTO EMPRESARIAL" [ref=e864] [cursor=pointer]:
+                      - /url: https://www.grupocei.net
+                    - generic [ref=e865]:
+                      - text: CL JUAN DE LA CRUZ 2 BJ 2 , Irun
+                      - generic [ref=e866]: · 📞 943666012
+                  - generic [ref=e867]:
+                    - link "OTEITZA LIZEO POLITEKNIKOA" [ref=e869] [cursor=pointer]:
+                      - /url: https://www.oteitzalp.org
+                    - generic [ref=e870]:
+                      - text: CL GUIPUZCOA KALEA 5 , Zarautz
+                      - generic [ref=e871]: · 📞 943111000
+                  - generic [ref=e872]:
+                    - link "OPOTEST" [ref=e874] [cursor=pointer]:
+                      - /url: https://www.opotestformacion.com
+                    - generic [ref=e875]:
+                      - text: CL PINAR 15 , Irun
+                      - generic [ref=e876]: · 📞 943615644
+                  - generic [ref=e877]:
+                    - link "UROLALDE S.L." [ref=e879] [cursor=pointer]:
+                      - /url: https://www.urolalde.net
+                    - generic [ref=e880]:
+                      - text: CL JUAN XXIII 16 1º A , Azpeitia
+                      - generic [ref=e881]: · 📞 943157066
+                  - generic [ref=e882]:
+                    - link "ACADEMIA BASTIDA S.L." [ref=e884] [cursor=pointer]:
+                      - /url: https://www.bastida.es
+                    - generic [ref=e885]:
+                      - text: AV ALAVA 3 , Arrasate/Mondragón
+                      - generic [ref=e886]: · 📞 943793216
+                  - generic [ref=e887]:
+                    - link "INFORLINE" [ref=e889] [cursor=pointer]:
+                      - /url: https://www.inforline.net
+                    - generic [ref=e890]:
+                      - text: CL LABEAGA 58 BJ , Urretxu
+                      - generic [ref=e891]: · 📞 943724121
+                  - generic [ref=e892]:
+                    - link "GOIERRI ESKOLA" [ref=e894] [cursor=pointer]:
+                      - /url: https://www.goierrieskola.org
+                    - generic [ref=e895]:
+                      - text: CL ARRANOMENDIA 2 , Ordizia
+                      - generic [ref=e896]: · 📞 943880062
+                  - generic [ref=e897]:
+                    - link "CEINPRO CENTRO INFORMATICO PROFESIONAL" [ref=e899] [cursor=pointer]:
+                      - /url: https://www.ceinpro.es
+                    - generic [ref=e900]:
+                      - text: PP HERIZ 95 Bj , Donostia/San Sebastián
+                      - generic [ref=e901]: · 📞 943310873
+                  - generic [ref=e902]:
+                    - link "ASOCIACION EMPRESARIAL ASLE" [ref=e904] [cursor=pointer]:
+                      - /url: https://www.asle.es
+                    - generic [ref=e905]:
+                      - text: PA ARBOL DE GUERNICA 24 , Donostia/San Sebastián
+                      - generic [ref=e906]: · 📞 943445869
+                  - generic [ref=e907]:
+                    - link "LA SALLE-BERROZPE" [ref=e909] [cursor=pointer]:
+                      - /url: https://www.lasalleberrozpe.eus
+                    - generic [ref=e910]:
+                      - text: AV LA SALLE ETORBIDEA 5 , Andoain
+                      - generic [ref=e911]: · 📞 943590557
+                  - generic [ref=e912]:
+                    - link "ESCUELA AREA" [ref=e914] [cursor=pointer]:
+                      - /url: https://www.areafor.com
+                    - generic [ref=e915]:
+                      - text: CL JUAN FERMIN GILISAGASTI/OF.101-104 4 1º , Donostia/San Sebastián
+                      - generic [ref=e916]: · 📞 943320431
+                  - generic [ref=e917]:
+                    - link "CEAM S.L." [ref=e919] [cursor=pointer]:
+                      - /url: https://www.ceam-gil.com
+                    - generic [ref=e920]:
+                      - text: CL ARANE_1,2,3 1 , Eibar
+                      - generic [ref=e921]: · 📞 943207697
+                  - generic [ref=e922]:
+                    - link "AYUNTAMIENTO DE BERGARA" [ref=e924] [cursor=pointer]:
+                      - /url: https://www.bergara.net
+                    - generic [ref=e925]:
+                      - text: PZ PLAZA SAN MARTIN 1 , Bergara
+                      - generic [ref=e926]: · 📞 943779124
+                  - generic [ref=e927]:
+                    - link "IRUNGO LA SALLE" [ref=e929] [cursor=pointer]:
+                      - /url: https://www.irungolasalle.eus
+                    - generic [ref=e930]:
+                      - text: CL ELIZATXO 14 , Irun
+                      - generic [ref=e931]: · 📞 943628411
+                  - generic [ref=e932]:
+                    - link "CENTRO ESTUDIOS ZUBELDIA" [ref=e934] [cursor=pointer]:
+                      - /url: https://www.zubeldia.com
+                    - generic [ref=e935]:
+                      - text: PP DE LOS OLMOS 14 Bj , Donostia/San Sebastián
+                      - generic [ref=e936]: · 📞 943399877
+                  - generic [ref=e937]:
+                    - link "UROLALDE" [ref=e939] [cursor=pointer]:
+                      - /url: https://www.urolalde.net
+                    - generic [ref=e940]:
+                      - text: CL ORKOLAGA 14 BJ , Hernani
+                      - generic [ref=e941]: · 📞 943333711
+                  - generic [ref=e942]:
+                    - link "FONDO FORMACION EUSKADI S.L.L." [ref=e944] [cursor=pointer]:
+                      - /url: https://www.ffeuskadi.net
+                    - generic [ref=e945]:
+                      - text: AV AGUSTINAS 6 , Errenteria
+                      - generic [ref=e946]: · 📞 943344122
+                  - generic [ref=e947]:
+                    - link "CENTRO DE FORMACIÓN STANLEY" [ref=e949] [cursor=pointer]:
+                      - /url: https://www.stanleypublishing.es
+                    - generic [ref=e950]:
+                      - text: CL MENDELU 15 , Irun
+                      - generic [ref=e951]: · 📞 943640412
+                  - generic [ref=e952]:
+                    - link "LABAT AKADEMIA" [ref=e954] [cursor=pointer]:
+                      - /url: https://www.labatakademia.com
+                    - generic [ref=e955]:
+                      - text: PZ IDIAZABAL 41 , Urnieta
+                      - generic [ref=e956]: · 📞 943009634
+                  - generic [ref=e957]:
+                    - link "IKASI CENTRO DE FORMACION" [ref=e959] [cursor=pointer]:
+                      - /url: https://www.ikasi.com
+                    - generic [ref=e960]:
+                      - text: CL AMILLAGA 10 , Bergara
+                      - generic [ref=e961]: · 📞 943764033
+                  - generic [ref=e962]:
+                    - link "ASOCIACION AIKAOLA" [ref=e964] [cursor=pointer]:
+                      - /url: https://www.olazabalbhi.net
+                    - generic [ref=e965]:
+                      - text: BO SAN MARTIN 16 , Legazpi
+                      - generic [ref=e966]: · 📞 943734340
+                  - generic [ref=e967]:
+                    - link "OARSOALDEA" [ref=e969] [cursor=pointer]:
+                      - /url: https://www.oarsoaldea.eus
+                    - generic [ref=e970]:
+                      - text: CL ASTIGARRAGAKO BIDEA 2 2º , Oiartzun
+                      - generic [ref=e971]: · 📞 943510200
+                  - generic [ref=e972]:
+                    - link "DO'S FORMACION" [ref=e974] [cursor=pointer]:
+                      - /url: https://www.dosformacion.com
+                    - generic [ref=e975]:
+                      - text: AV NAVARRA 1 , Beasain
+                      - generic [ref=e976]: · 📞 943880346
+                  - generic [ref=e977]:
+                    - link "NAZARET" [ref=e979] [cursor=pointer]:
+                      - /url: https://www.nazaret.eus
+                    - generic [ref=e980]:
+                      - text: CL ALDAKOENEA 36 , Donostia/San Sebastián
+                      - generic [ref=e981]: · 📞 943326666
+                  - generic [ref=e982]:
+                    - link "CIFP USURBIL LHII" [ref=e984] [cursor=pointer]:
+                      - /url: https://www.lhusurbil.eus
+                    - generic [ref=e985]:
+                      - text: BO ETARTE BIDEA (ZUBIETA AUZOA) 9 , Usurbil
+                      - generic [ref=e986]: · 📞 943364600
+                  - generic [ref=e987]:
+                    - link "CIFP IZARRAITZ LANBIDE HEZIKETA LHII" [ref=e989] [cursor=pointer]:
+                      - /url: https://www.izarraitz.eus
+                    - generic [ref=e990]:
+                      - text: BO ALTAMIRA S/N 0 , Azkoitia
+                      - generic [ref=e991]: · 📞 943852174
+                  - generic [ref=e992]:
+                    - link "IES ZUBIRI-MANTEO BHI" [ref=e994] [cursor=pointer]:
+                      - /url: https://www.zubirimanteo.com
+                    - generic [ref=e995]:
+                      - text: PO JOSE Mª BARANDIARAN 10 , Donostia/San Sebastián
+                      - generic [ref=e996]: · 📞 943899292
+                  - generic [ref=e997]:
+                    - link "CIFP PLAIAUNDI LHII" [ref=e999] [cursor=pointer]:
+                      - /url: https://www.plaiaundi.eus
+                    - generic [ref=e1000]:
+                      - text: CL PLAIAUNDI 1 , Irun
+                      - generic [ref=e1001]: · 📞 943899214
+                  - generic [ref=e1002]:
+                    - link "CIFP MEKA LHII" [ref=e1004] [cursor=pointer]:
+                      - /url: https://www.meka-elgoibar.net
+                    - generic [ref=e1005]:
+                      - text: CL ARREGITORRE 2 , Elgoibar
+                      - generic [ref=e1006]: · 📞 943748019
+                  - generic [ref=e1007]:
+                    - link "CIFP TOLOSALDEA LHII" [ref=e1009] [cursor=pointer]:
+                      - /url: https://www.tolosaldea.com
+                    - generic [ref=e1010]:
+                      - text: CL SANTA LUZIA 17 , Goiburu o San Esteban
+                      - generic [ref=e1011]: · 📞 943651147
+                  - paragraph [ref=e849]: ... i 97 centres més
+        - rowgroup [ref=e564]:
+          - row "Asistencia a la dirección en la gestión administrativa y comercial ADG_C_003_5B Administración y Gestión C 3" [ref=e565] [cursor=pointer]:
+            - cell "Asistencia a la dirección en la gestión administrativa y comercial" [ref=e566]
+            - cell "ADG_C_003_5B" [ref=e567]
+            - cell "Administración y Gestión" [ref=e568]
+            - cell "C" [ref=e569]
+            - cell "3" [ref=e570]
+        - rowgroup [ref=e571]:
+          - row "Gestión contable y gestión administrativa para auditoría Pla antic 2960 centres ADGD0108 Administración y Gestión C 3" [ref=e572] [cursor=pointer]:
+            - cell "Gestión contable y gestión administrativa para auditoría Pla antic 2960 centres" [ref=e573]:
+              - text: Gestión contable y gestión administrativa para auditoría
+              - generic [ref=e574]: Pla antic
+              - text: 2960 centres
+            - cell "ADGD0108" [ref=e575]
+            - cell "Administración y Gestión" [ref=e576]
+            - cell "C" [ref=e577]
+            - cell "3" [ref=e578]
+        - rowgroup [ref=e579]:
+          - row "Gestión administrativa del transporte internacional COM_C_005_5B Comercio y Marketing C 3" [ref=e580] [cursor=pointer]:
+            - cell "Gestión administrativa del transporte internacional" [ref=e581]
+            - cell "COM_C_005_5B" [ref=e582]
+            - cell "Comercio y Marketing" [ref=e583]
+            - cell "C" [ref=e584]
+            - cell "3" [ref=e585]
+        - rowgroup [ref=e586]:
+          - row "Gestión administrativa y financiera del comercio internacional Pla antic 1948 centres COMT0210 Comercio y Marketing C 3" [ref=e587] [cursor=pointer]:
+            - cell "Gestión administrativa y financiera del comercio internacional Pla antic 1948 centres" [ref=e588]:
+              - text: Gestión administrativa y financiera del comercio internacional
+              - generic [ref=e589]: Pla antic
+              - text: 1948 centres
+            - cell "COMT0210" [ref=e590]
+            - cell "Comercio y Marketing" [ref=e591]
+            - cell "C" [ref=e592]
+            - cell "3" [ref=e593]
+  - contentinfo [ref=e32]:
+    - link "Historial d'actualitzacions" [ref=e33] [cursor=pointer]:
+      - /url: historial.html

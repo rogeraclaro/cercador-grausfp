@@ -1,0 +1,805 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - generic [ref=e5]: GrausFP
+    - generic [ref=e6]:
+      - heading "Formació Professional" [level=1] [ref=e7]:
+        - text: Formació
+        - emphasis [ref=e8]: Professional
+      - paragraph [ref=e9]: Explora els graus disponibles a l'estat espanyol
+      - generic [ref=e10]:
+        - img
+        - generic [ref=e11]: Cerca
+        - searchbox "Cerca" [ref=e12]: gestión administrativa
+    - tablist "Filtre per grau" [ref=e13]:
+      - button "Tots els graus" [ref=e14] [cursor=pointer]
+      - button "Grau A" [ref=e15] [cursor=pointer]
+      - button "Grau B" [ref=e16] [cursor=pointer]
+      - button "Grau C" [ref=e17] [cursor=pointer]
+      - button "Grau D" [ref=e18] [cursor=pointer]
+      - button "Grau E" [ref=e19] [cursor=pointer]
+    - generic [ref=e20]:
+      - generic [ref=e21]: "Filtrar per:"
+      - generic [ref=e22]: Família
+      - combobox "Família" [ref=e23] [cursor=pointer]:
+        - option "Totes les famílies" [selected]
+        - option "Actividades Físicas y Deportivas"
+        - option "Administración y Gestión"
+        - option "Agraria"
+        - option "Artes Gráficas"
+        - option "Artes y Artesanías"
+        - option "Comercio y Marketing"
+        - option "Edificación y Obra Civil"
+        - option "Electricidad y Electrónica"
+        - option "Energía y Agua"
+        - option "Fabricación Mecánica"
+        - option "Hostelería y Turismo"
+        - option "Imagen Personal"
+        - option "Imagen y Espectáculos"
+        - option "Industrias Alimentarias"
+        - option "Industrias Extractivas"
+        - option "Informática y Comunicaciones"
+        - option "Instalación y Mantenimiento"
+        - option "Inteligencia Artificial y Data"
+        - option "Madera, Mueble y Corcho"
+        - option "Mantenimiento y Servicios a la Producción"
+        - option "Marítimo-Pesquera"
+        - option "Química"
+        - option "Sanidad"
+        - option "Seguridad y Medio Ambiente"
+        - option "Servicios Socioculturales y a la Comunidad"
+        - option "Textil, Confección y Piel"
+        - option "Transporte y Mantenimiento de Vehículos"
+        - option "Vidrio y Cerámica"
+      - generic [ref=e24]: Nivell
+      - combobox "Nivell" [ref=e25] [cursor=pointer]:
+        - option "Tots els nivells" [selected]
+        - option "Nivell 1"
+        - option "Nivell 2"
+        - option "Nivell 3"
+      - generic [ref=e26] [cursor=pointer]:
+        - checkbox "Ocultar pla antic" [ref=e27]
+        - text: Ocultar pla antic
+      - button "Esborrar filtres ×" [ref=e28] [cursor=pointer]
+    - generic [ref=e29]:
+      - paragraph [ref=e30]: 5 resultats trobats
+      - table "Resultats del cercador de Graus FP" [ref=e32]:
+        - caption [ref=e33]: Resultats del cercador de Graus FP
+        - rowgroup [ref=e34]:
+          - row "Denominació Codi Família professional Grau Nivell" [ref=e35]:
+            - columnheader "Denominació" [ref=e36] [cursor=pointer]:
+              - text: Denominació
+              - generic [ref=e37]: ▲
+            - columnheader "Codi" [ref=e38] [cursor=pointer]:
+              - text: Codi
+              - generic [ref=e39]: ▲
+            - columnheader "Família professional" [ref=e40] [cursor=pointer]:
+              - text: Família professional
+              - generic [ref=e41]: ▲
+            - columnheader "Grau" [ref=e42] [cursor=pointer]:
+              - text: Grau
+              - generic [ref=e43]: ▲
+            - columnheader "Nivell" [ref=e44] [cursor=pointer]:
+              - text: Nivell
+              - generic [ref=e45]: ▲
+        - rowgroup
+        - rowgroup [ref=e406]:
+          - row "Actividades de gestión administrativa Pla antic 4113 centres ADGD0308 Administración y Gestión C 2" [ref=e407] [cursor=pointer]:
+            - cell "Actividades de gestión administrativa Pla antic 4113 centres" [ref=e408]:
+              - text: Actividades de gestión administrativa
+              - generic [ref=e409]: Pla antic
+              - text: 4113 centres
+            - cell "ADGD0308" [ref=e410]
+            - cell "Administración y Gestión" [ref=e411]
+            - cell "C" [ref=e412]
+            - cell "2" [ref=e413]
+          - row [ref=e444]:
+            - cell [ref=e445]:
+              - generic [ref=e446]:
+                - generic [ref=e447]:
+                  - generic [ref=e448]: 4113 / 4113 centres
+                  - combobox [ref=e449] [cursor=pointer]:
+                    - option "Totes" [selected]
+                    - option "Andalucía"
+                    - option "Aragón"
+                    - option "Cantabria"
+                    - option "Castilla La Mancha"
+                    - option "Castilla Y León"
+                    - option "Cataluña"
+                    - option "Ceuta"
+                    - option "Comunidad Valenciana"
+                    - option "Extremadura"
+                    - option "Galicia"
+                    - option "Illes Balears"
+                    - option "Islas Canarias"
+                    - option "La Rioja"
+                    - option "Madrid"
+                    - option "Melilla"
+                    - option "Navarra"
+                    - option "País Vasco"
+                    - option "Principado De Asturias"
+                    - option "Región De Murcia"
+                  - searchbox "Cerca centre o població…" [ref=e450]
+                  - button "✕" [ref=e451] [cursor=pointer]
+                - generic [ref=e452]:
+                  - generic [ref=e453]:
+                    - link "Consultora estudios economicos e sociais" [ref=e455] [cursor=pointer]:
+                      - /url: https://www.ceesconsultora.com
+                    - generic [ref=e456]:
+                      - text: Rúa Anxeriz - (milladoiro), Nº 3, Baixo , Ames (San Tomé)
+                      - generic [ref=e457]:
+                        - text: ·
+                        - link "📞 981591012" [ref=e458] [cursor=pointer]:
+                          - /url: tel:981591012
+                      - generic [ref=e459]:
+                        - text: ·
+                        - link "formacion@ceesconsultora.com" [ref=e460] [cursor=pointer]:
+                          - /url: mailto:formacion@ceesconsultora.com
+                  - generic [ref=e461]:
+                    - link "For-ga-ames" [ref=e463] [cursor=pointer]:
+                      - /url: https://www.forga.gal
+                    - generic [ref=e464]:
+                      - text: Rúa Poligono Novo Milladoiro, Rúa Palmeira , 21a , Ames (San Tomé)
+                      - generic [ref=e465]:
+                        - text: ·
+                        - link "📞 981939434" [ref=e466] [cursor=pointer]:
+                          - /url: tel:981939434
+                      - generic [ref=e467]:
+                        - text: ·
+                        - link "dt.centro@forga.gal" [ref=e468] [cursor=pointer]:
+                          - /url: mailto:dt.centro@forga.gal
+                  - generic [ref=e469]:
+                    - link "Instituto de formacion y estudios sociales - ifes" [ref=e471] [cursor=pointer]:
+                      - /url: https://www.galicia.ifes.es
+                    - generic [ref=e472]:
+                      - text: Rúa Da Xesta Nave 76a - Milladoiro , Ames (San Tomé)
+                      - generic [ref=e473]:
+                        - text: ·
+                        - link "📞 981569200" [ref=e474] [cursor=pointer]:
+                          - /url: tel:981569200
+                      - generic [ref=e475]:
+                        - text: ·
+                        - link "mdelgado@galicia.ifes.es" [ref=e476] [cursor=pointer]:
+                          - /url: mailto:mdelgado@galicia.ifes.es
+                  - generic [ref=e477]:
+                    - link "Centro de estudios profesionales de galicia" [ref=e479] [cursor=pointer]:
+                      - /url: https://www.adams.es
+                    - generic [ref=e480]:
+                      - text: Rúa San Andres, Nº 115, Baixo , A Coruña
+                      - generic [ref=e481]:
+                        - text: ·
+                        - link "📞 981153234" [ref=e482] [cursor=pointer]:
+                          - /url: tel:981153234
+                      - generic [ref=e483]:
+                        - text: ·
+                        - link "carmenamor@adams.es" [ref=e484] [cursor=pointer]:
+                          - /url: mailto:carmenamor@adams.es
+                  - generic [ref=e485]:
+                    - link "Centro de formacion nuevas profesiones sl" [ref=e487] [cursor=pointer]:
+                      - /url: https://www.mundo-r.com
+                    - generic [ref=e488]:
+                      - text: Rúa Aaiun, Nº 3, Baixo , A Coruña
+                      - generic [ref=e489]:
+                        - text: ·
+                        - link "📞 981277043" [ref=e490] [cursor=pointer]:
+                          - /url: tel:981277043
+                      - generic [ref=e491]:
+                        - text: ·
+                        - link "cfnuevasprofesiones@mundo-r.com" [ref=e492] [cursor=pointer]:
+                          - /url: mailto:cfnuevasprofesiones@mundo-r.com
+                  - generic [ref=e493]:
+                    - link "Centro de iniciativas profesionales cip" [ref=e495] [cursor=pointer]:
+                      - /url: https://www.cip-formacion.com
+                    - generic [ref=e496]:
+                      - text: Rúa Paseo De Los Puentes, Nº 2, Baixo , A Coruña
+                      - generic [ref=e497]:
+                        - text: ·
+                        - link "📞 981278181" [ref=e498] [cursor=pointer]:
+                          - /url: tel:981278181
+                      - generic [ref=e499]:
+                        - text: ·
+                        - link "proyectos@cip-formacion.com" [ref=e500] [cursor=pointer]:
+                          - /url: mailto:proyectos@cip-formacion.com
+                  - generic [ref=e501]:
+                    - link "Centro gallego de estudios informate" [ref=e503] [cursor=pointer]:
+                      - /url: https://www.informateoposiciones.es
+                    - generic [ref=e504]:
+                      - text: Rúa Marques De Amboage, Nº 12, Baixo , A Coruña
+                      - generic [ref=e505]:
+                        - text: ·
+                        - link "📞 698188205" [ref=e506] [cursor=pointer]:
+                          - /url: tel:698188205
+                      - generic [ref=e507]:
+                        - text: ·
+                        - link "antonioestevez@informateoposiciones.es" [ref=e508] [cursor=pointer]:
+                          - /url: mailto:antonioestevez@informateoposiciones.es
+                  - generic [ref=e509]:
+                    - link "Confederacion de empresarios de coruña - cec" [ref=e511] [cursor=pointer]:
+                      - /url: https://www.cec.es
+                    - generic [ref=e512]:
+                      - text: Rúa Francisco Vales Villamarin 24-26 Bajo , A Coruña
+                      - generic [ref=e513]:
+                        - text: ·
+                        - link "📞 981133702" [ref=e514] [cursor=pointer]:
+                          - /url: tel:981133702
+                      - generic [ref=e515]:
+                        - text: ·
+                        - link "formacion@cec.es" [ref=e516] [cursor=pointer]:
+                          - /url: mailto:formacion@cec.es
+                  - generic [ref=e517]:
+                    - link "Confederacion empresarios coruña" [ref=e519] [cursor=pointer]:
+                      - /url: https://www.cec.es
+                    - generic [ref=e520]:
+                      - text: Rúa Plaza Luis Seoane, Torre 1, Entreplanta , A Coruña
+                      - generic [ref=e521]:
+                        - text: ·
+                        - link "📞 981133702" [ref=e522] [cursor=pointer]:
+                          - /url: tel:981133702
+                      - generic [ref=e523]:
+                        - text: ·
+                        - link "cec@cec.es" [ref=e524] [cursor=pointer]:
+                          - /url: mailto:cec@cec.es
+                  - generic [ref=e525]:
+                    - link "Confederación gallega de persoas con discapacidade" [ref=e527] [cursor=pointer]:
+                      - /url: https://www.cogami.gal
+                    - generic [ref=e528]:
+                      - text: Avenida Cadiz (edificio Malagrosa ), Nº 1, 1 2 , A Coruña
+                      - generic [ref=e529]:
+                        - text: ·
+                        - link "📞 981231105" [ref=e530] [cursor=pointer]:
+                          - /url: tel:981231105
+                      - generic [ref=e531]:
+                        - text: ·
+                        - link "correo@cogami.gal" [ref=e532] [cursor=pointer]:
+                          - /url: mailto:correo@cogami.gal
+                  - generic [ref=e533]:
+                    - link "Consultora monte alto s.l." [ref=e535] [cursor=pointer]:
+                      - /url: https://www.metodogrupo.com
+                    - generic [ref=e536]:
+                      - text: Rúa Diego Delicado, Nº 23, Bajo , A Coruña
+                      - generic [ref=e537]:
+                        - text: ·
+                        - link "📞 981937808" [ref=e538] [cursor=pointer]:
+                          - /url: tel:981937808
+                      - generic [ref=e539]:
+                        - text: ·
+                        - link "mtobio@metodogrupo.com" [ref=e540] [cursor=pointer]:
+                          - /url: mailto:mtobio@metodogrupo.com
+                  - generic [ref=e541]:
+                    - link "Formega coruña" [ref=e543] [cursor=pointer]:
+                      - /url: https://www.formega.es
+                    - generic [ref=e544]:
+                      - text: Rúa Gambrinus - Poligono A Grela, Nº 60 , A Coruña
+                      - generic [ref=e545]:
+                        - text: ·
+                        - link "📞 981258209" [ref=e546] [cursor=pointer]:
+                          - /url: tel:981258209
+                      - generic [ref=e547]:
+                        - text: ·
+                        - link "coruna@formega.es" [ref=e548] [cursor=pointer]:
+                          - /url: mailto:coruna@formega.es
+                  - generic [ref=e549]:
+                    - link "Fundacion formacion e emprego de galicia" [ref=e551] [cursor=pointer]:
+                      - /url: https://www.foremga.ccoo.es
+                    - generic [ref=e552]:
+                      - text: Polígono A Grela - Bens - Rua Da Ermita, Nº 46 , A Coruña
+                      - generic [ref=e553]:
+                        - text: ·
+                        - link "📞 981613909" [ref=e554] [cursor=pointer]:
+                          - /url: tel:981613909
+                      - generic [ref=e555]:
+                        - text: ·
+                        - link "fina_lourido@foremga.ccoo.es" [ref=e556] [cursor=pointer]:
+                          - /url: mailto:fina_lourido@foremga.ccoo.es
+                  - generic [ref=e557]:
+                    - link "Fundacion nortempo" [ref=e559] [cursor=pointer]:
+                      - /url: https://www.fundacionnortempo.es
+                    - generic [ref=e560]:
+                      - text: Rúa Bolivia, Nº 1, 1º Izda , A Coruña
+                      - generic [ref=e561]:
+                        - text: ·
+                        - link "📞 981272611" [ref=e562] [cursor=pointer]:
+                          - /url: tel:981272611
+                      - generic [ref=e563]:
+                        - text: ·
+                        - link "formacion@fundacionnortempo.es" [ref=e564] [cursor=pointer]:
+                          - /url: mailto:formacion@fundacionnortempo.es
+                  - generic [ref=e565]:
+                    - link "Gaba formacion sl" [ref=e567] [cursor=pointer]:
+                      - /url: https://www.gabaformacion.com
+                    - generic [ref=e568]:
+                      - text: Rúa Medico Duran 7-9bajo , A Coruña
+                      - generic [ref=e569]:
+                        - text: ·
+                        - link "📞 981145583" [ref=e570] [cursor=pointer]:
+                          - /url: tel:981145583
+                      - generic [ref=e571]:
+                        - text: ·
+                        - link "info@gabaformacion.com" [ref=e572] [cursor=pointer]:
+                          - /url: mailto:info@gabaformacion.com
+                  - generic [ref=e573]:
+                    - link "Instituto de formación e estudios sociais" [ref=e575] [cursor=pointer]:
+                      - /url: https://www.telefonica.net
+                    - generic [ref=e576]:
+                      - text: Avenida Alfonso Molina S/n - Edificio Sindicatos , A Coruña
+                      - generic [ref=e577]:
+                        - text: ·
+                        - link "📞 981577171" [ref=e578] [cursor=pointer]:
+                          - /url: tel:981577171
+                      - generic [ref=e579]:
+                        - text: ·
+                        - link "ifescoruna@telefonica.net" [ref=e580] [cursor=pointer]:
+                          - /url: mailto:ifescoruna@telefonica.net
+                  - generic [ref=e581]:
+                    - link "Lexgal formacion sl" [ref=e583] [cursor=pointer]:
+                      - /url: https://www.lexgalformacion.es
+                    - generic [ref=e584]:
+                      - text: Avenida Chile, Nº 29 , A Coruña
+                      - generic [ref=e585]:
+                        - text: ·
+                        - link "📞 981225240" [ref=e586] [cursor=pointer]:
+                          - /url: tel:981225240
+                      - generic [ref=e587]:
+                        - text: ·
+                        - link "info@lexgalformacion.es" [ref=e588] [cursor=pointer]:
+                          - /url: mailto:info@lexgalformacion.es
+                  - generic [ref=e589]:
+                    - link "Nt for learning s.l" [ref=e591] [cursor=pointer]:
+                      - /url: https://www.ntfor.com
+                    - generic [ref=e592]:
+                      - text: Rúa Curros Enriquez , 43 Baixo , A Coruña
+                      - generic [ref=e593]:
+                        - text: ·
+                        - link "📞 881035299" [ref=e594] [cursor=pointer]:
+                          - /url: tel:881035299
+                      - generic [ref=e595]:
+                        - text: ·
+                        - link "ntformacion@ntfor.com" [ref=e596] [cursor=pointer]:
+                          - /url: mailto:ntformacion@ntfor.com
+                  - generic [ref=e597]:
+                    - link "Coesco - a estrada" [ref=e599] [cursor=pointer]:
+                      - /url: https://www.coescoformacion.com
+                    - generic [ref=e600]:
+                      - text: Rúa San Pelayo, Nº 21 Bajo , A Estrada
+                      - generic [ref=e601]:
+                        - text: ·
+                        - link "📞 986572025" [ref=e602] [cursor=pointer]:
+                          - /url: tel:986572025
+                      - generic [ref=e603]:
+                        - text: ·
+                        - link "organizacion@coescoformacion.com" [ref=e604] [cursor=pointer]:
+                          - /url: mailto:organizacion@coescoformacion.com
+                  - generic [ref=e605]:
+                    - link "Concello da estrada (escola obradoiro)" [ref=e607] [cursor=pointer]:
+                      - /url: https://www.aestrada.com
+                    - generic [ref=e608]:
+                      - text: Praza Da Constitucion, Nº 1 , A Estrada
+                      - generic [ref=e609]:
+                        - text: ·
+                        - link "📞 986570997" [ref=e610] [cursor=pointer]:
+                          - /url: tel:986570997
+                      - generic [ref=e611]:
+                        - text: ·
+                        - link "formacion@aestrada.com" [ref=e612] [cursor=pointer]:
+                          - /url: mailto:formacion@aestrada.com
+                  - generic [ref=e613]:
+                    - link "Fundación cultural da estrada - concello da estrada" [ref=e615] [cursor=pointer]:
+                      - /url: https://www.aestrada.es
+                    - generic [ref=e616]:
+                      - text: Avenida Benito Vigo, Nº 104, Baixo , A Estrada
+                      - generic [ref=e617]:
+                        - text: ·
+                        - link "📞 986570997" [ref=e618] [cursor=pointer]:
+                          - /url: tel:986570997
+                      - generic [ref=e619]:
+                        - text: ·
+                        - link "fundacioncultural@aestrada.es" [ref=e620] [cursor=pointer]:
+                          - /url: mailto:fundacioncultural@aestrada.es
+                  - generic [ref=e621]:
+                    - link "Instituto de formacion profesional da estrada" [ref=e623] [cursor=pointer]:
+                      - /url: https://www.aecies.com
+                    - generic [ref=e624]:
+                      - text: Avenida De Santiago, Nº 71, Esc Bj , A Estrada
+                      - generic [ref=e625]:
+                        - text: ·
+                        - link "📞 669892628" [ref=e626] [cursor=pointer]:
+                          - /url: tel:669892628
+                      - generic [ref=e627]:
+                        - text: ·
+                        - link "jose@aecies.com" [ref=e628] [cursor=pointer]:
+                          - /url: mailto:jose@aecies.com
+                  - generic [ref=e629]:
+                    - generic [ref=e630]: Phonos a estrada, s.l.
+                    - generic [ref=e631]:
+                      - text: Rúa Gradín, Nº 25 - Baixo , A Estrada
+                      - generic [ref=e632]:
+                        - text: ·
+                        - link "📞 986575159" [ref=e633] [cursor=pointer]:
+                          - /url: tel:986575159
+                      - generic [ref=e634]:
+                        - text: ·
+                        - link "phonosaestrada@hotmail.com" [ref=e635] [cursor=pointer]:
+                          - /url: mailto:phonosaestrada@hotmail.com
+                  - generic [ref=e636]:
+                    - link "Informática san benito, s.l." [ref=e638] [cursor=pointer]:
+                      - /url: https://www.sanbenito.es
+                    - generic [ref=e639]:
+                      - text: Praza San Benito, Nº 2-3 , A Guarda
+                      - generic [ref=e640]:
+                        - text: ·
+                        - link "📞 986608920" [ref=e641] [cursor=pointer]:
+                          - /url: tel:986608920
+                      - generic [ref=e642]:
+                        - text: ·
+                        - link "info@sanbenito.es" [ref=e643] [cursor=pointer]:
+                          - /url: mailto:info@sanbenito.es
+                  - generic [ref=e644]:
+                    - link "Jaime pérez martínez (informática jaime)" [ref=e646] [cursor=pointer]:
+                      - /url: https://www.informaticajaime.com
+                    - generic [ref=e647]:
+                      - text: Rúa Galicia, Nº 37, Baixo , A Guarda
+                      - generic [ref=e648]:
+                        - text: ·
+                        - link "📞 986610363" [ref=e649] [cursor=pointer]:
+                          - /url: tel:986610363
+                      - generic [ref=e650]:
+                        - text: ·
+                        - link "jaime@informaticajaime.com" [ref=e651] [cursor=pointer]:
+                          - /url: mailto:jaime@informaticajaime.com
+                  - generic [ref=e652]:
+                    - link "Lidera knowledge sl" [ref=e654] [cursor=pointer]:
+                      - /url: https://www.liderakformacion.com
+                    - generic [ref=e655]:
+                      - text: Rúa Vicente Sobrino, Nº 2, 0 , A Guarda
+                      - generic [ref=e656]:
+                        - text: ·
+                        - link "📞 692310258" [ref=e657] [cursor=pointer]:
+                          - /url: tel:692310258
+                      - generic [ref=e658]:
+                        - text: ·
+                        - link "jvalencia@liderakformacion.com" [ref=e659] [cursor=pointer]:
+                          - /url: mailto:jvalencia@liderakformacion.com
+                  - generic [ref=e660]:
+                    - link "El muelle servicios hosting sl" [ref=e662] [cursor=pointer]:
+                      - /url: https://www.elmuelle.es
+                    - generic [ref=e663]:
+                      - text: Rúa Condado, Nº 1 , A Pobra do Caramiñal
+                      - generic [ref=e664]:
+                        - text: ·
+                        - link "📞 902881122" [ref=e665] [cursor=pointer]:
+                          - /url: tel:902881122
+                      - generic [ref=e666]:
+                        - text: ·
+                        - link "soporte@elmuelle.es" [ref=e667] [cursor=pointer]:
+                          - /url: mailto:soporte@elmuelle.es
+                  - generic [ref=e668]:
+                    - link "Misioneras divino maestro" [ref=e670] [cursor=pointer]:
+                      - /url: https://www.edu.xunta.gal
+                    - generic [ref=e671]:
+                      - text: Rúa Virgen Del Monte, 6 , A Pobra do Caramiñal
+                      - generic [ref=e672]:
+                        - text: ·
+                        - link "📞 981830892" [ref=e673] [cursor=pointer]:
+                          - /url: tel:981830892
+                      - generic [ref=e674]:
+                        - text: ·
+                        - link "cpr.divino.maestro.pobra@edu.xunta.gal" [ref=e675] [cursor=pointer]:
+                          - /url: mailto:cpr.divino.maestro.pobra@edu.xunta.gal
+                  - generic [ref=e676]:
+                    - link "Edificio cima" [ref=e678] [cursor=pointer]:
+                      - /url: https://www.amdformacion.com
+                    - generic [ref=e679]:
+                      - text: Cl/ Del Compositor David Templado, 54, Planta Bo Cp 30550 Abaran, Abarán, Murcia , Abarán
+                      - generic [ref=e680]:
+                        - text: ·
+                        - link "📞 685477739" [ref=e681] [cursor=pointer]:
+                          - /url: tel:685477739
+                      - generic [ref=e682]:
+                        - text: ·
+                        - link "info@amdformacion.com" [ref=e683] [cursor=pointer]:
+                          - /url: mailto:info@amdformacion.com
+                  - generic [ref=e684]:
+                    - link "Ajuntament d'abrera" [ref=e686] [cursor=pointer]:
+                      - /url: https://www.abrera.cat
+                    - generic [ref=e687]:
+                      - text: Pj Escoles Velles 1 , Abrera
+                      - generic [ref=e688]:
+                        - text: ·
+                        - link "📞 937700102" [ref=e689] [cursor=pointer]:
+                          - /url: tel:937700102
+                      - generic [ref=e690]:
+                        - text: ·
+                        - link "mendietallt@abrera.cat" [ref=e691] [cursor=pointer]:
+                          - /url: mailto:mendietallt@abrera.cat
+                  - generic [ref=e692]:
+                    - link "Ajuntament d'abrera" [ref=e694] [cursor=pointer]:
+                      - /url: https://www.abrera.cat
+                    - generic [ref=e695]:
+                      - text: Cr Martorell 20 , Abrera
+                      - generic [ref=e696]:
+                        - text: ·
+                        - link "📞 937700102" [ref=e697] [cursor=pointer]:
+                          - /url: tel:937700102
+                      - generic [ref=e698]:
+                        - text: ·
+                        - link "mendietallt@abrera.cat" [ref=e699] [cursor=pointer]:
+                          - /url: mailto:mendietallt@abrera.cat
+                  - generic [ref=e700]:
+                    - link "Complejo azucarera" [ref=e702] [cursor=pointer]:
+                      - /url: https://www.andaluciajunta.es
+                    - generic [ref=e703]:
+                      - text: Edificio La Alcoholera, Pol. Ind. La Azucarera 0 , Adra
+                      - generic [ref=e704]:
+                        - text: ·
+                        - link "📞 950402221" [ref=e705] [cursor=pointer]:
+                          - /url: tel:950402221
+                      - generic [ref=e706]:
+                        - text: ·
+                        - link "DESARROLLOADRA@ANDALUCIAJUNTA.ES" [ref=e707] [cursor=pointer]:
+                          - /url: mailto:DESARROLLOADRA@ANDALUCIAJUNTA.ES
+                  - generic [ref=e708]:
+                    - generic [ref=e709]: I.e.s abdera
+                    - generic [ref=e710]:
+                      - text: Calle Marisma 6 , Adra
+                      - generic [ref=e711]:
+                        - text: ·
+                        - link "📞 950400711" [ref=e712] [cursor=pointer]:
+                          - /url: tel:950400711
+                      - generic [ref=e713]:
+                        - text: ·
+                        - link "04000110.edu@juntadeandalucia.es" [ref=e714] [cursor=pointer]:
+                          - /url: "mailto: 04000110.edu@juntadeandalucia.es"
+                  - generic [ref=e715]:
+                    - link "Centro de formacion de agost" [ref=e717] [cursor=pointer]:
+                      - /url: https://www.agost.es
+                    - generic [ref=e718]:
+                      - text: Av De Xixona 2 , Agost
+                      - generic [ref=e719]:
+                        - text: ·
+                        - link "📞 965691869" [ref=e720] [cursor=pointer]:
+                          - /url: tel:965691869
+                      - generic [ref=e721]:
+                        - text: ·
+                        - link "DESARROLLOYCULTURA@AGOST.ES" [ref=e722] [cursor=pointer]:
+                          - /url: mailto:DESARROLLOYCULTURA@AGOST.ES
+                  - generic [ref=e723]:
+                    - link "Academia triángulo" [ref=e725] [cursor=pointer]:
+                      - /url: https://www.triangulo.com.es
+                    - generic [ref=e726]:
+                      - text: Cl/ Gran Vía, 43 , Planta Bj. Cp 30430 Cehegín, Murcia , Agua Salada
+                      - generic [ref=e727]:
+                        - text: ·
+                        - link "📞 690077103" [ref=e728] [cursor=pointer]:
+                          - /url: tel:690077103
+                      - generic [ref=e729]:
+                        - text: ·
+                        - link "info@triangulo.com.es" [ref=e730] [cursor=pointer]:
+                          - /url: mailto:info@triangulo.com.es
+                  - generic [ref=e731]:
+                    - link "Academia técnica universitaria-cehegín" [ref=e733] [cursor=pointer]:
+                      - /url: https://www.grupoatu.com
+                    - generic [ref=e734]:
+                      - text: Cl/ Valle Inclán, 4 Cp 30430 Cehegín, Murcia , Agua Salada
+                      - generic [ref=e735]:
+                        - text: ·
+                        - link "📞 968741006" [ref=e736] [cursor=pointer]:
+                          - /url: tel:968741006
+                      - generic [ref=e737]:
+                        - text: ·
+                        - link "isabel@grupoatu.com" [ref=e738] [cursor=pointer]:
+                          - /url: mailto:isabel@grupoatu.com
+                  - generic [ref=e739]:
+                    - generic [ref=e740]: Autoescuela vidal, s.l.
+                    - generic [ref=e741]:
+                      - text: Cr/ Murcia, 57 Cp 30430 Cehegín, Murcia , Agua Salada
+                      - generic [ref=e742]:
+                        - text: ·
+                        - link "📞 607303226" [ref=e743] [cursor=pointer]:
+                          - /url: tel:607303226
+                      - generic [ref=e744]:
+                        - text: ·
+                        - link "coordinacioncursosformacion@gmail.com" [ref=e745] [cursor=pointer]:
+                          - /url: mailto:coordinacioncursosformacion@gmail.com
+                  - generic [ref=e746]:
+                    - link "Centro de promocion economica de cehegin" [ref=e748] [cursor=pointer]:
+                      - /url: https://www.cehegin.es
+                    - generic [ref=e749]:
+                      - text: Cl/ Del Coso, Sin Número Cp 30430 Cehegín, Murcia , Agua Salada
+                      - generic [ref=e750]:
+                        - text: ·
+                        - link "📞 968002060" [ref=e751] [cursor=pointer]:
+                          - /url: tel:968002060
+                      - generic [ref=e752]:
+                        - text: ·
+                        - link "adl2@cehegin.es" [ref=e753] [cursor=pointer]:
+                          - /url: mailto:adl2@cehegin.es
+                  - generic [ref=e754]:
+                    - link "Data control formación, s.l." [ref=e756] [cursor=pointer]:
+                      - /url: https://www.datacontrol.es
+                    - generic [ref=e757]:
+                      - text: Cl/ Helios, Sin Número Cp 30430 Cehegín, Murcia , Agua Salada
+                      - generic [ref=e758]:
+                        - text: ·
+                        - link "📞 968223627" [ref=e759] [cursor=pointer]:
+                          - /url: tel:968223627
+                      - generic [ref=e760]:
+                        - text: ·
+                        - link "formacion@datacontrol.es" [ref=e761] [cursor=pointer]:
+                          - /url: mailto:formacion@datacontrol.es
+                  - generic [ref=e762]:
+                    - link "Centro fpe centro de formación aguadulce" [ref=e764] [cursor=pointer]:
+                      - /url: https://www.yahoo.es
+                    - generic [ref=e765]:
+                      - text: Calle Huerta De La Encina, S/n 0 , Aguadulce
+                      - generic [ref=e766]:
+                        - text: ·
+                        - link "📞 954816210" [ref=e767] [cursor=pointer]:
+                          - /url: tel:954816210
+                      - generic [ref=e768]:
+                        - text: ·
+                        - link "REGISTROAGUADULCE@YAHOO.ES" [ref=e769] [cursor=pointer]:
+                          - /url: mailto:REGISTROAGUADULCE@YAHOO.ES
+                  - generic [ref=e770]:
+                    - link "Centro tecnologico del patrimonio" [ref=e772] [cursor=pointer]:
+                      - /url: https://www.santamarialareal.org
+                    - generic [ref=e773]:
+                      - text: Av De Ronda 1-3 , Aguilar de Campoo
+                      - generic [ref=e774]:
+                        - text: ·
+                        - link "📞 979125000" [ref=e775] [cursor=pointer]:
+                          - /url: tel:979125000
+                      - generic [ref=e776]:
+                        - text: ·
+                        - link "gbueno@santamarialareal.org" [ref=e777] [cursor=pointer]:
+                          - /url: mailto:gbueno@santamarialareal.org
+                  - generic [ref=e778]:
+                    - link "Colegio san gregorio la compasion" [ref=e780] [cursor=pointer]:
+                      - /url: https://www.menesianosaguilar.net
+                    - generic [ref=e781]:
+                      - text: Pp Del Soto 2 , Aguilar de Campoo
+                      - generic [ref=e782]:
+                        - text: ·
+                        - link "📞 979715100" [ref=e783] [cursor=pointer]:
+                          - /url: tel:979715100
+                      - generic [ref=e784]:
+                        - text: ·
+                        - link "sangregorio@menesianosaguilar.net" [ref=e785] [cursor=pointer]:
+                          - /url: mailto:sangregorio@menesianosaguilar.net
+                  - generic [ref=e786]:
+                    - link "Colegio san gregorio la compasion" [ref=e788] [cursor=pointer]:
+                      - /url: https://www.menesianosaguilar.net
+                    - generic [ref=e789]:
+                      - text: Pp Del Soto. 2 , Aguilar de Campoo
+                      - generic [ref=e790]:
+                        - text: ·
+                        - link "📞 979715100" [ref=e791] [cursor=pointer]:
+                          - /url: tel:979715100
+                      - generic [ref=e792]:
+                        - text: ·
+                        - link "sangregorio@menesianosaguilar.net" [ref=e793] [cursor=pointer]:
+                          - /url: mailto:sangregorio@menesianosaguilar.net
+                  - generic [ref=e794]:
+                    - link "Colegio san gregorio la compasion" [ref=e796] [cursor=pointer]:
+                      - /url: https://www.gdoce.es
+                    - generic [ref=e797]:
+                      - text: Pp Del Soto 2 , Aguilar de Campoo
+                      - generic [ref=e798]:
+                        - text: ·
+                        - link "📞 979891380" [ref=e799] [cursor=pointer]:
+                          - /url: tel:979891380
+                      - generic [ref=e800]:
+                        - text: ·
+                        - link "consultoria@gdoce.es" [ref=e801] [cursor=pointer]:
+                          - /url: mailto:consultoria@gdoce.es
+                  - generic [ref=e802]:
+                    - link "Edificio talleres artesanos" [ref=e804] [cursor=pointer]:
+                      - /url: https://www.aguilardelafrontera.es
+                    - generic [ref=e805]:
+                      - text: Calle Manzanares 21 , Aguilar de la Frontera
+                      - generic [ref=e806]:
+                        - text: ·
+                        - link "📞 957660000" [ref=e807] [cursor=pointer]:
+                          - /url: tel:957660000
+                      - generic [ref=e808]:
+                        - text: ·
+                        - link "AYUNTAMIENTO@AGUILARDELAFRONTERA.ES" [ref=e809] [cursor=pointer]:
+                          - /url: mailto:AYUNTAMIENTO@AGUILARDELAFRONTERA.ES
+                  - generic [ref=e810]:
+                    - generic [ref=e811]: Cifp villa de agüimes
+                    - generic [ref=e812]:
+                      - text: Calle Alcorac Num 50 , Agüimes
+                      - generic [ref=e813]:
+                        - text: ·
+                        - link "📞 928188949" [ref=e814] [cursor=pointer]:
+                          - /url: tel:928188949
+                      - generic [ref=e815]:
+                        - text: ·
+                        - link "fp.educacion@gobiernodecanarias.org" [ref=e816] [cursor=pointer]:
+                          - /url: mailto:fp.educacion@gobiernodecanarias.org
+                  - generic [ref=e817]:
+                    - link "Estación de guaguas de aguimes" [ref=e819] [cursor=pointer]:
+                      - /url: https://www.aguimes.es
+                    - generic [ref=e820]:
+                      - text: C/ Joaquín Artiles, S/n , Agüimes
+                      - generic [ref=e821]:
+                        - text: ·
+                        - link "📞 928 789 980/928 785 717" [ref=e822] [cursor=pointer]:
+                          - /url: tel:928 789 980/928 785 717
+                      - generic [ref=e823]:
+                        - text: ·
+                        - link "adl@aguimes.es" [ref=e824] [cursor=pointer]:
+                          - /url: mailto:adl@aguimes.es
+                  - generic [ref=e825]:
+                    - generic [ref=e826]: Centro de estancias diurnas (intalacion separada)
+                    - generic [ref=e827]:
+                      - text: Av/ Del Valle De Ricote, Sin Número Cp 30610 Ricote, Murcia , Ainas
+                      - generic [ref=e828]:
+                        - text: ·
+                        - link "📞 968697063" [ref=e829] [cursor=pointer]:
+                          - /url: tel:968697063
+                      - generic [ref=e830]:
+                        - text: ·
+                        - link "ayuntamientodericote@hotmail.com" [ref=e831] [cursor=pointer]:
+                          - /url: mailto:ayuntamientodericote@hotmail.com
+                  - generic [ref=e832]:
+                    - link "Centro cultural" [ref=e834] [cursor=pointer]:
+                      - /url: https://www.aytofortuna.es
+                    - generic [ref=e835]:
+                      - text: Cl/ Carmen Conde, Esquina Calle San Idelfonso, Sin Número Cp 30620 Fortuna, Murcia , Ajauque
+                      - generic [ref=e836]:
+                        - text: ·
+                        - link "📞 968685103" [ref=e837] [cursor=pointer]:
+                          - /url: tel:968685103
+                      - generic [ref=e838]:
+                        - text: ·
+                        - link "isabelmherrero@aytofortuna.es" [ref=e839] [cursor=pointer]:
+                          - /url: mailto:isabelmherrero@aytofortuna.es
+                  - generic [ref=e840]:
+                    - generic [ref=e841]: Autoescuela stylo
+                    - generic [ref=e842]:
+                      - text: Real , Ajofrín
+                      - generic [ref=e843]:
+                        - text: ·
+                        - link "📞 925390731" [ref=e844] [cursor=pointer]:
+                          - /url: tel:925390731
+                      - generic [ref=e845]:
+                        - text: ·
+                        - link "autoescuelastylo1@gmail.com" [ref=e846] [cursor=pointer]:
+                          - /url: mailto:autoescuelastylo1@gmail.com
+                  - paragraph [ref=e847]: ... i 4063 centres més
+        - rowgroup [ref=e414]:
+          - row "Asistencia a la dirección en la gestión administrativa y comercial ADG_C_003_5B Administración y Gestión C 3" [ref=e415] [cursor=pointer]:
+            - cell "Asistencia a la dirección en la gestión administrativa y comercial" [ref=e416]
+            - cell "ADG_C_003_5B" [ref=e417]
+            - cell "Administración y Gestión" [ref=e418]
+            - cell "C" [ref=e419]
+            - cell "3" [ref=e420]
+        - rowgroup [ref=e421]:
+          - row "Gestión contable y gestión administrativa para auditoría Pla antic 2960 centres ADGD0108 Administración y Gestión C 3" [ref=e422] [cursor=pointer]:
+            - cell "Gestión contable y gestión administrativa para auditoría Pla antic 2960 centres" [ref=e423]:
+              - text: Gestión contable y gestión administrativa para auditoría
+              - generic [ref=e424]: Pla antic
+              - text: 2960 centres
+            - cell "ADGD0108" [ref=e425]
+            - cell "Administración y Gestión" [ref=e426]
+            - cell "C" [ref=e427]
+            - cell "3" [ref=e428]
+        - rowgroup [ref=e429]:
+          - row "Gestión administrativa del transporte internacional COM_C_005_5B Comercio y Marketing C 3" [ref=e430] [cursor=pointer]:
+            - cell "Gestión administrativa del transporte internacional" [ref=e431]
+            - cell "COM_C_005_5B" [ref=e432]
+            - cell "Comercio y Marketing" [ref=e433]
+            - cell "C" [ref=e434]
+            - cell "3" [ref=e435]
+        - rowgroup [ref=e436]:
+          - row "Gestión administrativa y financiera del comercio internacional Pla antic 1948 centres COMT0210 Comercio y Marketing C 3" [ref=e437] [cursor=pointer]:
+            - cell "Gestión administrativa y financiera del comercio internacional Pla antic 1948 centres" [ref=e438]:
+              - text: Gestión administrativa y financiera del comercio internacional
+              - generic [ref=e439]: Pla antic
+              - text: 1948 centres
+            - cell "COMT0210" [ref=e440]
+            - cell "Comercio y Marketing" [ref=e441]
+            - cell "C" [ref=e442]
+            - cell "3" [ref=e443]
+  - contentinfo [ref=e404]:
+    - link "Historial d'actualitzacions" [ref=e405] [cursor=pointer]:
+      - /url: historial.html

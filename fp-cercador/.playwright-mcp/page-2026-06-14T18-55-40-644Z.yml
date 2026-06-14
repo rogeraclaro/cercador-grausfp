@@ -1,0 +1,39 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - generic [ref=e5]: GrausFP
+    - generic [ref=e6]:
+      - heading "Formació Professional" [level=1] [ref=e7]:
+        - text: Formació
+        - emphasis [ref=e8]: Professional
+      - paragraph [ref=e9]: Explora els graus disponibles a l'estat espanyol
+      - generic [ref=e10]:
+        - img
+        - generic [ref=e11]: Cerca
+        - searchbox "Cerca" [ref=e12]
+    - tablist "Filtre per grau" [ref=e13]:
+      - button "Tots els graus" [ref=e14] [cursor=pointer]
+      - button "Grau A" [ref=e15] [cursor=pointer]
+      - button "Grau B" [ref=e16] [cursor=pointer]
+      - button "Grau C" [ref=e17] [cursor=pointer]
+      - button "Grau D" [ref=e18] [cursor=pointer]
+      - button "Grau E" [ref=e19] [cursor=pointer]
+    - generic [ref=e20]:
+      - generic [ref=e21]: "Filtrar per:"
+      - generic [ref=e22]: Família
+      - combobox "Família" [ref=e23] [cursor=pointer]:
+        - option "Totes les famílies" [selected]
+      - generic [ref=e24]: Nivell
+      - combobox "Nivell" [ref=e25] [cursor=pointer]:
+        - option "Tots els nivells" [selected]
+        - option "Nivell 1"
+        - option "Nivell 2"
+        - option "Nivell 3"
+      - generic [ref=e26] [cursor=pointer]:
+        - checkbox "Ocultar pla antic" [ref=e27]
+        - text: Ocultar pla antic
+      - button "Esborrar filtres ×" [ref=e28] [cursor=pointer]
+    - status [ref=e29]:
+      - paragraph [ref=e31]: Carregant dades del catàleg FP...
+  - contentinfo [ref=e32]:
+    - link "Historial d'actualitzacions" [ref=e33] [cursor=pointer]:
+      - /url: historial.html

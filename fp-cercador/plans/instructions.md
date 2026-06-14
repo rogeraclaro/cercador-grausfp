@@ -31,7 +31,7 @@ sessió els pugui executar només llegint el fitxer.
 Obre una sessió nova de Claude Code a `fp-cercador/` i enganxa:
 
 ```
-Executa el pla plans/001-aillar-tests-de-dades-reals.md al peu de la lletra.
+/improve execute el pla plans/010-treure-artefactes-de-dades-del-git.md al peu de la lletra.
 Llegeix-lo sencer abans de tocar res. Executa el "Drift check" del principi.
 Respecta les seccions Scope (no toquis res fora d'In scope) i STOP conditions
 (si se'n dona una, atura't i informa'm en lloc d'improvisar). Verifica cada
@@ -42,6 +42,7 @@ com a DONE a plans/README.md i ensenya'm el resum de canvis.
 (Canvia el nom del fitxer per a cada pla.)
 
 Alternatives equivalents:
+
 - **`/gsd-quick`**: si vols mantenir el flux GSD del projecte, pots fer
   `/gsd-quick executa el pla plans/00X-....md tal com està escrit` — els
   plans encaixen bé com a "quick tasks" perquè ja porten la verificació
@@ -71,6 +72,7 @@ OPCIONALS (quan vulguis, són investigació sense codi):
 ```
 
 Regles d'or:
+
 - **No comencis res abans del 001.** Mentre el 001 no estigui fet, CADA
   execució de `pytest` torna a escriure brossa a l'historial públic. Això
   inclou els pytest que llançaran els executors dels altres plans.
@@ -108,15 +110,19 @@ Els plans deixen el repo llest, però alguns canvis demanen acció al VPS
 (Contabo, CloudPanel). Després de fer `git pull` al servidor:
 
 ### Després del pla 001
+
 Si mai s'han executat tests al VPS, el seu `refresh_history.json` també pot
 estar contaminat. Comprova-ho i neteja amb el mateix script del Step 3 del
 pla 001 (còpia'l al servidor o executa'l per ssh):
+
 ```bash
 python3 -c "import json; h=json.load(open('backend/data/refresh_history.json')); print([e['ts'] for e in h if e.get('total')==100])"
 ```
+
 Si imprimeix dates, executa l'script de neteja allà.
 
 ### Després del pla 004
+
 ```bash
 cp deploy/fp-cercador.service /etc/systemd/system/fp-cercador.service
 systemctl daemon-reload
@@ -125,19 +131,20 @@ ps aux | grep gunicorn   # esperat: 2 processos (1 master + 1 worker), no 3
 ```
 
 ### Després del pla 006
+
 1. Executa la migració d'historial del Step 2 del pla 006 AL SERVIDOR
    (sobre el `refresh_history.json` del VPS, que és diferent del local).
    Fes còpia abans: `cp backend/data/refresh_history.json backend/data/refresh_history.json.bak`
 2. Aplica el conf de nginx i recarrega:
-   ```bash
-   # còpia el conf al lloc on CloudPanel gestiona el vhost, després:
-   nginx -t && systemctl reload nginx
-   ```
+    ```bash
+    # còpia el conf al lloc on CloudPanel gestiona el vhost, després:
+    nginx -t && systemctl reload nginx
+    ```
 3. Verifica la compressió i la mida:
-   ```bash
-   curl -s -H "Accept-Encoding: gzip" -o /dev/null -w "%{size_download} bytes\n" https://EL_TEU_DOMINI/api/refresh-history
-   ```
-   Esperat: pocs KB (abans: ~11,5 MB).
+    ```bash
+    curl -s -H "Accept-Encoding: gzip" -o /dev/null -w "%{size_download} bytes\n" https://EL_TEU_DOMINI/api/refresh-history
+    ```
+    Esperat: pocs KB (abans: ~11,5 MB).
 4. Reinicia el servei Flask (`systemctl restart fp-cercador`) perquè
    carregui el nou `history.py`.
 
@@ -185,10 +192,12 @@ data (ja només hi ha un worker), i després de la primera execució programada
 verifica que apareix una entrada nova a `historial.html`.
 
 ### Després dels plans 005, 007, 009, 012 (canvis de codi/frontend)
+
 Només cal `git pull` + `systemctl restart fp-cercador` (el frontend és
 estàtic, nginx el serveix directament del checkout).
 
 ### Després del pla 010
+
 Cap acció: `git pull` deixarà els fitxers de dades del servidor com a
 untracked i deixaran de donar conflictes. Verifica que
 `backend/data/ofertes.json` segueix existint al servidor després del pull.
@@ -219,6 +228,7 @@ l'scheduler des del panell admin i fer la verificació final del diagnòstic.
 ### Prompts llestos per copiar (una sessió nova de Claude Code per a cadascun)
 
 **Pas 1 — pla 001:**
+
 ```
 Executa el pla plans/001-aillar-tests-de-dades-reals.md al peu de la lletra.
 Llegeix-lo sencer abans de tocar res. Executa el "Drift check" del principi.
@@ -229,6 +239,7 @@ com a DONE a plans/README.md i ensenya'm el resum de canvis.
 ```
 
 **Pas 2 — pla 005 (només quan el 001 estigui DONE):**
+
 ```
 Executa el pla plans/005-historial-del-refresh-programat.md al peu de la
 lletra. Llegeix-lo sencer abans de tocar res. Executa el "Drift check" del
@@ -239,6 +250,7 @@ plans/README.md i ensenya'm el resum de canvis.
 ```
 
 **Pas 3 — pla 004 (en qualsevol moment, sessió a part):**
+
 ```
 Executa el pla plans/004-gunicorn-un-sol-worker.md al peu de la lletra.
 Atenció: els fitxers que toca són a l'arrel del repo git (directori pare de
@@ -255,6 +267,7 @@ programada apareix a `historial.html`.
 
 **Pas 5 — només si DESPRÉS de tot això encara falla** (sessió nova, enganxa-hi
 la sortida del diagnòstic):
+
 ```
 El refresh automàtic del Cercador FP segueix sense funcionar després d'aplicar
 els plans 004 i 005 de plans/ (gunicorn a 1 worker; history.py compartit entre
@@ -316,6 +329,7 @@ de les fases de construcció (016–018), que aprovaràs tu abans de construir r
 
 **Prompt per llançar-lo** (sessió nova; millor amb un model potent — és
 investigació amb judici, no execució mecànica):
+
 ```
 Executa el pla plans/015-spike-centres-per-grau.md. És un spike d'investigació
 i disseny: el lliurable és plans/outputs/spike-centres-per-grau.md, NO codi —
@@ -341,6 +355,7 @@ Spikes ja generats per a la primera tongada (mateix patró que el 015 —
 sessió nova, model potent, lliurable a `plans/outputs/`, zero codi):
 
 **Spike 018 — Observatori (F7, onada 1, no necessita login):**
+
 ```
 Executa el pla plans/018-spike-observatori-oferta.md. És un spike de disseny:
 el lliurable és plans/outputs/spike-observatori.md, NO codi — no modifiquis
@@ -350,6 +365,7 @@ dependències). En acabar, marca el pla DONE i resumeix-me la recomanació.
 ```
 
 **Spike 016 — Login (F1, onada 2, el fonament):**
+
 ```
 Executa el pla plans/016-spike-login-fonament.md. És un spike de disseny: el
 lliurable és plans/outputs/spike-login.md, NO codi — no modifiquis res fora
@@ -361,6 +377,7 @@ que em demana (SMTP, GDPR, model d'auth recomanat).
 ```
 
 **Spike 017 — Alertes (F3, onada 3, NOMÉS quan el 016 estigui DONE):**
+
 ```
 Executa el pla plans/017-spike-alertes-novetats.md. És un spike de disseny:
 el lliurable és plans/outputs/spike-alertes.md, NO codi. Llegeix abans
