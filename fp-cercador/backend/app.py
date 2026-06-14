@@ -7,6 +7,8 @@ Rutes:
   GET    /api/refresh-status           → estat del darrer refresh (idle/running/done/error)
   GET    /api/refresh-history          → historial de refreshos (sense auth, màx 20 entrades)
   GET    /api/next-refresh             → data del proper refresh programat (sense auth)
+  GET    /api/feed.rss               → Feed RSS 2.0 de novetats (sense auth)
+  GET    /api/feed.json              → Feed JSON Feed 1.1 de novetats (sense auth)
   POST   /api/admin/refresh            → llança el pipeline en background (requereix Bearer token)
   GET    /api/admin/scheduler          → retorna config scheduler periòdic (Phase 6, D-08)
   POST   /api/admin/scheduler          → actualitza config scheduler (Phase 6, D-08)
@@ -34,6 +36,7 @@ from dotenv import load_dotenv
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 
+import feed
 import history
 import refresh_state
 import scheduler_service
@@ -124,6 +127,24 @@ def refresh_history():
     except (json.JSONDecodeError, OSError):
         return jsonify([]), 200
     return jsonify(data), 200
+
+
+@app.route("/api/feed.rss")
+def api_feed_rss():
+    items = feed.load_feed_items()
+    rss = feed.render_rss(items)
+    return app.response_class(
+        rss,
+        mimetype="application/rss+xml",
+        headers={"Cache-Control": "public, max-age=3600"},
+    )
+
+
+@app.route("/api/feed.json")
+def api_feed_json():
+    items = feed.load_feed_items()
+    data = feed.render_json_feed(items)
+    return jsonify(data), 200, {"Cache-Control": "public, max-age=3600"}
 
 
 @app.route("/api/admin/refresh", methods=["POST"])
