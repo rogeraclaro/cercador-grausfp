@@ -114,6 +114,18 @@ def _auth_cors(response):
         _set_auth_cors(response)
     return response
 
+# Inicialitza la BD (crea les taules si no existeixen via migracions).
+# Neteja les entrades antigues de login_attempts (> 1 dia) a cada restart;
+# evita creixement il·limitat sense necessitat de cron extern.
+import db as _db_init
+_db_conn = _db_init.init_db()
+_db_conn.execute(
+    "DELETE FROM login_attempts WHERE attempted_at < datetime('now', '-1 day')"
+)
+_db_conn.commit()
+_db_conn.close()
+del _db_conn, _db_init
+
 # Phase 6 (D-06/D-07): Arrenca APScheduler i programa el job persistit (si enabled).
 scheduler_service.init_scheduler()
 

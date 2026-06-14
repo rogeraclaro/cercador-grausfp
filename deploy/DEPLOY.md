@@ -32,11 +32,32 @@ cp fp-cercador/backend/.env.example fp-cercador/backend/.env
 nano fp-cercador/backend/.env
 ```
 
-El `.env` ha de contenir:
+El `.env` ha de contenir (vegeu `fp-cercador/backend/.env.example`):
 
 ```
+# — Obligatori —
 ADMIN_TOKEN=<token-segur-aleatori>
+SECRET_KEY=<token-segur-aleatori>   # python3 -c "import secrets; print(secrets.token_hex(32))"
+BASE_URL=https://<el-teu-domini>    # sense trailing slash; usat als emails d'auth
+
+# — Email (Brevo SMTP) — necessari per a verificació de compte i reset de contrasenya
+BREVO_SMTP_HOST=smtp-relay.brevo.com
+BREVO_SMTP_PORT=587
+BREVO_SMTP_USER=<compte@domini.com>
+BREVO_SMTP_KEY=<API_key_brevo>
+EMAIL_FROM=noreply@<domini.com>
+EMAIL_FROM_NAME=Cercador FP España
+
+# — Brevo API (novetats/newsletters, opcional) —
+BREVO_API_KEY=
+BREVO_LIST_ID=
+BREVO_SENDER_EMAIL=
+BREVO_SENDER_NAME=Cercador FP España
 ```
+
+> Si `SECRET_KEY` és buit, l'app arrenca però els logs mostraran un warning.
+> Si `BREVO_SMTP_KEY` és buit, els emails d'auth no s'envien però el registre
+> i el login segueixen funcionant (errors als logs).
 
 ## 4. Crear directori de logs
 
@@ -111,6 +132,66 @@ curl https://DOMINI_AQUI/api/refresh-status
 ```
 
 **Nota:** El refresh triga ~4s.
+
+## 9. Base de dades SQLite
+
+La BD (`fp-cercador/backend/data/fp_cercador.db`) es crea automàticament la
+primera vegada que arrenca l'app. No cal cap pas manual de migració: `init_db()`
+aplica els scripts de `fp-cercador/backend/migrations/` en ordre.
+
+**Còpia de seguretat (cron nocturn, retenció 7 dies)**
+
+```bash
+# Crear directori de backups
+mkdir -p /home/masellas-grausfp/backups/fp-cercador
+
+# Afegir al cron de root: crontab -e
+0 3 * * * sqlite3 /home/masellas-grausfp/htdocs/grausfp.masellas.info/fp-cercador/backend/data/fp_cercador.db \
+    ".backup /home/masellas-grausfp/backups/fp-cercador/fp_cercador_$(date +\%Y\%m\%d).db" && \
+    find /home/masellas-grausfp/backups/fp-cercador -name "*.db" -mtime +7 -delete
+```
+
+Verificar que el cron ha funcionat (el dia següent):
+```bash
+ls -lh /home/masellas-grausfp/backups/fp-cercador/
+```
+
+## 10. Checklist de verificació auth en producció
+
+Abans de donar per bo el desplegament d'auth, comprova:
+
+- [ ] **Same-origin**: frontend i backend se serveixen des del mateix domini
+  (nginx fa proxy de `/api/` al port 8033). Les cookies d'auth no necessiten
+  CORS en producció — same-origin és transparent.
+- [ ] **Cookie Secure**: quan l'app corre amb gunicorn (`app.debug = False`),
+  les cookies es generen amb `Secure=True` automàticament. Verificar:
+  ```bash
+  curl -X POST https://<DOMINI>/api/auth/login \
+    -H "Content-Type: application/json" \
+    -d '{"email":"test@test.com","password":"wrongpw"}' -v 2>&1 | grep -i "set-cookie"
+  # Ha de mostrar: Secure; HttpOnly; SameSite=Lax
+  ```
+- [ ] **Email d'auth funcional**: registra un compte de prova i verifica que
+  arriba l'email de verificació. Si no arriba:
+  ```bash
+  journalctl -u fp-cercador -f | grep "Error enviant"
+  ```
+- [ ] **Rate limiting**: 6 intents de login fallits consecutius retornen 429.
+- [ ] **BD creada**: `ls -lh fp-cercador/backend/data/fp_cercador.db` ha d'existir
+  amb mida > 0 després del primer arranc.
+
+**Headers de seguretat nginx (recomanat)**
+
+Afegir al bloc `server` de `nginx-cloudpanel.conf` (o via CloudPanel UI
+> Nginx Configuration > Vhost):
+
+```nginx
+add_header X-Frame-Options "DENY" always;
+add_header X-Content-Type-Options "nosniff" always;
+add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+```
+
+Recarregar nginx: `nginx -t && systemctl reload nginx`.
 
 ## Gestió del servei
 

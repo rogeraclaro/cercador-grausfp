@@ -38,6 +38,7 @@ amb quins prerequisits i quins passos manuals calen al servidor.
 | 023 | Login F1-A: Base de dades i model de dades | P2 | S | 016 (spike DONE) | DONE |
 | 024 | Login F1-B: Backend auth (endpoints + email) | P2 | M | 023 | DONE |
 | 025 | Login F1-C: Frontend auth (pàgines + auth.js) | P2 | S-M | 024 | DONE |
+| 026 | Login F1-D: Hardening i documentació de desplegament | P2 | S | 024, 025 | DONE |
 
 Valors de Status: `TODO` | `IN PROGRESS` | `DONE` | `BLOCKED (motiu en una línia)` | `REJECTED (motiu en una línia)`
 
