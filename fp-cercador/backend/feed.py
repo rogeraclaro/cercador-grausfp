@@ -47,7 +47,7 @@ def item_summary(ch: dict) -> str:
     return "\n".join(lines) if lines else "Canvis sense detall disponible."
 
 
-def render_rss(items: list, base_url: str = "https://fp.lamosca.com") -> str:
+def render_rss(items: list, base_url: str = "https://grausfp.masellas.info") -> str:
     """Genera el XML RSS 2.0 complet."""
     xml_items = []
     for it in items:
@@ -77,7 +77,7 @@ def render_rss(items: list, base_url: str = "https://fp.lamosca.com") -> str:
     )
 
 
-def render_json_feed(items: list, base_url: str = "https://fp.lamosca.com") -> dict:
+def render_json_feed(items: list, base_url: str = "https://grausfp.masellas.info") -> dict:
     """Genera l'estructura JSON Feed 1.1."""
     return {
         "version": "https://jsonfeed.org/version/1.1",
