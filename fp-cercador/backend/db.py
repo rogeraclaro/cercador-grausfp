@@ -11,17 +11,14 @@ Funcions públiques:
 import os
 import sqlite3
 
-_DEFAULT_DB_PATH = os.environ.get(
-    "DB_PATH",
-    os.path.join(os.path.dirname(__file__), "data", "fp_cercador.db"),
-)
+_FALLBACK_DB_PATH = os.path.join(os.path.dirname(__file__), "data", "fp_cercador.db")
 
 _MIGRATIONS_DIR = os.path.join(os.path.dirname(__file__), "migrations")
 
 
 def get_db(db_path=None):
     """Retorna una connexió SQLite configurada."""
-    path = db_path if db_path is not None else _DEFAULT_DB_PATH
+    path = db_path if db_path is not None else os.environ.get("DB_PATH", _FALLBACK_DB_PATH)
     conn = sqlite3.connect(path)
     conn.row_factory = sqlite3.Row
     conn.execute("PRAGMA journal_mode=WAL")

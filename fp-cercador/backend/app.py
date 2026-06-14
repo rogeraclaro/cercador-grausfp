@@ -58,6 +58,9 @@ ADMIN_TOKEN = os.environ.get("ADMIN_TOKEN", "")
 if not ADMIN_TOKEN:
     raise RuntimeError("ADMIN_TOKEN not set. Create .env from .env.example.")
 
+SECRET_KEY = os.environ.get("SECRET_KEY", "")
+BASE_URL = os.environ.get("BASE_URL", "http://localhost:5001")
+
 DATA_PATH = os.path.normpath(
     os.path.join(os.path.dirname(__file__), "data", "ofertes.json")
 )
@@ -429,6 +432,243 @@ def get_certificado_detail(codigo):
     except Exception as exc:
         logger.error("get_certificado_detail: error cridant fichaCP per %s: %s", codigo, exc)
         return jsonify({'error': str(exc)}), 502
+
+
+# ---------------------------------------------------------------------------
+# Auth — /api/auth/*
+# ---------------------------------------------------------------------------
+
+
+def _get_session_user(req):
+    """Retorna el user_id de la sessió activa, o None si no hi ha sessió vàlida."""
+    import db as _db
+    token = req.cookies.get("session")
+    if not token:
+        return None
+    conn = _db.get_db()
+    try:
+        row = _db.query_one(
+            conn,
+            "SELECT user_id FROM sessions WHERE token = ? AND expires_at > datetime('now')",
+            (token,),
+        )
+        return row["user_id"] if row else None
+    finally:
+        conn.close()
+
+
+@app.route("/api/auth/register", methods=["POST"])
+def auth_register():
+    import secrets as _secrets
+    import db as _db
+    from werkzeug.security import generate_password_hash
+    from datetime import datetime, timezone, timedelta
+    data = request.get_json(silent=True) or {}
+    email = (data.get("email") or "").strip().lower()
+    password = data.get("password") or ""
+    if not email or "@" not in email or len(password) < 8:
+        return jsonify({"error": "Email o contrasenya invàlids"}), 400
+    conn = _db.get_db()
+    try:
+        existing = _db.query_one(conn, "SELECT id FROM users WHERE email = ?", (email,))
+        if existing:
+            return jsonify({"error": "Aquest email ja està registrat"}), 409
+        pw_hash = generate_password_hash(password)
+        conn.execute(
+            "INSERT INTO users (email, password_hash) VALUES (?, ?)", (email, pw_hash)
+        )
+        conn.commit()
+        user_id = conn.execute("SELECT last_insert_rowid()").fetchone()[0]
+        token = _secrets.token_hex(32)
+        expires = (datetime.now(timezone.utc) + timedelta(hours=24)).strftime("%Y-%m-%d %H:%M:%S")
+        conn.execute(
+            "INSERT INTO tokens (user_id, token, type, expires_at) VALUES (?, ?, 'email_verify', ?)",
+            (user_id, token, expires),
+        )
+        conn.commit()
+    finally:
+        conn.close()
+    try:
+        import email_service
+        email_service.send_verification_email(email, token, BASE_URL)
+    except Exception as exc:
+        logger.error("Error enviant email de verificació: %s", exc)
+    return jsonify({"message": "Compte creat. Revisa el teu email per verificar-lo."}), 201
+
+
+@app.route("/api/auth/verify", methods=["GET"])
+def auth_verify():
+    import db as _db
+    from flask import redirect
+    token = request.args.get("token", "")
+    if not token:
+        return jsonify({"error": "Token invàlid"}), 400
+    conn = _db.get_db()
+    try:
+        row = _db.query_one(
+            conn,
+            "SELECT user_id FROM tokens WHERE token = ? AND type = 'email_verify' AND expires_at > datetime('now')",
+            (token,),
+        )
+        if not row:
+            return jsonify({"error": "Token invàlid o caducat"}), 400
+        conn.execute("UPDATE users SET verified = 1 WHERE id = ?", (row["user_id"],))
+        conn.execute("DELETE FROM tokens WHERE token = ?", (token,))
+        conn.commit()
+    finally:
+        conn.close()
+    return redirect("/?verified=1")
+
+
+@app.route("/api/auth/login", methods=["POST"])
+def auth_login():
+    import secrets as _secrets
+    import db as _db
+    from werkzeug.security import check_password_hash
+    from datetime import datetime, timezone, timedelta
+    data = request.get_json(silent=True) or {}
+    email = (data.get("email") or "").strip().lower()
+    password = data.get("password") or ""
+    ip = request.remote_addr or ""
+    conn = _db.get_db()
+    try:
+        attempts = _db.query_one(
+            conn,
+            "SELECT COUNT(*) FROM login_attempts WHERE ip = ? AND success = 0 AND attempted_at > datetime('now', '-15 minutes')",
+            (ip,),
+        )[0]
+        if attempts >= 5:
+            return jsonify({"error": "Massa intents. Espera 15 minuts."}), 429
+        user = _db.query_one(
+            conn,
+            "SELECT id, password_hash, verified FROM users WHERE email = ? AND deleted_at IS NULL",
+            (email,),
+        )
+        ok = bool(user and check_password_hash(user["password_hash"], password))
+        conn.execute(
+            "INSERT INTO login_attempts (ip, email, success) VALUES (?, ?, ?)",
+            (ip, email, 1 if ok else 0),
+        )
+        conn.commit()
+        if not ok:
+            return jsonify({"error": "Email o contrasenya incorrectes"}), 401
+        if not user["verified"]:
+            return jsonify({"error": "Compte no verificat. Revisa el teu email."}), 403
+        session_token = _secrets.token_hex(32)
+        expires = (datetime.now(timezone.utc) + timedelta(days=30)).strftime("%Y-%m-%d %H:%M:%S")
+        conn.execute(
+            "INSERT INTO sessions (user_id, token, expires_at, ip, user_agent) VALUES (?, ?, ?, ?, ?)",
+            (user["id"], session_token, expires, ip, request.headers.get("User-Agent", "")),
+        )
+        conn.commit()
+        uid = user["id"]
+    finally:
+        conn.close()
+    resp = jsonify({"user": {"id": uid, "email": email}})
+    secure = not app.debug
+    resp.set_cookie(
+        "session", session_token,
+        httponly=True, secure=secure, samesite="Lax",
+        max_age=30 * 24 * 3600,
+    )
+    return resp
+
+
+@app.route("/api/auth/logout", methods=["POST"])
+def auth_logout():
+    import db as _db
+    token = request.cookies.get("session")
+    if token:
+        conn = _db.get_db()
+        try:
+            conn.execute("DELETE FROM sessions WHERE token = ?", (token,))
+            conn.commit()
+        finally:
+            conn.close()
+    resp = jsonify({"message": "Sessió tancada"})
+    resp.set_cookie("session", "", max_age=0)
+    return resp
+
+
+@app.route("/api/auth/me", methods=["GET"])
+def auth_me():
+    import db as _db
+    user_id = _get_session_user(request)
+    if not user_id:
+        return jsonify({"error": "No autenticat"}), 401
+    conn = _db.get_db()
+    try:
+        user = _db.query_one(
+            conn,
+            "SELECT id, email FROM users WHERE id = ? AND deleted_at IS NULL",
+            (user_id,),
+        )
+    finally:
+        conn.close()
+    if not user:
+        return jsonify({"error": "Usuari no trobat"}), 404
+    return jsonify({"id": user["id"], "email": user["email"]})
+
+
+@app.route("/api/auth/forgot-password", methods=["POST"])
+def auth_forgot_password():
+    import secrets as _secrets
+    import db as _db
+    from datetime import datetime, timezone, timedelta
+    data = request.get_json(silent=True) or {}
+    email = (data.get("email") or "").strip().lower()
+    if not email:
+        return jsonify({"message": "Si l'email existeix, rebràs un missatge."}), 200
+    conn = _db.get_db()
+    try:
+        user = _db.query_one(
+            conn, "SELECT id FROM users WHERE email = ? AND deleted_at IS NULL", (email,)
+        )
+        if user:
+            token = _secrets.token_hex(32)
+            expires = (datetime.now(timezone.utc) + timedelta(hours=1)).strftime("%Y-%m-%d %H:%M:%S")
+            conn.execute(
+                "INSERT INTO tokens (user_id, token, type, expires_at) VALUES (?, ?, 'password_reset', ?)",
+                (user["id"], token, expires),
+            )
+            conn.commit()
+            try:
+                import email_service
+                email_service.send_password_reset_email(email, token, BASE_URL)
+            except Exception as exc:
+                logger.error("Error enviant email de reset: %s", exc)
+    finally:
+        conn.close()
+    return jsonify({"message": "Si l'email existeix, rebràs un missatge."}), 200
+
+
+@app.route("/api/auth/reset-password", methods=["POST"])
+def auth_reset_password():
+    import db as _db
+    from werkzeug.security import generate_password_hash
+    data = request.get_json(silent=True) or {}
+    token = data.get("token") or ""
+    new_password = data.get("password") or ""
+    if not token or len(new_password) < 8:
+        return jsonify({"error": "Token o contrasenya invàlids"}), 400
+    conn = _db.get_db()
+    try:
+        row = _db.query_one(
+            conn,
+            "SELECT user_id FROM tokens WHERE token = ? AND type = 'password_reset' AND expires_at > datetime('now')",
+            (token,),
+        )
+        if not row:
+            return jsonify({"error": "Token invàlid o caducat"}), 400
+        pw_hash = generate_password_hash(new_password)
+        conn.execute(
+            "UPDATE users SET password_hash = ? WHERE id = ?", (pw_hash, row["user_id"])
+        )
+        conn.execute("DELETE FROM tokens WHERE token = ?", (token,))
+        conn.commit()
+    finally:
+        conn.close()
+    return jsonify({"message": "Contrasenya actualitzada correctament."})
 
 
 # ---------------------------------------------------------------------------
