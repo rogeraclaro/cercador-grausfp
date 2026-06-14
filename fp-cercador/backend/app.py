@@ -9,6 +9,8 @@ Rutes:
   GET    /api/next-refresh             → data del proper refresh programat (sense auth)
   GET    /api/feed.rss               → Feed RSS 2.0 de novetats (sense auth)
   GET    /api/feed.json              → Feed JSON Feed 1.1 de novetats (sense auth)
+  GET    /api/centres                  → centres per oferta (?codigo=ADGG0408 o ?id=12664)
+  GET    /api/centres/count            → dict {clau: recompte} per a totes les ofertes
   POST   /api/admin/refresh            → llança el pipeline en background (requereix Bearer token)
   GET    /api/admin/scheduler          → retorna config scheduler periòdic (Phase 6, D-08)
   POST   /api/admin/scheduler          → actualitza config scheduler (Phase 6, D-08)
@@ -57,6 +59,23 @@ DATA_PATH = os.path.normpath(
     os.path.join(os.path.dirname(__file__), "data", "ofertes.json")
 )
 
+_DATA_DIR = os.path.join(os.path.dirname(__file__), "data")
+_CENTRES_PATH = os.path.join(_DATA_DIR, "centres.json")
+_OFERTA_CENTRES_PATH = os.path.join(_DATA_DIR, "oferta_centres.json")
+_centres_index: dict | None = None
+_oferta_centres: dict | None = None
+
+
+def _load_centres_data():
+    global _centres_index, _oferta_centres
+    if _centres_index is None:
+        with open(_CENTRES_PATH, encoding="utf-8") as f:
+            centres_list = json.load(f)
+        _centres_index = {c["id"]: c for c in centres_list}
+    if _oferta_centres is None:
+        with open(_OFERTA_CENTRES_PATH, encoding="utf-8") as f:
+            _oferta_centres = json.load(f)
+
 app = Flask(__name__)
 CORS(app)
 
@@ -88,6 +107,37 @@ def _check_auth(req) -> bool:
 def health():
     """API-07: Health check sense autenticació."""
     return jsonify({"status": "ok"}), 200
+
+
+@app.route("/api/centres")
+def get_centres():
+    """
+    GET /api/centres?codigo=ADGG0408   (Grado C LOE)
+    GET /api/centres?id=12664          (Grado D/E)
+    Retorna array JSON de centres per a l'oferta indicada.
+    """
+    try:
+        _load_centres_data()
+    except FileNotFoundError:
+        return jsonify({"error": "centres.json no disponible"}), 503
+
+    clau = request.args.get("codigo") or request.args.get("id")
+    if not clau:
+        return jsonify({"error": "cal el paràmetre codigo o id"}), 400
+
+    ids = _oferta_centres.get(clau, [])
+    centres = [_centres_index[i] for i in ids if i in _centres_index]
+    return jsonify(centres)
+
+
+@app.route("/api/centres/count")
+def get_centres_count():
+    """GET /api/centres/count → {clau: recompte} per a totes les ofertes."""
+    try:
+        _load_centres_data()
+    except FileNotFoundError:
+        return jsonify({}), 200
+    return jsonify({k: len(v) for k, v in _oferta_centres.items()})
 
 
 _ofertes_cache = {"mtime": None, "body": None}

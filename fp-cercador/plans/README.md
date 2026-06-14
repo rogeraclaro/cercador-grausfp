@@ -34,7 +34,7 @@ amb quins prerequisits i quins passos manuals calen al servidor.
 | 019 | Migració a domini propi (checklist manual VPS) | P3 | S | — (quan hi hagi domini) | TODO |
 | 020 | Enriquiment Grado C (LOE): durada, Annexe PDF, Europass, BOE | P2 | M | 001, 002, 006 | DONE |
 | 021 | Construir feed de novetats RSS 2.0 i JSON Feed | P2 | S | 005, 006, 014 | DONE |
-| 022 | API i frontend per a centres per oferta | P2 | M | 015, 016b | TODO |
+| 022 | API i frontend per a centres per oferta | P2 | M | 015, 016b | DONE |
 
 Valors de Status: `TODO` | `IN PROGRESS` | `DONE` | `BLOCKED (motiu en una línia)` | `REJECTED (motiu en una línia)`
 

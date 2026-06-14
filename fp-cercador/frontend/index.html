@@ -601,6 +601,66 @@
     }
 
     [x-cloak] { display: none !important; }
+
+    /* ── Centres per oferta ─────────────────────────── */
+    .badge-centres {
+      cursor: pointer;
+      background: #e8f4fd;
+      color: #1a73e8;
+      border: 1px solid #1a73e8;
+      border-radius: 12px;
+      padding: 2px 8px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      margin-left: 6px;
+      white-space: nowrap;
+    }
+    .badge-centres:hover { background: #1a73e8; color: #fff; }
+
+    .centres-panel td { padding: 0 !important; }
+    .centres-container {
+      background: #f8f9fa;
+      border-top: 2px solid #1a73e8;
+      padding: 12px 16px;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+    .centres-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 10px;
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+    .centres-header select {
+      font-size: 0.85rem;
+      padding: 2px 6px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+    }
+    .centres-header button {
+      margin-left: auto;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 1rem;
+      color: #666;
+    }
+    .centres-loading { color: #666; font-style: italic; padding: 8px 0; }
+
+    .centre-item {
+      padding: 6px 0;
+      border-bottom: 1px solid #e9ecef;
+    }
+    .centre-item:last-child { border-bottom: none; }
+    .centre-nom { font-weight: 500; font-size: 0.88rem; }
+    .centre-nom a { color: #1a73e8; text-decoration: none; }
+    .centre-nom a:hover { text-decoration: underline; }
+    .centre-meta { font-size: 0.78rem; color: #666; margin-top: 2px; }
+
+    .centres-more { color: #888; font-size: 0.82rem; margin-top: 8px; }
+    .centres-buit { color: #888; font-style: italic; font-size: 0.85rem; }
   </style>
 
   <script>
@@ -626,6 +686,12 @@
         sortDir: 0,
         expandedId: null,
 
+        centresCount: {},
+        centresVisible: {},
+        centresData: {},
+        centresCCAA: {},
+        centresLoading: {},
+
         async init() {
           try {
             const res = await fetch(API_BASE + '/api/ofertes');
@@ -647,6 +713,10 @@
             }));
             this.families = [...new Set(this.allRecords.map(r => r.familia))].sort();
             this.state = 'ready';
+            fetch(API_BASE + '/api/centres/count')
+              .then(r => r.json())
+              .then(d => { this.centresCount = d; })
+              .catch(() => {});
           } catch (e) {
             this.state = 'error';
           }
@@ -735,6 +805,44 @@
         setGrado(g) {
           this.filterGrado = this.filterGrado === g ? '' : g;
           this.resetPage();
+        },
+
+        centres_count(row) {
+          if (this.centresData[row.id]) return this.centresData[row.id].length;
+          const clau = row.grado === 'C' && row.plan_antiguo ? row.codigo : String(row.id);
+          return this.centresCount[clau] || 0;
+        },
+
+        async toggleCentres(row) {
+          if (this.centresVisible[row.id]) {
+            this.centresVisible[row.id] = false;
+            return;
+          }
+          this.centresVisible[row.id] = true;
+          if (this.centresData[row.id]) return;
+          this.centresLoading[row.id] = true;
+          try {
+            const param = row.grado === 'C' && row.plan_antiguo
+              ? 'codigo=' + row.codigo
+              : 'id=' + row.id;
+            const resp = await fetch(API_BASE + '/api/centres?' + param);
+            this.centresData[row.id] = await resp.json();
+            this.centresCCAA[row.id] = 'Totes';
+          } finally {
+            this.centresLoading[row.id] = false;
+          }
+        },
+
+        centresFiltrats(row) {
+          const data = this.centresData[row.id] || [];
+          const ccaa = this.centresCCAA[row.id];
+          if (!ccaa || ccaa === 'Totes') return data;
+          return data.filter(c => c.ccaa === ccaa);
+        },
+
+        ccaasDisponibles(row) {
+          const data = this.centresData[row.id] || [];
+          return ['Totes', ...[...new Set(data.map(c => c.ccaa).filter(Boolean))].sort()];
         },
 
         async fetchBoe(codigo) {
@@ -904,6 +1012,12 @@
                 <td class="col-nom">
                   <span x-text="row.denominacion"></span>
                   <span x-show="row.plan_antiguo" class="badge-old">Pla antic</span>
+                  <template x-if="centres_count(row) > 0">
+                    <span class="badge-centres"
+                          @click.stop="toggleCentres(row)"
+                          x-text="centres_count(row) + ' centres'">
+                    </span>
+                  </template>
                 </td>
                 <td class="col-codi" x-text="row.codigo ?? '—'"></td>
                 <td class="col-fam" x-text="row.familia"></td>
@@ -921,6 +1035,54 @@
                   </div>
                 </td>
               </tr>
+              <template x-if="centresVisible[row.id]">
+                <tr class="centres-panel">
+                  <td colspan="5">
+                    <div class="centres-container">
+                      <div class="centres-header">
+                        <span x-text="(centresData[row.id] || []).length + ' centres'"></span>
+                        <select x-model="centresCCAA[row.id]">
+                          <template x-for="ccaa in ccaasDisponibles(row)" :key="ccaa">
+                            <option :value="ccaa" x-text="ccaa"></option>
+                          </template>
+                        </select>
+                        <button @click.stop="centresVisible[row.id] = false">✕</button>
+                      </div>
+                      <div x-show="centresLoading[row.id]" class="centres-loading">
+                        Carregant centres…
+                      </div>
+                      <div x-show="!centresLoading[row.id]">
+                        <template x-for="centre in centresFiltrats(row).slice(0, 50)" :key="centre.id">
+                          <div class="centre-item">
+                            <div class="centre-nom">
+                              <template x-if="centre.url_web">
+                                <a :href="centre.url_web" target="_blank" rel="noopener" x-text="centre.nombre"></a>
+                              </template>
+                              <template x-if="!centre.url_web">
+                                <span x-text="centre.nombre"></span>
+                              </template>
+                            </div>
+                            <div class="centre-meta">
+                              <span x-text="centre.direccio || ''"></span>
+                              <span x-show="centre.direccio && centre.localitat">, </span>
+                              <span x-text="centre.localitat || ''"></span>
+                              <span x-show="centre.telefon"> · 📞 <span x-text="centre.telefon"></span></span>
+                            </div>
+                          </div>
+                        </template>
+                        <template x-if="centresFiltrats(row).length > 50">
+                          <p class="centres-more"
+                             x-text="'... i ' + (centresFiltrats(row).length - 50) + ' centres més'">
+                          </p>
+                        </template>
+                        <template x-if="centresFiltrats(row).length === 0 && !centresLoading[row.id]">
+                          <p class="centres-buit">Cap centre trobat per a aquesta comunitat.</p>
+                        </template>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+              </template>
             </tbody>
           </template>
         </table>
