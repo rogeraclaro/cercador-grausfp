@@ -26,13 +26,15 @@ amb quins prerequisits i quins passos manuals calen al servidor.
 | 012 | Vendoritzar Alpine.js (treure CDN) | P3 | S | — | DONE |
 | 013 | [SPIKE opcional] Dades extra Grado C | P3 | M | — | DONE |
 | 014 | [SPIKE opcional] Feed de novetats RSS/JSON | P3 | S-M | 005, 006 | DONE |
-| 015 | [SPIKE] Centres per grau (fonts, estats, contacte) | P3 | M-L | — (millor després de 005/006; coordinar amb 013) | TODO |
+| 015 | [SPIKE] Centres per grau (fonts, estats, contacte) | P3 | M-L | — (millor després de 005/006; coordinar amb 013) | DONE |
 | 016 | [SPIKE — F1] Login d'usuaris (fonament del roadmap) | P2 | M | — (millor amb 001–007 DONE) | TODO |
+| 016b | [OPCIONAL] URL web dels centres | P3 | S | 016 | TODO |
 | 017 | [SPIKE — F3] Alertes personalitzades de novetats | P2 | M | 016, 005, 006 | TODO |
 | 018 | [SPIKE — F7] Observatori públic de l'oferta FP | P2 | S-M | 005, 006 | TODO |
 | 019 | Migració a domini propi (checklist manual VPS) | P3 | S | — (quan hi hagi domini) | TODO |
 | 020 | Enriquiment Grado C (LOE): durada, Annexe PDF, Europass, BOE | P2 | M | 001, 002, 006 | DONE |
 | 021 | Construir feed de novetats RSS 2.0 i JSON Feed | P2 | S | 005, 006, 014 | DONE |
+| 022 | API i frontend per a centres per oferta | P2 | M | 015, 016b | TODO |
 
 Valors de Status: `TODO` | `IN PROGRESS` | `DONE` | `BLOCKED (motiu en una línia)` | `REJECTED (motiu en una línia)`
 
