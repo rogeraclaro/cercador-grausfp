@@ -179,7 +179,22 @@
       .results-table { min-width: 520px; }
       footer { padding: 20px 16px; }
     }
+
+    /* Auth widget al topbar */
+    #auth-widget { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+    .auth-greeting { color: rgba(255,255,255,0.75); font-size: 13px; }
+    .auth-btn {
+      font-size: 13px; padding: 5px 14px; border-radius: 4px;
+      border: 1px solid rgba(255,255,255,0.35); color: var(--white);
+      background: transparent; cursor: pointer; text-decoration: none;
+      font-family: inherit; transition: background 0.15s;
+    }
+    .auth-btn:hover { background: rgba(255,255,255,0.12); }
+    .auth-btn--primary { background: var(--white); color: var(--dark); border-color: var(--white); }
+    .auth-btn--primary:hover { background: var(--warm2); }
+    .auth-btn--logout { border-color: rgba(255,255,255,0.25); }
   </style>
+  <script src="auth.js"></script>
   <link rel="alternate" type="application/rss+xml" title="Cercador FP España — Novetats" href="/api/feed.rss">
 </head>
 <body>
@@ -187,6 +202,7 @@
   <header class="topbar">
     <div class="topbar-inner">
       <a href="index.html" class="topbar-logo">GrausFP</a>
+      <div id="auth-widget"></div>
     </div>
   </header>
 

@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inicia sessió — Cercador Graus FP</title>
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=DM+Serif+Display:ital@0;1&display=swap"
+    rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --dark: #1c1410;
+      --warm: #8a7060;
+      --warm2: #f5ece2;
+      --border: #e8ddd4;
+      --bg: #fdf8f2;
+      --white: #ffffff;
+    }
+
+    body {
+      font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 14px;
+      color: var(--dark);
+      background: var(--bg);
+      min-height: 100vh;
+    }
+
+    .topbar { background: var(--dark); padding: 0 48px; }
+    .topbar-inner { display: flex; align-items: center; height: 52px; }
+    .topbar-logo {
+      font-family: 'DM Serif Display', serif;
+      color: var(--white);
+      font-size: 20px;
+      letter-spacing: -0.3px;
+      text-decoration: none;
+    }
+
+    .auth-page {
+      max-width: 400px;
+      margin: 64px auto;
+      padding: 0 24px;
+    }
+
+    .auth-page h1 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 32px;
+      font-weight: 400;
+      color: var(--dark);
+      margin-bottom: 28px;
+    }
+
+    .msg {
+      padding: 10px 14px;
+      border-radius: 4px;
+      font-size: 13px;
+      margin-bottom: 16px;
+      border: 1px solid var(--border);
+      background: var(--warm2);
+    }
+    .msg--error { background: #fde8e8; border-color: #e8a0a0; color: #7a1515; }
+    .msg--ok { background: #e8f5e8; border-color: #8ec98e; color: #1a521a; }
+
+    form { display: flex; flex-direction: column; gap: 14px; }
+
+    label { font-size: 13px; font-weight: 500; color: var(--dark); margin-bottom: 2px; }
+
+    input[type="email"],
+    input[type="password"] {
+      width: 100%;
+      padding: 9px 12px;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      font-size: 14px;
+      font-family: inherit;
+      background: var(--white);
+      color: var(--dark);
+      transition: border-color 0.15s;
+    }
+    input:focus { outline: none; border-color: var(--warm); }
+
+    .field { display: flex; flex-direction: column; gap: 4px; }
+
+    button[type="submit"] {
+      padding: 10px;
+      background: var(--dark);
+      color: var(--white);
+      border: none;
+      border-radius: 4px;
+      font-size: 14px;
+      font-family: inherit;
+      font-weight: 500;
+      cursor: pointer;
+      transition: opacity 0.15s;
+    }
+    button[type="submit"]:hover { opacity: 0.85; }
+    button[type="submit"]:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .auth-links {
+      margin-top: 16px;
+      font-size: 13px;
+      color: var(--warm);
+      text-align: center;
+    }
+    .auth-links a { color: var(--dark); }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner">
+      <a class="topbar-logo" href="index.html">GrausFP</a>
+    </div>
+  </div>
+
+  <div class="auth-page">
+    <h1>Inicia sessió</h1>
+    <p id="msg" class="msg" hidden></p>
+    <form id="form-login">
+      <div class="field">
+        <label for="email">Email</label>
+        <input type="email" id="email" required autocomplete="email" placeholder="el-teu@email.com">
+      </div>
+      <div class="field">
+        <label for="password">Contrasenya</label>
+        <input type="password" id="password" required autocomplete="current-password" placeholder="········">
+      </div>
+      <button type="submit" id="btn-submit">Entra</button>
+    </form>
+    <p class="auth-links"><a href="forgot-password.html">Has oblidat la contrasenya?</a></p>
+    <p class="auth-links">Sense compte? <a href="register.html">Registra't</a></p>
+  </div>
+
+  <script>
+    const API_BASE = window.location.hostname === 'localhost' ? 'http://localhost:5001' : '';
+    const msgEl = document.getElementById('msg');
+    const btn = document.getElementById('btn-submit');
+
+    function showMsg(text, type) {
+      msgEl.textContent = text;
+      msgEl.className = 'msg msg--' + type;
+      msgEl.hidden = false;
+    }
+
+    // Mostra avís si ve de verificació d'email
+    if (new URLSearchParams(window.location.search).get('verified') === '1') {
+      showMsg('Compte verificat correctament. Ja pots entrar.', 'ok');
+    }
+
+    document.getElementById('form-login').addEventListener('submit', async function (e) {
+      e.preventDefault();
+      btn.disabled = true;
+      btn.textContent = 'Entrant…';
+      try {
+        const res = await fetch(API_BASE + '/api/auth/login', {
+          method: 'POST',
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email: document.getElementById('email').value.trim(),
+            password: document.getElementById('password').value
+          })
+        });
+        const data = await res.json();
+        if (res.ok) {
+          window.location.href = 'index.html';
+        } else {
+          showMsg(data.error || 'Error en iniciar sessió.', 'error');
+          btn.disabled = false;
+          btn.textContent = 'Entra';
+        }
+      } catch (_) {
+        showMsg('Error de connexió. Torna-ho a intentar.', 'error');
+        btn.disabled = false;
+        btn.textContent = 'Entra';
+      }
+    });
+  </script>
+</body>
+</html>

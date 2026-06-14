@@ -37,6 +37,7 @@ amb quins prerequisits i quins passos manuals calen al servidor.
 | 022 | API i frontend per a centres per oferta | P2 | M | 015, 016b | DONE |
 | 023 | Login F1-A: Base de dades i model de dades | P2 | S | 016 (spike DONE) | DONE |
 | 024 | Login F1-B: Backend auth (endpoints + email) | P2 | M | 023 | DONE |
+| 025 | Login F1-C: Frontend auth (pàgines + auth.js) | P2 | S-M | 024 | DONE |
 
 Valors de Status: `TODO` | `IN PROGRESS` | `DONE` | `BLOCKED (motiu en una línia)` | `REJECTED (motiu en una línia)`
 
