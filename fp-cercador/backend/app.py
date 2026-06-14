@@ -38,6 +38,7 @@ from flask_cors import CORS
 
 import feed
 import history
+import notifier
 import refresh_state
 import scheduler_service
 from scrapers import pipeline
@@ -183,6 +184,10 @@ def admin_refresh():
                 history.append(result)
             except Exception as exc_h:
                 logger.error("Could not write refresh history: %s", exc_h)
+            try:
+                notifier.notify_if_new()
+            except Exception as exc_n:
+                logger.error("Could not send Brevo notification: %s", exc_n)
         except Exception as exc:
             logger.error("Pipeline refresh failed: %s", exc)
             refresh_state.set_state(status="error", errors=[str(exc)])
