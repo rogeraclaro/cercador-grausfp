@@ -632,13 +632,23 @@
       margin-bottom: 10px;
       font-weight: 600;
       font-size: 0.9rem;
+      flex-wrap: nowrap;
     }
+    .centres-header > span { white-space: nowrap; }
     .centres-header select {
       font-size: 0.85rem;
       padding: 2px 6px;
       border-radius: 4px;
       border: 1px solid #ccc;
     }
+    .centres-search-input {
+      font-size: 0.85rem;
+      padding: 2px 8px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      min-width: 180px;
+    }
+    .centres-search-input:focus { outline: 2px solid #1a73e8; border-color: transparent; }
     .centres-header button {
       margin-left: auto;
       background: none;
@@ -691,6 +701,7 @@
         centresData: {},
         centresCCAA: {},
         centresLoading: {},
+        centresSearch: {},
 
         async init() {
           try {
@@ -839,6 +850,7 @@
             const resp = await fetch(API_BASE + '/api/centres?' + param);
             this.centresData[row.id] = await resp.json();
             this.centresCCAA[row.id] = 'Totes';
+            this.centresSearch[row.id] = '';
           } finally {
             this.centresLoading[row.id] = false;
           }
@@ -847,7 +859,16 @@
         centresFiltrats(row) {
           const data = this.centresData[row.id] || [];
           const ccaa = this.centresCCAA[row.id];
-          const filtered = (!ccaa || ccaa === 'Totes') ? data : data.filter(c => c.ccaa === ccaa);
+          const q = (this.centresSearch[row.id] || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim();
+          const filtered = data.filter(c => {
+            if (ccaa && ccaa !== 'Totes' && c.ccaa !== ccaa) return false;
+            if (q) {
+              const nom = (c.nombre || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+              const loc = (c.localitat || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+              if (!nom.includes(q) && !loc.includes(q)) return false;
+            }
+            return true;
+          });
           return [...filtered].sort((a, b) => {
             const la = (a.localitat || '').toLowerCase();
             const lb = (b.localitat || '').toLowerCase();
@@ -1056,12 +1077,17 @@
                   <td colspan="5">
                     <div class="centres-container">
                       <div class="centres-header">
-                        <span x-text="(centresData[row.id] || []).length + ' centres'"></span>
+                        <span x-text="centresFiltrats(row).length + ' / ' + (centresData[row.id] || []).length + ' centres'"></span>
                         <select x-model="centresCCAA[row.id]">
                           <template x-for="ccaa in ccaasDisponibles(row)" :key="ccaa">
                             <option :value="ccaa" x-text="tc(ccaa)"></option>
                           </template>
                         </select>
+                        <input type="search"
+                               x-model="centresSearch[row.id]"
+                               placeholder="Cerca centre o població…"
+                               class="centres-search-input"
+                               @click.stop>
                         <button @click.stop="centresVisible[row.id] = false">✕</button>
                       </div>
                       <div x-show="centresLoading[row.id]" class="centres-loading">
