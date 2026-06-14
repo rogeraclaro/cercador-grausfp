@@ -15,6 +15,8 @@ Rutes:
   GET    /api/admin/scheduler          → retorna config scheduler periòdic (Phase 6, D-08)
   POST   /api/admin/scheduler          → actualitza config scheduler (Phase 6, D-08)
   DELETE /api/admin/scheduler          → desactiva scheduler (Phase 6, D-08)
+  POST   /api/admin/refresh-centres    → llança scraping de centres en background (requereix Bearer token)
+  GET    /api/admin/centres-status     → estat del darrer scraping de centres (sense auth)
 
 Decisions de disseny:
   - Sense Blueprints: rutes no justifiquen la complexitat addicional
@@ -44,6 +46,7 @@ import notifier
 import refresh_state
 import scheduler_service
 from scrapers import pipeline
+from scrapers.centres_scraper import build_centres_data
 
 # ---------------------------------------------------------------------------
 # Inicialització
@@ -306,6 +309,62 @@ def scheduler_delete():
         logger.error("scheduler delete failed: %s", exc)
         return jsonify({"error": "Could not disable scheduler"}), 500
     return jsonify({"status": "disabled"}), 200
+
+
+# ---------------------------------------------------------------------------
+# Scraping de centres (manual, des del panell admin)
+# ---------------------------------------------------------------------------
+
+_centres_scrape_state: dict = {"status": "idle", "started_at": None,
+                                "finished_at": None, "total_centres": None,
+                                "total_ofertes": None, "error": None}
+_centres_scrape_lock = threading.Lock()
+
+
+@app.route("/api/admin/centres-status")
+def centres_scrape_status():
+    """Retorna l'estat del darrer scraping de centres (sense auth — només estat)."""
+    return jsonify(_centres_scrape_state), 200
+
+
+@app.route("/api/admin/refresh-centres", methods=["POST"])
+def admin_refresh_centres():
+    """Llança el scraping de centres en background (requereix Bearer token)."""
+    if not _check_auth(request):
+        return jsonify({"error": "Unauthorized"}), 401
+
+    if not _centres_scrape_lock.acquire(blocking=False):
+        return jsonify({"error": "Scraping de centres ja en curs"}), 409
+
+    _centres_scrape_state.update(status="running",
+                                  started_at=datetime.now(timezone.utc).isoformat(),
+                                  finished_at=None, total_centres=None,
+                                  total_ofertes=None, error=None)
+
+    def _run():
+        global _centres_index, _oferta_centres
+        try:
+            build_centres_data()
+            # Recarrega la cache en memòria perquè les noves dades siguin visibles
+            _centres_index = None
+            _oferta_centres = None
+            _load_centres_data()
+            _centres_scrape_state.update(
+                status="done",
+                finished_at=datetime.now(timezone.utc).isoformat(),
+                total_centres=len(_centres_index),
+                total_ofertes=len(_oferta_centres),
+                error=None,
+            )
+        except Exception as exc:
+            logger.error("Centres scraping failed: %s", exc)
+            _centres_scrape_state.update(status="error", error=str(exc),
+                                          finished_at=datetime.now(timezone.utc).isoformat())
+        finally:
+            _centres_scrape_lock.release()
+
+    threading.Thread(target=_run, daemon=True).start()
+    return jsonify({"status": "started"}), 200
 
 
 # ---------------------------------------------------------------------------

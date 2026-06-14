@@ -200,6 +200,18 @@
       <div id="refresh-status"></div>
     </section>
 
+    <!-- ── Secció 3: Scraping de centres ── -->
+    <section class="section" id="section-centres">
+      <h2>Actualitzar centres</h2>
+      <p style="color: var(--warm); font-size: 13px; margin-bottom: 12px;">
+        Regenera els fitxers <code>centres.json</code> i <code>oferta_centres.json</code> fent scraping
+        del Registre Estatal d'Entitats de Formació FP (~15–18 min). Necessita el token introduït a la
+        secció de Refresh manual.
+      </p>
+      <button id="centres-btn">Actualitzar centres</button>
+      <div id="centres-status"></div>
+    </section>
+
     <!-- ── Secció 2: Refresh periòdic ── -->
 
     <section class="section" id="section-scheduler">
@@ -426,6 +438,68 @@
         setSchedStatus('Scheduler desactivat.', 'success');
       } catch (e) { setSchedStatus('Error de connexió.', 'error'); }
       finally { schedDisableBtn.disabled = false; }
+    });
+
+    // ── Scraping de centres ──────────────────────────────────
+    const centresBtn = document.getElementById('centres-btn');
+    const centresStatusEl = document.getElementById('centres-status');
+    let centresPollTimer = null;
+
+    function setCentresStatus(html, kind = 'info') {
+      centresStatusEl.innerHTML = `<div class="status-msg ${kind}">${html}</div>`;
+    }
+
+    function stopCentresPoll() {
+      if (centresPollTimer !== null) { clearInterval(centresPollTimer); centresPollTimer = null; }
+    }
+
+    async function pollCentresOnce() {
+      try {
+        const res = await fetch(API_BASE + '/api/admin/centres-status');
+        const state = await res.json();
+        if (state.status === 'running') {
+          setCentresStatus('<span class="spinner"></span> Scraping en curs (~15–18 min)…', 'info');
+        } else if (state.status === 'done') {
+          stopCentresPoll();
+          centresBtn.disabled = false;
+          setCentresStatus(
+            `<strong>Scraping completat.</strong><br>` +
+            `${state.total_centres.toLocaleString('ca-ES')} centres únics · ` +
+            `${state.total_ofertes.toLocaleString('ca-ES')} relacions oferta↔centres`,
+            'success'
+          );
+        } else if (state.status === 'error') {
+          stopCentresPoll();
+          centresBtn.disabled = false;
+          setCentresStatus(`<strong>Error:</strong> ${escapeHtml(state.error || '(sense detalls)')}`, 'error');
+        }
+      } catch (e) {
+        setCentresStatus('Error de connexió en consultar estat', 'error');
+        stopCentresPoll();
+        centresBtn.disabled = false;
+      }
+    }
+
+    centresBtn.addEventListener('click', async () => {
+      const token = getToken();
+      if (!token) { setCentresStatus('Introdueix el token a la secció de Refresh manual.', 'error'); return; }
+      if (!confirm('El scraping de centres triga ~15–18 minuts. Continuar?')) return;
+      centresBtn.disabled = true;
+      setCentresStatus('Iniciant scraping…', 'info');
+      try {
+        const res = await fetch(API_BASE + '/api/admin/refresh-centres', {
+          method: 'POST',
+          headers: { 'Authorization': 'Bearer ' + token },
+        });
+        if (res.status === 401) { setCentresStatus('Token incorrecte.', 'error'); centresBtn.disabled = false; return; }
+        if (res.status === 409) { setCentresStatus('Ja hi ha un scraping en curs.', 'error'); centresBtn.disabled = false; return; }
+        if (!res.ok) { setCentresStatus('Error inesperat (HTTP ' + res.status + ')', 'error'); centresBtn.disabled = false; return; }
+        pollCentresOnce();
+        centresPollTimer = setInterval(pollCentresOnce, 10000);
+      } catch (e) {
+        setCentresStatus('Error de connexió.', 'error');
+        centresBtn.disabled = false;
+      }
     });
   </script>
 </body>
