@@ -83,7 +83,36 @@ def _load_centres_data():
             _oferta_centres = json.load(f)
 
 app = Flask(__name__)
-CORS(app)
+CORS(app)  # wildcard per a l'API pública
+_AUTH_ORIGINS = {"https://cercadorfp.com", "http://localhost:5001", "http://localhost:8080"}
+
+
+def _set_auth_cors(response):
+    """Afegeix headers CORS amb credentials per a les rutes /api/auth/*."""
+    origin = request.headers.get("Origin", "")
+    if origin in _AUTH_ORIGINS:
+        response.headers["Access-Control-Allow-Origin"] = origin
+        response.headers["Access-Control-Allow-Credentials"] = "true"
+        response.headers["Access-Control-Allow-Headers"] = "Content-Type"
+        response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
+        response.headers["Vary"] = "Origin"
+    return response
+
+
+@app.before_request
+def _auth_preflight():
+    """Respon directament als preflight OPTIONS per a /api/auth/*."""
+    if request.method == "OPTIONS" and request.path.startswith("/api/auth/"):
+        from flask import make_response
+        return _set_auth_cors(make_response("", 204))
+
+
+@app.after_request
+def _auth_cors(response):
+    """Afegeix CORS amb credentials a les respostes de /api/auth/*."""
+    if request.path.startswith("/api/auth/"):
+        _set_auth_cors(response)
+    return response
 
 # Phase 6 (D-06/D-07): Arrenca APScheduler i programa el job persistit (si enabled).
 scheduler_service.init_scheduler()
