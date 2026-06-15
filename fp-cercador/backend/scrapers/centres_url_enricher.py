@@ -79,7 +79,11 @@ def _fetch_url_centrorcd(session: requests.Session, cod_ministerio: str) -> str 
             match = _URL_CENTRO_RE.search(resp.text)
             if match:
                 url = match.group(1).strip()
-                return url if url else None
+                if not url:
+                    return None
+                if not url.startswith('http://') and not url.startswith('https://'):
+                    url = 'https://' + url
+                return url
             return None
         except requests.RequestException as exc:
             logger.warning('Error intent %d per %s: %s', attempt + 1, cod_ministerio, exc)
