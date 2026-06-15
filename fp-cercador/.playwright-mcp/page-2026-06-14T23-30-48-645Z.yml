@@ -1,0 +1,22 @@
+- generic [active] [ref=e1]:
+  - link "GrausFP" [ref=e4] [cursor=pointer]:
+    - /url: index.html
+  - generic [ref=e5]:
+    - heading "Inicia sessió" [level=1] [ref=e6]
+    - generic [ref=e7]:
+      - generic [ref=e8]:
+        - generic [ref=e9]: Email
+        - textbox "Email" [ref=e10]:
+          - /placeholder: el-teu@email.com
+      - generic [ref=e11]:
+        - generic [ref=e12]: Contrasenya
+        - textbox "Contrasenya" [ref=e13]:
+          - /placeholder: ········
+      - button "Entra" [ref=e14] [cursor=pointer]
+    - paragraph [ref=e15]:
+      - link "Has oblidat la contrasenya?" [ref=e16] [cursor=pointer]:
+        - /url: forgot-password.html
+    - paragraph [ref=e17]:
+      - text: Sense compte?
+      - link "Registra't" [ref=e18] [cursor=pointer]:
+        - /url: register.html

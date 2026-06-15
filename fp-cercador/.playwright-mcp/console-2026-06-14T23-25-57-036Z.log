@@ -1,0 +1,7 @@
+[   23282ms] [ERROR] Access to fetch at 'http://localhost:5001/api/auth/me' from origin 'http://localhost:8080' has been blocked by CORS policy: The value of the 'Access-Control-Allow-Credentials' header in the response is '' which must be 'true' when the request's credentials mode is 'include'. @ http://localhost:8080/:0
+[   23283ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:5001/api/auth/me:0
+[   23760ms] [WARNING] Alpine Warning: x-for templates require a single root element, additional elements will be ignored. JSHandle@node @ http://localhost:8080/vendor/alpinejs-3.15.11.min.js:4
+[   23761ms] [WARNING] Alpine Warning: x-for templates require a single root element, additional elements will be ignored. JSHandle@node @ http://localhost:8080/vendor/alpinejs-3.15.11.min.js:4
+[   23761ms] [WARNING] Alpine Warning: x-for templates require a single root element, additional elements will be ignored. JSHandle@node @ http://localhost:8080/vendor/alpinejs-3.15.11.min.js:4
+[   23761ms] [WARNING] Alpine Warning: x-for templates require a single root element, additional elements will be ignored. JSHandle@node @ http://localhost:8080/vendor/alpinejs-3.15.11.min.js:4
+[   23761ms] [WARNING] Alpine Warning: x-for templates require a single root element, additional elements will be ignored. JSHandle@node @ http://localhost:8080/vendor/alpinejs-3.15.11.min.js:4
