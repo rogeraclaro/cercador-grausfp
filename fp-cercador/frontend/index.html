@@ -739,6 +739,65 @@
       font-size: 0.85rem;
     }
 
+    /* Gating centres — modal + separator + upsell */
+    .centres-modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.45);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+
+    .centres-modal {
+      background: var(--white);
+      border-radius: 8px;
+      padding: 28px 32px;
+      max-width: 380px;
+      width: 90%;
+      text-align: center;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+    }
+
+    .centres-modal-msg {
+      font-size: 16px;
+      font-weight: 500;
+      color: var(--dark);
+      margin-bottom: 20px;
+      line-height: 1.4;
+    }
+
+    .centres-modal-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+    }
+
+    .centres-separator {
+      border: none;
+      border-top: 1px dashed var(--border);
+      margin: 10px 0 8px;
+    }
+
+    .centres-upsell {
+      font-size: 0.85rem;
+      color: var(--warm);
+      padding: 6px 0 2px;
+      font-style: italic;
+    }
+
+    .centres-upsell a {
+      color: #1a73e8;
+      text-decoration: none;
+      font-style: normal;
+      font-weight: 500;
+    }
+
+    .centres-upsell a:hover {
+      text-decoration: underline;
+    }
+
     /* Auth widget al topbar */
     #auth-widget { margin-left: auto; display: flex; align-items: center; gap: 8px; }
     .auth-greeting { color: rgba(255,255,255,0.75); font-size: 13px; }
@@ -785,9 +844,17 @@
         centresLoading: {},
         centresSearch: {},
 
+        // Afegir:
+        loggedIn: false,
+        centresModalVisible: false,
+
         async init() {
           try {
-            const res = await fetch(API_BASE + '/api/ofertes');
+            const [res, authRes] = await Promise.all([
+              fetch(API_BASE + '/api/ofertes'),
+              fetch(API_BASE + '/api/auth/me', { credentials: 'include' })
+            ]);
+            this.loggedIn = authRes.ok;
             if (!res.ok) { this.state = 'error'; return; }
             const data = await res.json();
             const FAMILIA_ALIASES = {
@@ -937,6 +1004,18 @@
           } finally {
             this.centresLoading[row.id] = false;
           }
+        },
+
+        showCentresModal() {
+          this.centresModalVisible = true;
+        },
+
+        centresVisibles(row) {
+          const total = (this.centresData[row.id] || []).length;
+          if (this.loggedIn || total <= 3) {
+            return this.centresFiltrats(row).slice(0, 50);
+          }
+          return (this.centresData[row.id] || []).slice(0, 3);
         },
 
         centresFiltrats(row) {
@@ -1172,21 +1251,23 @@
                     <div class="centres-container">
                       <div class="centres-header">
                         <span
-                          x-text="centresFiltrats(row).length + ' / ' + (centresData[row.id] || []).length + ' centres'"></span>
-                        <select x-model="centresCCAA[row.id]">
+                          x-text="centresVisibles(row).length + ' / ' + (centresData[row.id] || []).length + ' centres'"></span>
+                        <select x-model="centresCCAA[row.id]"
+                          @mousedown="if(!loggedIn){ $event.preventDefault(); showCentresModal(); }">
                           <template x-for="ccaa in ccaasDisponibles(row)" :key="ccaa">
                             <option :value="ccaa" x-text="tc(ccaa)"></option>
                           </template>
                         </select>
                         <input type="search" x-model="centresSearch[row.id]" placeholder="Cerca centre o població…"
-                          class="centres-search-input" @click.stop>
+                          class="centres-search-input" @click.stop
+                          @focus="if(!loggedIn){ $event.target.blur(); showCentresModal(); }">
                         <button @click.stop="centresVisible[row.id] = false">✕</button>
                       </div>
                       <div x-show="centresLoading[row.id]" class="centres-loading">
                         Carregant centres…
                       </div>
                       <div x-show="!centresLoading[row.id]">
-                        <template x-for="centre in centresFiltrats(row).slice(0, 50)" :key="centre.id">
+                        <template x-for="centre in centresVisibles(row)" :key="centre.id">
                           <div class="centre-item">
                             <div class="centre-nom">
                               <template x-if="centre.url_web">
@@ -1207,7 +1288,16 @@
                             </div>
                           </div>
                         </template>
-                        <template x-if="centresFiltrats(row).length > 50">
+                        <!-- Separador + upsell per a usuaris anònims (quan hi ha >3 centres) -->
+                        <template x-if="!loggedIn && (centresData[row.id] || []).length > 3">
+                          <div>
+                            <hr class="centres-separator">
+                            <p class="centres-upsell">
+                              <a href="register.html">Registra't per a veure-les totes</a>
+                            </p>
+                          </div>
+                        </template>
+                        <template x-if="loggedIn && centresFiltrats(row).length > 50">
                           <p class="centres-more"
                             x-text="'... i ' + (centresFiltrats(row).length - 50) + ' centres més'">
                           </p>
@@ -1251,6 +1341,17 @@
 
     </div>
 
+    <!-- Modal gating centres -->
+    <div x-show="centresModalVisible" @click="centresModalVisible = false"
+         class="centres-modal-overlay" x-cloak>
+      <div class="centres-modal" @click.stop>
+        <p class="centres-modal-msg">Registra't per accedir a tota la informació</p>
+        <div class="centres-modal-actions">
+          <a href="register.html" class="auth-btn auth-btn--primary">Registra't</a>
+          <button class="auth-btn" @click="centresModalVisible = false">Ara no</button>
+        </div>
+      </div>
+    </div>
   </div><!-- /x-data -->
 
   <footer style="border-top:1px solid var(--border); padding:20px 48px; text-align:right;">
