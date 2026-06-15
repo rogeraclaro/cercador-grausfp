@@ -22,6 +22,7 @@ def send_email(to: str, subject: str, body: str) -> None:
     with smtplib.SMTP(SMTP_HOST, SMTP_PORT) as s:
         s.ehlo()
         s.starttls()
+        s.ehlo()
         s.login(SMTP_USER, SMTP_KEY)
         s.sendmail(FROM_EMAIL, [to], msg.as_bytes())
 
