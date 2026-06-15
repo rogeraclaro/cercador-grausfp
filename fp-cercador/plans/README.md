@@ -39,6 +39,7 @@ amb quins prerequisits i quins passos manuals calen al servidor.
 | 024 | Login F1-B: Backend auth (endpoints + email) | P2 | M | 023 | DONE |
 | 025 | Login F1-C: Frontend auth (pàgines + auth.js) | P2 | S-M | 024 | DONE |
 | 026 | Login F1-D: Hardening i documentació de desplegament | P2 | S | 024, 025 | DONE |
+| 027 | Gate centres per oferta darrere del login (preview 3 per anònims) | P2 | M | 023–026 | DONE |
 
 Valors de Status: `TODO` | `IN PROGRESS` | `DONE` | `BLOCKED (motiu en una línia)` | `REJECTED (motiu en una línia)`
 
