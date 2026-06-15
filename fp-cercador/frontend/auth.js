@@ -39,5 +39,30 @@
     return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
   }
 
-  document.addEventListener('DOMContentLoaded', initAuth);
+  function showVerifiedToast() {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('verified') !== '1') return;
+    history.replaceState(null, '', window.location.pathname);
+
+    const toast = document.createElement('div');
+    toast.textContent = '✓ Compte verificat. Ja pots iniciar sessió.';
+    Object.assign(toast.style, {
+      position: 'fixed', bottom: '24px', left: '50%',
+      transform: 'translateX(-50%)',
+      background: '#2e7d32', color: '#fff',
+      padding: '12px 24px', borderRadius: '8px',
+      fontSize: '15px', fontWeight: '500',
+      boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
+      zIndex: '9999', opacity: '0',
+      transition: 'opacity 0.3s ease',
+    });
+    document.body.appendChild(toast);
+    requestAnimationFrame(() => { toast.style.opacity = '1'; });
+    setTimeout(() => {
+      toast.style.opacity = '0';
+      setTimeout(() => toast.remove(), 300);
+    }, 5000);
+  }
+
+  document.addEventListener('DOMContentLoaded', () => { initAuth(); showVerifiedToast(); });
 })();
