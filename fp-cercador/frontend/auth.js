@@ -47,7 +47,7 @@
     const toast = document.createElement('div');
     toast.textContent = '✓ Compte verificat. Ja pots iniciar sessió.';
     Object.assign(toast.style, {
-      position: 'fixed', bottom: '24px', left: '50%',
+      position: 'fixed', top: '24px', left: '50%',
       transform: 'translateX(-50%)',
       background: '#2e7d32', color: '#fff',
       padding: '12px 24px', borderRadius: '8px',
