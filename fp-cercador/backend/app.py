@@ -17,6 +17,9 @@ Rutes:
   DELETE /api/admin/scheduler          → desactiva scheduler (Phase 6, D-08)
   POST   /api/admin/refresh-centres    → llança scraping de centres en background (requereix Bearer token)
   GET    /api/admin/centres-status     → estat del darrer scraping de centres (sense auth)
+  GET    /api/favorites                → favorits de l'usuari autenticat
+  POST   /api/favorites                → afegeix oferta als favorits
+  DELETE /api/favorites/<oferta_id>   → elimina oferta dels favorits
 
 Decisions de disseny:
   - Sense Blueprints: rutes no justifiquen la complexitat addicional
@@ -88,29 +91,33 @@ _AUTH_ORIGINS = {"https://cercadorfp.com", "http://localhost:5001", "http://loca
 
 
 def _set_auth_cors(response):
-    """Afegeix headers CORS amb credentials per a les rutes /api/auth/*."""
+    """Afegeix headers CORS amb credentials per a les rutes /api/auth/* i /api/favorites*."""
     origin = request.headers.get("Origin", "")
     if origin in _AUTH_ORIGINS:
         response.headers["Access-Control-Allow-Origin"] = origin
         response.headers["Access-Control-Allow-Credentials"] = "true"
         response.headers["Access-Control-Allow-Headers"] = "Content-Type"
-        response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
+        response.headers["Access-Control-Allow-Methods"] = "GET, POST, DELETE, OPTIONS"
         response.headers["Vary"] = "Origin"
     return response
 
 
+def _needs_auth_cors(path):
+    return path.startswith("/api/auth/") or path.startswith("/api/favorites")
+
+
 @app.before_request
 def _auth_preflight():
-    """Respon directament als preflight OPTIONS per a /api/auth/*."""
-    if request.method == "OPTIONS" and request.path.startswith("/api/auth/"):
+    """Respon directament als preflight OPTIONS per a /api/auth/* i /api/favorites*."""
+    if request.method == "OPTIONS" and _needs_auth_cors(request.path):
         from flask import make_response
         return _set_auth_cors(make_response("", 204))
 
 
 @app.after_request
 def _auth_cors(response):
-    """Afegeix CORS amb credentials a les respostes de /api/auth/*."""
-    if request.path.startswith("/api/auth/"):
+    """Afegeix CORS amb credentials a les respostes de /api/auth/* i /api/favorites*."""
+    if _needs_auth_cors(request.path):
         _set_auth_cors(response)
     return response
 
@@ -710,6 +717,96 @@ def auth_reset_password():
     finally:
         conn.close()
     return jsonify({"message": "Contrasenya actualitzada correctament."})
+
+
+# ---------------------------------------------------------------------------
+# Favorits — /api/favorites
+# ---------------------------------------------------------------------------
+
+
+def _get_or_create_favorites_list(conn, user_id):
+    """Retorna l'id de la llista 'Favorits' de l'usuari, creant-la si cal."""
+    import db as _db
+    row = _db.query_one(conn, "SELECT id FROM lists WHERE user_id = ? LIMIT 1", (user_id,))
+    if row:
+        return row["id"]
+    conn.execute("INSERT INTO lists (user_id, name) VALUES (?, 'Favorits')", (user_id,))
+    conn.commit()
+    return conn.execute("SELECT last_insert_rowid()").fetchone()[0]
+
+
+@app.route("/api/favorites", methods=["GET"])
+def favorites_get():
+    """Retorna els favorits de l'usuari autenticat."""
+    import db as _db
+    user_id = _get_session_user(request)
+    if not user_id:
+        return jsonify({"error": "No autenticat"}), 401
+    conn = _db.get_db()
+    try:
+        list_id_row = _db.query_one(conn, "SELECT id FROM lists WHERE user_id = ? LIMIT 1", (user_id,))
+        if not list_id_row:
+            return jsonify([]), 200
+        items = _db.query_all(
+            conn,
+            "SELECT oferta_id, oferta_codigo, added_at FROM list_items WHERE list_id = ? ORDER BY added_at DESC",
+            (list_id_row["id"],),
+        )
+        return jsonify([dict(r) for r in items]), 200
+    finally:
+        conn.close()
+
+
+@app.route("/api/favorites", methods=["POST"])
+def favorites_add():
+    """Afegeix una oferta als favorits. Body: {oferta_id, oferta_codigo}."""
+    import db as _db
+    user_id = _get_session_user(request)
+    if not user_id:
+        return jsonify({"error": "No autenticat"}), 401
+    data = request.get_json(silent=True) or {}
+    oferta_id = data.get("oferta_id")
+    oferta_codigo = data.get("oferta_codigo") or None
+    if not isinstance(oferta_id, int):
+        return jsonify({"error": "oferta_id és obligatori i ha de ser enter"}), 400
+    conn = _db.get_db()
+    try:
+        list_id = _get_or_create_favorites_list(conn, user_id)
+        existing = _db.query_one(
+            conn, "SELECT id FROM list_items WHERE list_id = ? AND oferta_id = ?", (list_id, oferta_id)
+        )
+        if existing:
+            return jsonify({"status": "already_exists"}), 200
+        conn.execute(
+            "INSERT INTO list_items (list_id, oferta_id, oferta_codigo) VALUES (?, ?, ?)",
+            (list_id, oferta_id, oferta_codigo),
+        )
+        conn.commit()
+        return jsonify({"status": "added"}), 201
+    finally:
+        conn.close()
+
+
+@app.route("/api/favorites/<int:oferta_id>", methods=["DELETE"])
+def favorites_remove(oferta_id):
+    """Elimina una oferta dels favorits."""
+    import db as _db
+    user_id = _get_session_user(request)
+    if not user_id:
+        return jsonify({"error": "No autenticat"}), 401
+    conn = _db.get_db()
+    try:
+        list_id_row = _db.query_one(conn, "SELECT id FROM lists WHERE user_id = ? LIMIT 1", (user_id,))
+        if not list_id_row:
+            return jsonify({"status": "not_found"}), 404
+        conn.execute(
+            "DELETE FROM list_items WHERE list_id = ? AND oferta_id = ?",
+            (list_id_row["id"], oferta_id),
+        )
+        conn.commit()
+        return "", 204
+    finally:
+        conn.close()
 
 
 # ---------------------------------------------------------------------------
