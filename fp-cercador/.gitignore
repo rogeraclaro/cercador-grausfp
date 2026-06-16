@@ -30,3 +30,7 @@ build/
 # Artefactes de runtime (ofertes.json, refresh_history.json, scheduler.json,
 # last_snapshot.json, last_failure.html) — el servidor els regenera
 backend/data/
+
+# Artefactes de testing i planificació local
+.playwright-mcp/
+.planning/
