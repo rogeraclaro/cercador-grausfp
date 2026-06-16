@@ -625,16 +625,21 @@
       opacity: 0;
       transition: opacity 0.1s;
     }
+
     .results-table tbody tr:hover .btn-fav,
     .btn-fav--active {
       opacity: 1;
     }
-    .btn-fav:hover, .btn-fav--active {
+
+    .btn-fav:hover,
+    .btn-fav--active {
       color: #e53935;
     }
+
     .results-table tbody tr.row-fav td {
       background: var(--warm2);
     }
+
     .checkbox-label--favs {
       cursor: pointer;
       display: inline-flex;
@@ -644,6 +649,7 @@
       font-weight: 500;
       user-select: none;
     }
+
     .checkbox-label--favs input[type="checkbox"] {
       accent-color: #e53935;
     }
@@ -809,7 +815,10 @@
       line-height: 1;
       padding: 2px 4px;
     }
-    .centres-modal-close:hover { color: var(--dark); }
+
+    .centres-modal-close:hover {
+      color: var(--dark);
+    }
 
     .centres-modal-msg {
       font-size: 16px;
@@ -838,19 +847,27 @@
       border: none;
       transition: background 0.15s;
     }
+
     .centres-modal-btn--primary {
       background: var(--dark);
       color: var(--white);
       width: 100%;
     }
-    .centres-modal-btn--primary:hover { background: #333; }
+
+    .centres-modal-btn--primary:hover {
+      background: #333;
+    }
+
     .centres-modal-btn--secondary {
       background: none;
       color: var(--warm);
       font-size: 13px;
       font-weight: 400;
     }
-    .centres-modal-btn--secondary:hover { text-decoration: underline; }
+
+    .centres-modal-btn--secondary:hover {
+      text-decoration: underline;
+    }
 
     .centres-modal-login-link {
       display: block;
@@ -860,7 +877,10 @@
       text-align: center;
       text-decoration: none;
     }
-    .centres-modal-login-link:hover { text-decoration: underline; }
+
+    .centres-modal-login-link:hover {
+      text-decoration: underline;
+    }
 
     .centres-separator {
       border: none;
@@ -887,18 +907,48 @@
     }
 
     /* Auth widget al topbar */
-    #auth-widget { margin-left: auto; display: flex; align-items: center; gap: 8px; }
-    .auth-greeting { color: rgba(255,255,255,0.75); font-size: 13px; }
-    .auth-btn {
-      font-size: 13px; padding: 5px 14px; border-radius: 4px;
-      border: 1px solid rgba(255,255,255,0.35); color: var(--white);
-      background: transparent; cursor: pointer; text-decoration: none;
-      font-family: inherit; transition: background 0.15s;
+    #auth-widget {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
-    .auth-btn:hover { background: rgba(255,255,255,0.12); }
-    .auth-btn--primary { background: var(--white); color: var(--dark); border-color: var(--white); }
-    .auth-btn--primary:hover { background: var(--warm2); }
-    .auth-btn--logout { border-color: rgba(255,255,255,0.25); }
+
+    .auth-greeting {
+      color: rgba(255, 255, 255, 0.75);
+      font-size: 13px;
+    }
+
+    .auth-btn {
+      font-size: 13px;
+      padding: 5px 14px;
+      border-radius: 4px;
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      color: var(--white);
+      background: transparent;
+      cursor: pointer;
+      text-decoration: none;
+      font-family: inherit;
+      transition: background 0.15s;
+    }
+
+    .auth-btn:hover {
+      background: rgba(255, 255, 255, 0.12);
+    }
+
+    .auth-btn--primary {
+      background: var(--white);
+      color: var(--dark);
+      border-color: var(--white);
+    }
+
+    .auth-btn--primary:hover {
+      background: var(--warm2);
+    }
+
+    .auth-btn--logout {
+      border-color: rgba(255, 255, 255, 0.25);
+    }
   </style>
 
   <script src="auth.js"></script>
@@ -1259,14 +1309,16 @@
       <label class="checkbox-label checkbox-label--favs"
         @click.prevent="if(!loggedIn){ showCentresModal(); } else { filterFavs = !filterFavs; resetPage(); }">
         <input type="checkbox" :checked="filterFavs" tabindex="-1" style="pointer-events:none">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="13" height="13" style="vertical-align:-1px;margin-right:2px">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="13" height="13"
+          style="vertical-align:-1px;margin-right:2px">
           <path fill="currentColor" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"
-            d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+            d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
         </svg>
         Favorits
       </label>
 
-      <button class="clear-btn" x-show="search || filterGrado || filterFamilia || filterNivel || filterOld !== 'all' || filterFavs"
+      <button class="clear-btn"
+        x-show="search || filterGrado || filterFamilia || filterNivel || filterOld !== 'all' || filterFavs"
         @click="search=''; filterGrado=''; filterFamilia=''; filterNivel=''; filterOld='all'; filterFavs=false; resetPage()">
         Esborrar filtres ×
       </button>
@@ -1357,8 +1409,9 @@
                     :class="{ 'btn-fav--active': favorites.has(row.id) }"
                     :title="favorites.has(row.id) ? 'Treu dels favorits' : 'Afegeix als favorits'">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16">
-                      <path :fill="favorites.has(row.id) ? 'currentColor' : 'none'" stroke="currentColor" stroke-width="2" stroke-linejoin="round"
-                        d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                      <path :fill="favorites.has(row.id) ? 'currentColor' : 'none'" stroke="currentColor"
+                        stroke-width="2" stroke-linejoin="round"
+                        d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
                     </svg>
                   </button>
                   <span x-text="row.denominacion"></span>
@@ -1433,7 +1486,7 @@
                           <div>
                             <hr class="centres-separator">
                             <p class="centres-upsell">
-                              <a href="register.html">Registra't per a veure-les totes</a>
+                              <a href="register.html">Registra't per a veure'ls tots</a>
                             </p>
                           </div>
                         </template>
@@ -1482,14 +1535,14 @@
     </div>
 
     <!-- Modal gating centres -->
-    <div x-show="centresModalVisible" @click="centresModalVisible = false"
-         class="centres-modal-overlay" x-cloak>
+    <div x-show="centresModalVisible" @click="centresModalVisible = false" class="centres-modal-overlay" x-cloak>
       <div class="centres-modal" @click.stop>
         <button class="centres-modal-close" @click="centresModalVisible = false">✕</button>
         <p class="centres-modal-msg">Registra't o entra amb el teu usuari per a accedir a tota la informació</p>
         <div class="centres-modal-actions">
           <a href="register.html" class="centres-modal-btn centres-modal-btn--primary">Registrar-me</a>
-          <button class="centres-modal-btn centres-modal-btn--secondary" @click="centresModalVisible = false">Ara no</button>
+          <button class="centres-modal-btn centres-modal-btn--secondary" @click="centresModalVisible = false">Ara
+            no</button>
         </div>
         <a href="login.html" class="centres-modal-login-link">Entrar</a>
       </div>
