@@ -74,6 +74,17 @@ def compute_changes(curr: dict, prev: dict) -> dict:
         if added: new_by_grado[g] = added
         if gone:  removed_by_grado[g] = gone
 
+    # Metadades enriquides per a F3 (alertes personalitzades)
+    curr_meta = curr.get("meta_by_grado") or {}
+    prev_meta = prev.get("meta_by_grado") or {}
+    new_by_grado_meta = {}
+    for g, items in curr_meta.items():
+        curr_by_d = {item["denominacio"]: item for item in (items or [])}
+        prev_d_set = {item["denominacio"] for item in (prev_meta.get(g) or [])}
+        added = [curr_by_d[d] for d in sorted(curr_by_d) if d not in prev_d_set]
+        if added:
+            new_by_grado_meta[g] = added
+
     return {
         "new_families": new_families,
         "removed_families": removed_families,
@@ -84,6 +95,7 @@ def compute_changes(curr: dict, prev: dict) -> dict:
         "new_by_grado": new_by_grado,
         "removed_by_grado": removed_by_grado,
         "has_changes": bool(new_families or removed_families or grado_deltas or new_denominacions or removed_denominacions),
+        "new_by_grado_meta": new_by_grado_meta,               # NOU
     }
 
 
@@ -100,6 +112,7 @@ def append(result: dict) -> None:
         "families": result.get("families", []),
         "denominacions": result.get("denominacions", []),
         "denominacions_by_grado": result.get("denominacions_by_grado", {}),
+        "meta_by_grado": result.get("meta_by_grado", {}),     # NOU
     }
     prev = _load_json(SNAPSHOT_PATH)
     entry = {

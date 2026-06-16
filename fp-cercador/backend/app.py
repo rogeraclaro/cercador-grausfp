@@ -103,7 +103,7 @@ def _set_auth_cors(response):
 
 
 def _needs_auth_cors(path):
-    return path.startswith("/api/auth/") or path.startswith("/api/favorites")
+    return path.startswith("/api/auth/") or path.startswith("/api/favorites") or path.startswith("/api/alerts")
 
 
 @app.before_request
@@ -292,6 +292,11 @@ def admin_refresh():
                 notifier.notify_if_new()
             except Exception as exc_n:
                 logger.error("Could not send Brevo notification: %s", exc_n)
+            try:
+                import alerts_service
+                alerts_service.dispatch_alerts(result, base_url=BASE_URL)
+            except Exception as exc_a:
+                logger.error("Could not dispatch alerts: %s", exc_a)
         except Exception as exc:
             logger.error("Pipeline refresh failed: %s", exc)
             refresh_state.set_state(status="error", errors=[str(exc)])
@@ -807,6 +812,165 @@ def favorites_remove(oferta_id):
         return "", 204
     finally:
         conn.close()
+
+
+# ---------------------------------------------------------------------------
+# Alertes — /api/alerts  (F3)
+# ---------------------------------------------------------------------------
+
+VALID_GRADOS = {"A", "B", "C", "D", "E"}
+
+
+@app.route("/api/alerts", methods=["GET"])
+def alerts_get():
+    """Retorna les alertes actives i inactives de l'usuari autenticat."""
+    import db as _db
+    user_id = _get_session_user(request)
+    if not user_id:
+        return jsonify({"error": "No autenticat"}), 401
+    conn = _db.get_db()
+    try:
+        rows = _db.query_all(
+            conn,
+            "SELECT id, filter_json, active, created_at, last_sent_at FROM alerts "
+            "WHERE user_id = ? ORDER BY created_at DESC",
+            (user_id,),
+        )
+        return jsonify([dict(r) for r in rows]), 200
+    finally:
+        conn.close()
+
+
+@app.route("/api/alerts", methods=["POST"])
+def alerts_create():
+    """Crea una nova alerta. Body: {"filter_json": {...}}. Màxim 10 alertes actives/usuari."""
+    import db as _db
+    import json as _json
+    import secrets as _secrets
+    from datetime import datetime, timezone, timedelta
+    user_id = _get_session_user(request)
+    if not user_id:
+        return jsonify({"error": "No autenticat"}), 401
+    data = request.get_json(silent=True) or {}
+    filter_dict = data.get("filter_json")
+    if not isinstance(filter_dict, dict):
+        return jsonify({"error": "filter_json ha de ser un objecte JSON"}), 400
+    criteria_keys = {"grado", "familia", "nivel", "texto"}
+    if not any(filter_dict.get(k) for k in criteria_keys):
+        return jsonify({"error": "L'alerta ha de tenir almenys un criteri (grado, familia, nivel o texto)"}), 400
+    if filter_dict.get("grado") and filter_dict["grado"] not in VALID_GRADOS:
+        return jsonify({"error": "grado ha de ser A, B, C, D o E"}), 400
+    conn = _db.get_db()
+    try:
+        count = _db.query_one(
+            conn,
+            "SELECT COUNT(*) FROM alerts WHERE user_id = ? AND active = 1",
+            (user_id,),
+        )[0]
+        if count >= 10:
+            return jsonify({"error": "Màxim 10 alertes actives per usuari"}), 429
+        filter_str = _json.dumps(filter_dict, ensure_ascii=False)
+        conn.execute(
+            "INSERT INTO alerts (user_id, filter_json) VALUES (?, ?)",
+            (user_id, filter_str),
+        )
+        conn.commit()
+        alert_id = conn.execute("SELECT last_insert_rowid()").fetchone()[0]
+        raw_token = _secrets.token_hex(32)
+        stored_token = f"alert_{alert_id}_{raw_token}"
+        expires = (datetime.now(timezone.utc) + timedelta(days=365)).strftime("%Y-%m-%d %H:%M:%S")
+        conn.execute(
+            "INSERT INTO tokens (user_id, token, type, expires_at) VALUES (?, ?, 'alert_unsubscribe', ?)",
+            (user_id, stored_token, expires),
+        )
+        conn.commit()
+        row = _db.query_one(
+            conn,
+            "SELECT id, filter_json, active, created_at, last_sent_at FROM alerts WHERE id = ?",
+            (alert_id,),
+        )
+        return jsonify(dict(row)), 201
+    finally:
+        conn.close()
+
+
+@app.route("/api/alerts/<int:alert_id>", methods=["DELETE"])
+def alerts_delete(alert_id):
+    """Esborra una alerta de l'usuari autenticat."""
+    import db as _db
+    user_id = _get_session_user(request)
+    if not user_id:
+        return jsonify({"error": "No autenticat"}), 401
+    conn = _db.get_db()
+    try:
+        row = _db.query_one(
+            conn, "SELECT id FROM alerts WHERE id = ? AND user_id = ?", (alert_id, user_id)
+        )
+        if not row:
+            return jsonify({"error": "Alerta no trobada"}), 404
+        conn.execute("DELETE FROM alerts WHERE id = ?", (alert_id,))
+        conn.execute("DELETE FROM tokens WHERE token LIKE ?", (f"alert_{alert_id}_%",))
+        conn.commit()
+        return "", 204
+    finally:
+        conn.close()
+
+
+@app.route("/api/alerts/<int:alert_id>", methods=["PATCH"])
+def alerts_toggle(alert_id):
+    """Activa o desactiva una alerta. Body: {"active": true/false}."""
+    import db as _db
+    user_id = _get_session_user(request)
+    if not user_id:
+        return jsonify({"error": "No autenticat"}), 401
+    data = request.get_json(silent=True) or {}
+    if "active" not in data:
+        return jsonify({"error": "Cal el camp active"}), 400
+    active = 1 if data["active"] else 0
+    conn = _db.get_db()
+    try:
+        row = _db.query_one(
+            conn, "SELECT id FROM alerts WHERE id = ? AND user_id = ?", (alert_id, user_id)
+        )
+        if not row:
+            return jsonify({"error": "Alerta no trobada"}), 404
+        conn.execute("UPDATE alerts SET active = ? WHERE id = ?", (active, alert_id))
+        conn.commit()
+        updated = _db.query_one(
+            conn,
+            "SELECT id, filter_json, active, created_at, last_sent_at FROM alerts WHERE id = ?",
+            (alert_id,),
+        )
+        return jsonify(dict(updated)), 200
+    finally:
+        conn.close()
+
+
+@app.route("/api/alerts/<int:alert_id>/unsubscribe", methods=["GET"])
+def alerts_unsubscribe(alert_id):
+    """Baixa sense login via token signat. GET /api/alerts/<id>/unsubscribe?token=<tok>"""
+    import db as _db
+    from flask import redirect
+    raw_token = request.args.get("token", "")
+    if not raw_token:
+        return jsonify({"error": "Token invàlid"}), 400
+    stored_token = f"alert_{alert_id}_{raw_token}"
+    conn = _db.get_db()
+    try:
+        row = _db.query_one(
+            conn,
+            "SELECT id, user_id FROM tokens WHERE token = ? AND type = 'alert_unsubscribe' "
+            "AND expires_at > datetime('now')",
+            (stored_token,),
+        )
+        if not row:
+            return jsonify({"error": "Token invàlid o caducat"}), 400
+        conn.execute("UPDATE alerts SET active = 0 WHERE id = ?", (alert_id,))
+        conn.execute("DELETE FROM tokens WHERE token = ?", (stored_token,))
+        conn.commit()
+    finally:
+        conn.close()
+    return redirect("/?unsubscribed=1")
 
 
 # ---------------------------------------------------------------------------

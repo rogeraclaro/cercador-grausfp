@@ -177,12 +177,22 @@ def run() -> dict:
         for g in ['A', 'B', 'C', 'D', 'E']
     }
 
+    meta_by_grado = {
+        g: [
+            {"denominacio": r["denominacion"], "familia": r["familia"], "nivel": r["nivel"]}
+            for r in all_records
+            if r.get("grado") == g and r.get("denominacion")
+        ]
+        for g in ["A", "B", "C", "D", "E"]
+    }
+
     return {
         "total": len(all_records),
         "by_grado": by_grado,
         "families": families,
         "denominacions": denominacions,
         "denominacions_by_grado": denominacions_by_grado,
+        "meta_by_grado": meta_by_grado,           # NOU — per a F3 alertes
         "errors": [],
         "unknown_families": sorted(_unknown),
         "duration_seconds": round(time.time() - start, 2),

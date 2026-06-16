@@ -29,7 +29,7 @@ amb quins prerequisits i quins passos manuals calen al servidor.
 | 015 | [SPIKE] Centres per grau (fonts, estats, contacte) | P3 | M-L | — (millor després de 005/006; coordinar amb 013) | DONE |
 | 016 | [SPIKE — F1] Login d'usuaris (fonament del roadmap) | P2 | M | — (millor amb 001–007 DONE) | DONE |
 | 016b | [OPCIONAL] URL web dels centres | P3 | S | 016 | DONE |
-| 017 | [SPIKE — F3] Alertes personalitzades de novetats | P2 | M | 016, 005, 006 | TODO |
+| 017 | [SPIKE — F3] Alertes personalitzades de novetats | P2 | M | 016, 005, 006 | DONE |
 | 018 | [SPIKE — F7] Observatori públic de l'oferta FP | P2 | S-M | 005, 006 | TODO |
 | 019 | Migració a domini propi (checklist manual VPS) | P3 | S | — (quan hi hagi domini) | TODO |
 | 020 | Enriquiment Grado C (LOE): durada, Annexe PDF, Europass, BOE | P2 | M | 001, 002, 006 | DONE |
@@ -40,6 +40,8 @@ amb quins prerequisits i quins passos manuals calen al servidor.
 | 025 | Login F1-C: Frontend auth (pàgines + auth.js) | P2 | S-M | 024 | DONE |
 | 026 | Login F1-D: Hardening i documentació de desplegament | P2 | S | 024, 025 | DONE |
 | 027 | Gate centres per oferta darrere del login (preview 3 per anònims) | P2 | M | 023–026 | DONE |
+
+| 028 | Backend motor d'alertes F3 (alerts_service + CRUD endpoints) | P1 | M | 017, 023–027 | DONE |
 
 Valors de Status: `TODO` | `IN PROGRESS` | `DONE` | `BLOCKED (motiu en una línia)` | `REJECTED (motiu en una línia)`
 

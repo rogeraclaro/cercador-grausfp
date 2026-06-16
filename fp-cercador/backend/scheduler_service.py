@@ -120,6 +120,11 @@ def _scheduled_refresh() -> None:
             history.append(result)
         except Exception as exc_h:
             logger.error("Could not write refresh history: %s", exc_h)
+        try:
+            import alerts_service
+            alerts_service.dispatch_alerts(result)
+        except Exception as exc_a:
+            logger.error("Could not dispatch alerts: %s", exc_a)
     except Exception as exc:
         logger.error("scheduled_refresh failed: %s", exc)
         refresh_state.set_state(status="error", errors=[str(exc)])

@@ -94,7 +94,7 @@ def test_run_returns_schema():
     )
     required_keys = {
         'total', 'by_grado', 'families', 'denominacions',
-        'denominacions_by_grado', 'errors', 'unknown_families', 'duration_seconds',
+        'denominacions_by_grado', 'meta_by_grado', 'errors', 'unknown_families', 'duration_seconds',
     }
     assert required_keys == set(result.keys())
     assert result['errors'] == []
