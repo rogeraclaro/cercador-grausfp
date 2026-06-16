@@ -622,9 +622,30 @@
       vertical-align: middle;
       line-height: 1;
       flex-shrink: 0;
+      opacity: 0;
+      transition: opacity 0.1s;
+    }
+    .results-table tbody tr:hover .btn-fav,
+    .btn-fav--active {
+      opacity: 1;
     }
     .btn-fav:hover, .btn-fav--active {
       color: #e53935;
+    }
+    .results-table tbody tr.row-fav td {
+      background: var(--warm2);
+    }
+    .checkbox-label--favs {
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      color: #e53935;
+      font-weight: 500;
+      user-select: none;
+    }
+    .checkbox-label--favs input[type="checkbox"] {
+      accent-color: #e53935;
     }
 
     /* ── Centres per oferta ─────────────────────────── */
@@ -904,6 +925,7 @@
         loggedIn: false,
         centresModalVisible: false,
         favorites: new Set(),
+        filterFavs: false,
 
         async init() {
           try {
@@ -949,6 +971,7 @@
             if (this.filterGrado && r.grado !== this.filterGrado) return false;
             if (this.filterFamilia && r.familia !== this.filterFamilia) return false;
             if (this.filterNivel && r.nivel !== parseInt(this.filterNivel)) return false;
+            if (this.filterFavs && !this.favorites.has(r.id)) return false;
             if (q && !r._normDen.includes(q) && !r._normCod.includes(q)) return false;
             return true;
           });
@@ -1223,8 +1246,18 @@
         </label>
       </div>
 
-      <button class="clear-btn" x-show="search || filterGrado || filterFamilia || filterNivel || filterOld !== 'all'"
-        @click="search=''; filterGrado=''; filterFamilia=''; filterNivel=''; filterOld='all'; resetPage()">
+      <label class="checkbox-label checkbox-label--favs"
+        @click.prevent="if(!loggedIn){ showCentresModal(); } else { filterFavs = !filterFavs; resetPage(); }">
+        <input type="checkbox" :checked="filterFavs" @click.stop tabindex="-1">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="13" height="13" style="vertical-align:-1px;margin-right:2px">
+          <path fill="currentColor" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"
+            d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+        </svg>
+        Favorits
+      </label>
+
+      <button class="clear-btn" x-show="search || filterGrado || filterFamilia || filterNivel || filterOld !== 'all' || filterFavs"
+        @click="search=''; filterGrado=''; filterFamilia=''; filterNivel=''; filterOld='all'; filterFavs=false; resetPage()">
         Esborrar filtres ×
       </button>
     </div>
@@ -1299,7 +1332,7 @@
           <template x-for="row in pagedRecords" :key="row.id">
             <tbody>
               <tr
-                :class="{ 'row-link': (row.grado === 'C' && row.plan_antiguo) || (['A','B','C'].includes(row.grado) && row.ficha_id) || (['D','E'].includes(row.grado) && row.ficha_url) }"
+                :class="{ 'row-link': (row.grado === 'C' && row.plan_antiguo) || (['A','B','C'].includes(row.grado) && row.ficha_id) || (['D','E'].includes(row.grado) && row.ficha_url), 'row-fav': favorites.has(row.id) }"
                 @click="
                   row.grado === 'C' && row.plan_antiguo
                     ? (expandedId = (expandedId === row.id ? null : row.id))
@@ -1445,7 +1478,7 @@
         <button class="centres-modal-close" @click="centresModalVisible = false">✕</button>
         <p class="centres-modal-msg">Registra't per accedir a tota la informació</p>
         <div class="centres-modal-actions">
-          <a href="register.html" class="centres-modal-btn centres-modal-btn--primary">Registra't</a>
+          <a href="register.html" class="centres-modal-btn centres-modal-btn--primary">Registrar-me</a>
           <button class="centres-modal-btn centres-modal-btn--secondary" @click="centresModalVisible = false">Ara no</button>
         </div>
       </div>
