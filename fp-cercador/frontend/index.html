@@ -852,6 +852,16 @@
     }
     .centres-modal-btn--secondary:hover { text-decoration: underline; }
 
+    .centres-modal-login-link {
+      display: block;
+      margin-top: 12px;
+      font-size: 13px;
+      color: var(--warm);
+      text-align: center;
+      text-decoration: none;
+    }
+    .centres-modal-login-link:hover { text-decoration: underline; }
+
     .centres-separator {
       border: none;
       border-top: 1px dashed var(--border);
@@ -1476,11 +1486,12 @@
          class="centres-modal-overlay" x-cloak>
       <div class="centres-modal" @click.stop>
         <button class="centres-modal-close" @click="centresModalVisible = false">✕</button>
-        <p class="centres-modal-msg">Registra't per accedir a tota la informació</p>
+        <p class="centres-modal-msg">Registra't o entra el teu usuari per a accedir a tota la informació</p>
         <div class="centres-modal-actions">
           <a href="register.html" class="centres-modal-btn centres-modal-btn--primary">Registrar-me</a>
           <button class="centres-modal-btn centres-modal-btn--secondary" @click="centresModalVisible = false">Ara no</button>
         </div>
+        <a href="login.html" class="centres-modal-login-link">Entrar</a>
       </div>
     </div>
   </div><!-- /x-data -->
