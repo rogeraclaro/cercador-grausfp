@@ -153,6 +153,29 @@ def _check_auth(req) -> bool:
     return hmac.compare_digest(provided, ADMIN_TOKEN)
 
 
+def _check_admin(req) -> bool:
+    """Accepta Bearer ADMIN_TOKEN (scripts) O sessió d'usuari amb is_admin=1 (UI)."""
+    if _check_auth(req):
+        return True
+    import db as _db
+    token = req.cookies.get("session")
+    if not token:
+        return False
+    conn = _db.get_db()
+    try:
+        row = _db.query_one(
+            conn,
+            """SELECT u.id FROM sessions s
+               JOIN users u ON u.id = s.user_id
+               WHERE s.token = ? AND s.expires_at > datetime('now')
+               AND u.is_admin = 1 AND u.is_active = 1 AND u.deleted_at IS NULL""",
+            (token,),
+        )
+        return bool(row)
+    finally:
+        conn.close()
+
+
 # ---------------------------------------------------------------------------
 # Rutes
 # ---------------------------------------------------------------------------
@@ -311,7 +334,7 @@ def api_feed_json():
 @app.route("/api/admin/refresh", methods=["POST"])
 def admin_refresh():
     """API-03 / API-04 / API-05: Llança el pipeline en background si el token és vàlid."""
-    if not _check_auth(request):
+    if not _check_admin(request):
         return jsonify({"error": "Unauthorized"}), 401
 
     acquired = refresh_state._lock.acquire(blocking=False)
@@ -382,7 +405,7 @@ def next_refresh():
 @app.route("/api/admin/scheduler", methods=["GET"])
 def scheduler_get():
     """D-08: Retorna l'estat actual del scheduler periòdic."""
-    if not _check_auth(request):
+    if not _check_admin(request):
         return jsonify({"error": "Unauthorized"}), 401
     cfg = scheduler_service.load_config()
     cfg["next_run"] = scheduler_service.get_next_run_iso()
@@ -392,7 +415,7 @@ def scheduler_get():
 @app.route("/api/admin/scheduler", methods=["POST"])
 def scheduler_set():
     """D-08: Actualitza la config del scheduler i la persisteix."""
-    if not _check_auth(request):
+    if not _check_admin(request):
         return jsonify({"error": "Unauthorized"}), 401
     body = request.get_json(silent=True) or {}
     try:
@@ -410,7 +433,7 @@ def scheduler_set():
 @app.route("/api/admin/scheduler", methods=["DELETE"])
 def scheduler_delete():
     """D-08: Desactiva el scheduler i elimina el job."""
-    if not _check_auth(request):
+    if not _check_admin(request):
         return jsonify({"error": "Unauthorized"}), 401
     cfg = scheduler_service.load_config()
     cfg["enabled"] = False
@@ -431,7 +454,7 @@ def scheduler_delete():
 @app.route("/api/admin/users", methods=["GET"])
 def admin_users_list():
     """Retorna la llista d'usuaris registrats (sense password_hash)."""
-    if not _check_auth(request):
+    if not _check_admin(request):
         return jsonify({"error": "Unauthorized"}), 401
     import db as _db
     conn = _db.get_db()
@@ -448,7 +471,7 @@ def admin_users_list():
 @app.route("/api/admin/users/<int:user_id>", methods=["PATCH"])
 def admin_users_toggle(user_id):
     """Activa o desactiva un compte d'usuari."""
-    if not _check_auth(request):
+    if not _check_admin(request):
         return jsonify({"error": "Unauthorized"}), 401
     import db as _db
     body = request.get_json(silent=True) or {}
@@ -472,7 +495,7 @@ def admin_users_toggle(user_id):
 @app.route("/api/admin/users/<int:user_id>", methods=["DELETE"])
 def admin_users_delete(user_id):
     """Elimina permanentment un usuari i totes les seves dades (CASCADE)."""
-    if not _check_auth(request):
+    if not _check_admin(request):
         return jsonify({"error": "Unauthorized"}), 401
     import db as _db
     conn = _db.get_db()
@@ -505,7 +528,7 @@ def centres_scrape_status():
 @app.route("/api/admin/refresh-centres", methods=["POST"])
 def admin_refresh_centres():
     """Llança el scraping de centres en background (requereix Bearer token)."""
-    if not _check_auth(request):
+    if not _check_admin(request):
         return jsonify({"error": "Unauthorized"}), 401
 
     if not _centres_scrape_lock.acquire(blocking=False):
@@ -716,7 +739,7 @@ def auth_login():
             return jsonify({"error": "Massa intents. Espera 15 minuts."}), 429
         user = _db.query_one(
             conn,
-            "SELECT id, password_hash, verified FROM users WHERE email = ? AND deleted_at IS NULL AND is_active = 1",
+            "SELECT id, password_hash, verified, is_admin FROM users WHERE email = ? AND deleted_at IS NULL AND is_active = 1",
             (email,),
         )
         ok = bool(user and check_password_hash(user["password_hash"], password))
@@ -737,9 +760,10 @@ def auth_login():
         )
         conn.commit()
         uid = user["id"]
+        is_admin = bool(user["is_admin"])
     finally:
         conn.close()
-    resp = jsonify({"user": {"id": uid, "email": email}})
+    resp = jsonify({"user": {"id": uid, "email": email, "is_admin": is_admin}})
     secure = not app.debug
     resp.set_cookie(
         "session", session_token,
@@ -775,14 +799,14 @@ def auth_me():
     try:
         user = _db.query_one(
             conn,
-            "SELECT id, email FROM users WHERE id = ? AND deleted_at IS NULL AND is_active = 1",
+            "SELECT id, email, is_admin FROM users WHERE id = ? AND deleted_at IS NULL AND is_active = 1",
             (user_id,),
         )
     finally:
         conn.close()
     if not user:
         return jsonify({"error": "Usuari no trobat"}), 404
-    return jsonify({"id": user["id"], "email": user["email"]})
+    return jsonify({"id": user["id"], "email": user["email"], "is_admin": bool(user["is_admin"])})
 
 
 @app.route("/api/auth/forgot-password", methods=["POST"])

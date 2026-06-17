@@ -183,8 +183,10 @@
 <body>
 
   <header class="topbar">
-    <div class="topbar-inner">
-      <span class="topbar-logo">GrausFP</span>
+    <div class="topbar-inner" style="justify-content: space-between;">
+      <span class="topbar-logo">GrausFP — Administració</span>
+      <span id="admin-identity" style="color:#ccc;font-size:13px;"></span>
+      <button id="btn-logout" style="background:transparent;border:1px solid #555;color:#ccc;padding:6px 14px;margin-top:0;font-size:13px;" onclick="adminLogout()">Sortir</button>
     </div>
   </header>
 
@@ -194,8 +196,6 @@
     <!-- ── Secció 1: Refresh manual ── -->
     <section class="section" id="section-refresh">
       <h2>Refresh manual</h2>
-      <label for="token-input">ADMIN_TOKEN</label>
-      <input id="token-input" type="password" autocomplete="off" placeholder="Enganxa el token">
       <button id="refresh-btn">Actualitzar dades</button>
       <div id="refresh-status"></div>
     </section>
@@ -271,9 +271,22 @@
       ? 'http://localhost:5001'
       : '';
 
-    // ADMN-08: el token viu només en memòria (input DOM). No es persisteix mai.
-    function getToken() {
-      return document.getElementById('token-input').value.trim();
+    // Guard: redirigeix si no és admin (is_admin=false → index.html, sense sessió → login.html)
+    (async function checkAdminSession() {
+      try {
+        const res = await fetch(API_BASE + '/api/auth/me', { credentials: 'include' });
+        if (!res.ok) { window.location.href = 'login.html'; return; }
+        const me = await res.json();
+        if (!me.is_admin) { window.location.href = 'index.html'; return; }
+        document.getElementById('admin-identity').textContent = me.email;
+      } catch (_) {
+        window.location.href = 'login.html';
+      }
+    })();
+
+    async function adminLogout() {
+      await fetch(API_BASE + '/api/auth/logout', { method: 'POST', credentials: 'include' });
+      window.location.href = 'login.html';
     }
 
     // ── Refresh manual ───────────────────────────────────────
@@ -339,14 +352,13 @@
     }
 
     refreshBtn.addEventListener('click', async () => {
-      const token = getToken();
-      if (!token) { setStatus('Introdueix el token.', 'error'); return; }
       refreshBtn.disabled = true;
       setStatus('Iniciant refresh…', 'info');
       try {
         const res = await fetch(API_BASE + '/api/admin/refresh', {
           method: 'POST',
-          headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
         });
         if (res.status === 401) { setStatus('Token incorrecte.', 'error'); refreshBtn.disabled = false; return; }
         if (res.status === 409) { setStatus('Ja hi ha un refresh en curs.', 'error'); refreshBtn.disabled = false; return; }
@@ -387,11 +399,9 @@
     }
 
     schedLoadBtn.addEventListener('click', async () => {
-      const token = getToken();
-      if (!token) { setSchedStatus('Introdueix el token a la secció de Refresh manual.', 'error'); return; }
       try {
         const res = await fetch(API_BASE + '/api/admin/scheduler', {
-          headers: { 'Authorization': 'Bearer ' + token },
+          credentials: 'include',
         });
         if (res.status === 401) { setSchedStatus('Token incorrecte.', 'error'); return; }
         if (!res.ok) { setSchedStatus('Error carregant config (HTTP ' + res.status + ')', 'error'); return; }
@@ -403,8 +413,6 @@
     });
 
     schedSaveBtn.addEventListener('click', async () => {
-      const token = getToken();
-      if (!token) { setSchedStatus('Introdueix el token.', 'error'); return; }
       const body = {
         enabled: schedEnabled.checked,
         day_of_week: schedDay.value,
@@ -415,7 +423,8 @@
       try {
         const res = await fetch(API_BASE + '/api/admin/scheduler', {
           method: 'POST',
-          headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(body),
         });
         if (res.status === 401) { setSchedStatus('Token incorrecte.', 'error'); return; }
@@ -432,14 +441,12 @@
     });
 
     schedDisableBtn.addEventListener('click', async () => {
-      const token = getToken();
-      if (!token) { setSchedStatus('Introdueix el token.', 'error'); return; }
       if (!confirm('Desactivar el refresh periòdic?')) return;
       schedDisableBtn.disabled = true;
       try {
         const res = await fetch(API_BASE + '/api/admin/scheduler', {
           method: 'DELETE',
-          headers: { 'Authorization': 'Bearer ' + token },
+          credentials: 'include',
         });
         if (res.status === 401) { setSchedStatus('Token incorrecte.', 'error'); return; }
         if (!res.ok) { setSchedStatus('Error desactivant (HTTP ' + res.status + ')', 'error'); return; }
@@ -491,15 +498,13 @@
     }
 
     centresBtn.addEventListener('click', async () => {
-      const token = getToken();
-      if (!token) { setCentresStatus('Introdueix el token a la secció de Refresh manual.', 'error'); return; }
       if (!confirm('El scraping de centres triga ~15–18 minuts. Continuar?')) return;
       centresBtn.disabled = true;
       setCentresStatus('Iniciant scraping…', 'info');
       try {
         const res = await fetch(API_BASE + '/api/admin/refresh-centres', {
           method: 'POST',
-          headers: { 'Authorization': 'Bearer ' + token },
+          credentials: 'include',
         });
         if (res.status === 401) { setCentresStatus('Token incorrecte.', 'error'); centresBtn.disabled = false; return; }
         if (res.status === 409) { setCentresStatus('Ja hi ha un scraping en curs.', 'error'); centresBtn.disabled = false; return; }
@@ -547,13 +552,11 @@
     }
 
     usersLoadBtn.addEventListener('click', async () => {
-      const token = getToken();
-      if (!token) { usersContainer.innerHTML = '<div class="status-msg error">Introdueix el token.</div>'; return; }
       usersLoadBtn.disabled = true;
       usersContainer.innerHTML = '<span class="spinner"></span> Carregant…';
       try {
         const res = await fetch(API_BASE + '/api/admin/users', {
-          headers: { 'Authorization': 'Bearer ' + token },
+          credentials: 'include',
         });
         if (res.status === 401) { usersContainer.innerHTML = '<div class="status-msg error">Token incorrecte.</div>'; return; }
         if (!res.ok) { usersContainer.innerHTML = '<div class="status-msg error">Error HTTP ' + res.status + '</div>'; return; }
@@ -566,13 +569,12 @@
     });
 
     async function toggleUser(userId, currentActive) {
-      const token = getToken();
-      if (!token) { alert('Introdueix el token.'); return; }
       const newActive = currentActive ? 0 : 1;
       try {
         const res = await fetch(API_BASE + '/api/admin/users/' + userId, {
           method: 'PATCH',
-          headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ is_active: newActive }),
         });
         if (!res.ok) { alert('Error: HTTP ' + res.status); return; }
@@ -588,13 +590,11 @@
     }
 
     async function deleteUser(userId, email) {
-      const token = getToken();
-      if (!token) { alert('Introdueix el token.'); return; }
       if (!confirm(`Eliminar permanentment l'usuari "${email}"?\nAquesta acció no es pot desfer.`)) return;
       try {
         const res = await fetch(API_BASE + '/api/admin/users/' + userId, {
           method: 'DELETE',
-          headers: { 'Authorization': 'Bearer ' + token },
+          credentials: 'include',
         });
         if (!res.ok) { alert('Error: HTTP ' + res.status); return; }
         const row = document.getElementById('user-row-' + userId);

@@ -165,7 +165,7 @@
         });
         const data = await res.json();
         if (res.ok) {
-          window.location.href = 'index.html';
+          window.location.href = data.user && data.user.is_admin ? 'admin.html' : 'index.html';
         } else {
           showMsg(data.error || 'Error en iniciar sessió.', 'error');
           btn.disabled = false;
