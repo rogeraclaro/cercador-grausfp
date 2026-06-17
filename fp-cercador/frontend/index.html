@@ -1077,6 +1077,28 @@
 
         get filteredCount() { return this.filteredRecords.length; },
 
+        exportCSV() {
+          const cols = ['codigo', 'denominacion', 'familia', 'grado', 'nivel', 'plan_antiguo'];
+          const headers = ['Codi', 'Denominació', 'Família', 'Grau', 'Nivell', 'Pla antic'];
+          const escape = v => {
+            const s = String(v ?? '');
+            return s.includes(',') || s.includes('"') || s.includes('\n')
+              ? '"' + s.replace(/"/g, '""') + '"'
+              : s;
+          };
+          const rows = [headers.join(',')];
+          for (const r of this.filteredRecords) {
+            rows.push(cols.map(c => escape(r[c])).join(','));
+          }
+          const blob = new Blob(['﻿' + rows.join('\r\n')], { type: 'text/csv;charset=utf-8;' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = 'grausfp-export.csv';
+          a.click();
+          URL.revokeObjectURL(url);
+        },
+
         get pagedRecords() {
           const start = (this.currentPage - 1) * this.pageSize;
           return this.filteredRecords.slice(start, start + this.pageSize);
@@ -1381,6 +1403,11 @@
       <button class="save-alert-btn" x-show="search || filterGrado || filterFamilia || filterNivel"
         :disabled="alertSaving" @click="saveAlert()">
         🔔 Desa com a alerta
+      </button>
+      <button class="save-alert-btn" x-show="state === 'ready' && filteredCount > 0"
+        @click="exportCSV()"
+        :title="'Exporta ' + filteredCount + ' registres a CSV'">
+        ↓ Exporta CSV
       </button>
       <button class="clear-btn"
         x-show="search || filterGrado || filterFamilia || filterNivel || filterOld !== 'all' || filterFavs"
