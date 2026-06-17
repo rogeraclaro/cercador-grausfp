@@ -30,7 +30,7 @@ amb quins prerequisits i quins passos manuals calen al servidor.
 | 016 | [SPIKE — F1] Login d'usuaris (fonament del roadmap) | P2 | M | — (millor amb 001–007 DONE) | DONE |
 | 016b | [OPCIONAL] URL web dels centres | P3 | S | 016 | DONE |
 | 017 | [SPIKE — F3] Alertes personalitzades de novetats | P2 | M | 016, 005, 006 | DONE |
-| 018 | [SPIKE — F7] Observatori públic de l'oferta FP | P2 | S-M | 005, 006 | TODO |
+| 018 | [SPIKE — F7] Observatori públic de l'oferta FP | P2 | S-M | 005, 006 | DONE |
 | 019 | Migració a domini propi (checklist manual VPS) | P3 | S | — (quan hi hagi domini) | TODO |
 | 020 | Enriquiment Grado C (LOE): durada, Annexe PDF, Europass, BOE | P2 | M | 001, 002, 006 | DONE |
 | 021 | Construir feed de novetats RSS 2.0 i JSON Feed | P2 | S | 005, 006, 014 | DONE |
@@ -43,6 +43,10 @@ amb quins prerequisits i quins passos manuals calen al servidor.
 
 | 028 | Backend motor d'alertes F3 (alerts_service + CRUD endpoints) | P1 | M | 017, 023–027 | DONE |
 | 029 | Frontend gestió d'alertes F3 (alertes.html + alertes.js + botó index) | P1 | M | 028 | DONE |
+| 030 | [F7] Migració 002 SQLite + persistència observatory_snapshots | P2 | S | 018 (spike DONE) | DONE |
+| 031 | [F7] Endpoint `/api/observatory` (dades agregades per a gràfics) | P2 | S | 030 | DONE |
+| 032 | [F7] Pàgina `observatori.html` — primer increment (V1 + V3 + V6) | P2 | M | 031 | DONE |
+| 033 | [F7] Gràfics addicionals (V2 + V4) + SEO refinament | P3 | S | 032 + 4 setm. dades | TODO |
 
 Valors de Status: `TODO` | `IN PROGRESS` | `DONE` | `BLOCKED (motiu en una línia)` | `REJECTED (motiu en una línia)`
 

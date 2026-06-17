@@ -1,3 +1,73 @@
+# Pla 032: [F7] Pàgina `observatori.html` — primer increment (V1 + V3 + V6)
+
+## Status
+
+- **Priority**: P2
+- **Effort**: M (4-6h)
+- **Risk**: LOW — pàgina nova independent, no toca codi existent
+- **Depends on**: Pla 031 DONE (endpoint `/api/observatory` funcionant)
+- **Category**: frontend
+- **Planned at**: commit `b84ffb4`, 2026-06-17
+
+## Why this matters
+
+El primer increment demostrable de l'Observatori: una pàgina pública que mostra l'evolució del total de titulacions FP (línia), la distribució per grado (barres SVG manuals), i les darreres novetats amb links al cercador. Completament funcional amb les dades actuals. És el lliurable visible de F7.
+
+## Decisions de disseny (del spike, tancades)
+
+- **Gràfics de sèries temporals** (V1): uPlot ~15 KB, vendoritzat a `frontend/vendor/uplot.min.js`
+- **Distribució per grado** (V3): SVG generat a mà en JS vanilla (~60 línies)
+- **Últimes novetats** (V6): llista HTML renderitzada en JS, links al cercador amb `?grado=X&q=denominacio`
+- **Idioma**: català (`<html lang="ca">`), `<title>` i `<meta description>` en castellà per SEO
+- **Patró visual**: idèntic a `historial.html` — variables CSS, fonts, topbar, hero
+
+## Variables CSS i fonts del projecte (de `historial.html`)
+
+```css
+:root {
+  --dark: #1c1410;
+  --warm: #8a7060;
+  --warm2: #f5ece2;
+  --border: #e8ddd4;
+  --bg: #fdf8f2;
+  --white: #ffffff;
+}
+/* Fonts: DM Sans (body), DM Serif Display (h1), Geist Mono (mono) */
+```
+
+## Scope
+
+**In scope**:
+- `frontend/observatori.html` (fitxer nou)
+- `frontend/vendor/uplot.min.js` (fitxer nou — descarregar i vendoritzar)
+
+**Out of scope**: cap fitxer existent. `index.html`, `historial.html`, `app.py`, `auth.js` — no tocar. Els links des d'`index.html` i `historial.html` cap a l'observatori es faran al pla 033 o com a tasca separada.
+
+## Steps
+
+### Step 1: Vendoritzar uPlot
+
+Descarregar uPlot des de npm (no CDN):
+
+```bash
+# Opció A: via npm (si disponible)
+npm pack uplot@1.6.30
+# extreu el fitxer dist/uplot.min.js
+
+# Opció B: descarregar directament del repositori GitHub de uPlot
+# https://github.com/leeoniya/uPlot/raw/master/dist/uPlot.iife.min.js
+# Desar a frontend/vendor/uplot.min.js
+```
+
+Verificar mida: `wc -c frontend/vendor/uplot.min.js` — ha de ser entre 35.000 i 50.000 bytes (~15 KB gzipped).
+
+Verificar llicència: uPlot és MIT. No cal fitxer de llicència addicional, però afegir un comentari a la primera línia si el fitxer no el porta: `// uPlot v1.6.x — MIT License — https://github.com/leeoniya/uPlot`
+
+### Step 2: Crear `frontend/observatori.html`
+
+Estructura general (seguint el patró exacte d'`historial.html`):
+
+```html
 <!DOCTYPE html>
 <html lang="ca">
 <head>
@@ -11,16 +81,17 @@
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=DM+Serif+Display:ital@0;1&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
 
   <!-- uPlot vendoritzat -->
-  <link rel="stylesheet" href="vendor/uplot.css">
+  <link rel="stylesheet" href="vendor/uplot.css"> <!-- si existeix, o inline els estils mínims -->
   <script src="vendor/uplot.min.js"></script>
 
   <style>
+    /* Variables i reset idèntics a historial.html */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
       --dark: #1c1410; --warm: #8a7060; --warm2: #f5ece2;
       --border: #e8ddd4; --bg: #fdf8f2; --white: #ffffff;
     }
-    body { font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 14px; color: var(--dark); background: var(--bg); }
+    body { font-family: 'DM Sans', -apple-system, sans-serif; font-size: 14px; color: var(--dark); background: var(--bg); }
 
     /* Topbar idèntic */
     .topbar { background: var(--dark); padding: 0 48px; }
@@ -76,7 +147,7 @@
 
     /* Footer */
     footer { border-top: 1px solid var(--border); padding: 20px 48px; }
-    .footer-note { font-size: 12px; color: var(--warm); margin-bottom: 8px; }
+    .footer-note { font-size: 12px; color: var(--warm); }
     footer a { font-size: 13px; color: var(--warm); text-decoration: none; }
     footer a:hover { color: var(--dark); }
 
@@ -107,7 +178,7 @@
     <p class="hero-sub">Evolució setmanal del catàleg de Formació Professional espanyol</p>
     <div class="stats-strip" id="stats-strip">
       <div class="stat-card"><span class="stat-value" id="stat-total">—</span><span class="stat-label">Titulacions actives</span></div>
-      <div class="stat-card"><span class="stat-value">5</span><span class="stat-label">Graus (A–E)</span></div>
+      <div class="stat-card"><span class="stat-value">5</span><span class="stat-label">Grados (A–E)</span></div>
       <div class="stat-card"><span class="stat-value" id="stat-date">—</span><span class="stat-label">Darrera actualització</span></div>
     </div>
   </div>
@@ -123,7 +194,7 @@
     </section>
 
     <section class="chart-section">
-      <h2>Distribució per grau</h2>
+      <h2>Distribució per grado</h2>
       <div class="chart-wrap">
         <div class="bar-chart" id="chart-grados">
           <div class="loading-state">Carregant...</div>
@@ -267,3 +338,40 @@
   </script>
 </body>
 </html>
+```
+
+**Notes d'implementació per a l'executor:**
+- Si `uPlot` necessita un fitxer CSS a part (`uplot.css`), vendoritzar-lo també a `frontend/vendor/uplot.css`. Si no n'hi ha, eliminar el `<link rel="stylesheet" href="vendor/uplot.css">`.
+- El codi de `renderLineChart` és una guia — adaptar `opts` si l'API d'uPlot de la versió descargada difereix (consultar la documentació inline del fitxer `.min.js` o el README del repositori).
+- El mockup HTML d'aquest pla és complet però l'executor ha de verificar que funciona realment al navegador amb les dades reals de l'endpoint.
+
+## Done criteria
+
+- [ ] `frontend/vendor/uplot.min.js` existeix i pesa entre 30–60 KB
+- [ ] `frontend/observatori.html` existeix i carrega sense errors de consola
+- [ ] Els 3 números del stats-strip es rendren (total, grados, data)
+- [ ] El gràfic de línies V1 es mostra (o mostra el missatge "Poques dades" si hi ha <2 punts)
+- [ ] Les barres de distribució V3 es rendren amb percentatges
+- [ ] La llista de novetats V6 es mostra o mostra "Sense novetats recents"
+- [ ] Els links de novetats apunten a `index.html?grado=X&q=denominacio`
+- [ ] La pàgina és responsiva (mòbil: h1 30px, padding reduït)
+- [ ] `git status` — cap fitxer fora de l'scope modificat
+
+## STOP conditions
+
+- Si `uPlot` no es pot descarregar sense CDN en l'entorn d'execució: ATURA i reporta — el revisor decidirà si usar SVG pur com a alternativa.
+- Si l'endpoint `/api/observatory` retorna error o no existeix (pla 031 no executat): ATURA.
+- Si l'API d'uPlot de la versió disponible és molt diferent del codi de `renderLineChart`: documenta la diferència i adapta mínimament — no canviis l'estructura de la pàgina.
+
+## Git workflow
+
+```
+git add frontend/observatori.html frontend/vendor/uplot.min.js
+git commit -m "feat(F7): pàgina observatori.html primer increment V1+V3+V6 (pla 032)"
+```
+
+## Maintenance notes
+
+- El pla 033 afegirà V2 (evolució per grado) i V4 (altes per setmana) dins el mateix `observatori.html` quan hi hagi ≥4 setmanes de dades reals a `observatory_snapshots`.
+- Quan el pla 033 estigui DONE, afegir l'enllaç des d'`index.html` (footer o nav) i des d'`historial.html`.
+- Si en el futur es vendoritza una nova versió d'uPlot, actualitzar `frontend/vendor/uplot.min.js` i verificar que `renderLineChart` segueix funcionant.

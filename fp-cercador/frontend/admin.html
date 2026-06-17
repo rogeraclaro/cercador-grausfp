@@ -290,13 +290,13 @@
     function renderDone(state) {
       const rows = state.by_grado
         ? Object.entries(state.by_grado)
-            .map(([g, n]) => `<tr><td>Grado ${g}</td><td>${n}</td></tr>`).join('')
+            .map(([g, n]) => `<tr><td>Grau ${g}</td><td>${n}</td></tr>`).join('')
         : '';
       setStatus(`
         <strong>Refresh completat.</strong><br>
         Total: ${state.total} registres<br>
         Durada: ${state.duration_seconds} s
-        ${rows ? `<table class="by-grado-table"><thead><tr><th>Grado</th><th>Registres</th></tr></thead><tbody>${rows}</tbody></table>` : ''}
+        ${rows ? `<table class="by-grado-table"><thead><tr><th>Grau</th><th>Registres</th></tr></thead><tbody>${rows}</tbody></table>` : ''}
       `, 'success');
     }
 
