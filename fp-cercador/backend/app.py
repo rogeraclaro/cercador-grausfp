@@ -6,6 +6,7 @@ Rutes:
   GET    /api/ofertes                  → array JSON dels registres (200) o 503 si no hi ha dades
   GET    /api/refresh-status           → estat del darrer refresh (idle/running/done/error)
   GET    /api/refresh-history          → historial de refreshos (sense auth, màx 20 entrades)
+  GET    /api/observatory              → dades agregades Observatori FP (públic)
   GET    /api/next-refresh             → data del proper refresh programat (sense auth)
   GET    /api/feed.rss               → Feed RSS 2.0 de novetats (sense auth)
   GET    /api/feed.json              → Feed JSON Feed 1.1 de novetats (sense auth)
@@ -232,6 +233,61 @@ def refresh_history():
     except (json.JSONDecodeError, OSError):
         return jsonify([]), 200
     return jsonify(data), 200
+
+
+@app.route("/api/observatory")
+def observatory():
+    """Retorna les dades agregades de l'Observatori FP (públic, sense auth)."""
+    import db as _db
+    try:
+        conn = _db.init_db()
+        rows = _db.query_observatory(conn)
+        conn.close()
+    except Exception as exc:
+        logger.warning("observatory endpoint error: %s", exc)
+        return jsonify({"error": "unavailable"}), 503
+
+    series = [
+        {
+            "ts": row["ts"],
+            "total": row["total"],
+            "A": row["total_a"],
+            "B": row["total_b"],
+            "C": row["total_c"],
+            "D": row["total_d"],
+            "E": row["total_e"],
+            "n_altes": row["n_altes"],
+            "n_baixes": row["n_baixes"],
+        }
+        for row in rows
+    ]
+
+    current = series[-1] if series else {}
+
+    # Darreres novetats: de refresh_history.json (les 5 darreres amb altes)
+    recent_changes = []
+    try:
+        import json as _json
+        with open(history.HISTORY_PATH, "r", encoding="utf-8") as f:
+            hist = _json.load(f)
+        for entry in hist[:10]:
+            c = entry.get("changes") or {}
+            if not c.get("has_changes"):
+                continue
+            recent_changes.append({
+                "ts": entry["ts"],
+                "new_by_grado": c.get("new_by_grado") or {},
+            })
+            if len(recent_changes) >= 5:
+                break
+    except Exception:
+        pass
+
+    return jsonify({
+        "current": current,
+        "series": series,
+        "recent_changes": recent_changes,
+    }), 200
 
 
 @app.route("/api/feed.rss")
