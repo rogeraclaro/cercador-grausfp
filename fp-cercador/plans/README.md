@@ -42,6 +42,7 @@ amb quins prerequisits i quins passos manuals calen al servidor.
 | 027 | Gate centres per oferta darrere del login (preview 3 per anònims) | P2 | M | 023–026 | DONE |
 
 | 028 | Backend motor d'alertes F3 (alerts_service + CRUD endpoints) | P1 | M | 017, 023–027 | DONE |
+| 029 | Frontend gestió d'alertes F3 (alertes.html + alertes.js + botó index) | P1 | M | 028 | DONE |
 
 Valors de Status: `TODO` | `IN PROGRESS` | `DONE` | `BLOCKED (motiu en una línia)` | `REJECTED (motiu en una línia)`
 

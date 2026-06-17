@@ -218,13 +218,28 @@
     }
 
     .save-alert-btn {
-      font-size: 13px; font-family: inherit; font-weight: 500;
-      padding: 5px 12px; border-radius: 4px; cursor: pointer;
-      border: 1px solid var(--dark); color: var(--dark);
-      background: transparent; white-space: nowrap; transition: background 0.15s;
+      font-size: 13px;
+      font-family: inherit;
+      font-weight: 500;
+      padding: 5px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      border: 1px solid var(--dark);
+      color: var(--dark);
+      background: transparent;
+      white-space: nowrap;
+      transition: background 0.15s;
+      text-decoration: none;
     }
-    .save-alert-btn:hover { background: var(--warm2); }
-    .save-alert-btn:disabled { opacity: 0.5; cursor: default; }
+
+    .save-alert-btn:hover {
+      background: var(--warm2);
+    }
+
+    .save-alert-btn:disabled {
+      opacity: 0.5;
+      cursor: default;
+    }
 
     /* ── Main content ── */
     .content {
@@ -1166,10 +1181,10 @@
         async saveAlert() {
           if (!this.loggedIn) { this.showCentresModal(); return; }
           const filter = {};
-          if (this.filterGrado)   filter.grado   = this.filterGrado;
-          if (this.filterFamilia) filter.familia  = this.filterFamilia;
-          if (this.filterNivel)   filter.nivel    = parseInt(this.filterNivel);
-          if (this.search.trim()) filter.texto    = this.search.trim();
+          if (this.filterGrado) filter.grado = this.filterGrado;
+          if (this.filterFamilia) filter.familia = this.filterFamilia;
+          if (this.filterNivel) filter.nivel = parseInt(this.filterNivel);
+          if (this.search.trim()) filter.texto = this.search.trim();
           if (!Object.keys(filter).length) return;
           this.alertSaving = true;
           this.alertSaveError = '';
@@ -1362,10 +1377,8 @@
       </label>
 
       <a href="alertes.html" class="save-alert-btn">Veure alertes</a>
-      <button class="save-alert-btn"
-        x-show="search || filterGrado || filterFamilia || filterNivel"
-        :disabled="alertSaving"
-        @click="saveAlert()">
+      <button class="save-alert-btn" x-show="search || filterGrado || filterFamilia || filterNivel"
+        :disabled="alertSaving" @click="saveAlert()">
         🔔 Desa com a alerta
       </button>
       <button class="clear-btn"
@@ -1592,10 +1605,12 @@
         <template x-if="!alertSaveError">
           <div>
             <p class="centres-modal-msg" style="color:#166534;">✓ Alerta desada correctament</p>
-            <p style="font-size:13px;color:var(--warm);margin-top:8px;text-align:center;">Rebràs un email quan hi hagi nous ensenyaments que encaixin amb els teus filtres.</p>
+            <p style="font-size:13px;color:var(--warm);margin-top:8px;text-align:center;">Rebràs un email quan hi hagi
+              nous ensenyaments que encaixin amb els teus filtres.</p>
             <div class="centres-modal-actions" style="margin-top:16px;">
               <a href="alertes.html" class="centres-modal-btn centres-modal-btn--primary">Veure les meves alertes</a>
-              <button class="centres-modal-btn centres-modal-btn--secondary" @click="alertModalVisible = false">Continuar cercant</button>
+              <button class="centres-modal-btn centres-modal-btn--secondary"
+                @click="alertModalVisible = false">Continuar cercant</button>
             </div>
           </div>
         </template>
@@ -1603,7 +1618,8 @@
           <div>
             <p class="centres-modal-msg" style="color:#991b1b;" x-text="alertSaveError"></p>
             <div class="centres-modal-actions" style="margin-top:16px;">
-              <button class="centres-modal-btn centres-modal-btn--secondary" @click="alertModalVisible = false">Tancar</button>
+              <button class="centres-modal-btn centres-modal-btn--secondary"
+                @click="alertModalVisible = false">Tancar</button>
             </div>
           </div>
         </template>
