@@ -49,6 +49,8 @@ amb quins prerequisits i quins passos manuals calen al servidor.
 | 033 | [F7] Gràfics addicionals (V2 + V4) + SEO refinament | P3 | S | 032 + 4 setm. dades | TODO |
 | 034 | [F8] Botó "Exporta CSV" al cercador | P2 | S | — | DONE |
 | 035 | [F8] Selecció centres checkbox → pin + columna CSV | P2 | M | 034 MERGED | DONE |
+| 036 | Panell admin — llistar, desactivar i eliminar usuaris | P2 | M | 023–026 DONE | DONE |
+| 037 | Admin s'autentica via sessió normal + guard admin.html | P2 | M | 023–026 DONE | TODO |
 
 Valors de Status: `TODO` | `IN PROGRESS` | `DONE` | `BLOCKED (motiu en una línia)` | `REJECTED (motiu en una línia)`
 
