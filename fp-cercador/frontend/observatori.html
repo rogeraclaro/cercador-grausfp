@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Observatorio FP España — Estadísticas de la oferta formativa | GrausFP</title>
+  <meta name="description" content="Evolución semanal de las titulaciones de Formación Profesional en España (Grados A–E). Estadísticas actualizadas automáticamente desde el Ministerio de Educación.">
+
+  <!-- Mateixes fonts que historial.html -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=DM+Serif+Display:ital@0;1&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <!-- uPlot vendoritzat -->
+  <link rel="stylesheet" href="vendor/uplot.css">
+  <script src="vendor/uplot.min.js"></script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --dark: #1c1410; --warm: #8a7060; --warm2: #f5ece2;
+      --border: #e8ddd4; --bg: #fdf8f2; --white: #ffffff;
+    }
+    body { font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 14px; color: var(--dark); background: var(--bg); }
+
+    /* Topbar idèntic */
+    .topbar { background: var(--dark); padding: 0 48px; }
+    .topbar-inner { display: flex; align-items: center; height: 52px; }
+    .topbar-logo { font-family: 'DM Serif Display', serif; color: var(--white); font-size: 20px; letter-spacing: -0.3px; text-decoration: none; }
+
+    /* Hero */
+    .hero { border-bottom: 2px solid var(--dark); padding: 40px 48px 32px; }
+    .hero h1 { font-family: 'DM Serif Display', serif; font-size: 48px; font-weight: 400; line-height: 1.05; color: var(--dark); margin-bottom: 10px; }
+    .hero-sub { font-size: 15px; color: var(--warm); }
+
+    /* Stats strip al hero */
+    .stats-strip { display: flex; gap: 32px; margin-top: 24px; flex-wrap: wrap; }
+    .stat-card { display: flex; flex-direction: column; gap: 4px; }
+    .stat-value { font-family: 'DM Serif Display', serif; font-size: 36px; line-height: 1; color: var(--dark); }
+    .stat-label { font-size: 12px; color: var(--warm); text-transform: uppercase; letter-spacing: 0.06em; }
+
+    /* Contingut */
+    .content { padding: 28px 48px 64px; }
+    .chart-section { margin-bottom: 48px; }
+    .chart-section h2 { font-family: 'DM Serif Display', serif; font-size: 24px; font-weight: 400; margin-bottom: 16px; }
+    .chart-wrap { background: var(--white); border: 1px solid var(--border); border-radius: 2px; padding: 20px; }
+
+    /* Barres SVG distribució */
+    .bar-chart { display: flex; flex-direction: column; gap: 10px; max-width: 480px; }
+    .bar-row { display: flex; align-items: center; gap: 12px; }
+    .bar-label { width: 56px; font-size: 13px; font-weight: 600; color: var(--dark); }
+    .bar-track { flex: 1; height: 20px; background: var(--warm2); border-radius: 2px; overflow: hidden; }
+    .bar-fill { height: 100%; background: var(--dark); border-radius: 2px; transition: width 0.4s ease; }
+    .bar-value { width: 64px; font-size: 12px; color: var(--warm); text-align: right; font-family: 'Geist Mono', monospace; }
+
+    /* Llista novetats */
+    .novetats-list { list-style: none; padding: 0; }
+    .noveta-item { padding: 12px 0; border-bottom: 1px solid var(--border); }
+    .noveta-item:last-child { border-bottom: none; }
+    .noveta-date { font-family: 'Geist Mono', monospace; font-size: 11px; color: var(--warm); margin-bottom: 6px; }
+    .noveta-chips { display: flex; flex-wrap: wrap; gap: 4px; }
+    .chip { border-radius: 4px; padding: 2px 8px; font-size: 11px; font-weight: 600; }
+    .chip-new { background: #dcfce7; color: #166534; }
+    .chip-link { text-decoration: none; cursor: pointer; }
+    .chip-link:hover { filter: brightness(0.9); }
+
+    /* Auth widget al topbar */
+    #auth-widget { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+    .auth-greeting { color: rgba(255,255,255,0.75); font-size: 13px; }
+    .auth-btn { font-size: 13px; padding: 5px 14px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.35); color: var(--white); background: transparent; cursor: pointer; text-decoration: none; font-family: inherit; }
+    .auth-btn:hover { background: rgba(255,255,255,0.12); }
+    .auth-btn--primary { background: var(--white); color: var(--dark); border-color: var(--white); }
+
+    /* States */
+    .loading-state { text-align: center; padding: 64px 48px; color: var(--warm); }
+    .empty-state { text-align: center; color: var(--warm); padding: 32px; font-style: italic; }
+
+    /* Footer */
+    footer { border-top: 1px solid var(--border); padding: 20px 48px; }
+    .footer-note { font-size: 12px; color: var(--warm); margin-bottom: 8px; }
+    footer a { font-size: 13px; color: var(--warm); text-decoration: none; }
+    footer a:hover { color: var(--dark); }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .topbar { padding: 0 16px; }
+      .hero { padding: 24px 16px 20px; }
+      .hero h1 { font-size: 30px; }
+      .content { padding: 16px 16px 32px; }
+      footer { padding: 20px 16px; }
+      .stats-strip { gap: 20px; }
+      .stat-value { font-size: 28px; }
+    }
+  </style>
+  <script src="auth.js"></script>
+</head>
+<body>
+
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a href="index.html" class="topbar-logo">GrausFP</a>
+      <div id="auth-widget"></div>
+    </div>
+  </header>
+
+  <div class="hero">
+    <h1>Observatori<br><em>de l'oferta FP</em></h1>
+    <p class="hero-sub">Evolució setmanal del catàleg de Formació Professional espanyol</p>
+    <div class="stats-strip" id="stats-strip">
+      <div class="stat-card"><span class="stat-value" id="stat-total">—</span><span class="stat-label">Titulacions actives</span></div>
+      <div class="stat-card"><span class="stat-value">5</span><span class="stat-label">Grados (A–E)</span></div>
+      <div class="stat-card"><span class="stat-value" id="stat-date">—</span><span class="stat-label">Darrera actualització</span></div>
+    </div>
+  </div>
+
+  <main class="content">
+
+    <section class="chart-section">
+      <h2>Evolució del total de titulacions</h2>
+      <div class="chart-wrap" id="chart-total-wrap">
+        <div class="loading-state" id="chart-total-loading">Carregant dades...</div>
+        <div id="chart-total" style="display:none"></div>
+      </div>
+    </section>
+
+    <section class="chart-section">
+      <h2>Distribució per grado</h2>
+      <div class="chart-wrap">
+        <div class="bar-chart" id="chart-grados">
+          <div class="loading-state">Carregant...</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="chart-section">
+      <h2>Darreres novetats</h2>
+      <ul class="novetats-list" id="novetats-list">
+        <li class="loading-state">Carregant...</li>
+      </ul>
+    </section>
+
+  </main>
+
+  <footer>
+    <p class="footer-note">Font: Ministerio de Educación, FP.es (todofp.es). Actualitzat automàticament cada setmana.</p>
+    <a href="historial.html">← Veure l'historial complet</a>
+  </footer>
+
+  <noscript>
+    <p>Observatori de l'oferta FP espanyola. Activa JavaScript per veure les estadístiques interactives.</p>
+  </noscript>
+
+  <script>
+    const API_BASE = window.location.hostname === 'localhost' ? 'http://localhost:5001' : '';
+
+    function formatDate(iso) {
+      const d = new Date(iso);
+      return d.toLocaleDateString('ca-ES', { day: '2-digit', month: '2-digit', year: 'numeric' });
+    }
+
+    function renderBarChart(current) {
+      const container = document.getElementById('chart-grados');
+      const grados = ['A', 'B', 'C', 'D', 'E'];
+      const total = current.total || 1;
+      const html = grados.map(g => {
+        const val = current[g] || 0;
+        const pct = ((val / total) * 100).toFixed(1);
+        return `<div class="bar-row">
+          <span class="bar-label">Grau ${g}</span>
+          <div class="bar-track"><div class="bar-fill" style="width:${pct}%"></div></div>
+          <span class="bar-value">${val.toLocaleString('ca-ES')} (${pct}%)</span>
+        </div>`;
+      }).join('');
+      container.innerHTML = html;
+    }
+
+    function renderNovetats(recentChanges) {
+      const list = document.getElementById('novetats-list');
+      if (!recentChanges.length) {
+        list.innerHTML = '<li class="empty-state">Sense novetats recents</li>';
+        return;
+      }
+      list.innerHTML = recentChanges.map(entry => {
+        const chips = Object.entries(entry.new_by_grado).flatMap(([grado, denoms]) =>
+          denoms.slice(0, 5).map(d => {
+            const q = encodeURIComponent(d);
+            return `<a class="chip chip-new chip-link" href="index.html?grado=${grado}&q=${q}" title="${d}">Grau ${grado}: ${d.length > 40 ? d.slice(0, 40) + '…' : d}</a>`;
+          })
+        ).join('');
+        return `<li class="noveta-item">
+          <div class="noveta-date">${formatDate(entry.ts)}</div>
+          <div class="noveta-chips">${chips || '<span style="color:var(--warm);font-size:12px">Sense denominacions detallades</span>'}</div>
+        </li>`;
+      }).join('');
+    }
+
+    function renderLineChart(series) {
+      const wrap = document.getElementById('chart-total-wrap');
+      const loading = document.getElementById('chart-total-loading');
+      const container = document.getElementById('chart-total');
+
+      if (series.length < 2) {
+        loading.textContent = 'Poques dades per mostrar una tendència (mínim 2 refreshos).';
+        return;
+      }
+
+      const timestamps = series.map(s => new Date(s.ts).getTime() / 1000);
+      const totals = series.map(s => s.total);
+
+      loading.style.display = 'none';
+      container.style.display = 'block';
+
+      const opts = {
+        width: wrap.clientWidth - 40,
+        height: 220,
+        cursor: { show: true },
+        series: [
+          {},
+          {
+            label: 'Total titulacions',
+            stroke: '#1c1410',
+            width: 2,
+            fill: 'rgba(138,112,96,0.08)',
+          },
+        ],
+        axes: [
+          { stroke: '#8a7060', ticks: { stroke: '#e8ddd4' } },
+          { stroke: '#8a7060', ticks: { stroke: '#e8ddd4' }, size: 60 },
+        ],
+        scales: { x: { time: true } },
+      };
+
+      new uPlot(opts, [timestamps, totals], container);
+    }
+
+    async function load() {
+      try {
+        const res = await fetch(API_BASE + '/api/observatory');
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const data = await res.json();
+
+        // Stats strip
+        if (data.current && data.current.total) {
+          document.getElementById('stat-total').textContent = data.current.total.toLocaleString('ca-ES');
+        }
+        if (data.current && data.current.ts) {
+          document.getElementById('stat-date').textContent = formatDate(data.current.ts);
+        }
+
+        // Gràfic de línies V1
+        renderLineChart(data.series || []);
+
+        // Barres distribució V3
+        if (data.current && data.current.total) {
+          renderBarChart(data.current);
+        }
+
+        // Novetats V6
+        renderNovetats(data.recent_changes || []);
+
+      } catch (e) {
+        document.querySelector('.content').innerHTML =
+          '<p class="empty-state" style="color:#991b1b;">Error carregant les dades de l\'Observatori.</p>';
+      }
+    }
+
+    load();
+  </script>
+</body>
+</html>
