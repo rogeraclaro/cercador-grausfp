@@ -252,6 +252,16 @@
       </div>
       <div id="sched-status"></div>
     </section>
+
+    <!-- ── Secció 4: Gestió d'usuaris ── -->
+    <section class="section" id="section-users">
+      <h2>Usuaris registrats</h2>
+      <p style="color: var(--warm); font-size: 13px; margin-bottom: 12px;">
+        Necessita el token introduït a la secció de Refresh manual.
+      </p>
+      <button id="users-load-btn">Carregar usuaris</button>
+      <div id="users-container" style="margin-top: 16px;"></div>
+    </section>
   </main>
 
   <script>
@@ -501,6 +511,98 @@
         centresBtn.disabled = false;
       }
     });
+
+    // ── Gestió d'usuaris ──────────────────────────────────────
+    const usersLoadBtn = document.getElementById('users-load-btn');
+    const usersContainer = document.getElementById('users-container');
+
+    function renderUsers(users) {
+      if (!users.length) {
+        usersContainer.innerHTML = '<p style="color:var(--warm);font-size:13px;">Cap usuari registrat.</p>';
+        return;
+      }
+      const rows = users.map(u => `
+        <tr id="user-row-${u.id}">
+          <td style="font-family:'Geist Mono',monospace;font-size:12px;">${u.id}</td>
+          <td>${escapeHtml(u.email)}</td>
+          <td>${u.verified ? '✓' : '—'}</td>
+          <td id="user-active-${u.id}">${u.is_active ? 'Sí' : 'No'}</td>
+          <td style="font-family:'Geist Mono',monospace;font-size:12px;">${escapeHtml(u.created_at || '')}</td>
+          <td style="white-space:nowrap;">
+            <button onclick="toggleUser(${u.id}, ${u.is_active})"
+              style="margin-top:0;padding:6px 12px;font-size:12px;background:${u.is_active ? 'var(--warm)' : 'var(--dark)'};"
+              id="user-toggle-${u.id}">${u.is_active ? 'Desactivar' : 'Activar'}</button>
+            <button onclick="deleteUser(${u.id}, '${escapeHtml(u.email).replace(/'/g, '')}')"
+              style="margin-top:0;margin-left:6px;padding:6px 12px;font-size:12px;background:#dc2626;">
+              Eliminar</button>
+          </td>
+        </tr>`).join('');
+      usersContainer.innerHTML = `
+        <table class="by-grado-table">
+          <thead><tr>
+            <th>ID</th><th>Email</th><th>Verificat</th><th>Actiu</th><th>Creat</th><th>Accions</th>
+          </tr></thead>
+          <tbody>${rows}</tbody>
+        </table>`;
+    }
+
+    usersLoadBtn.addEventListener('click', async () => {
+      const token = getToken();
+      if (!token) { usersContainer.innerHTML = '<div class="status-msg error">Introdueix el token.</div>'; return; }
+      usersLoadBtn.disabled = true;
+      usersContainer.innerHTML = '<span class="spinner"></span> Carregant…';
+      try {
+        const res = await fetch(API_BASE + '/api/admin/users', {
+          headers: { 'Authorization': 'Bearer ' + token },
+        });
+        if (res.status === 401) { usersContainer.innerHTML = '<div class="status-msg error">Token incorrecte.</div>'; return; }
+        if (!res.ok) { usersContainer.innerHTML = '<div class="status-msg error">Error HTTP ' + res.status + '</div>'; return; }
+        renderUsers(await res.json());
+      } catch (e) {
+        usersContainer.innerHTML = '<div class="status-msg error">Error de connexió.</div>';
+      } finally {
+        usersLoadBtn.disabled = false;
+      }
+    });
+
+    async function toggleUser(userId, currentActive) {
+      const token = getToken();
+      if (!token) { alert('Introdueix el token.'); return; }
+      const newActive = currentActive ? 0 : 1;
+      try {
+        const res = await fetch(API_BASE + '/api/admin/users/' + userId, {
+          method: 'PATCH',
+          headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ is_active: newActive }),
+        });
+        if (!res.ok) { alert('Error: HTTP ' + res.status); return; }
+        // Actualitzar la fila sense recarregar tota la taula
+        document.getElementById('user-active-' + userId).textContent = newActive ? 'Sí' : 'No';
+        const btn = document.getElementById('user-toggle-' + userId);
+        btn.textContent = newActive ? 'Desactivar' : 'Activar';
+        btn.style.background = newActive ? 'var(--warm)' : 'var(--dark)';
+        btn.setAttribute('onclick', `toggleUser(${userId}, ${newActive})`);
+      } catch (e) {
+        alert('Error de connexió.');
+      }
+    }
+
+    async function deleteUser(userId, email) {
+      const token = getToken();
+      if (!token) { alert('Introdueix el token.'); return; }
+      if (!confirm(`Eliminar permanentment l'usuari "${email}"?\nAquesta acció no es pot desfer.`)) return;
+      try {
+        const res = await fetch(API_BASE + '/api/admin/users/' + userId, {
+          method: 'DELETE',
+          headers: { 'Authorization': 'Bearer ' + token },
+        });
+        if (!res.ok) { alert('Error: HTTP ' + res.status); return; }
+        const row = document.getElementById('user-row-' + userId);
+        if (row) row.remove();
+      } catch (e) {
+        alert('Error de connexió.');
+      }
+    }
   </script>
 </body>
 </html>

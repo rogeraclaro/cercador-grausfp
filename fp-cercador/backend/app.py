@@ -424,6 +424,69 @@ def scheduler_delete():
 
 
 # ---------------------------------------------------------------------------
+# Gestió d'usuaris (admin)
+# ---------------------------------------------------------------------------
+
+
+@app.route("/api/admin/users", methods=["GET"])
+def admin_users_list():
+    """Retorna la llista d'usuaris registrats (sense password_hash)."""
+    if not _check_auth(request):
+        return jsonify({"error": "Unauthorized"}), 401
+    import db as _db
+    conn = _db.get_db()
+    try:
+        rows = _db.query_all(
+            conn,
+            "SELECT id, email, verified, is_active, created_at FROM users WHERE deleted_at IS NULL ORDER BY created_at DESC",
+        )
+        return jsonify([dict(r) for r in rows]), 200
+    finally:
+        conn.close()
+
+
+@app.route("/api/admin/users/<int:user_id>", methods=["PATCH"])
+def admin_users_toggle(user_id):
+    """Activa o desactiva un compte d'usuari."""
+    if not _check_auth(request):
+        return jsonify({"error": "Unauthorized"}), 401
+    import db as _db
+    body = request.get_json(silent=True) or {}
+    if "is_active" not in body:
+        return jsonify({"error": "Cal el camp is_active (0 o 1)"}), 400
+    is_active = 1 if body["is_active"] else 0
+    conn = _db.get_db()
+    try:
+        conn.execute(
+            "UPDATE users SET is_active = ? WHERE id = ? AND deleted_at IS NULL",
+            (is_active, user_id),
+        )
+        conn.commit()
+        if conn.execute("SELECT changes()").fetchone()[0] == 0:
+            return jsonify({"error": "Usuari no trobat"}), 404
+        return jsonify({"id": user_id, "is_active": is_active}), 200
+    finally:
+        conn.close()
+
+
+@app.route("/api/admin/users/<int:user_id>", methods=["DELETE"])
+def admin_users_delete(user_id):
+    """Elimina permanentment un usuari i totes les seves dades (CASCADE)."""
+    if not _check_auth(request):
+        return jsonify({"error": "Unauthorized"}), 401
+    import db as _db
+    conn = _db.get_db()
+    try:
+        conn.execute("DELETE FROM users WHERE id = ?", (user_id,))
+        conn.commit()
+        if conn.execute("SELECT changes()").fetchone()[0] == 0:
+            return jsonify({"error": "Usuari no trobat"}), 404
+        return jsonify({"deleted": user_id}), 200
+    finally:
+        conn.close()
+
+
+# ---------------------------------------------------------------------------
 # Scraping de centres (manual, des del panell admin)
 # ---------------------------------------------------------------------------
 
@@ -558,7 +621,10 @@ def _get_session_user(req):
     try:
         row = _db.query_one(
             conn,
-            "SELECT user_id FROM sessions WHERE token = ? AND expires_at > datetime('now')",
+            """SELECT s.user_id FROM sessions s
+               JOIN users u ON u.id = s.user_id
+               WHERE s.token = ? AND s.expires_at > datetime('now')
+               AND u.is_active = 1 AND u.deleted_at IS NULL""",
             (token,),
         )
         return row["user_id"] if row else None
@@ -650,7 +716,7 @@ def auth_login():
             return jsonify({"error": "Massa intents. Espera 15 minuts."}), 429
         user = _db.query_one(
             conn,
-            "SELECT id, password_hash, verified FROM users WHERE email = ? AND deleted_at IS NULL",
+            "SELECT id, password_hash, verified FROM users WHERE email = ? AND deleted_at IS NULL AND is_active = 1",
             (email,),
         )
         ok = bool(user and check_password_hash(user["password_hash"], password))
@@ -709,7 +775,7 @@ def auth_me():
     try:
         user = _db.query_one(
             conn,
-            "SELECT id, email FROM users WHERE id = ? AND deleted_at IS NULL",
+            "SELECT id, email FROM users WHERE id = ? AND deleted_at IS NULL AND is_active = 1",
             (user_id,),
         )
     finally:
@@ -731,7 +797,7 @@ def auth_forgot_password():
     conn = _db.get_db()
     try:
         user = _db.query_one(
-            conn, "SELECT id FROM users WHERE email = ? AND deleted_at IS NULL", (email,)
+            conn, "SELECT id FROM users WHERE email = ? AND deleted_at IS NULL AND is_active = 1", (email,)
         )
         if user:
             token = _secrets.token_hex(32)
