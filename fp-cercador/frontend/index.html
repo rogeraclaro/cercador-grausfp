@@ -764,12 +764,33 @@
     }
 
     .centre-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
       padding: 6px 0;
       border-bottom: 1px solid #e9ecef;
     }
 
     .centre-item:last-child {
       border-bottom: none;
+    }
+
+    .centre-checkbox {
+      margin-top: 3px;
+      flex-shrink: 0;
+      cursor: pointer;
+      accent-color: #1a73e8;
+    }
+
+    .centre-checkbox:disabled {
+      cursor: default;
+      opacity: 0.4;
+    }
+
+    .centres-selected-sep {
+      border: none;
+      border-top: 2px solid #888;
+      margin: 6px 0 8px;
     }
 
     .centre-nom {
@@ -1006,6 +1027,7 @@
         centresCCAA: {},
         centresLoading: {},
         centresSearch: {},
+        selectedCentres: {},
 
         loggedIn: false,
         centresModalVisible: false,
@@ -1079,7 +1101,7 @@
 
         exportCSV() {
           const cols = ['codigo', 'denominacion', 'familia', 'grado', 'nivel', 'plan_antiguo'];
-          const headers = ['Codi', 'Denominació', 'Família', 'Grau', 'Nivell', 'Pla antic'];
+          const headers = ['Codi', 'Denominació', 'Família', 'Grau', 'Nivell', 'Pla antic', 'Centres seleccionats'];
           const escape = v => {
             const s = String(v ?? '');
             return s.includes(',') || s.includes('"') || s.includes('\n')
@@ -1088,7 +1110,14 @@
           };
           const rows = [headers.join(',')];
           for (const r of this.filteredRecords) {
-            rows.push(cols.map(c => escape(r[c])).join(','));
+            const sel = this.selectedCentres[r.id];
+            const centreStr = (sel && sel.size > 0 && this.centresData[r.id])
+              ? [...sel].map(id => {
+                  const c = (this.centresData[r.id] || []).find(x => x.id === id);
+                  return c ? (c.nombre + (c.localitat ? ` (${c.localitat})` : '')) : '';
+                }).filter(Boolean).join(' | ')
+              : '';
+            rows.push([...cols.map(c => escape(r[c])), escape(centreStr)].join(','));
           }
           const blob = new Blob(['﻿' + rows.join('\r\n')], { type: 'text/csv;charset=utf-8;' });
           const url = URL.createObjectURL(blob);
@@ -1291,6 +1320,28 @@
             if (la !== lb) return la < lb ? -1 : 1;
             return (a.nombre || '').toLowerCase() < (b.nombre || '').toLowerCase() ? -1 : 1;
           });
+        },
+
+        toggleCentreSelect(rowId, centreId) {
+          const sel = new Set(this.selectedCentres[rowId] || []);
+          if (sel.has(centreId)) {
+            sel.delete(centreId);
+          } else if (sel.size < 5) {
+            sel.add(centreId);
+          }
+          this.selectedCentres = { ...this.selectedCentres, [rowId]: sel };
+        },
+
+        centresSeleccionats(row) {
+          const sel = this.selectedCentres[row.id];
+          if (!sel || sel.size === 0 || !this.loggedIn) return [];
+          return this.centresFiltrats(row).filter(c => sel.has(c.id));
+        },
+
+        centresNoSeleccionats(row) {
+          const sel = this.selectedCentres[row.id] || new Set();
+          if (!this.loggedIn) return this.centresVisibles(row);
+          return this.centresFiltrats(row).filter(c => !sel.has(c.id)).slice(0, 50);
         },
 
         ccaasDisponibles(row) {
@@ -1552,24 +1603,62 @@
                         Carregant centres…
                       </div>
                       <div x-show="!centresLoading[row.id]">
-                        <template x-for="centre in centresVisibles(row)" :key="centre.id">
+                        <!-- Centres seleccionats: sempre al capdamunt -->
+                        <template x-for="centre in centresSeleccionats(row)" :key="'sel-'+centre.id">
                           <div class="centre-item">
-                            <div class="centre-nom">
-                              <template x-if="centre.url_web">
-                                <a :href="centre.url_web" target="_blank" rel="noopener" x-text="sc(centre.nombre)"></a>
-                              </template>
-                              <template x-if="!centre.url_web">
-                                <span x-text="sc(centre.nombre)"></span>
-                              </template>
+                            <input type="checkbox" class="centre-checkbox" checked @click.stop="toggleCentreSelect(row.id, centre.id)" :title="'Treu ' + sc(centre.nombre) + ' de la selecció'">
+                            <div>
+                              <div class="centre-nom">
+                                <template x-if="centre.url_web">
+                                  <a :href="centre.url_web" target="_blank" rel="noopener" x-text="sc(centre.nombre)"></a>
+                                </template>
+                                <template x-if="!centre.url_web">
+                                  <span x-text="sc(centre.nombre)"></span>
+                                </template>
+                              </div>
+                              <div class="centre-meta">
+                                <span x-text="tc(centre.direccio) || ''"></span>
+                                <span x-show="centre.direccio && centre.localitat">, </span>
+                                <span x-text="centre.localitat || ''"></span>
+                                <span x-show="centre.telefon"> · <a :href="'tel:'+centre.telefon"
+                                    x-text="'📞 '+centre.telefon" style="color:inherit;text-decoration:none"></a></span>
+                                <span x-show="centre.email"> · <a :href="'mailto:'+centre.email" x-text="centre.email"
+                                    style="color:inherit"></a></span>
+                              </div>
                             </div>
-                            <div class="centre-meta">
-                              <span x-text="tc(centre.direccio) || ''"></span>
-                              <span x-show="centre.direccio && centre.localitat">, </span>
-                              <span x-text="centre.localitat || ''"></span>
-                              <span x-show="centre.telefon"> · <a :href="'tel:'+centre.telefon"
-                                  x-text="'📞 '+centre.telefon" style="color:inherit;text-decoration:none"></a></span>
-                              <span x-show="centre.email"> · <a :href="'mailto:'+centre.email" x-text="centre.email"
-                                  style="color:inherit"></a></span>
+                          </div>
+                        </template>
+                        <!-- Separador entre seleccionats i la resta (només si n'hi ha de seleccionats) -->
+                        <template x-if="centresSeleccionats(row).length > 0">
+                          <hr class="centres-selected-sep">
+                        </template>
+                        <!-- Centres no seleccionats -->
+                        <template x-for="centre in centresNoSeleccionats(row)" :key="'rest-'+centre.id">
+                          <div class="centre-item">
+                            <input type="checkbox" class="centre-checkbox"
+                              :checked="false"
+                              :disabled="(selectedCentres[row.id] || new Set()).size >= 5"
+                              @click.stop="toggleCentreSelect(row.id, centre.id)"
+                              :title="(selectedCentres[row.id] || new Set()).size >= 5 ? 'Màxim 5 centres seleccionats' : 'Marca ' + sc(centre.nombre)"
+                              x-show="loggedIn">
+                            <div>
+                              <div class="centre-nom">
+                                <template x-if="centre.url_web">
+                                  <a :href="centre.url_web" target="_blank" rel="noopener" x-text="sc(centre.nombre)"></a>
+                                </template>
+                                <template x-if="!centre.url_web">
+                                  <span x-text="sc(centre.nombre)"></span>
+                                </template>
+                              </div>
+                              <div class="centre-meta">
+                                <span x-text="tc(centre.direccio) || ''"></span>
+                                <span x-show="centre.direccio && centre.localitat">, </span>
+                                <span x-text="centre.localitat || ''"></span>
+                                <span x-show="centre.telefon"> · <a :href="'tel:'+centre.telefon"
+                                    x-text="'📞 '+centre.telefon" style="color:inherit;text-decoration:none"></a></span>
+                                <span x-show="centre.email"> · <a :href="'mailto:'+centre.email" x-text="centre.email"
+                                    style="color:inherit"></a></span>
+                              </div>
                             </div>
                           </div>
                         </template>
