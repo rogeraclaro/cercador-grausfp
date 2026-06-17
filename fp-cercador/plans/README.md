@@ -47,6 +47,8 @@ amb quins prerequisits i quins passos manuals calen al servidor.
 | 031 | [F7] Endpoint `/api/observatory` (dades agregades per a gràfics) | P2 | S | 030 | DONE |
 | 032 | [F7] Pàgina `observatori.html` — primer increment (V1 + V3 + V6) | P2 | M | 031 | DONE |
 | 033 | [F7] Gràfics addicionals (V2 + V4) + SEO refinament | P3 | S | 032 + 4 setm. dades | TODO |
+| 034 | [F8] Botó "Exporta CSV" al cercador | P2 | S | — | DONE |
+| 035 | [F8] Selecció centres checkbox → pin + columna CSV | P2 | M | 034 MERGED | DONE |
 
 Valors de Status: `TODO` | `IN PROGRESS` | `DONE` | `BLOCKED (motiu en una línia)` | `REJECTED (motiu en una línia)`
 
