@@ -99,6 +99,41 @@ def compute_changes(curr: dict, prev: dict) -> dict:
     }
 
 
+def _persist_observatory(entry: dict, changes: dict) -> None:
+    """Persisteix una fila a observatory_snapshots (no-fatal si el SQLite falla)."""
+    import json as _json
+    from db import get_db, run_migrations
+    by_grado = entry.get("by_grado") or {}
+    new_denoms = changes.get("new_denominacions") or []
+    removed_denoms = changes.get("removed_denominacions") or []
+    new_by_grado = changes.get("new_by_grado") or {}
+    families_amb_altes = sorted(new_by_grado.keys()) if new_by_grado else []
+    conn = get_db()
+    run_migrations(conn)
+    conn.execute(
+        """
+        INSERT OR IGNORE INTO observatory_snapshots
+            (ts, total, total_a, total_b, total_c, total_d, total_e,
+             n_altes, n_baixes, families_amb_altes)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """,
+        (
+            entry["ts"],
+            entry.get("total") or 0,
+            by_grado.get("A") or 0,
+            by_grado.get("B") or 0,
+            by_grado.get("C") or 0,
+            by_grado.get("D") or 0,
+            by_grado.get("E") or 0,
+            len(new_denoms),
+            len(removed_denoms),
+            _json.dumps(families_amb_altes, ensure_ascii=False) if families_amb_altes else None,
+        ),
+    )
+    conn.commit()
+    conn.close()
+
+
 def append(result: dict) -> None:
     """Afegeix una entrada SLIM a l'historial i actualitza l'snapshot.
 
@@ -128,3 +163,8 @@ def append(result: dict) -> None:
     history = history[:HISTORY_MAX]
     _write_atomic(history, HISTORY_PATH)
     _write_atomic(full, SNAPSHOT_PATH)
+    # Persistència a l'Observatori (no-fatal)
+    try:
+        _persist_observatory(entry, entry.get("changes") or {})
+    except Exception as exc:
+        logger.warning("observatory_persist failed: %s", exc)
