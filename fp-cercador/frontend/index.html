@@ -7,7 +7,7 @@
   <meta name="author" content="Roger Masellas">
   <meta name="description" content="Cercador de graus de formació professional">
   <meta name="copyright" content="Roger Masellas, 2026">
-  <title>Cercador Graus FP</title>
+  <title data-i18n="page.title.index">Cercador Graus FP</title>
   <link rel="icon" type="image/png" href="favicon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link
@@ -1006,8 +1006,21 @@
     .auth-btn--logout {
       border-color: rgba(255, 255, 255, 0.25);
     }
+
+    /* ── Lang selector ── */
+    .lang-selector { display: flex; align-items: center; gap: 2px; margin-left: 16px; }
+    .lang-btn {
+      font-size: 11px; font-weight: 700; font-family: inherit;
+      padding: 3px 8px; border-radius: 3px; cursor: pointer;
+      background: transparent; border: 1px solid rgba(255,255,255,0.3);
+      color: rgba(255,255,255,0.6); letter-spacing: 0.04em;
+      transition: background 0.15s, color 0.15s;
+    }
+    .lang-btn:hover { background: rgba(255,255,255,0.12); color: var(--white); }
+    .lang-btn--active { background: rgba(255,255,255,0.18); color: var(--white); border-color: rgba(255,255,255,0.6); }
   </style>
 
+  <script src="i18n.js"></script>
   <script src="auth.js"></script>
   <script>
     const API_BASE = window.location.hostname === 'localhost'
@@ -1081,14 +1094,14 @@
             });
             if (!res.ok) {
               const err = await res.json().catch(() => ({}));
-              this.watchSaveError = err.error || 'Error desconegut';
+              this.watchSaveError = err.error || t('index.err.watch.unknown');
               return;
             }
             this.watchedOfertaKeys = new Set([...this.watchedOfertaKeys, key]);
             this.watchSaved[key] = true;
             setTimeout(() => { delete this.watchSaved[key]; }, 3000);
           } catch (e) {
-            this.watchSaveError = 'Error de xarxa';
+            this.watchSaveError = t('index.err.watch.network');
           } finally {
             this.watchSaving = false;
           }
@@ -1161,7 +1174,10 @@
 
         exportCSV() {
           const cols = ['codigo', 'denominacion', 'familia', 'grado', 'nivel', 'plan_antiguo'];
-          const headers = ['Codi', 'Denominació', 'Família', 'Grau', 'Nivell', 'Pla antic', 'Centres seleccionats'];
+          const headers = [
+            t('csv.header.codi'), t('csv.header.denom'), t('csv.header.fam'),
+            t('csv.header.grau'), t('csv.header.niv'), t('csv.header.old'), t('csv.header.centres')
+          ];
           const escape = v => {
             const s = String(v ?? '');
             return s.includes(',') || s.includes('"') || s.includes('\n')
@@ -1279,7 +1295,7 @@
               : 'id=' + row.id;
             const resp = await fetch(API_BASE + '/api/centres?' + param);
             this.centresData[row.id] = await resp.json();
-            this.centresCCAA[row.id] = 'Totes';
+            this.centresCCAA[row.id] = t('index.centres.all.ccaa');
             this.centresSearch[row.id] = '';
           } finally {
             this.centresLoading[row.id] = false;
@@ -1416,10 +1432,10 @@
             if (data.url_boe) {
               window.open(data.url_boe, '_blank');
             } else {
-              alert('URL del BOE no disponible per a aquest certificat.');
+              alert(t('index.err.boe.missing'));
             }
           } catch (e) {
-            alert('Error en obtenir el BOE: ' + e.message);
+            alert(t('index.err.boe.fetch') + e.message);
           }
         }
       }));
@@ -1436,29 +1452,34 @@
     <div class="topbar">
       <div class="topbar-inner">
         <span class="topbar-logo">GrausFP</span>
+        <div class="lang-selector" aria-label="Language selector">
+          <button class="lang-btn" data-lang="ca" onclick="setLang('ca')">CA</button>
+          <button class="lang-btn" data-lang="es" onclick="setLang('es')">ES</button>
+        </div>
         <div id="auth-widget"></div>
       </div>
     </div>
 
     <!-- Hero / Search -->
     <div class="hero">
-      <h1>Formació<br><em>Professional</em></h1>
-      <p class="hero-sub">Explora els graus disponibles a l'estat espanyol</p>
+      <h1><span data-i18n="index.hero.h1.line1">Formació</span><br><em data-i18n="index.hero.h1.line2">Professional</em></h1>
+      <p class="hero-sub" data-i18n="index.hero.sub">Explora els graus disponibles a l'estat espanyol</p>
       <div class="search-wrap">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2.5"
           stroke-linecap="round">
           <circle cx="11" cy="11" r="8" />
           <path d="m21 21-4.35-4.35" />
         </svg>
-        <label for="search" class="sr-only">Cerca</label>
+        <label for="search" class="sr-only" data-i18n="index.search.label">Cerca</label>
         <input type="search" id="search" x-model.debounce.250ms="search" @input="resetPage()"
+          data-i18n-placeholder="index.search.placeholder"
           placeholder="Cerca per denominació o codi..." autocomplete="off">
       </div>
     </div>
 
     <!-- Grau tabs -->
-    <div class="grau-tabs" role="tablist" aria-label="Filtre per grau">
-      <button :class="{ active: filterGrado === '' }" @click="filterGrado=''; resetPage()">Tots els graus</button>
+    <div class="grau-tabs" role="tablist" data-i18n-aria="index.tabs.aria" aria-label="Filtre per grau">
+      <button :class="{ active: filterGrado === '' }" @click="filterGrado=''; resetPage()" x-text="t('index.tabs.all')"></button>
       <template x-for="g in ['A','B','C','D','E']" :key="g">
         <button :class="{ active: filterGrado === g }" @click="setGrado(g)" x-text="'Grau ' + g"></button>
       </template>
@@ -1466,11 +1487,11 @@
 
     <!-- Secondary filter bar -->
     <div class="filter-bar">
-      <span class="filter-bar-label">Filtrar per:</span>
+      <span class="filter-bar-label" data-i18n="index.filter.label">Filtrar per:</span>
 
       <label for="filter-familia" class="sr-only">Família</label>
       <select id="filter-familia" x-model="filterFamilia" @change="resetPage()">
-        <option value="">Totes les famílies</option>
+        <option value="" data-i18n="index.filter.allFam">Totes les famílies</option>
         <template x-for="fam in families" :key="fam">
           <option :value="fam" x-text="fam"></option>
         </template>
@@ -1478,24 +1499,24 @@
 
       <label for="filter-nivel" class="sr-only">Nivell</label>
       <select id="filter-nivel" x-model="filterNivel" @change="resetPage()">
-        <option value="">Tots els nivells</option>
-        <option value="1">Nivell 1</option>
-        <option value="2">Nivell 2</option>
-        <option value="3">Nivell 3</option>
+        <option value="" data-i18n="index.filter.allNiv">Tots els nivells</option>
+        <option value="1" data-i18n="index.filter.niv1">Nivell 1</option>
+        <option value="2" data-i18n="index.filter.niv2">Nivell 2</option>
+        <option value="3" data-i18n="index.filter.niv3">Nivell 3</option>
       </select>
 
       <div class="radio-group">
         <label class="checkbox-label">
           <input type="radio" name="filterOld" value="all" x-model="filterOld" @change="resetPage()">
-          Veure'ls tots
+          <span data-i18n="index.filter.all">Veure'ls tots</span>
         </label>
         <label class="checkbox-label">
           <input type="radio" name="filterOld" value="hide" x-model="filterOld" @change="resetPage()">
-          Ocultar pla antic
+          <span data-i18n="index.filter.hideOld">Ocultar pla antic</span>
         </label>
         <label class="checkbox-label">
           <input type="radio" name="filterOld" value="only" x-model="filterOld" @change="resetPage()">
-          Només pla antic
+          <span data-i18n="index.filter.onlyOld">Només pla antic</span>
         </label>
       </div>
 
@@ -1507,81 +1528,78 @@
           <path fill="currentColor" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"
             d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
         </svg>
-        Favorits
+        <span data-i18n="index.filter.favs">Favorits</span>
       </label>
 
-      <a href="alertes.html" class="save-alert-btn">Veure alertes</a>
+      <a href="alertes.html" class="save-alert-btn" data-i18n="index.btn.alerts">Veure alertes</a>
       <button class="save-alert-btn" x-show="search || filterGrado || filterFamilia || filterNivel"
-        :disabled="alertSaving" @click="saveAlert()">
-        🔔 Desa com a alerta
+        :disabled="alertSaving" @click="saveAlert()" x-text="t('index.btn.saveAlert')">
       </button>
       <button class="save-alert-btn" x-show="state === 'ready' && filteredCount > 0"
         @click="exportCSV()"
-        :title="'Exporta ' + filteredCount + ' registres a CSV'">
-        ↓ Exporta CSV
+        :title="t('index.btn.exportTitle', {n: filteredCount})"
+        x-text="t('index.btn.exportCsv')">
       </button>
       <button class="clear-btn"
         x-show="search || filterGrado || filterFamilia || filterNivel || filterOld !== 'all' || filterFavs"
-        @click="search=''; filterGrado=''; filterFamilia=''; filterNivel=''; filterOld='all'; filterFavs=false; resetPage()">
-        Esborrar filtres ×
+        @click="search=''; filterGrado=''; filterFamilia=''; filterNivel=''; filterOld='all'; filterFavs=false; resetPage()"
+        x-text="t('index.btn.clearFilters')">
       </button>
     </div>
 
     <!-- Loading -->
     <div x-show="state === 'loading'" class="loading-state" role="status">
       <div class="spinner"></div>
-      <p>Carregant dades del catàleg FP...</p>
+      <p x-text="t('index.loading')"></p>
     </div>
 
     <!-- Error -->
-    <div x-show="state === 'error'" class="error-state" role="alert">
-      ⚠️ Les dades del catàleg no estan disponibles. Contacteu l'administrador del sistema.
-    </div>
+    <div x-show="state === 'error'" class="error-state" role="alert" x-text="t('index.error')"></div>
 
     <!-- Main content -->
     <div x-show="state === 'ready'" class="content">
 
       <p class="results-count"
-        x-text="filteredCount === 0 ? 'Cap resultat coincideix amb els filtres aplicats' : (filteredCount === 1 ? '1 resultat trobat' : filteredCount + ' resultats trobats')">
+        x-text="filteredCount === 0 ? t('index.results.zero') : (filteredCount === 1 ? t('index.results.one') : t('index.results.many', {n: filteredCount}))">
       </p>
 
       <div class="table-wrap">
         <table class="results-table" id="results-table">
-          <caption class="sr-only">Resultats del cercador de Graus FP</caption>
+          <caption class="sr-only" data-i18n="index.table.caption">Resultats del cercador de Graus FP</caption>
           <thead>
             <tr>
               <th scope="col" class="sortable col-nom" :class="{ 'sort-active': sortCol === 'denominacion' }"
                 @click="sortBy('denominacion')"
                 :aria-sort="sortCol === 'denominacion' ? (sortDir === 1 ? 'ascending' : 'descending') : 'none'">
-                Denominació
+                <span data-i18n="index.col.nom">Denominació</span>
                 <span class="sort-indicator" aria-hidden="true"
                   x-text="sortCol === 'denominacion' ? (sortDir === 1 ? '▲' : '▼') : '▲'"></span>
               </th>
               <th scope="col" class="sortable col-codi" :class="{ 'sort-active': sortCol === 'codigo' }"
                 @click="sortBy('codigo')"
                 :aria-sort="sortCol === 'codigo' ? (sortDir === 1 ? 'ascending' : 'descending') : 'none'">
-                Codi
+                <span data-i18n="index.col.codi">Codi</span>
                 <span class="sort-indicator" aria-hidden="true"
                   x-text="sortCol === 'codigo' ? (sortDir === 1 ? '▲' : '▼') : '▲'"></span>
               </th>
               <th scope="col" class="sortable col-fam" :class="{ 'sort-active': sortCol === 'familia' }"
                 @click="sortBy('familia')"
                 :aria-sort="sortCol === 'familia' ? (sortDir === 1 ? 'ascending' : 'descending') : 'none'">
-                Família professional
+                <span data-i18n="index.col.fam">Família professional</span>
                 <span class="sort-indicator" aria-hidden="true"
                   x-text="sortCol === 'familia' ? (sortDir === 1 ? '▲' : '▼') : '▲'"></span>
               </th>
               <th scope="col" class="sortable col-grau" :class="{ 'sort-active': sortCol === 'grado' }"
                 @click="sortBy('grado')"
                 :aria-sort="sortCol === 'grado' ? (sortDir === 1 ? 'ascending' : 'descending') : 'none'">
-                Grau
+                <span data-i18n="index.col.grau">Grau</span>
                 <span class="sort-indicator" aria-hidden="true"
                   x-text="sortCol === 'grado' ? (sortDir === 1 ? '▲' : '▼') : '▲'"></span>
               </th>
               <th scope="col" class="sortable col-niv" :class="{ 'sort-active': sortCol === 'nivel' }"
                 @click="sortBy('nivel')"
                 :aria-sort="sortCol === 'nivel' ? (sortDir === 1 ? 'ascending' : 'descending') : 'none'">
-                Nivell
+                <span data-i18n="index.col.niv">Nivell</span>
                 <span class="sort-indicator" aria-hidden="true"
                   x-text="sortCol === 'nivel' ? (sortDir === 1 ? '▲' : '▼') : '▲'"></span>
               </th>
@@ -1590,7 +1608,7 @@
           <tbody>
             <template x-if="filteredCount === 0">
               <tr class="empty-row">
-                <td colspan="5">Cap resultat coincideix amb els filtres aplicats.</td>
+                <td colspan="5" x-text="t('index.table.empty')"></td>
               </tr>
             </template>
           </tbody>
@@ -1610,7 +1628,7 @@
                 <td class="col-nom">
                   <button class="btn-fav" @click.stop="toggleFavorite(row)"
                     :class="{ 'btn-fav--active': favorites.has(row.id) }"
-                    :title="favorites.has(row.id) ? 'Treu dels favorits' : 'Afegeix als favorits'">
+                    :title="favorites.has(row.id) ? t('index.fav.remove') : t('index.fav.add')"
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16">
                       <path :fill="favorites.has(row.id) ? 'currentColor' : 'none'" stroke="currentColor"
                         stroke-width="2" stroke-linejoin="round"
@@ -1618,10 +1636,10 @@
                     </svg>
                   </button>
                   <span x-text="row.denominacion"></span>
-                  <span x-show="row.plan_antiguo" class="badge-old">Pla antic</span>
+                  <span x-show="row.plan_antiguo" class="badge-old" x-text="t('index.badge.old')"></span>
                   <template x-if="centres_count(row) > 0">
                     <span class="badge-centres" @click.stop="toggleCentres(row)"
-                      x-text="centres_count(row) + ' centres'">
+                      x-text="t('index.centres.count', {n: centres_count(row)})">
                     </span>
                   </template>
                 </td>
@@ -1654,7 +1672,9 @@
                             <option :value="ccaa" x-text="tc(ccaa)"></option>
                           </template>
                         </select>
-                        <input type="search" x-model="centresSearch[row.id]" placeholder="Cerca centre o població…"
+                        <input type="search" x-model="centresSearch[row.id]"
+                          data-i18n-placeholder="index.centres.placeholder"
+                          placeholder="Cerca centre o població…"
                           class="centres-search-input" @click.stop
                           @focus="if(!loggedIn){ $event.target.blur(); showCentresModal(); }">
                         <template x-if="loggedIn">
@@ -1666,15 +1686,13 @@
                               ? (window.location.href = 'seguiment.html')
                               : toggleWatch(row)"
                             x-text="watchedOfertaKeys.has(row.codigo || String(row.id))
-                              ? (watchSaved[row.codigo || String(row.id)] ? '✓ Seguiment desat!' : 'Seguint centres →')
-                              : 'Seguir centres'"
+                              ? (watchSaved[row.codigo || String(row.id)] ? t('index.centres.saved') : t('index.centres.watching'))
+                              : t('index.centres.watch')"
                           ></button>
                         </template>
                         <button @click.stop="centresVisible[row.id] = false">✕</button>
                       </div>
-                      <div x-show="centresLoading[row.id]" class="centres-loading">
-                        Carregant centres…
-                      </div>
+                      <div x-show="centresLoading[row.id]" class="centres-loading" x-text="t('index.centres.loading')"></div>
                       <div x-show="!centresLoading[row.id]">
                         <!-- Centres seleccionats: sempre al capdamunt -->
                         <template x-for="centre in centresSeleccionats(row)" :key="'sel-'+centre.id">
@@ -1712,7 +1730,7 @@
                               :checked="false"
                               :disabled="(selectedCentres[row.id] || new Set()).size >= 5"
                               @click.stop="toggleCentreSelect(row.id, centre.id)"
-                              :title="(selectedCentres[row.id] || new Set()).size >= 5 ? 'Màxim 5 centres seleccionats' : 'Marca ' + sc(centre.nombre)"
+                              :title="(selectedCentres[row.id] || new Set()).size >= 5 ? t('index.centres.maxSel') : 'Marca ' + sc(centre.nombre)"
                               x-show="loggedIn">
                             <div>
                               <div class="centre-nom">
@@ -1740,17 +1758,17 @@
                           <div>
                             <!-- <hr class="centres-separator"> -->
                             <p class="centres-upsell">
-                              <a href="register.html">Registra't per a veure'ls tots</a>
+                              <a href="register.html" data-i18n="index.centres.upsell">Registra't per a veure'ls tots</a>
                             </p>
                           </div>
                         </template>
                         <template x-if="loggedIn && centresFiltrats(row).length > 50">
                           <p class="centres-more"
-                            x-text="'... i ' + (centresFiltrats(row).length - 50) + ' centres més'">
+                            x-text="t('index.centres.more', {n: centresFiltrats(row).length - 50})">
                           </p>
                         </template>
                         <template x-if="centresFiltrats(row).length === 0 && !centresLoading[row.id]">
-                          <p class="centres-buit">Cap centre trobat per a aquesta comunitat.</p>
+                          <p class="centres-buit" x-text="t('index.centres.empty')"></p>
                         </template>
                       </div>
                     </div>
@@ -1763,18 +1781,18 @@
       </div><!-- /table-wrap -->
 
       <!-- Pagination -->
-      <nav class="pagination" aria-label="Paginació de resultats" x-show="totalPages > 1">
+      <nav class="pagination" data-i18n-aria="pagination.aria" aria-label="Paginació de resultats" x-show="totalPages > 1">
         <span class="pagination-info"
-          x-text="'Mostrant ' + paginationStart + '–' + paginationEnd + ' de ' + filteredCount">
+          x-text="t('pagination.showing', {start: paginationStart, end: paginationEnd, total: filteredCount})">
         </span>
         <div class="pagination-controls">
           <button @click="goToPage(currentPage - 1)" :class="{ disabled: currentPage === 1 }"
-            :aria-disabled="currentPage === 1">← Anterior</button>
+            :aria-disabled="currentPage === 1" x-text="t('pagination.prev')"></button>
 
           <template x-for="item in buildPagination()" :key="JSON.stringify(item)">
             <template x-if="item.type === 'page'">
               <button @click="goToPage(item.n)" :aria-current="item.n === currentPage ? 'page' : false"
-                :aria-label="'Pàgina ' + item.n" :class="{ active: item.n === currentPage }" x-text="item.n"></button>
+                :aria-label="t('pagination.page', {n: item.n})" :class="{ active: item.n === currentPage }" x-text="item.n"></button>
             </template>
             <template x-if="item.type === 'ellipsis'">
               <span class="pagination-ellipsis">…</span>
@@ -1782,7 +1800,7 @@
           </template>
 
           <button @click="goToPage(currentPage + 1)" :class="{ disabled: currentPage === totalPages }"
-            :aria-disabled="currentPage === totalPages">Següent →</button>
+            :aria-disabled="currentPage === totalPages" x-text="t('pagination.next')"></button>
         </div>
       </nav>
 
@@ -1794,13 +1812,12 @@
         <button class="centres-modal-close" @click="alertModalVisible = false">✕</button>
         <template x-if="!alertSaveError">
           <div>
-            <p class="centres-modal-msg" style="color:#166534;">✓ Alerta desada correctament</p>
-            <p style="font-size:13px;color:var(--warm);margin-top:8px;text-align:center;">Rebràs un email quan hi hagi
-              nous ensenyaments que encaixin amb els teus filtres.</p>
+            <p class="centres-modal-msg" style="color:#166534;" data-i18n="modal.alert.ok">✓ Alerta desada correctament</p>
+            <p style="font-size:13px;color:var(--warm);margin-top:8px;text-align:center;" data-i18n="modal.alert.sub">Rebràs un email quan hi hagi nous ensenyaments que encaixin amb els teus filtres.</p>
             <div class="centres-modal-actions" style="margin-top:16px;">
-              <a href="alertes.html" class="centres-modal-btn centres-modal-btn--primary">Veure les meves alertes</a>
+              <a href="alertes.html" class="centres-modal-btn centres-modal-btn--primary" data-i18n="modal.alert.view">Veure les meves alertes</a>
               <button class="centres-modal-btn centres-modal-btn--secondary"
-                @click="alertModalVisible = false">Continuar cercant</button>
+                @click="alertModalVisible = false" data-i18n="modal.alert.continue">Continuar cercant</button>
             </div>
           </div>
         </template>
@@ -1809,7 +1826,7 @@
             <p class="centres-modal-msg" style="color:#991b1b;" x-text="alertSaveError"></p>
             <div class="centres-modal-actions" style="margin-top:16px;">
               <button class="centres-modal-btn centres-modal-btn--secondary"
-                @click="alertModalVisible = false">Tancar</button>
+                @click="alertModalVisible = false" data-i18n="modal.alert.close">Tancar</button>
             </div>
           </div>
         </template>
@@ -1820,21 +1837,19 @@
     <div x-show="centresModalVisible" @click="centresModalVisible = false" class="centres-modal-overlay" x-cloak>
       <div class="centres-modal" @click.stop>
         <button class="centres-modal-close" @click="centresModalVisible = false">✕</button>
-        <p class="centres-modal-msg">Registra't o entra amb el teu usuari per a accedir a tota la informació</p>
+        <p class="centres-modal-msg" data-i18n="modal.gate.msg">Registra't o entra amb el teu usuari per a accedir a tota la informació</p>
         <div class="centres-modal-actions">
-          <a href="register.html" class="centres-modal-btn centres-modal-btn--primary">Registrar-me</a>
-          <button class="centres-modal-btn centres-modal-btn--secondary" @click="centresModalVisible = false">Ara
-            no</button>
+          <a href="register.html" class="centres-modal-btn centres-modal-btn--primary" data-i18n="modal.gate.register">Registrar-me</a>
+          <button class="centres-modal-btn centres-modal-btn--secondary" @click="centresModalVisible = false" data-i18n="modal.gate.later">Ara no</button>
         </div>
-        <a href="login.html" class="centres-modal-login-link">Entrar</a>
+        <a href="login.html" class="centres-modal-login-link" data-i18n="modal.gate.login">Entrar</a>
       </div>
     </div>
   </div><!-- /x-data -->
 
   <footer style="border-top:1px solid var(--border); padding:20px 48px; text-align:right;">
-    <a href="historial.html" style="font-size:13px; color:var(--warm); text-decoration:none;">Historial
-      d'actualitzacions</a>
-    <a href="observatori.html" style="font-size:13px; color:var(--warm); text-decoration:none; margin-left:30px;">Observatori</a>
+    <a href="historial.html" style="font-size:13px; color:var(--warm); text-decoration:none;" data-i18n="index.footer.historial">Historial d'actualitzacions</a>
+    <a href="observatori.html" style="font-size:13px; color:var(--warm); text-decoration:none; margin-left:30px;" data-i18n="index.footer.obs">Observatori</a>
   </footer>
 </body>
 

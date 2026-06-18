@@ -1,18 +1,17 @@
 (function () {
-  const API_BASE = window.location.hostname === 'localhost'
+  var API_BASE = window.location.hostname === 'localhost'
     ? 'http://localhost:5001' : '';
 
   async function initAuth() {
-    const widget = document.getElementById('auth-widget');
+    var widget = document.getElementById('auth-widget');
     if (!widget) return;
-
     try {
-      const res = await fetch(API_BASE + '/api/auth/me', { credentials: 'include' });
+      var res = await fetch(API_BASE + '/api/auth/me', { credentials: 'include' });
       if (res.ok) {
-        const { email } = await res.json();
+        var data = await res.json();
         widget.innerHTML =
-          '<span class="auth-greeting">Hola, ' + escHtml(email) + '</span>' +
-          '<button class="auth-btn auth-btn--logout" id="btn-logout">Sortir</button>';
+          '<span class="auth-greeting">' + t('nav.greeting', { email: escHtml(data.email) }) + '</span>' +
+          '<button class="auth-btn auth-btn--logout" id="btn-logout">' + t('nav.logout') + '</button>';
         document.getElementById('btn-logout').addEventListener('click', logout);
       } else {
         showGuestButtons(widget);
@@ -24,14 +23,12 @@
 
   function showGuestButtons(widget) {
     widget.innerHTML =
-      '<a class="auth-btn" href="login.html">Entra</a>' +
-      '<a class="auth-btn auth-btn--primary" href="register.html">Registra\'t</a>';
+      '<a class="auth-btn" href="login.html">' + t('nav.login') + '</a>' +
+      '<a class="auth-btn auth-btn--primary" href="register.html">' + t('nav.register') + '</a>';
   }
 
   async function logout() {
-    await fetch(API_BASE + '/api/auth/logout', {
-      method: 'POST', credentials: 'include'
-    });
+    await fetch(API_BASE + '/api/auth/logout', { method: 'POST', credentials: 'include' });
     window.location.reload();
   }
 
@@ -40,12 +37,11 @@
   }
 
   function showVerifiedToast() {
-    const params = new URLSearchParams(window.location.search);
+    var params = new URLSearchParams(window.location.search);
     if (params.get('verified') !== '1') return;
     history.replaceState(null, '', window.location.pathname);
-
-    const toast = document.createElement('div');
-    toast.textContent = '✓ Compte verificat. Ja pots iniciar sessió.';
+    var toast = document.createElement('div');
+    toast.textContent = t('auth.verified.toast');
     Object.assign(toast.style, {
       position: 'fixed', top: '24px', left: '50%',
       transform: 'translateX(-50%)',
@@ -57,12 +53,12 @@
       transition: 'opacity 0.3s ease',
     });
     document.body.appendChild(toast);
-    requestAnimationFrame(() => { toast.style.opacity = '1'; });
-    setTimeout(() => {
+    requestAnimationFrame(function () { toast.style.opacity = '1'; });
+    setTimeout(function () {
       toast.style.opacity = '0';
-      setTimeout(() => toast.remove(), 300);
+      setTimeout(function () { toast.remove(); }, 300);
     }, 5000);
   }
 
-  document.addEventListener('DOMContentLoaded', () => { initAuth(); showVerifiedToast(); });
+  document.addEventListener('DOMContentLoaded', function () { initAuth(); showVerifiedToast(); });
 })();

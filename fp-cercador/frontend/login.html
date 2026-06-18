@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Inicia sessió — Cercador Graus FP</title>
+  <title data-i18n="page.title.login">Inicia sessió — Cercador Graus FP</title>
   <link rel="icon" type="image/png" href="favicon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link
@@ -106,17 +106,34 @@
       text-align: center;
     }
     .auth-links a { color: var(--dark); }
+
+    /* ── Lang selector ── */
+    .lang-selector { display: flex; align-items: center; gap: 2px; margin-left: 16px; }
+    .lang-btn {
+      font-size: 11px; font-weight: 700; font-family: inherit;
+      padding: 3px 8px; border-radius: 3px; cursor: pointer;
+      background: transparent; border: 1px solid rgba(255,255,255,0.3);
+      color: rgba(255,255,255,0.6); letter-spacing: 0.04em;
+      transition: background 0.15s, color 0.15s;
+    }
+    .lang-btn:hover { background: rgba(255,255,255,0.12); color: var(--white); }
+    .lang-btn--active { background: rgba(255,255,255,0.18); color: var(--white); border-color: rgba(255,255,255,0.6); }
   </style>
+  <script src="i18n.js"></script>
 </head>
 <body>
   <div class="topbar">
     <div class="topbar-inner">
       <a class="topbar-logo" href="index.html">GrausFP</a>
+      <div class="lang-selector" aria-label="Language selector">
+        <button class="lang-btn" data-lang="ca" onclick="setLang('ca')">CA</button>
+        <button class="lang-btn" data-lang="es" onclick="setLang('es')">ES</button>
+      </div>
     </div>
   </div>
 
   <div class="auth-page">
-    <h1>Inicia sessió</h1>
+    <h1 data-i18n="login.h1">Inicia sessió</h1>
     <p id="msg" class="msg" hidden></p>
     <form id="form-login">
       <div class="field">
@@ -124,13 +141,13 @@
         <input type="email" id="email" required autocomplete="email" placeholder="el-teu@email.com">
       </div>
       <div class="field">
-        <label for="password">Contrasenya</label>
+        <label for="password" data-i18n="login.pw.label">Contrasenya</label>
         <input type="password" id="password" required autocomplete="current-password" placeholder="········">
       </div>
-      <button type="submit" id="btn-submit">Entra</button>
+      <button type="submit" id="btn-submit" data-i18n="login.btn.submit">Entra</button>
     </form>
-    <p class="auth-links"><a href="forgot-password.html">Has oblidat la contrasenya?</a></p>
-    <p class="auth-links">Sense compte? <a href="register.html">Registra't</a></p>
+    <p class="auth-links"><a href="forgot-password.html" data-i18n="login.link.forgot">Has oblidat la contrasenya?</a></p>
+    <p class="auth-links" data-i18n="login.link.register">Sense compte? <a href="register.html">Registra't</a></p>
   </div>
 
   <script>
@@ -146,13 +163,13 @@
 
     // Mostra avís si ve de verificació d'email
     if (new URLSearchParams(window.location.search).get('verified') === '1') {
-      showMsg('Compte verificat correctament. Ja pots entrar.', 'ok');
+      showMsg(t('login.msg.verified'), 'ok');
     }
 
     document.getElementById('form-login').addEventListener('submit', async function (e) {
       e.preventDefault();
       btn.disabled = true;
-      btn.textContent = 'Entrant…';
+      btn.textContent = t('login.btn.submitting');
       try {
         const res = await fetch(API_BASE + '/api/auth/login', {
           method: 'POST',
@@ -167,14 +184,14 @@
         if (res.ok) {
           window.location.href = data.user && data.user.is_admin ? 'admin.html' : 'index.html';
         } else {
-          showMsg(data.error || 'Error en iniciar sessió.', 'error');
+          showMsg(data.error || t('login.err.default'), 'error');
           btn.disabled = false;
-          btn.textContent = 'Entra';
+          btn.textContent = t('login.btn.submit');
         }
       } catch (_) {
-        showMsg('Error de connexió. Torna-ho a intentar.', 'error');
+        showMsg(t('login.err.network'), 'error');
         btn.disabled = false;
-        btn.textContent = 'Entra';
+        btn.textContent = t('login.btn.submit');
       }
     });
   </script>
