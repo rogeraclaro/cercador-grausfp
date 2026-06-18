@@ -633,6 +633,17 @@
       background: var(--border);
     }
 
+    .watch-btn {
+      font-size: 12px; font-weight: 600; font-family: inherit;
+      padding: 5px 12px; border-radius: 4px; cursor: pointer;
+      background: var(--white); color: var(--dark);
+      border: 1px solid var(--border); white-space: nowrap;
+      transition: background 0.15s;
+    }
+    .watch-btn:hover { background: var(--warm2); }
+    .watch-btn--active { background: #dcfce7; color: #166534; border-color: #bbf7d0; }
+    .watch-btn:disabled { opacity: 0.5; cursor: default; }
+
     [x-cloak] {
       display: none !important;
     }
@@ -1037,6 +1048,52 @@
         favorites: new Set(),
         filterFavs: false,
 
+        // F4 — Seguiment de centres
+        watchSaving: false,
+        watchSaveError: '',
+        watchSaved: {},
+        watchedOfertaKeys: new Set(),
+
+        async loadWatches() {
+          try {
+            const res = await fetch(API_BASE + '/api/centres-watch', { credentials: 'include' });
+            if (!res.ok) return;
+            const data = await res.json();
+            this.watchedOfertaKeys = new Set(data.filter(w => w.active).map(w => w.oferta_key));
+          } catch (e) { /* silenci */ }
+        },
+
+        async toggleWatch(row) {
+          if (!this.loggedIn) { this.showCentresModal(); return; }
+          const key = row.codigo || String(row.id);
+          if (this.watchedOfertaKeys.has(key)) return;
+          this.watchSaving = true;
+          this.watchSaveError = '';
+          try {
+            const res = await fetch(API_BASE + '/api/centres-watch', {
+              method: 'POST',
+              credentials: 'include',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                oferta_key: key,
+                oferta_denom: row.denominacion || row.denominacio || '',
+              })
+            });
+            if (!res.ok) {
+              const err = await res.json().catch(() => ({}));
+              this.watchSaveError = err.error || 'Error desconegut';
+              return;
+            }
+            this.watchedOfertaKeys = new Set([...this.watchedOfertaKeys, key]);
+            this.watchSaved[key] = true;
+            setTimeout(() => { delete this.watchSaved[key]; }, 3000);
+          } catch (e) {
+            this.watchSaveError = 'Error de xarxa';
+          } finally {
+            this.watchSaving = false;
+          }
+        },
+
         async init() {
           try {
             const [res, authRes] = await Promise.all([
@@ -1044,7 +1101,10 @@
               fetch(API_BASE + '/api/auth/me', { credentials: 'include' }).catch(() => ({ ok: false }))
             ]);
             this.loggedIn = authRes.ok;
-            if (this.loggedIn) this.loadFavorites();
+            if (this.loggedIn) {
+              this.loadFavorites();
+              this.loadWatches();
+            }
             if (!res.ok) { this.state = 'error'; return; }
             const data = await res.json();
             const FAMILIA_ALIASES = {
@@ -1597,6 +1657,19 @@
                         <input type="search" x-model="centresSearch[row.id]" placeholder="Cerca centre o població…"
                           class="centres-search-input" @click.stop
                           @focus="if(!loggedIn){ $event.target.blur(); showCentresModal(); }">
+                        <template x-if="loggedIn">
+                          <button
+                            class="watch-btn"
+                            :class="{ 'watch-btn--active': watchedOfertaKeys.has(row.codigo || String(row.id)) }"
+                            :disabled="watchSaving"
+                            @click.stop="watchedOfertaKeys.has(row.codigo || String(row.id))
+                              ? (window.location.href = 'seguiment.html')
+                              : toggleWatch(row)"
+                            x-text="watchedOfertaKeys.has(row.codigo || String(row.id))
+                              ? (watchSaved[row.codigo || String(row.id)] ? '✓ Seguiment desat!' : 'Seguint centres →')
+                              : 'Seguir centres'"
+                          ></button>
+                        </template>
                         <button @click.stop="centresVisible[row.id] = false">✕</button>
                       </div>
                       <div x-show="centresLoading[row.id]" class="centres-loading">
