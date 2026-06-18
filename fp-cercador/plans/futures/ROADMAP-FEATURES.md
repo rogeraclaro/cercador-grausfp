@@ -79,10 +79,23 @@ ONADA 5 (diferenciar): F5 itineraris · F6 cerca per ocupació [spikes propis]
 
 | Feature | Spike/pla de disseny | Estat |
 |---|---|---|
-| F1 | `plans/016-spike-login-fonament.md` | TODO |
-| F3 | `plans/017-spike-alertes-novetats.md` | TODO |
-| F7 | `plans/018-spike-observatori-oferta.md` | TODO |
-| F2, F4, F5, F6, F8, F9, F10 | pendents de generar (per onades; demanar a /improve quan toqui) | — |
+| F1 | plans 023–026 | DONE |
+| F2 | plans 028–029 (favorits/llistes) | DONE |
+| F3 | plans 028–029 (alertes) | DONE |
+| F7 | plans 030–032; pla 033 pendent (~juliol, espera ≥4 setm. dades) | PARCIAL |
+| F8 | plans 034–035 (CSV + centres) | DONE |
+| F4 | plans 038–039 | TODO — plans generats 2026-06-18 |
+| F9 | pendent de generar spike | TODO — independent, esforç S-M |
+| F10 | pendent de generar spike | TODO — depèn de F1 ✓ |
+| F5 | pendent de generar spike | TODO — necessita spike de fonts (itineraris A→B→C→D) |
+| F6 | pendent de generar spike | TODO — necessita spike de fonts SEPE |
 
-Quan una onada s'acosti, generar els spikes que faltin amb el mateix patró
-(013–018) i afegir-los aquí i a `plans/README.md`.
+## Ordre recomanat per als propers plans
+
+1. **F4** — Seguiment de centres (infraestructura d'alertes ja feta, valor alt)
+2. **F9** — Multiidioma ca/es (independent, S-M, es pot fer entre features grosses)
+3. **F10** — API pública documentada (F1 ja feta)
+4. **F5** — Itineraris formatius (spike previ de fonts necessari)
+5. **F6** — Cerca per ocupació/SEPE (spike previ de fonts necessari)
+
+Quan toqui una feature, demanar `/improve plan <descripció>` per generar el pla corresponent.
