@@ -52,7 +52,7 @@ amb quins prerequisits i quins passos manuals calen al servidor.
 | 036 | Panell admin — llistar, desactivar i eliminar usuaris | P2 | M | 023–026 DONE | DONE |
 | 037 | Admin s'autentica via sessió normal + guard admin.html | P2 | M | 023–026 DONE | DONE |
 | 038 | [F4-A] Backend seguiment de centres (BD + servei + endpoints + hook) | P2 | M | 022, 028, 037 | DONE |
-| 039 | [F4-B] Frontend seguiment de centres (botó index + seguiment.html) | P2 | M | 038 | TODO |
+| 039 | [F4-B] Frontend seguiment de centres (botó index + seguiment.html) | P2 | M | 038 | DONE |
 
 Valors de Status: `TODO` | `IN PROGRESS` | `DONE` | `BLOCKED (motiu en una línia)` | `REJECTED (motiu en una línia)`
 
