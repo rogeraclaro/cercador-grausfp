@@ -104,7 +104,8 @@ def _set_auth_cors(response):
 
 
 def _needs_auth_cors(path):
-    return path.startswith("/api/auth/") or path.startswith("/api/favorites") or path.startswith("/api/alerts")
+    return (path.startswith("/api/auth/") or path.startswith("/api/favorites")
+            or path.startswith("/api/alerts") or path.startswith("/api/centres-watch"))
 
 
 @app.before_request
@@ -554,6 +555,11 @@ def admin_refresh_centres():
                 total_ofertes=len(_oferta_centres),
                 error=None,
             )
+            try:
+                import centres_watch_service
+                centres_watch_service.dispatch_centres_watch(base_url=BASE_URL)
+            except Exception as exc_cw:
+                logger.error("Could not dispatch centres watch notifications: %s", exc_cw)
         except Exception as exc:
             logger.error("Centres scraping failed: %s", exc)
             _centres_scrape_state.update(status="error", error=str(exc),
@@ -965,6 +971,7 @@ def favorites_remove(oferta_id):
 # ---------------------------------------------------------------------------
 
 VALID_GRADOS = {"A", "B", "C", "D", "E"}
+CENTRES_WATCH_MAX_PER_USER = 10
 
 
 @app.route("/api/alerts", methods=["GET"])
@@ -1117,6 +1124,173 @@ def alerts_unsubscribe(alert_id):
     finally:
         conn.close()
     return redirect("/?unsubscribed=1")
+
+
+# ---------------------------------------------------------------------------
+# Seguiment de centres — /api/centres-watch  (F4)
+# ---------------------------------------------------------------------------
+
+
+@app.route("/api/centres-watch", methods=["GET"])
+def centres_watch_get():
+    """Retorna tots els seguiments (actius i inactius) de l'usuari autenticat."""
+    import db as _db
+    user_id = _get_session_user(request)
+    if not user_id:
+        return jsonify({"error": "No autenticat"}), 401
+    conn = _db.get_db()
+    try:
+        rows = _db.query_all(
+            conn,
+            "SELECT id, oferta_key, oferta_denom, provincia_filter, active, created_at, last_sent_at "
+            "FROM centres_watch WHERE user_id = ? ORDER BY created_at DESC",
+            (user_id,),
+        )
+        return jsonify([dict(r) for r in rows]), 200
+    finally:
+        conn.close()
+
+
+@app.route("/api/centres-watch", methods=["POST"])
+def centres_watch_create():
+    """
+    Crea un seguiment.
+    Body: {"oferta_key": "ADGG0408", "oferta_denom": "Gestió Administrativa",
+           "provincia_filter": "BARCELONA"}   (provincia_filter és opcional)
+    """
+    import db as _db
+    import json as _json
+    user_id = _get_session_user(request)
+    if not user_id:
+        return jsonify({"error": "No autenticat"}), 401
+    data = request.get_json(silent=True) or {}
+    oferta_key = data.get("oferta_key", "").strip()
+    oferta_denom = data.get("oferta_denom", "").strip()
+    provincia_filter = data.get("provincia_filter") or None
+    if provincia_filter:
+        provincia_filter = provincia_filter.strip().upper() or None
+    if not oferta_key or not oferta_denom:
+        return jsonify({"error": "oferta_key i oferta_denom són obligatoris"}), 400
+
+    # Snapshot inicial: centres actuals per a aquesta oferta
+    try:
+        _load_centres_data()
+        initial_ids = list(_oferta_centres.get(oferta_key, []))
+    except Exception:
+        initial_ids = []
+    snapshot_json = _json.dumps(initial_ids)
+
+    conn = _db.get_db()
+    try:
+        count = _db.query_one(
+            conn,
+            "SELECT COUNT(*) FROM centres_watch WHERE user_id = ? AND active = 1",
+            (user_id,),
+        )[0]
+        if count >= CENTRES_WATCH_MAX_PER_USER:
+            return jsonify({"error": "Màxim 10 seguiments actius per usuari"}), 429
+        try:
+            conn.execute(
+                "INSERT INTO centres_watch (user_id, oferta_key, oferta_denom, provincia_filter, snapshot_json) "
+                "VALUES (?, ?, ?, ?, ?)",
+                (user_id, oferta_key, oferta_denom, provincia_filter, snapshot_json),
+            )
+            conn.commit()
+        except Exception as exc:
+            if "UNIQUE" in str(exc):
+                return jsonify({"error": "Ja segueixes aquest ensenyament"}), 409
+            raise
+        watch_id = conn.execute("SELECT last_insert_rowid()").fetchone()[0]
+        row = _db.query_one(
+            conn,
+            "SELECT id, oferta_key, oferta_denom, provincia_filter, active, created_at, last_sent_at "
+            "FROM centres_watch WHERE id = ?",
+            (watch_id,),
+        )
+        return jsonify(dict(row)), 201
+    finally:
+        conn.close()
+
+
+@app.route("/api/centres-watch/<int:watch_id>", methods=["DELETE"])
+def centres_watch_delete(watch_id):
+    """Elimina un seguiment de l'usuari autenticat."""
+    import db as _db
+    user_id = _get_session_user(request)
+    if not user_id:
+        return jsonify({"error": "No autenticat"}), 401
+    conn = _db.get_db()
+    try:
+        row = _db.query_one(
+            conn, "SELECT id FROM centres_watch WHERE id = ? AND user_id = ?", (watch_id, user_id)
+        )
+        if not row:
+            return jsonify({"error": "Seguiment no trobat"}), 404
+        conn.execute("DELETE FROM centres_watch WHERE id = ?", (watch_id,))
+        conn.execute("DELETE FROM tokens WHERE token LIKE ?", (f"cw_{watch_id}_%",))
+        conn.commit()
+        return "", 204
+    finally:
+        conn.close()
+
+
+@app.route("/api/centres-watch/<int:watch_id>", methods=["PATCH"])
+def centres_watch_toggle(watch_id):
+    """Activa o desactiva un seguiment. Body: {"active": true/false}."""
+    import db as _db
+    user_id = _get_session_user(request)
+    if not user_id:
+        return jsonify({"error": "No autenticat"}), 401
+    data = request.get_json(silent=True) or {}
+    if "active" not in data:
+        return jsonify({"error": "Cal el camp active"}), 400
+    active = 1 if data["active"] else 0
+    conn = _db.get_db()
+    try:
+        row = _db.query_one(
+            conn, "SELECT id FROM centres_watch WHERE id = ? AND user_id = ?", (watch_id, user_id)
+        )
+        if not row:
+            return jsonify({"error": "Seguiment no trobat"}), 404
+        conn.execute("UPDATE centres_watch SET active = ? WHERE id = ?", (active, watch_id))
+        conn.commit()
+        updated = _db.query_one(
+            conn,
+            "SELECT id, oferta_key, oferta_denom, provincia_filter, active, created_at, last_sent_at "
+            "FROM centres_watch WHERE id = ?",
+            (watch_id,),
+        )
+        return jsonify(dict(updated)), 200
+    finally:
+        conn.close()
+
+
+@app.route("/api/centres-watch/<int:watch_id>/unsubscribe", methods=["GET"])
+def centres_watch_unsubscribe(watch_id):
+    """Baixa sense login via token a l'URL de l'email."""
+    import db as _db
+    token_param = request.args.get("token", "")
+    if not token_param:
+        return jsonify({"error": "Token requerit"}), 400
+    stored_token = f"cw_{watch_id}_{token_param}"
+    conn = _db.get_db()
+    try:
+        row = _db.query_one(
+            conn,
+            "SELECT user_id FROM tokens WHERE token = ? AND type = 'centres_watch_unsubscribe' "
+            "AND expires_at > datetime('now')",
+            (stored_token,),
+        )
+        if not row:
+            return jsonify({"error": "Token invàlid o caducat"}), 404
+        conn.execute(
+            "UPDATE centres_watch SET active = 0 WHERE id = ? AND user_id = ?",
+            (watch_id, row["user_id"]),
+        )
+        conn.commit()
+        return jsonify({"ok": True, "message": "Seguiment desactivat correctament"}), 200
+    finally:
+        conn.close()
 
 
 # ---------------------------------------------------------------------------
