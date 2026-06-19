@@ -8,7 +8,8 @@
   <meta name="description" content="Cercador de graus de formació professional">
   <meta name="copyright" content="Roger Masellas, 2026">
   <title data-i18n="page.title.index">Cercador Graus FP</title>
-  <link rel="icon" type="image/png" href="favicon.png">
+  <!-- <link rel="icon" type="image/png" href="favicon.png"> -->
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link
     href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=DM+Serif+Display:ital@0;1&family=Geist+Mono:wght@400;500&display=swap"
@@ -634,15 +635,33 @@
     }
 
     .watch-btn {
-      font-size: 12px; font-weight: 600; font-family: inherit;
-      padding: 5px 12px; border-radius: 4px; cursor: pointer;
-      background: var(--white); color: var(--dark);
-      border: 1px solid var(--border); white-space: nowrap;
+      font-size: 12px;
+      font-weight: 600;
+      font-family: inherit;
+      padding: 5px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      background: var(--white);
+      color: var(--dark);
+      border: 1px solid var(--border);
+      white-space: nowrap;
       transition: background 0.15s;
     }
-    .watch-btn:hover { background: var(--warm2); }
-    .watch-btn--active { background: #dcfce7; color: #166534; border-color: #bbf7d0; }
-    .watch-btn:disabled { opacity: 0.5; cursor: default; }
+
+    .watch-btn:hover {
+      background: var(--warm2);
+    }
+
+    .watch-btn--active {
+      background: #dcfce7;
+      color: #166534;
+      border-color: #bbf7d0;
+    }
+
+    .watch-btn:disabled {
+      opacity: 0.5;
+      cursor: default;
+    }
 
     [x-cloak] {
       display: none !important;
@@ -1032,16 +1051,37 @@
     }
 
     /* ── Lang selector ── */
-    .lang-selector { display: flex; align-items: center; gap: 2px; margin-left: 16px; }
+    .lang-selector {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      margin-left: 16px;
+    }
+
     .lang-btn {
-      font-size: 11px; font-weight: 700; font-family: inherit;
-      padding: 3px 8px; border-radius: 3px; cursor: pointer;
-      background: transparent; border: 1px solid rgba(255,255,255,0.3);
-      color: rgba(255,255,255,0.6); letter-spacing: 0.04em;
+      font-size: 11px;
+      font-weight: 700;
+      font-family: inherit;
+      padding: 3px 8px;
+      border-radius: 3px;
+      cursor: pointer;
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      color: rgba(255, 255, 255, 0.6);
+      letter-spacing: 0.04em;
       transition: background 0.15s, color 0.15s;
     }
-    .lang-btn:hover { background: rgba(255,255,255,0.12); color: var(--white); }
-    .lang-btn--active { background: rgba(255,255,255,0.18); color: var(--white); border-color: rgba(255,255,255,0.6); }
+
+    .lang-btn:hover {
+      background: rgba(255, 255, 255, 0.12);
+      color: var(--white);
+    }
+
+    .lang-btn--active {
+      background: rgba(255, 255, 255, 0.18);
+      color: var(--white);
+      border-color: rgba(255, 255, 255, 0.6);
+    }
   </style>
 
   <script src="i18n.js"></script>
@@ -1226,9 +1266,9 @@
             const sel = this.selectedCentres[r.id];
             const centreStr = (sel && sel.size > 0 && this.centresData[r.id])
               ? [...sel].map(id => {
-                  const c = (this.centresData[r.id] || []).find(x => x.id === id);
-                  return c ? (c.nombre + (c.localitat ? ` (${c.localitat})` : '')) : '';
-                }).filter(Boolean).join(' | ')
+                const c = (this.centresData[r.id] || []).find(x => x.id === id);
+                return c ? (c.nombre + (c.localitat ? ` (${c.localitat})` : '')) : '';
+              }).filter(Boolean).join(' | ')
               : '';
             rows.push([...cols.map(c => escape(r[c])), escape(centreStr)].join(','));
           }
@@ -1522,7 +1562,8 @@
 
     <!-- Hero / Search -->
     <div class="hero">
-      <h1><span data-i18n="index.hero.h1.line1">Formació</span><br><em data-i18n="index.hero.h1.line2">Professional</em></h1>
+      <h1><span data-i18n="index.hero.h1.line1">Formació</span><br><em data-i18n="index.hero.h1.line2">Professional</em>
+      </h1>
       <p class="hero-sub" data-i18n="index.hero.sub">Explora els graus disponibles a l'estat espanyol</p>
       <div class="search-wrap">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2.5"
@@ -1532,16 +1573,18 @@
         </svg>
         <label for="search" class="sr-only" data-i18n="index.search.label">Cerca</label>
         <input type="search" id="search" x-model.debounce.250ms="search" @input="resetPage()"
-          data-i18n-placeholder="index.search.placeholder"
-          placeholder="Cerca per denominació o codi..." autocomplete="off">
+          data-i18n-placeholder="index.search.placeholder" placeholder="Cerca per denominació o codi..."
+          autocomplete="off">
       </div>
     </div>
 
     <!-- Grau tabs -->
     <div class="grau-tabs" role="tablist" data-i18n-aria="index.tabs.aria" aria-label="Filtre per grau">
-      <button :class="{ active: filterGrado === '' }" @click="filterGrado=''; resetPage()" x-text="t('index.tabs.all')"></button>
+      <button :class="{ active: filterGrado === '' }" @click="filterGrado=''; resetPage()"
+        x-text="t('index.tabs.all')"></button>
       <template x-for="g in ['A','B','C','D','E']" :key="g">
-        <button :class="{ active: filterGrado === g }" @click="setGrado(g)" x-text="t('index.tabs.grau') + ' ' + g"></button>
+        <button :class="{ active: filterGrado === g }" @click="setGrado(g)"
+          x-text="t('index.tabs.grau') + ' ' + g"></button>
       </template>
     </div>
 
@@ -1595,10 +1638,8 @@
       <button class="save-alert-btn" x-show="search || filterGrado || filterFamilia || filterNivel"
         :disabled="alertSaving" @click="saveAlert()" x-text="t('index.btn.saveAlert')">
       </button>
-      <button class="save-alert-btn" x-show="state === 'ready' && filteredCount > 0"
-        @click="exportCSV()"
-        :title="t('index.btn.exportTitle', {n: filteredCount})"
-        x-text="t('index.btn.exportCsv')">
+      <button class="save-alert-btn" x-show="state === 'ready' && filteredCount > 0" @click="exportCSV()"
+        :title="t('index.btn.exportTitle', {n: filteredCount})" x-text="t('index.btn.exportCsv')">
       </button>
       <button class="clear-btn"
         x-show="search || filterGrado || filterFamilia || filterNivel || filterOld !== 'all' || filterFavs"
@@ -1688,11 +1729,11 @@
                 <td class="col-nom">
                   <button class="btn-fav" @click.stop="toggleFavorite(row)"
                     :class="{ 'btn-fav--active': favorites.has(row.id) }"
-                    :title="favorites.has(row.id) ? t('index.fav.remove') : t('index.fav.add')"
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16">
-                      <path :fill="favorites.has(row.id) ? 'currentColor' : 'none'" stroke="currentColor"
-                        stroke-width="2" stroke-linejoin="round"
-                        d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                    :title="favorites.has(row.id) ? t('index.fav.remove') : t('index.fav.add')" <svg
+                    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16">
+                    <path :fill="favorites.has(row.id) ? 'currentColor' : 'none'" stroke="currentColor" stroke-width="2"
+                      stroke-linejoin="round"
+                      d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
                     </svg>
                   </button>
                   <span x-text="row.denominacion"></span>
@@ -1717,7 +1758,8 @@
                 <td colspan="5" class="detall-certificat">
                   <div class="detall-inner">
                     <span class="detall-hores" x-show="row.duracion_horas" x-text="row.duracion_horas + ' h.'"></span>
-                    <a :href="row.url_anexo_pdf" target="_blank" rel="noopener" class="btn-doc" x-text="t('index.detall.annexe')"></a>
+                    <a :href="row.url_anexo_pdf" target="_blank" rel="noopener" class="btn-doc"
+                      x-text="t('index.detall.annexe')"></a>
                     <a :href="row.url_europass_es" target="_blank" rel="noopener" class="btn-doc">Europass ES</a>
                     <a :href="row.url_europass_en" target="_blank" rel="noopener" class="btn-doc">Europass EN</a>
                     <button @click.stop="fetchBoe(row.codigo)" class="btn-doc">BOE / RD</button>
@@ -1740,10 +1782,11 @@
                                 <li>
                                   <template x-if="cicle.ficha_url">
                                     <a :href="cicle.ficha_url" target="_blank" rel="noopener"
-                                       x-text="cicle.denominacion + (cicle.familia ? ' (' + cicle.familia + ')' : '')"></a>
+                                      x-text="cicle.denominacion + (cicle.familia ? ' (' + cicle.familia + ')' : '')"></a>
                                   </template>
                                   <template x-if="!cicle.ficha_url">
-                                    <span x-text="cicle.denominacion + (cicle.familia ? ' (' + cicle.familia + ')' : '')"></span>
+                                    <span
+                                      x-text="cicle.denominacion + (cicle.familia ? ' (' + cicle.familia + ')' : '')"></span>
                                   </template>
                                 </li>
                               </template>
@@ -1765,39 +1808,39 @@
                         <select x-model="centresCCAA[row.id]"
                           @mousedown="if(!loggedIn){ $event.preventDefault(); showCentresModal(); }">
                           <template x-for="ccaa in ccaasDisponibles(row)" :key="ccaa">
-                            <option :value="ccaa" x-text="ccaa === '' ? t('index.centres.all.ccaa') : tc(ccaa)"></option>
+                            <option :value="ccaa" x-text="ccaa === '' ? t('index.centres.all.ccaa') : tc(ccaa)">
+                            </option>
                           </template>
                         </select>
                         <input type="search" x-model="centresSearch[row.id]"
-                          data-i18n-placeholder="index.centres.placeholder"
-                          placeholder="Cerca centre o població…"
+                          data-i18n-placeholder="index.centres.placeholder" placeholder="Cerca centre o població…"
                           class="centres-search-input" @click.stop
                           @focus="if(!loggedIn){ $event.target.blur(); showCentresModal(); }">
                         <template x-if="loggedIn">
-                          <button
-                            class="watch-btn"
+                          <button class="watch-btn"
                             :class="{ 'watch-btn--active': watchedOfertaKeys.has(row.codigo || String(row.id)) }"
-                            :disabled="watchSaving"
-                            @click.stop="watchedOfertaKeys.has(row.codigo || String(row.id))
+                            :disabled="watchSaving" @click.stop="watchedOfertaKeys.has(row.codigo || String(row.id))
                               ? (window.location.href = 'seguiment.html')
-                              : toggleWatch(row)"
-                            x-text="watchedOfertaKeys.has(row.codigo || String(row.id))
+                              : toggleWatch(row)" x-text="watchedOfertaKeys.has(row.codigo || String(row.id))
                               ? (watchSaved[row.codigo || String(row.id)] ? t('index.centres.saved') : t('index.centres.watching'))
-                              : t('index.centres.watch')"
-                          ></button>
+                              : t('index.centres.watch')"></button>
                         </template>
                         <button @click.stop="centresVisible[row.id] = false">✕</button>
                       </div>
-                      <div x-show="centresLoading[row.id]" class="centres-loading" x-text="t('index.centres.loading')"></div>
+                      <div x-show="centresLoading[row.id]" class="centres-loading" x-text="t('index.centres.loading')">
+                      </div>
                       <div x-show="!centresLoading[row.id]">
                         <!-- Centres seleccionats: sempre al capdamunt -->
                         <template x-for="centre in centresSeleccionats(row)" :key="'sel-'+centre.id">
                           <div class="centre-item">
-                            <input type="checkbox" class="centre-checkbox" checked @click.stop="toggleCentreSelect(row.id, centre.id)" :title="'Treu ' + sc(centre.nombre) + ' de la selecció'">
+                            <input type="checkbox" class="centre-checkbox" checked
+                              @click.stop="toggleCentreSelect(row.id, centre.id)"
+                              :title="'Treu ' + sc(centre.nombre) + ' de la selecció'">
                             <div>
                               <div class="centre-nom">
                                 <template x-if="centre.url_web">
-                                  <a :href="centre.url_web" target="_blank" rel="noopener" x-text="sc(centre.nombre)"></a>
+                                  <a :href="centre.url_web" target="_blank" rel="noopener"
+                                    x-text="sc(centre.nombre)"></a>
                                 </template>
                                 <template x-if="!centre.url_web">
                                   <span x-text="sc(centre.nombre)"></span>
@@ -1822,8 +1865,7 @@
                         <!-- Centres no seleccionats -->
                         <template x-for="centre in centresNoSeleccionats(row)" :key="'rest-'+centre.id">
                           <div class="centre-item">
-                            <input type="checkbox" class="centre-checkbox"
-                              :checked="false"
+                            <input type="checkbox" class="centre-checkbox" :checked="false"
                               :disabled="(selectedCentres[row.id] || new Set()).size >= 5"
                               @click.stop="toggleCentreSelect(row.id, centre.id)"
                               :title="(selectedCentres[row.id] || new Set()).size >= 5 ? t('index.centres.maxSel') : 'Marca ' + sc(centre.nombre)"
@@ -1831,7 +1873,8 @@
                             <div>
                               <div class="centre-nom">
                                 <template x-if="centre.url_web">
-                                  <a :href="centre.url_web" target="_blank" rel="noopener" x-text="sc(centre.nombre)"></a>
+                                  <a :href="centre.url_web" target="_blank" rel="noopener"
+                                    x-text="sc(centre.nombre)"></a>
                                 </template>
                                 <template x-if="!centre.url_web">
                                   <span x-text="sc(centre.nombre)"></span>
@@ -1854,7 +1897,8 @@
                           <div>
                             <!-- <hr class="centres-separator"> -->
                             <p class="centres-upsell">
-                              <a href="register.html" data-i18n="index.centres.upsell">Registra't per a veure'ls tots</a>
+                              <a href="register.html" data-i18n="index.centres.upsell">Registra't per a veure'ls
+                                tots</a>
                             </p>
                           </div>
                         </template>
@@ -1877,7 +1921,8 @@
       </div><!-- /table-wrap -->
 
       <!-- Pagination -->
-      <nav class="pagination" data-i18n-aria="pagination.aria" aria-label="Paginació de resultats" x-show="totalPages > 1">
+      <nav class="pagination" data-i18n-aria="pagination.aria" aria-label="Paginació de resultats"
+        x-show="totalPages > 1">
         <span class="pagination-info"
           x-text="t('pagination.showing', {start: paginationStart, end: paginationEnd, total: filteredCount})">
         </span>
@@ -1888,7 +1933,8 @@
           <template x-for="item in buildPagination()" :key="JSON.stringify(item)">
             <template x-if="item.type === 'page'">
               <button @click="goToPage(item.n)" :aria-current="item.n === currentPage ? 'page' : false"
-                :aria-label="t('pagination.page', {n: item.n})" :class="{ active: item.n === currentPage }" x-text="item.n"></button>
+                :aria-label="t('pagination.page', {n: item.n})" :class="{ active: item.n === currentPage }"
+                x-text="item.n"></button>
             </template>
             <template x-if="item.type === 'ellipsis'">
               <span class="pagination-ellipsis">…</span>
@@ -1908,12 +1954,15 @@
         <button class="centres-modal-close" @click="alertModalVisible = false">✕</button>
         <template x-if="!alertSaveError">
           <div>
-            <p class="centres-modal-msg" style="color:#166534;" data-i18n="modal.alert.ok">✓ Alerta desada correctament</p>
-            <p style="font-size:13px;color:var(--warm);margin-top:8px;text-align:center;" data-i18n="modal.alert.sub">Rebràs un email quan hi hagi nous ensenyaments que encaixin amb els teus filtres.</p>
+            <p class="centres-modal-msg" style="color:#166534;" data-i18n="modal.alert.ok">✓ Alerta desada correctament
+            </p>
+            <p style="font-size:13px;color:var(--warm);margin-top:8px;text-align:center;" data-i18n="modal.alert.sub">
+              Rebràs un email quan hi hagi nous ensenyaments que encaixin amb els teus filtres.</p>
             <div class="centres-modal-actions" style="margin-top:16px;">
-              <a href="alertes.html" class="centres-modal-btn centres-modal-btn--primary" data-i18n="modal.alert.view">Veure les meves alertes</a>
-              <button class="centres-modal-btn centres-modal-btn--secondary"
-                @click="alertModalVisible = false" data-i18n="modal.alert.continue">Continuar cercant</button>
+              <a href="alertes.html" class="centres-modal-btn centres-modal-btn--primary"
+                data-i18n="modal.alert.view">Veure les meves alertes</a>
+              <button class="centres-modal-btn centres-modal-btn--secondary" @click="alertModalVisible = false"
+                data-i18n="modal.alert.continue">Continuar cercant</button>
             </div>
           </div>
         </template>
@@ -1921,8 +1970,8 @@
           <div>
             <p class="centres-modal-msg" style="color:#991b1b;" x-text="alertSaveError"></p>
             <div class="centres-modal-actions" style="margin-top:16px;">
-              <button class="centres-modal-btn centres-modal-btn--secondary"
-                @click="alertModalVisible = false" data-i18n="modal.alert.close">Tancar</button>
+              <button class="centres-modal-btn centres-modal-btn--secondary" @click="alertModalVisible = false"
+                data-i18n="modal.alert.close">Tancar</button>
             </div>
           </div>
         </template>
@@ -1933,10 +1982,13 @@
     <div x-show="centresModalVisible" @click="centresModalVisible = false" class="centres-modal-overlay" x-cloak>
       <div class="centres-modal" @click.stop>
         <button class="centres-modal-close" @click="centresModalVisible = false">✕</button>
-        <p class="centres-modal-msg" data-i18n="modal.gate.msg">Registra't o entra amb el teu usuari per a accedir a tota la informació</p>
+        <p class="centres-modal-msg" data-i18n="modal.gate.msg">Registra't o entra amb el teu usuari per a accedir a
+          tota la informació</p>
         <div class="centres-modal-actions">
-          <a href="register.html" class="centres-modal-btn centres-modal-btn--primary" data-i18n="modal.gate.register">Registrar-me</a>
-          <button class="centres-modal-btn centres-modal-btn--secondary" @click="centresModalVisible = false" data-i18n="modal.gate.later">Ara no</button>
+          <a href="register.html" class="centres-modal-btn centres-modal-btn--primary"
+            data-i18n="modal.gate.register">Registrar-me</a>
+          <button class="centres-modal-btn centres-modal-btn--secondary" @click="centresModalVisible = false"
+            data-i18n="modal.gate.later">Ara no</button>
         </div>
         <a href="login.html" class="centres-modal-login-link" data-i18n="modal.gate.login">Entrar</a>
       </div>
@@ -1944,8 +1996,10 @@
   </div><!-- /x-data -->
 
   <footer style="border-top:1px solid var(--border); padding:20px 48px; text-align:right;">
-    <a href="historial.html" style="font-size:13px; color:var(--warm); text-decoration:none;" data-i18n="index.footer.historial">Historial d'actualitzacions</a>
-    <a href="observatori.html" style="font-size:13px; color:var(--warm); text-decoration:none; margin-left:30px;" data-i18n="index.footer.obs">Observatori</a>
+    <a href="historial.html" style="font-size:13px; color:var(--warm); text-decoration:none;"
+      data-i18n="index.footer.historial">Historial d'actualitzacions</a>
+    <a href="observatori.html" style="font-size:13px; color:var(--warm); text-decoration:none; margin-left:30px;"
+      data-i18n="index.footer.obs">Observatori</a>
   </footer>
 </body>
 
