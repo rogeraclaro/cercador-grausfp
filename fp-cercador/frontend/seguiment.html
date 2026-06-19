@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Seguiment de centres — Cercador Graus FP</title>
+  <title data-i18n="page.title.seguiment">Seguiment de centres — Cercador Graus FP</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link
@@ -66,6 +66,18 @@
     footer a { font-size: 13px; color: var(--warm); text-decoration: none; }
     footer a:hover { color: var(--dark); }
 
+    /* ── Lang selector ── */
+    .lang-selector { display: flex; align-items: center; gap: 2px; margin-left: 16px; }
+    .lang-btn {
+      font-size: 11px; font-weight: 700; font-family: inherit;
+      padding: 3px 8px; border-radius: 3px; cursor: pointer;
+      background: transparent; border: 1px solid rgba(255,255,255,0.3);
+      color: rgba(255,255,255,0.6); letter-spacing: 0.04em;
+      transition: background 0.15s, color 0.15s;
+    }
+    .lang-btn:hover { background: rgba(255,255,255,0.12); color: var(--white); }
+    .lang-btn--active { background: rgba(255,255,255,0.18); color: var(--white); border-color: rgba(255,255,255,0.6); }
+
     @media (max-width: 768px) {
       .topbar { padding: 0 16px; }
       .hero { padding: 24px 16px 20px; }
@@ -76,36 +88,41 @@
       footer { padding: 20px 16px; }
     }
   </style>
+  <script src="i18n.js"></script>
   <script src="auth.js"></script>
 </head>
 <body>
   <nav class="topbar">
     <div class="topbar-inner">
       <a class="topbar-logo" href="index.html">Cercador FP España</a>
+      <div class="lang-selector" aria-label="Language selector">
+        <button class="lang-btn" data-lang="ca" onclick="setLang('ca')">CA</button>
+        <button class="lang-btn" data-lang="es" onclick="setLang('es')">ES</button>
+      </div>
       <div id="auth-widget"></div>
     </div>
   </nav>
 
   <header class="hero">
-    <h1>Seguiment de centres</h1>
-    <p class="hero-sub">Rebràs un email quan apareguin nous centres que impartiran els ensenyaments que segueixes.</p>
+    <h1 data-i18n="seguiment.hero.h1">Seguiment de centres</h1>
+    <p class="hero-sub" data-i18n="seguiment.hero.sub">Rebràs un email quan apareguin nous centres que impartiran els ensenyaments que segueixes.</p>
   </header>
 
   <main class="content">
     <div class="table-wrap" id="main-content">
       <div class="loading-state">
         <div class="spinner"></div>
-        <span>Carregant seguiments…</span>
+        <span data-i18n="seguiment.loading">Carregant seguiments…</span>
       </div>
     </div>
   </main>
 
   <footer>
-    <a href="index.html">← Tornar al cercador</a>
+    <a href="index.html" data-i18n="seguiment.footer.back">← Tornar al cercador</a>
     &nbsp;·&nbsp;
-    <a href="alertes.html">Les meves alertes</a>
+    <a href="alertes.html" data-i18n="seguiment.footer.alerts">Les meves alertes</a>
     &nbsp;·&nbsp;
-    <a href="politica-privacitat.html">Política de privacitat</a>
+    <a href="politica-privacitat.html" data-i18n="seguiment.footer.priv">Política de privacitat</a>
   </footer>
 
   <script>
@@ -154,22 +171,20 @@
     function renderWatches(watches) {
       const main = document.getElementById('main-content');
       if (!watches.length) {
-        main.innerHTML = '<p class="empty-state">Encara no segueixes cap ensenyament.<br>'
-          + 'Obre el panell de centres d\'un ensenyament al <a href="index.html">cercador</a>'
-          + ' i clica "Seguir centres".</p>';
+        main.innerHTML = '<p class="empty-state">' + t('seguiment.empty') + '</p>';
         return;
       }
       const rows = watches.map(w => `
         <tr id="watch-row-${w.id}">
           <td>${esc(w.oferta_denom)}</td>
-          <td class="col-prov">${w.provincia_filter ? esc(w.provincia_filter) : '<span style="color:var(--warm)">Totes</span>'}</td>
+          <td class="col-prov">${w.provincia_filter ? esc(w.provincia_filter) : '<span style="color:var(--warm)">' + t('seguiment.all.prov') + '</span>'}</td>
           <td class="col-created">${formatDate(w.created_at)}</td>
           <td class="col-sent">${formatDate(w.last_sent_at)}</td>
           <td class="col-active">
             <button class="toggle-btn ${w.active ? 'toggle-btn--active' : 'toggle-btn--inactive'}"
               data-id="${w.id}" data-active="${w.active ? '1' : '0'}"
               onclick="handleToggle(${w.id}, ${w.active ? 0 : 1})">
-              ${w.active ? 'Actiu' : 'Inactiu'}
+              ${w.active ? t('seguiment.state.active') : t('seguiment.state.inactive')}
             </button>
           </td>
           <td class="col-actions">
@@ -177,18 +192,18 @@
           </td>
         </tr>
       `).join('');
-      main.innerHTML = `
-        <table class="results-table">
-          <thead><tr>
-            <th>Ensenyament</th>
-            <th class="col-prov">Província</th>
-            <th class="col-created">Creat</th>
-            <th class="col-sent">Darrer enviament</th>
-            <th class="col-active">Estat</th>
-            <th class="col-actions"></th>
-          </tr></thead>
-          <tbody>${rows}</tbody>
-        </table>`;
+      main.innerHTML =
+        '<table class="results-table">' +
+        '<thead><tr>' +
+        '<th>' + t('seguiment.col.ens') + '</th>' +
+        '<th class="col-prov">' + t('seguiment.col.prov') + '</th>' +
+        '<th class="col-created">' + t('seguiment.col.created') + '</th>' +
+        '<th class="col-sent">' + t('seguiment.col.sent') + '</th>' +
+        '<th class="col-active">' + t('seguiment.col.state') + '</th>' +
+        '<th class="col-actions"></th>' +
+        '</tr></thead>' +
+        '<tbody>' + rows + '</tbody>' +
+        '</table>';
     }
 
     window.handleDelete = async function (id) {
@@ -201,13 +216,11 @@
         const tbody = document.querySelector('.results-table tbody');
         if (tbody && !tbody.children.length) {
           document.getElementById('main-content').innerHTML =
-            '<p class="empty-state">Encara no segueixes cap ensenyament.<br>'
-            + 'Obre el panell de centres d\'un ensenyament al <a href="index.html">cercador</a>'
-            + ' i clica "Seguir centres".</p>';
+            '<p class="empty-state">' + t('seguiment.empty') + '</p>';
         }
       } catch (e) {
         if (btn) btn.disabled = false;
-        alert('Error eliminant el seguiment: ' + e.message);
+        alert(t('seguiment.err.delete') + e.message);
       }
     };
 
@@ -220,12 +233,12 @@
         if (btn) {
           btn.disabled = false;
           btn.className = 'toggle-btn ' + (updated.active ? 'toggle-btn--active' : 'toggle-btn--inactive');
-          btn.textContent = updated.active ? 'Actiu' : 'Inactiu';
+          btn.textContent = updated.active ? t('seguiment.state.active') : t('seguiment.state.inactive');
           btn.setAttribute('onclick', `handleToggle(${id}, ${updated.active ? 0 : 1})`);
         }
       } catch (e) {
         if (btn) btn.disabled = false;
-        alert('Error canviant estat: ' + e.message);
+        alert(t('seguiment.err.toggle') + e.message);
       }
     };
 
@@ -235,7 +248,7 @@
         if (watches !== null) renderWatches(watches);
       } catch (e) {
         document.getElementById('main-content').innerHTML =
-          '<p class="empty-state">Error carregant els seguiments.</p>';
+          '<p class="empty-state">' + t('seguiment.error') + '</p>';
       }
     })();
   })();

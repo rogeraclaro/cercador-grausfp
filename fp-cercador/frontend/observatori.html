@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Observatorio FP España — Estadísticas de la oferta formativa | GrausFP</title>
+  <title data-i18n="page.title.obs">Observatori de l'oferta FP — Cercador Graus FP</title>
   <meta name="description" content="Evolución semanal de las titulaciones de Formación Profesional en España (Grados A–E). Estadísticas actualizadas automáticamente desde el Ministerio de Educación.">
 
   <!-- Mateixes fonts que historial.html -->
@@ -80,6 +80,18 @@
     footer a { font-size: 13px; color: var(--warm); text-decoration: none; }
     footer a:hover { color: var(--dark); }
 
+    /* ── Lang selector ── */
+    .lang-selector { display: flex; align-items: center; gap: 2px; margin-left: 16px; }
+    .lang-btn {
+      font-size: 11px; font-weight: 700; font-family: inherit;
+      padding: 3px 8px; border-radius: 3px; cursor: pointer;
+      background: transparent; border: 1px solid rgba(255,255,255,0.3);
+      color: rgba(255,255,255,0.6); letter-spacing: 0.04em;
+      transition: background 0.15s, color 0.15s;
+    }
+    .lang-btn:hover { background: rgba(255,255,255,0.12); color: var(--white); }
+    .lang-btn--active { background: rgba(255,255,255,0.18); color: var(--white); border-color: rgba(255,255,255,0.6); }
+
     /* Responsive */
     @media (max-width: 768px) {
       .topbar { padding: 0 16px; }
@@ -91,6 +103,7 @@
       .stat-value { font-size: 28px; }
     }
   </style>
+  <script src="i18n.js"></script>
   <script src="auth.js"></script>
 </head>
 <body>
@@ -98,41 +111,45 @@
   <header class="topbar">
     <div class="topbar-inner">
       <a href="index.html" class="topbar-logo">GrausFP</a>
+      <div class="lang-selector" aria-label="Language selector">
+        <button class="lang-btn" data-lang="ca" onclick="setLang('ca')">CA</button>
+        <button class="lang-btn" data-lang="es" onclick="setLang('es')">ES</button>
+      </div>
       <div id="auth-widget"></div>
     </div>
   </header>
 
   <div class="hero">
-    <h1>Observatori<br><em>de l'oferta FP</em></h1>
-    <p class="hero-sub">Evolució setmanal del catàleg de Formació Professional espanyol</p>
+    <h1 data-i18n="obs.hero.h1">Observatori<br><em>de l'oferta FP</em></h1>
+    <p class="hero-sub" data-i18n="obs.hero.sub">Evolució setmanal del catàleg de Formació Professional espanyol</p>
     <div class="stats-strip" id="stats-strip">
-      <div class="stat-card"><span class="stat-value" id="stat-total">—</span><span class="stat-label">Titulacions actives</span></div>
-      <div class="stat-card"><span class="stat-value">5</span><span class="stat-label">Graus (A–E)</span></div>
-      <div class="stat-card"><span class="stat-value" id="stat-date">—</span><span class="stat-label">Darrera actualització</span></div>
+      <div class="stat-card"><span class="stat-value" id="stat-total">—</span><span class="stat-label" data-i18n="obs.stat.total.label">Titulacions actives</span></div>
+      <div class="stat-card"><span class="stat-value">5</span><span class="stat-label" data-i18n="obs.stat.graus.label">Graus (A–E)</span></div>
+      <div class="stat-card"><span class="stat-value" id="stat-date">—</span><span class="stat-label" data-i18n="obs.stat.date.label">Darrera actualització</span></div>
     </div>
   </div>
 
   <main class="content">
 
     <section class="chart-section">
-      <h2>Evolució del total de titulacions</h2>
+      <h2 data-i18n="obs.section.evolution">Evolució del total de titulacions</h2>
       <div class="chart-wrap" id="chart-total-wrap">
-        <div class="loading-state" id="chart-total-loading">Carregant dades...</div>
+        <div class="loading-state" id="chart-total-loading" data-i18n="obs.loading">Carregant dades...</div>
         <div id="chart-total" style="display:none"></div>
       </div>
     </section>
 
     <section class="chart-section">
-      <h2>Distribució per grau</h2>
+      <h2 data-i18n="obs.section.dist">Distribució per grau</h2>
       <div class="chart-wrap">
         <div class="bar-chart" id="chart-grados">
-          <div class="loading-state">Carregant...</div>
+          <div class="loading-state" data-i18n="obs.loading.short">Carregant...</div>
         </div>
       </div>
     </section>
 
     <section class="chart-section">
-      <h2>Darreres novetats</h2>
+      <h2 data-i18n="obs.section.novetats">Darreres novetats</h2>
       <ul class="novetats-list" id="novetats-list">
         <li class="loading-state">Carregant...</li>
       </ul>
@@ -141,8 +158,8 @@
   </main>
 
   <footer>
-    <p class="footer-note">Font: Ministerio de Educación, FP.es (todofp.es). Actualitzat automàticament cada setmana.</p>
-    <a href="historial.html">← Veure l'historial complet</a>
+    <p class="footer-note" data-i18n="obs.footer.note">Font: Ministerio de Educación, FP.es (todofp.es). Actualitzat automàticament cada setmana.</p>
+    <a href="historial.html" data-i18n="obs.footer.historial">← Veure l'historial complet</a>
   </footer>
 
   <noscript>
@@ -153,8 +170,9 @@
     const API_BASE = window.location.hostname === 'localhost' ? 'http://localhost:5001' : '';
 
     function formatDate(iso) {
+      var locale = getLang() === 'ca' ? 'ca-ES' : 'es-ES';
       const d = new Date(iso);
-      return d.toLocaleDateString('ca-ES', { day: '2-digit', month: '2-digit', year: 'numeric' });
+      return d.toLocaleDateString(locale, { day: '2-digit', month: '2-digit', year: 'numeric' });
     }
 
     function renderBarChart(current) {
@@ -167,7 +185,7 @@
         return `<div class="bar-row">
           <span class="bar-label">Grau ${g}</span>
           <div class="bar-track"><div class="bar-fill" style="width:${pct}%"></div></div>
-          <span class="bar-value">${val.toLocaleString('ca-ES')} (${pct}%)</span>
+          <span class="bar-value">${val.toLocaleString(getLang() === 'ca' ? 'ca-ES' : 'es-ES')} (${pct}%)</span>
         </div>`;
       }).join('');
       container.innerHTML = html;
@@ -176,7 +194,7 @@
     function renderNovetats(recentChanges) {
       const list = document.getElementById('novetats-list');
       if (!recentChanges.length) {
-        list.innerHTML = '<li class="empty-state">Sense novetats recents</li>';
+        list.innerHTML = '<li class="empty-state">' + t('obs.novetats.empty') + '</li>';
         return;
       }
       list.innerHTML = recentChanges.map(entry => {
@@ -188,7 +206,7 @@
         ).join('');
         return `<li class="noveta-item">
           <div class="noveta-date">${formatDate(entry.ts)}</div>
-          <div class="noveta-chips">${chips || '<span style="color:var(--warm);font-size:12px">Sense denominacions detallades</span>'}</div>
+          <div class="noveta-chips">${chips || '<span style="color:var(--warm);font-size:12px">' + t('obs.novetats.no.detail') + '</span>'}</div>
         </li>`;
       }).join('');
     }
@@ -199,7 +217,7 @@
       const container = document.getElementById('chart-total');
 
       if (series.length < 2) {
-        loading.textContent = 'Poques dades per mostrar una tendència (mínim 2 refreshos).';
+        loading.textContent = t('obs.few.data');
         return;
       }
 
@@ -240,7 +258,7 @@
 
         // Stats strip
         if (data.current && data.current.total) {
-          document.getElementById('stat-total').textContent = data.current.total.toLocaleString('ca-ES');
+          document.getElementById('stat-total').textContent = data.current.total.toLocaleString(getLang() === 'ca' ? 'ca-ES' : 'es-ES');
         }
         if (data.current && data.current.ts) {
           document.getElementById('stat-date').textContent = formatDate(data.current.ts);

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Política de privacitat — Cercador Graus FP</title>
+  <title data-i18n="page.title.privacitat">Política de privacitat — Cercador Graus FP</title>
   <link rel="icon" type="image/png" href="favicon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link
@@ -85,18 +85,35 @@
 
     .back { margin-top: 36px; font-size: 13px; }
     .back a { color: var(--warm); }
+
+    /* ── Lang selector ── */
+    .lang-selector { display: flex; align-items: center; gap: 2px; margin-left: 16px; }
+    .lang-btn {
+      font-size: 11px; font-weight: 700; font-family: inherit;
+      padding: 3px 8px; border-radius: 3px; cursor: pointer;
+      background: transparent; border: 1px solid rgba(255,255,255,0.3);
+      color: rgba(255,255,255,0.6); letter-spacing: 0.04em;
+      transition: background 0.15s, color 0.15s;
+    }
+    .lang-btn:hover { background: rgba(255,255,255,0.12); color: var(--white); }
+    .lang-btn--active { background: rgba(255,255,255,0.18); color: var(--white); border-color: rgba(255,255,255,0.6); }
   </style>
+  <script src="i18n.js"></script>
 </head>
 <body>
   <div class="topbar">
     <div class="topbar-inner">
       <a class="topbar-logo" href="index.html">GrausFP</a>
+      <div class="lang-selector" aria-label="Language selector">
+        <button class="lang-btn" data-lang="ca" onclick="setLang('ca')">CA</button>
+        <button class="lang-btn" data-lang="es" onclick="setLang('es')">ES</button>
+      </div>
     </div>
   </div>
 
   <div class="content">
-    <span class="provisional-badge">Text provisional — es completarà abans del llançament públic</span>
-    <h1>Política de privacitat</h1>
+    <span class="provisional-badge" data-i18n="priv.badge">Text provisional — es completarà abans del llançament públic</span>
+    <h1 data-i18n="priv.h1">Política de privacitat</h1>
     <p class="subtitle">Darrera actualització: juny 2026</p>
 
     <h2>Responsable del tractament</h2>
@@ -130,7 +147,7 @@
     <h2>Proveïdors externs</h2>
     <p>Els emails es gestionen a través de <strong>Brevo</strong> (smtp-relay.brevo.com), ubicat a la Unió Europea. No es transfereixen dades a tercers per a finalitats comercials.</p>
 
-    <p class="back"><a href="register.html">← Torna al registre</a></p>
+    <p class="back"><a href="register.html" data-i18n="priv.footer.back">← Tornar al cercador</a></p>
   </div>
 </body>
 </html>

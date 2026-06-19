@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Crea un compte — Cercador Graus FP</title>
+  <title data-i18n="page.title.register">Crea un compte — Cercador Graus FP</title>
   <link rel="icon" type="image/png" href="favicon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link
@@ -119,17 +119,34 @@
 
     .auth-links { margin-top: 16px; font-size: 13px; color: var(--warm); text-align: center; }
     .auth-links a { color: var(--dark); }
+
+    /* ── Lang selector ── */
+    .lang-selector { display: flex; align-items: center; gap: 2px; margin-left: 16px; }
+    .lang-btn {
+      font-size: 11px; font-weight: 700; font-family: inherit;
+      padding: 3px 8px; border-radius: 3px; cursor: pointer;
+      background: transparent; border: 1px solid rgba(255,255,255,0.3);
+      color: rgba(255,255,255,0.6); letter-spacing: 0.04em;
+      transition: background 0.15s, color 0.15s;
+    }
+    .lang-btn:hover { background: rgba(255,255,255,0.12); color: var(--white); }
+    .lang-btn--active { background: rgba(255,255,255,0.18); color: var(--white); border-color: rgba(255,255,255,0.6); }
   </style>
+  <script src="i18n.js"></script>
 </head>
 <body>
   <div class="topbar">
     <div class="topbar-inner">
       <a class="topbar-logo" href="index.html">GrausFP</a>
+      <div class="lang-selector" aria-label="Language selector">
+        <button class="lang-btn" data-lang="ca" onclick="setLang('ca')">CA</button>
+        <button class="lang-btn" data-lang="es" onclick="setLang('es')">ES</button>
+      </div>
     </div>
   </div>
 
   <div class="auth-page">
-    <h1>Crea un compte</h1>
+    <h1 data-i18n="register.h1">Crea un compte</h1>
     <p id="msg" class="msg" hidden></p>
     <form id="form-register">
       <div class="field">
@@ -137,25 +154,25 @@
         <input type="email" id="email" required autocomplete="email" placeholder="el-teu@email.com">
       </div>
       <div class="field">
-        <label for="password">Contrasenya</label>
+        <label for="password" data-i18n="register.pw.label">Contrasenya</label>
         <input type="password" id="password" required autocomplete="new-password"
-               placeholder="Mínim 8 caràcters" minlength="8">
+               data-i18n-placeholder="register.pw.placeholder" placeholder="Mínim 8 caràcters" minlength="8">
       </div>
       <div class="field">
-        <label for="password2">Confirma la contrasenya</label>
+        <label for="password2" data-i18n="register.pw2.label">Confirma la contrasenya</label>
         <input type="password" id="password2" required autocomplete="new-password"
-               placeholder="Repeteix la contrasenya">
+               data-i18n-placeholder="register.pw2.placeholder" placeholder="Repeteix la contrasenya">
       </div>
       <div class="gdpr-field">
         <input type="checkbox" id="gdpr-consent" required>
-        <label for="gdpr-consent">
+        <label for="gdpr-consent" data-i18n="register.gdpr">
           He llegit i accepto la <a href="politica-privacitat.html" target="_blank">política de privacitat</a>.
           Autoritzo el tractament del meu email per a l'autenticació i, si ho sol·licito, per rebre alertes personalitzades.
         </label>
       </div>
-      <button type="submit" id="btn-submit">Crea el compte</button>
+      <button type="submit" id="btn-submit" data-i18n="register.btn.submit">Crea el compte</button>
     </form>
-    <p class="auth-links">Ja tens compte? <a href="login.html">Inicia sessió</a></p>
+    <p class="auth-links" data-i18n="register.link.login">Ja tens compte? <a href="login.html">Inicia sessió</a></p>
   </div>
 
   <script>
@@ -174,10 +191,10 @@
       e.preventDefault();
       const pw = document.getElementById('password').value;
       const pw2 = document.getElementById('password2').value;
-      if (pw !== pw2) { showMsg('Les contrasenyes no coincideixen.', 'error'); return; }
+      if (pw !== pw2) { showMsg(t('register.err.pw.match'), 'error'); return; }
 
       btn.disabled = true;
-      btn.textContent = 'Creant compte…';
+      btn.textContent = t('register.btn.submitting');
       try {
         const res = await fetch(API_BASE + '/api/auth/register', {
           method: 'POST',
@@ -189,17 +206,17 @@
         });
         const data = await res.json();
         if (res.ok) {
-          showMsg('Compte creat. Revisa el teu email per verificar-lo.', 'ok');
+          showMsg(t('register.msg.ok'), 'ok');
           formEl.hidden = true;
         } else {
-          showMsg(data.error || 'Error en crear el compte.', 'error');
+          showMsg(data.error || t('register.err.default'), 'error');
           btn.disabled = false;
-          btn.textContent = 'Crea el compte';
+          btn.textContent = t('register.btn.submit');
         }
       } catch (_) {
-        showMsg('Error de connexió. Torna-ho a intentar.', 'error');
+        showMsg(t('register.err.network'), 'error');
         btn.disabled = false;
-        btn.textContent = 'Crea el compte';
+        btn.textContent = t('register.btn.submit');
       }
     });
   </script>
