@@ -127,6 +127,11 @@
       'index.itinerari.ciclos_d_none':  'No hi ha cicles associats.',
       'index.itinerari.ciclos_d_err':   'Error carregant cicles: ',
       'index.itinerari.parent_b_loe_cap': 'Mòduls B (LOE) acreditats per aquest certificat:',
+      'index.itinerari.children_c_loe_btn':     'Cert. C',
+      'index.itinerari.children_c_loe_cap':     'Certificats C que acrediten aquest mòdul:',
+      'index.itinerari.children_c_loe_none':    'Cap certificat C associat.',
+      'index.itinerari.children_c_loe_err':     'Error carregant certificats C.',
+      'index.itinerari.children_c_loe_loading': 'Carregant...',
 
       /* ── index.html — footer ── */
       'index.footer.historial':'Historial d\'actualitzacions',
@@ -393,6 +398,11 @@
       'index.itinerari.ciclos_d_none':  'No hay ciclos asociados.',
       'index.itinerari.ciclos_d_err':   'Error cargando ciclos: ',
       'index.itinerari.parent_b_loe_cap': 'Módulos B (LOE) acreditados por este certificado:',
+      'index.itinerari.children_c_loe_btn':     'Cert. C',
+      'index.itinerari.children_c_loe_cap':     'Certificados C que acreditan este módulo:',
+      'index.itinerari.children_c_loe_none':    'Ningún certificado C asociado.',
+      'index.itinerari.children_c_loe_err':     'Error cargando certificados C.',
+      'index.itinerari.children_c_loe_loading': 'Cargando...',
 
       /* ── index.html — footer ── */
       'index.footer.historial':'Historial de actualizaciones',

@@ -1126,8 +1126,10 @@
         filterFavs: false,
 
         // F5 — Itineraris formatius
-        ciclosDData: {},   // {codigo: [{denominacion, familia}] | 'loading' | 'error'}
-        parentBLoeData: {},     // NOU — parent B LOE per codigo C
+        ciclosDData: {},        // {codigo: [{denominacion, familia}] | 'loading' | 'error'}
+        parentBLoeData: {},     // parent B LOE per codigo C
+        childrenCLoeData: {},   // {row.id: [{codigo, denominacion}] | 'loading' | 'error'}
+        childrenCLoeVisible: {}, // {row.id: bool}
 
         // F4 — Seguiment de centres
         watchSaving: false,
@@ -1528,6 +1530,24 @@
           }
         },
 
+        async fetchChildrenCLoe(row) {
+          // Toggle: si ja és visible i carregat, amaga'l
+          if (this.childrenCLoeVisible[row.id] && this.childrenCLoeData[row.id] !== undefined) {
+            this.childrenCLoeVisible = { ...this.childrenCLoeVisible, [row.id]: false };
+            return;
+          }
+          this.childrenCLoeVisible = { ...this.childrenCLoeVisible, [row.id]: true };
+          if (this.childrenCLoeData[row.id] !== undefined) return; // ja carregat
+          this.childrenCLoeData = { ...this.childrenCLoeData, [row.id]: 'loading' };
+          try {
+            const res = await fetch(API_BASE + '/api/itinerari?grado=B&codigo=' + encodeURIComponent(row.codigo));
+            const data = await res.json();
+            this.childrenCLoeData = { ...this.childrenCLoeData, [row.id]: data.children_c_loe || [] };
+          } catch (e) {
+            this.childrenCLoeData = { ...this.childrenCLoeData, [row.id]: 'error' };
+          }
+        },
+
         async fetchBoe(codigo) {
           try {
             const res = await fetch(API_BASE + '/api/certificado/' + codigo);
@@ -1751,6 +1771,11 @@
                       :title="t('index.itinerari.parent_b_title') + (parentBOf(row)||{}).denominacion"
                       x-text="'→ ' + ((parentBOf(row)||{}).codigo || '')"></span>
                   </template>
+                  <template x-if="row.grado === 'B' && row.codigo && /^MF\d{4}_\d+$/.test(row.codigo)">
+                    <span class="badge-itinerari-b" style="cursor:pointer"
+                      @click.stop="fetchChildrenCLoe(row)"
+                      x-text="t('index.itinerari.children_c_loe_btn')"></span>
+                  </template>
                 </td>
                 <td class="col-codi" x-text="row.codigo ?? '—'"></td>
                 <td class="col-fam" x-text="row.familia"></td>
@@ -1805,6 +1830,32 @@
                         <ul class="ciclos-d-list">
                           <template x-for="bmod in parentBLoeData[row.codigo]" :key="bmod.codigo">
                             <li x-text="bmod.codigo + ' — ' + bmod.denominacion"></li>
+                          </template>
+                        </ul>
+                      </div>
+                    </template>
+                  </div>
+                </td>
+              </tr>
+              <!-- B→C LOE: certificats C que acrediten aquest mòdul B -->
+              <tr x-show="childrenCLoeVisible[row.id] && row.grado === 'B'">
+                <td colspan="5" class="detall-certificat">
+                  <div class="detall-inner">
+                    <template x-if="childrenCLoeData[row.id] === 'loading'">
+                      <span x-text="t('index.itinerari.children_c_loe_loading')"></span>
+                    </template>
+                    <template x-if="childrenCLoeData[row.id] === 'error'">
+                      <span x-text="t('index.itinerari.children_c_loe_err')"></span>
+                    </template>
+                    <template x-if="Array.isArray(childrenCLoeData[row.id]) && childrenCLoeData[row.id].length === 0">
+                      <span x-text="t('index.itinerari.children_c_loe_none')"></span>
+                    </template>
+                    <template x-if="Array.isArray(childrenCLoeData[row.id]) && childrenCLoeData[row.id].length > 0">
+                      <div>
+                        <span x-text="t('index.itinerari.children_c_loe_cap')"></span>
+                        <ul class="ciclos-d-list">
+                          <template x-for="cert in childrenCLoeData[row.id]" :key="cert.codigo">
+                            <li x-text="cert.codigo + ' — ' + cert.denominacion"></li>
                           </template>
                         </ul>
                       </div>

@@ -740,6 +740,33 @@ def _get_itinerary_index() -> dict:
         return {}
 
 
+_bc_loe_inverse_cache: dict = {"mtime": None, "index": None}
+
+
+def _get_bc_loe_inverse() -> dict:
+    """
+    Retorna l'índex invers de bc_loe.json: {uc_key: [codigo_c]}.
+    Cache invalidat per mtime. Retorna {} si bc_loe.json no existeix.
+    """
+    if not os.path.exists(BC_LOE_PATH):
+        return {}
+    mtime = os.path.getmtime(BC_LOE_PATH)
+    if _bc_loe_inverse_cache["mtime"] == mtime and _bc_loe_inverse_cache["index"] is not None:
+        return _bc_loe_inverse_cache["index"]
+    try:
+        with open(BC_LOE_PATH, 'r', encoding='utf-8') as f:
+            bc_loe = json.load(f)
+        inverse: dict = {}
+        for codigo_c, uc_codes in bc_loe.items():
+            for uc in uc_codes:
+                inverse.setdefault(uc, []).append(codigo_c)
+        _bc_loe_inverse_cache.update(mtime=mtime, index=inverse)
+        return inverse
+    except (OSError, json.JSONDecodeError) as exc:
+        logger.warning("_get_bc_loe_inverse: error llegint bc_loe.json: %s", exc)
+        return {}
+
+
 @app.route('/api/itinerari')
 def api_itinerari():
     """F5: Retorna l'itinerari local per a un registre A, B o C LOE.
@@ -813,7 +840,25 @@ def api_itinerari():
     # grado == 'B'
     mock_rec = {'grado': 'B', 'codigo': codigo}
     children = itinerary.get_children_a(mock_rec, idx)
-    return jsonify({'children_a': [_serialize(c) for c in children]})
+    response: dict = {'children_a': [_serialize(c) for c in children]}
+
+    # B→C LOE: certificats C que contenen aquest mòdul B (només per a B LOE: MF####_N)
+    _m_b_loe = re.match(r'^MF(\d{4})_(\d+)$', codigo)
+    if _m_b_loe:
+        uc_key = f"UC{_m_b_loe.group(1)}_{_m_b_loe.group(2)}"
+        inverse = _get_bc_loe_inverse()
+        c_codigos = inverse.get(uc_key, [])
+        c_loe_by_code = idx.get('c_loe_by_code', {})
+        children_c_loe = []
+        for cc in c_codigos:
+            c_rec = c_loe_by_code.get(cc)
+            if c_rec:
+                children_c_loe.append(_serialize(c_rec))
+        response['children_c_loe'] = children_c_loe
+    else:
+        response['children_c_loe'] = []
+
+    return jsonify(response)
 
 
 # ---------------------------------------------------------------------------

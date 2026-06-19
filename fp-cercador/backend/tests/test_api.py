@@ -227,6 +227,43 @@ def test_itinerari_grado_b_returns_children_a(client, monkeypatch):
     assert "ADG_A_3001_02" in codigos
 
 
+_FAKE_BC_LOE_B = '{"COML0110": ["UC0969_1", "UC0970_1"], "ADGG0408": ["UC0969_1"]}'
+_FAKE_OFERTES_ITINERARI_B_LOE = (
+    '[{"grado":"B","codigo":"MF0969_1","denominacion":"Gestió comptable","nivel":1,"familia":"ADG"},'
+    '{"grado":"C","codigo":"COML0110","denominacion":"Gestió comptable i fiscal","nivel":2,"familia":"COM","plan_antiguo":true},'
+    '{"grado":"C","codigo":"ADGG0408","denominacion":"Gestió comptable avançada","nivel":3,"familia":"ADG","plan_antiguo":true}]'
+)
+
+
+def test_itinerari_grado_b_loe_retorna_children_c_loe(client, monkeypatch):
+    """F5: GET /api/itinerari?grado=B&codigo=MF0969_1 retorna children_c_loe."""
+    import app as flask_app_module
+    monkeypatch.setattr(flask_app_module, "_itinerary_index_cache", {"mtime": None, "index": None})
+    monkeypatch.setattr(flask_app_module, "_bc_loe_inverse_cache", {"mtime": None, "index": None})
+
+    def _fake_open(path, *args, **kwargs):
+        import builtins
+        path_str = str(path)
+        if 'bc_loe' in path_str:
+            return mock.mock_open(read_data=_FAKE_BC_LOE_B)()
+        if 'ofertes' in path_str:
+            return mock.mock_open(read_data=_FAKE_OFERTES_ITINERARI_B_LOE)()
+        return builtins.open(path, *args, **kwargs)
+
+    with mock.patch(PATCH_OS_PATH_EXISTS, return_value=True), \
+         mock.patch("app.os.path.getmtime", return_value=42.0), \
+         mock.patch("builtins.open", side_effect=_fake_open):
+        r = client.get("/api/itinerari?grado=B&codigo=MF0969_1")
+
+    assert r.status_code == 200
+    data = r.get_json()
+    assert "children_a" in data
+    assert "children_c_loe" in data
+    codigos_c = {c["codigo"] for c in data["children_c_loe"]}
+    assert "COML0110" in codigos_c
+    assert "ADGG0408" in codigos_c
+
+
 def test_itinerari_grado_invalide_returns_400(client):
     """F5: GET /api/itinerari?grado=D retorna 400."""
     r = client.get("/api/itinerari?grado=D&codigo=QUELCOM")

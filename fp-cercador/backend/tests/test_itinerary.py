@@ -98,3 +98,22 @@ def test_build_ab_index_b_by_uc_maps_level():
     assert idx['b_by_uc']['UC0969_1']['codigo'] == 'MF0969_1'
     # UC0038_3 NO ha de correspondre a UC0038_1 (els nivells no es barregen)
     assert 'UC0038_1' not in idx['b_by_uc']
+
+
+RECORDS_C_LOE = [
+    {'grado': 'C', 'codigo': 'COML0110', 'denominacion': 'Gestió comptable', 'nivel': 2,
+     'familia': 'COM', 'plan_antiguo': True},
+    {'grado': 'C', 'codigo': 'ADGG0408', 'denominacion': 'Gestió comptable avançada', 'nivel': 3,
+     'familia': 'ADG', 'plan_antiguo': True},
+    {'grado': 'C', 'codigo': 'FAKELOMLOE', 'denominacion': 'LOMLOE cert', 'nivel': 2,
+     'familia': 'ADG', 'plan_antiguo': False},  # NO ha d'aparèixer
+]
+
+
+def test_build_ab_index_c_loe_by_code():
+    idx = itinerary.build_ab_index(RECORDS_C_LOE)
+    assert 'c_loe_by_code' in idx
+    assert 'COML0110' in idx['c_loe_by_code']
+    assert 'ADGG0408' in idx['c_loe_by_code']
+    # C LOMLOE (plan_antiguo=False) NO ha d'estar a l'índex
+    assert 'FAKELOMLOE' not in idx['c_loe_by_code']
