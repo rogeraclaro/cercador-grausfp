@@ -709,6 +709,30 @@
       color: #fff;
     }
 
+    /* ── F5: Itineraris formatius ──────────────────────── */
+    .badge-itinerari-b {
+      display: inline-block;
+      margin-left: 6px;
+      padding: 1px 5px;
+      border-radius: 3px;
+      font-size: 0.72em;
+      background: #e8f4e8;
+      color: #2a6e2a;
+      cursor: default;
+      vertical-align: middle;
+    }
+
+    .ciclos-d-list {
+      margin: 4px 0 0 16px;
+      padding: 0;
+      font-size: 0.9em;
+    }
+
+    .detall-ciclos-d {
+      margin-top: 8px;
+      font-size: 0.9em;
+    }
+
     .centres-panel td {
       padding: 0 !important;
     }
@@ -1061,6 +1085,9 @@
         favorites: new Set(),
         filterFavs: false,
 
+        // F5 — Itineraris formatius
+        ciclosDData: {},   // {codigo: [{denominacion, familia}] | 'loading' | 'error'}
+
         // F4 — Seguiment de centres
         watchSaving: false,
         watchSaveError: '',
@@ -1135,6 +1162,16 @@
               _normCod: (r.codigo || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
             }));
             this.families = [...new Set(this.allRecords.map(r => r.familia))].sort();
+            // F5 — Índex B per a derivació A→B local (LOMLOE i LOE)
+            this._bByCode = {};     // {codigo_B: record} LOMLOE
+            this._bByUfNum = {};    // {'0038': record}  LOE
+            for (const r of this.allRecords) {
+              if (r.grado === 'B') {
+                if (r.codigo) this._bByCode[r.codigo] = r;
+                const m = r.codigo && r.codigo.match(/^MF(\d+)_/);
+                if (m) this._bByUfNum[m[1]] = r;
+              }
+            }
             this.state = 'ready';
             fetch(API_BASE + '/api/centres/count')
               .then(r => r.json())
@@ -1425,6 +1462,29 @@
           return ['', ...[...new Set(data.map(c => c.ccaa).filter(Boolean))].sort()];
         },
 
+        parentBOf(row) {
+          if (row.grado !== 'A' || !row.codigo) return null;
+          // LOMLOE: ADG_A_3001_01 → ADG_B_3001
+          let m = row.codigo.match(/^([A-Z]+)_A_(\d+)_\d+$/);
+          if (m) return this._bByCode[`${m[1]}_B_${m[2]}`] || null;
+          // LOE: UF0038 → MF0038_*
+          m = row.codigo.match(/^UF(\d+)$/);
+          if (m) return this._bByUfNum[m[1]] || null;
+          return null;
+        },
+
+        async fetchCiclosD(codigo) {
+          if (this.ciclosDData[codigo] && this.ciclosDData[codigo] !== 'error') return;
+          this.ciclosDData = { ...this.ciclosDData, [codigo]: 'loading' };
+          try {
+            const res = await fetch(API_BASE + '/api/itinerari?grado=C&codigo=' + encodeURIComponent(codigo));
+            const data = await res.json();
+            this.ciclosDData = { ...this.ciclosDData, [codigo]: data.ciclos_d || [] };
+          } catch (e) {
+            this.ciclosDData = { ...this.ciclosDData, [codigo]: 'error' };
+          }
+        },
+
         async fetchBoe(codigo) {
           try {
             const res = await fetch(API_BASE + '/api/certificado/' + codigo);
@@ -1642,6 +1702,11 @@
                       x-text="t('index.centres.count', {n: centres_count(row)})">
                     </span>
                   </template>
+                  <template x-if="parentBOf(row)">
+                    <span class="badge-itinerari-b"
+                      :title="t('index.itinerari.parent_b_title') + (parentBOf(row)||{}).denominacion"
+                      x-text="'→ ' + ((parentBOf(row)||{}).codigo || '')"></span>
+                  </template>
                 </td>
                 <td class="col-codi" x-text="row.codigo ?? '—'"></td>
                 <td class="col-fam" x-text="row.familia"></td>
@@ -1656,6 +1721,29 @@
                     <a :href="row.url_europass_es" target="_blank" rel="noopener" class="btn-doc">Europass ES</a>
                     <a :href="row.url_europass_en" target="_blank" rel="noopener" class="btn-doc">Europass EN</a>
                     <button @click.stop="fetchBoe(row.codigo)" class="btn-doc">BOE / RD</button>
+                    <!-- F5: Cicles D -->
+                    <button @click.stop="fetchCiclosD(row.codigo)" class="btn-doc"
+                      x-text="t('index.itinerari.ciclos_d_btn')"></button>
+                    <template x-if="ciclosDData[row.codigo] && ciclosDData[row.codigo] !== 'loading'">
+                      <div class="detall-ciclos-d">
+                        <template x-if="ciclosDData[row.codigo] === 'error'">
+                          <span x-text="t('index.itinerari.ciclos_d_err')"></span>
+                        </template>
+                        <template x-if="Array.isArray(ciclosDData[row.codigo]) && ciclosDData[row.codigo].length === 0">
+                          <span x-text="t('index.itinerari.ciclos_d_none')"></span>
+                        </template>
+                        <template x-if="Array.isArray(ciclosDData[row.codigo]) && ciclosDData[row.codigo].length > 0">
+                          <div>
+                            <span x-text="t('index.itinerari.ciclos_d_cap')"></span>
+                            <ul class="ciclos-d-list">
+                              <template x-for="cicle in ciclosDData[row.codigo]" :key="cicle.denominacion">
+                                <li x-text="cicle.denominacion + (cicle.familia ? ' (' + cicle.familia + ')' : '')"></li>
+                              </template>
+                            </ul>
+                          </div>
+                        </template>
+                      </div>
+                    </template>
                   </div>
                 </td>
               </tr>

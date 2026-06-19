@@ -47,6 +47,7 @@ from flask_cors import CORS
 
 import feed
 import history
+import itinerary
 import notifier
 import refresh_state
 import scheduler_service
@@ -71,6 +72,7 @@ DATA_PATH = os.path.normpath(
 )
 
 _DATA_DIR = os.path.join(os.path.dirname(__file__), "data")
+CICLOS_PATH = os.path.join(_DATA_DIR, "ciclos_fp.json")
 _CENTRES_PATH = os.path.join(_DATA_DIR, "centres.json")
 _OFERTA_CENTRES_PATH = os.path.join(_DATA_DIR, "oferta_centres.json")
 _centres_index: dict | None = None
@@ -710,6 +712,88 @@ def ficha_redirect():
         return redirect(fallback, code=302)
 
     return redirect(f'{_FICHA_BASE}/ficha?grado={grado}&id={ficha_id}', code=302)
+
+
+# ---------------------------------------------------------------------------
+# F5 — Itineraris formatius A→B (local) + C→D via ciclosFP
+# ---------------------------------------------------------------------------
+
+_itinerary_index_cache: dict = {"mtime": None, "index": None}
+
+
+def _get_itinerary_index() -> dict:
+    """Retorna l'índex A→B, reconstruint-lo si ofertes.json ha canviat."""
+    if not os.path.exists(DATA_PATH):
+        return {}
+    mtime = os.path.getmtime(DATA_PATH)
+    if _itinerary_index_cache["mtime"] == mtime and _itinerary_index_cache["index"]:
+        return _itinerary_index_cache["index"]
+    try:
+        with open(DATA_PATH, 'r', encoding='utf-8') as f:
+            records = json.load(f)
+        idx = itinerary.build_ab_index(records)
+        _itinerary_index_cache.update(mtime=mtime, index=idx)
+        return idx
+    except (OSError, json.JSONDecodeError) as exc:
+        logger.error("_get_itinerary_index: error: %s", exc)
+        return {}
+
+
+@app.route('/api/itinerari')
+def api_itinerari():
+    """F5: Retorna l'itinerari local per a un registre A, B o C LOE.
+
+    GET /api/itinerari?grado=A&codigo=ADG_A_3001_01
+      → {"parent_b": {"codigo": "ADG_B_3001", "denominacion": "...", "grado": "B"}}
+
+    GET /api/itinerari?grado=B&codigo=ADG_B_3001
+      → {"children_a": [{"codigo": "ADG_A_3001_01", "denominacion": "...", "grado": "A"}, ...]}
+
+    GET /api/itinerari?grado=C&codigo=COML0110
+      → {"ciclos_d": [{"denominacion": "...", "familia": "..."}]}
+    """
+    grado = (request.args.get('grado') or '').upper()
+    codigo = request.args.get('codigo') or ''
+
+    if grado not in ('A', 'B', 'C'):
+        return jsonify({'error': 'grado ha de ser A, B o C'}), 400
+    if not codigo:
+        return jsonify({'error': 'falta el paràmetre codigo'}), 400
+
+    def _serialize(r):
+        return {
+            'codigo': r.get('codigo'),
+            'denominacion': r.get('denominacion'),
+            'grado': r.get('grado'),
+            'nivel': r.get('nivel'),
+            'familia': r.get('familia'),
+        }
+
+    if grado == 'C':
+        if not os.path.exists(CICLOS_PATH):
+            return jsonify({'ciclos_d': [], 'warning': 'ciclos_fp.json no disponible — cal fer un refresh'}), 200
+        try:
+            with open(CICLOS_PATH, 'r', encoding='utf-8') as f:
+                ciclos_index = json.load(f)
+        except (OSError, json.JSONDecodeError) as exc:
+            logger.error("api_itinerari C: error llegint ciclos_fp.json: %s", exc)
+            return jsonify({'error': 'Error llegint dades de cicles'}), 503
+        ciclos = ciclos_index.get(codigo, [])
+        return jsonify({'ciclos_d': ciclos})
+
+    idx = _get_itinerary_index()
+    if not idx:
+        return jsonify({'error': 'Dades no disponibles'}), 503
+
+    if grado == 'A':
+        mock_rec = {'grado': 'A', 'codigo': codigo}
+        parent = itinerary.get_parent_b(mock_rec, idx)
+        return jsonify({'parent_b': _serialize(parent) if parent else None})
+
+    # grado == 'B'
+    mock_rec = {'grado': 'B', 'codigo': codigo}
+    children = itinerary.get_children_a(mock_rec, idx)
+    return jsonify({'children_a': [_serialize(c) for c in children]})
 
 
 # ---------------------------------------------------------------------------
