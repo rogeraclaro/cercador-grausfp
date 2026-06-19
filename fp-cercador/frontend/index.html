@@ -1127,6 +1127,7 @@
 
         // F5 — Itineraris formatius
         ciclosDData: {},   // {codigo: [{denominacion, familia}] | 'loading' | 'error'}
+        parentBLoeData: {},     // NOU — parent B LOE per codigo C
 
         // F4 — Seguiment de centres
         watchSaving: false,
@@ -1520,8 +1521,10 @@
             const res = await fetch(API_BASE + '/api/itinerari?grado=C&codigo=' + encodeURIComponent(codigo));
             const data = await res.json();
             this.ciclosDData = { ...this.ciclosDData, [codigo]: data.ciclos_d || [] };
+            this.parentBLoeData = { ...this.parentBLoeData, [codigo]: data.parent_b_loe || [] };
           } catch (e) {
             this.ciclosDData = { ...this.ciclosDData, [codigo]: 'error' };
+            this.parentBLoeData = { ...this.parentBLoeData, [codigo]: [] };
           }
         },
 
@@ -1793,6 +1796,17 @@
                             </ul>
                           </div>
                         </template>
+                      </div>
+                    </template>
+                    <!-- B→C LOE: mòduls B LOE acreditats -->
+                    <template x-if="parentBLoeData[row.codigo] && parentBLoeData[row.codigo].length > 0">
+                      <div class="detall-ciclos-d" style="margin-top:6px">
+                        <span x-text="t('index.itinerari.parent_b_loe_cap')"></span>
+                        <ul class="ciclos-d-list">
+                          <template x-for="bmod in parentBLoeData[row.codigo]" :key="bmod.codigo">
+                            <li x-text="bmod.codigo + ' — ' + bmod.denominacion"></li>
+                          </template>
+                        </ul>
                       </div>
                     </template>
                   </div>

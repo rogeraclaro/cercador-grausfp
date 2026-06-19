@@ -408,3 +408,22 @@ mantindrà la numeració i actualitzarà l'índex.
   mort fora del repo.
 - Si en el futur vols re-auditar, executa `/improve` de nou: llegirà aquest
   `plans/README.md`, no duplicarà troballes i mantindrà la numeració.
+
+---
+
+## Passos manuals post-desplegament
+
+### bc_loe.json (Pla 045)
+
+Després del primer desplegament del pla 045, executa al VPS:
+
+```bash
+cd /ruta/al/repo
+pip install pdfplumber
+python3 scripts/generate_bc_loe.py
+```
+
+Triga ~6 min. `bc_loe.json` es genera a `backend/data/bc_loe.json`.
+No cal rellançar el servei: Flask llegeix el fitxer a cada petició.
+
+Re-executa el script si s'afegeixen nous certificats C LOE (rarament).

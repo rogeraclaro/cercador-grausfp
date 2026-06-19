@@ -15,6 +15,7 @@ _PAT_A_LOMLOE = re.compile(r'^([A-Z]+)_A_(\d+)_\d+$')
 _PAT_A_LOE    = re.compile(r'^UF(\d+)$')
 _PAT_B_LOMLOE = re.compile(r'^([A-Z]+)_B_(\d+)$')
 _PAT_B_LOE    = re.compile(r'^MF(\d+)_\d+$')
+_PAT_B_LOE_FULL = re.compile(r'^MF(\d{4})_(\d+)$')
 
 
 def build_ab_index(records: list[dict]) -> dict:
@@ -33,6 +34,7 @@ def build_ab_index(records: list[dict]) -> dict:
     b_by_uf_num: dict = {}
     a_by_b_code: dict = {}
     a_by_uf_num: dict = {}
+    b_by_uc: dict = {}
 
     for r in records:
         grado = r.get('grado')
@@ -46,6 +48,11 @@ def build_ab_index(records: list[dict]) -> dict:
             if m_loe:
                 num = m_loe.group(1)
                 b_by_uf_num[num] = r
+
+            m_loe_full = _PAT_B_LOE_FULL.match(codigo)
+            if m_loe_full:
+                uc_key = f"UC{m_loe_full.group(1)}_{m_loe_full.group(2)}"
+                b_by_uc[uc_key] = r  # ex: 'UC0969_1' → registre B MF0969_1
 
     for r in records:
         grado = r.get('grado')
@@ -67,6 +74,7 @@ def build_ab_index(records: list[dict]) -> dict:
         'b_by_uf_num': b_by_uf_num,
         'a_by_b_code': a_by_b_code,
         'a_by_uf_num': a_by_uf_num,
+        'b_by_uc':     b_by_uc,   # NOU: 'UC0969_1' → registre B MF0969_1
     }
 
 

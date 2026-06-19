@@ -126,6 +126,7 @@
       'index.itinerari.ciclos_d_cap':   'Cicles formatius que convaliden aquest certificat:',
       'index.itinerari.ciclos_d_none':  'No hi ha cicles associats.',
       'index.itinerari.ciclos_d_err':   'Error carregant cicles: ',
+      'index.itinerari.parent_b_loe_cap': 'Mòduls B (LOE) acreditats per aquest certificat:',
 
       /* ── index.html — footer ── */
       'index.footer.historial':'Historial d\'actualitzacions',
@@ -391,6 +392,7 @@
       'index.itinerari.ciclos_d_cap':   'Ciclos formativos que convalidan este certificado:',
       'index.itinerari.ciclos_d_none':  'No hay ciclos asociados.',
       'index.itinerari.ciclos_d_err':   'Error cargando ciclos: ',
+      'index.itinerari.parent_b_loe_cap': 'Módulos B (LOE) acreditados por este certificado:',
 
       /* ── index.html — footer ── */
       'index.footer.historial':'Historial de actualizaciones',

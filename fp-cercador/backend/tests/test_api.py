@@ -233,3 +233,46 @@ def test_itinerari_grado_invalide_returns_400(client):
     assert r.status_code == 400
     data = r.get_json()
     assert "error" in data
+
+
+# ---------------------------------------------------------------------------
+# F5: GET /api/itinerari?grado=C — B→C LOE (parent_b_loe)
+# ---------------------------------------------------------------------------
+
+_FAKE_BC_LOE = '{"COML0110": ["UC0969_1", "UC0970_1"]}'
+_FAKE_OFERTES_ITINERARI_C = (
+    '[{"grado":"B","codigo":"MF0969_1","denominacion":"Gestió comptable","nivel":1,"familia":"ADG"},'
+    '{"grado":"B","codigo":"MF0970_1","denominacion":"Gestió fiscal","nivel":1,"familia":"ADG"},'
+    '{"grado":"C","codigo":"COML0110","denominacion":"Gestió comptable i fiscal","nivel":2,"familia":"COM","plan_antiguo":true}]'
+)
+_FAKE_CICLOS = '{"COML0110": [{"denominacion": "Servicios Administrativos", "familia": "ADG", "ficha_url": null}]}'
+
+
+def test_itinerari_grado_c_retorna_parent_b_loe(client, monkeypatch):
+    """F5: GET /api/itinerari?grado=C inclou parent_b_loe amb els B LOE acreditats."""
+    import app as flask_app_module
+    monkeypatch.setattr(flask_app_module, "_itinerary_index_cache", {"mtime": None, "index": None})
+
+    def _fake_open(path, *args, **kwargs):
+        import builtins
+        path_str = str(path)
+        if 'bc_loe' in path_str:
+            return mock.mock_open(read_data=_FAKE_BC_LOE)()
+        if 'ciclos_fp' in path_str:
+            return mock.mock_open(read_data=_FAKE_CICLOS)()
+        if 'ofertes' in path_str:
+            return mock.mock_open(read_data=_FAKE_OFERTES_ITINERARI_C)()
+        return builtins.open(path, *args, **kwargs)
+
+    with mock.patch(PATCH_OS_PATH_EXISTS, return_value=True), \
+         mock.patch("app.os.path.getmtime", return_value=99.0), \
+         mock.patch("builtins.open", side_effect=_fake_open):
+        r = client.get("/api/itinerari?grado=C&codigo=COML0110")
+
+    assert r.status_code == 200
+    data = r.get_json()
+    assert "ciclos_d" in data
+    assert "parent_b_loe" in data
+    codigos_b = {b["codigo"] for b in data["parent_b_loe"]}
+    assert "MF0969_1" in codigos_b
+    assert "MF0970_1" in codigos_b

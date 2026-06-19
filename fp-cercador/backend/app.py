@@ -73,6 +73,7 @@ DATA_PATH = os.path.normpath(
 
 _DATA_DIR = os.path.join(os.path.dirname(__file__), "data")
 CICLOS_PATH = os.path.join(_DATA_DIR, "ciclos_fp.json")
+BC_LOE_PATH = os.path.join(_DATA_DIR, "bc_loe.json")
 _CENTRES_PATH = os.path.join(_DATA_DIR, "centres.json")
 _OFERTA_CENTRES_PATH = os.path.join(_DATA_DIR, "oferta_centres.json")
 _centres_index: dict | None = None
@@ -771,7 +772,8 @@ def api_itinerari():
 
     if grado == 'C':
         if not os.path.exists(CICLOS_PATH):
-            return jsonify({'ciclos_d': [], 'warning': 'ciclos_fp.json no disponible — cal fer un refresh'}), 200
+            return jsonify({'ciclos_d': [], 'parent_b_loe': [],
+                            'warning': 'ciclos_fp.json no disponible — cal fer un refresh'}), 200
         try:
             with open(CICLOS_PATH, 'r', encoding='utf-8') as f:
                 ciclos_index = json.load(f)
@@ -779,7 +781,25 @@ def api_itinerari():
             logger.error("api_itinerari C: error llegint ciclos_fp.json: %s", exc)
             return jsonify({'error': 'Error llegint dades de cicles'}), 503
         ciclos = ciclos_index.get(codigo, [])
-        return jsonify({'ciclos_d': ciclos})
+
+        # B→C LOE: mòduls B LOE acreditats per aquest certificat C
+        parent_b_loe: list[dict] = []
+        if os.path.exists(BC_LOE_PATH):
+            try:
+                with open(BC_LOE_PATH, 'r', encoding='utf-8') as f:
+                    bc_loe_index = json.load(f)
+                uc_codes = bc_loe_index.get(codigo, [])
+                if uc_codes:
+                    it_idx = _get_itinerary_index()
+                    b_by_uc = it_idx.get('b_by_uc', {})
+                    for uc in uc_codes:
+                        b_rec = b_by_uc.get(uc)
+                        if b_rec:
+                            parent_b_loe.append(_serialize(b_rec))
+            except (OSError, json.JSONDecodeError) as exc:
+                logger.warning("api_itinerari C: error llegint bc_loe.json: %s", exc)
+
+        return jsonify({'ciclos_d': ciclos, 'parent_b_loe': parent_b_loe})
 
     idx = _get_itinerary_index()
     if not idx:

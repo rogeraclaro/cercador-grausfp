@@ -226,3 +226,38 @@ def enrich_record(record: dict, cert_data: dict) -> dict:
         'url_europass_es': f"{BASE_DAM}/europass/n{nivel_n}-{codigo_lc}-es-pub.pdf",
         'url_europass_en': f"{BASE_DAM}/europass/n{nivel_n}-{codigo_lc}-in-pub.pdf",
     }
+
+
+# ── B→C LOE: extracció UC codes de l'Annexo PDF ─────────────────────────────
+
+import io as _io
+import re as _re
+
+_UC_PAT = _re.compile(r'\bUC\d{4}_\d+\b')
+_PDF_HEADERS = {**_HEADERS, 'Referer': 'https://www.todofp.es/'}
+
+
+def fetch_uc_codes_from_pdf(codigo_c: str, timeout: int = 30) -> list[str]:
+    """
+    Descarrega l'Annexo PDF d'un C LOE i retorna la llista de codis UC únics.
+
+    URL: BASE_DAM/anexos/{codigo_c.lower()}.pdf
+    Retorna [] si el PDF no existeix (404) o no conté UC codes llegibles.
+    Eleva requests.HTTPError per errors inesperats de xarxa (no 404).
+    """
+    import pdfplumber as _pdfplumber
+
+    url = f"{BASE_DAM}/anexos/{codigo_c.lower()}.pdf"
+    resp = requests.get(url, headers=_PDF_HEADERS, timeout=timeout)
+    if resp.status_code == 404:
+        logger.debug("fetch_uc_codes_from_pdf: PDF no trobat per %s", codigo_c)
+        return []
+    resp.raise_for_status()
+
+    uc_codes: list[str] = []
+    with _pdfplumber.open(_io.BytesIO(resp.content)) as pdf:
+        for page in pdf.pages:
+            text = page.extract_text() or ''
+            uc_codes.extend(_UC_PAT.findall(text))
+
+    return list(dict.fromkeys(uc_codes))  # dedup preservant ordre

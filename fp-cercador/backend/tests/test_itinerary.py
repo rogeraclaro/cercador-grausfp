@@ -77,3 +77,24 @@ def test_get_parent_b_invalid_codigo():
     a_rec = {'grado': 'A', 'codigo': None}
     parent = itinerary.get_parent_b(a_rec, idx)
     assert parent is None
+
+
+RECORDS_B_LOE_UC = [
+    {'grado': 'B', 'codigo': 'MF0038_3', 'denominacion': 'Análisis enológico', 'nivel': 3, 'familia': 'AGA'},
+    {'grado': 'B', 'codigo': 'MF0969_1', 'denominacion': 'Gestión contable',   'nivel': 1, 'familia': 'ADG'},
+]
+
+
+def test_build_ab_index_b_by_uc_present():
+    idx = itinerary.build_ab_index(RECORDS_B_LOE_UC)
+    assert 'b_by_uc' in idx
+    assert 'UC0038_3' in idx['b_by_uc']
+    assert idx['b_by_uc']['UC0038_3']['codigo'] == 'MF0038_3'
+
+
+def test_build_ab_index_b_by_uc_maps_level():
+    idx = itinerary.build_ab_index(RECORDS_B_LOE_UC)
+    assert 'UC0969_1' in idx['b_by_uc']
+    assert idx['b_by_uc']['UC0969_1']['codigo'] == 'MF0969_1'
+    # UC0038_3 NO ha de correspondre a UC0038_1 (els nivells no es barregen)
+    assert 'UC0038_1' not in idx['b_by_uc']
