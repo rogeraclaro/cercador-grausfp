@@ -1382,7 +1382,7 @@
           const ccaa = this.centresCCAA[row.id];
           const q = (this.centresSearch[row.id] || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim();
           const filtered = data.filter(c => {
-            if (ccaa && ccaa !== 'Totes' && c.ccaa !== ccaa) return false;
+            if (ccaa && c.ccaa !== ccaa) return false;
             if (q) {
               const nom = (c.nombre || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
               const loc = (c.localitat || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
@@ -1422,7 +1422,7 @@
 
         ccaasDisponibles(row) {
           const data = this.centresData[row.id] || [];
-          return ['Totes', ...[...new Set(data.map(c => c.ccaa).filter(Boolean))].sort()];
+          return ['', ...[...new Set(data.map(c => c.ccaa).filter(Boolean))].sort()];
         },
 
         async fetchBoe(codigo) {
@@ -1481,7 +1481,7 @@
     <div class="grau-tabs" role="tablist" data-i18n-aria="index.tabs.aria" aria-label="Filtre per grau">
       <button :class="{ active: filterGrado === '' }" @click="filterGrado=''; resetPage()" x-text="t('index.tabs.all')"></button>
       <template x-for="g in ['A','B','C','D','E']" :key="g">
-        <button :class="{ active: filterGrado === g }" @click="setGrado(g)" x-text="'Grau ' + g"></button>
+        <button :class="{ active: filterGrado === g }" @click="setGrado(g)" x-text="t('index.tabs.grau') + ' ' + g"></button>
       </template>
     </div>
 
@@ -1652,7 +1652,7 @@
                 <td colspan="5" class="detall-certificat">
                   <div class="detall-inner">
                     <span class="detall-hores" x-show="row.duracion_horas" x-text="row.duracion_horas + ' h.'"></span>
-                    <a :href="row.url_anexo_pdf" target="_blank" rel="noopener" class="btn-doc">Annexe PDF</a>
+                    <a :href="row.url_anexo_pdf" target="_blank" rel="noopener" class="btn-doc" x-text="t('index.detall.annexe')"></a>
                     <a :href="row.url_europass_es" target="_blank" rel="noopener" class="btn-doc">Europass ES</a>
                     <a :href="row.url_europass_en" target="_blank" rel="noopener" class="btn-doc">Europass EN</a>
                     <button @click.stop="fetchBoe(row.codigo)" class="btn-doc">BOE / RD</button>
@@ -1665,11 +1665,11 @@
                     <div class="centres-container">
                       <div class="centres-header">
                         <span
-                          x-text="centresVisibles(row).length + ' / ' + (centresData[row.id] || []).length + ' centres'"></span>
+                          x-text="centresVisibles(row).length + ' / ' + (centresData[row.id] || []).length + ' ' + t('index.centres.word')"></span>
                         <select x-model="centresCCAA[row.id]"
                           @mousedown="if(!loggedIn){ $event.preventDefault(); showCentresModal(); }">
                           <template x-for="ccaa in ccaasDisponibles(row)" :key="ccaa">
-                            <option :value="ccaa" x-text="tc(ccaa)"></option>
+                            <option :value="ccaa" x-text="ccaa === '' ? t('index.centres.all.ccaa') : tc(ccaa)"></option>
                           </template>
                         </select>
                         <input type="search" x-model="centresSearch[row.id]"

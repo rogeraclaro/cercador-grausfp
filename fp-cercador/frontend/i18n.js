@@ -33,6 +33,7 @@
 
       /* ── index.html — grau tabs ── */
       'index.tabs.all':        'Tots els graus',
+      'index.tabs.grau':       'Grau',
       'index.tabs.aria':       'Filtre per grau',
 
       /* ── index.html — filter bar ── */
@@ -74,6 +75,7 @@
       /* ── index.html — centres panel ── */
       'index.centres.placeholder': 'Cerca centre o població…',
       'index.centres.loading': 'Carregant centres…',
+      'index.centres.word':    'centres',
       'index.centres.all.ccaa': 'Totes',
       'index.centres.watch':   'Seguir centres',
       'index.centres.watching':'Seguint centres →',
@@ -112,6 +114,7 @@
       'modal.gate.login':      'Entrar',
 
       /* ── index.html — errors inline JS ── */
+      'index.detall.annexe':   'Annexe PDF',
       'index.err.boe.missing': 'URL del BOE no disponible per a aquest certificat.',
       'index.err.boe.fetch':   'Error en obtenir el BOE: ',
       'index.err.watch.unknown': 'Error desconegut',
@@ -288,6 +291,7 @@
 
       /* ── index.html — grau tabs ── */
       'index.tabs.all':        'Todos los grados',
+      'index.tabs.grau':       'Grado',
       'index.tabs.aria':       'Filtro por grado',
 
       /* ── index.html — filter bar ── */
@@ -329,6 +333,7 @@
       /* ── index.html — centres panel ── */
       'index.centres.placeholder': 'Buscar centro o población…',
       'index.centres.loading': 'Cargando centros…',
+      'index.centres.word':    'centros',
       'index.centres.all.ccaa': 'Todas',
       'index.centres.watch':   'Seguir centros',
       'index.centres.watching':'Siguiendo centros →',
@@ -367,6 +372,7 @@
       'modal.gate.login':      'Entrar',
 
       /* ── index.html — errors inline JS ── */
+      'index.detall.annexe':   'Anexo PDF',
       'index.err.boe.missing': 'URL del BOE no disponible para este certificado.',
       'index.err.boe.fetch':   'Error al obtener el BOE: ',
       'index.err.watch.unknown': 'Error desconocido',
