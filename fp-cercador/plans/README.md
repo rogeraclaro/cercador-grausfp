@@ -59,6 +59,7 @@ amb quins prerequisits i quins passos manuals calen al servidor.
 | 043 | [SPIKE — F5] Investigació fonts C LOMLOE→D i B→C LOE | P2 | M | 042 DONE | DONE |
 | 044 | [F5] Enriquir ciclos_fp.json amb ficha_url de cada cicle D | P2 | S | 043 DONE | DONE |
 | 045 | [F5] B→C LOE — índex UC codes (Annexo PDF) + endpoint + UI | P2 | L | 044 DONE | DONE |
+| 046 | [F5] Índex invers B→C LOE — des d'un Grado B mostrar els Certificats C | P2 | S | 045 DONE | DONE |
 
 Valors de Status: `TODO` | `IN PROGRESS` | `DONE` | `BLOCKED (motiu en una línia)` | `REJECTED (motiu en una línia)`
 
