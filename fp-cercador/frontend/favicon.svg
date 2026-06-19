@@ -1,33 +1,28 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 528 528">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 544 544">
   <style>
-    /* Estils per defecte (Mode Clar i base) */
-    .base-frame { fill: #ffffff; } /* El marc exterior blanc */
-    .bg-inner { fill: #0056b3; transition: fill 0.3s; } /* El fons interior original (blau) */
+    /* Estils base */
+    .base-frame { fill: #ffffff; }
+    .bg-inner { fill: #0056b3; transition: fill 0.3s; }
     
+    /* La teva tipografia específica */
     .letter { 
-      fill: none; 
-      stroke: #8a7060; /* El color de la G demanat */
-      stroke-width: 56; 
-      stroke-linecap: round; 
-      stroke-linejoin: round; 
-      transition: stroke 0.3s;
+      fill: #8a7060; 
+      font-family: 'NomDeLaTevaTipografia', sans-serif; /* <-- CANVIA AIXÒ */
+      font-size: 380px; 
+      font-weight: bold; 
+      transition: fill 0.3s;
     }
-    .dot { fill: #8a7060; transition: fill 0.3s; } /* El color del punt demanat */
 
     /* Adaptació automàtica per al Mode Fosc */
     @media (prefers-color-scheme: dark) {
-      .bg-inner { fill: #1a1a24; } /* Fons interior fosc */
-      .letter { stroke: #ffffff; } /* La G i el punt es tornen blancs sobre fons fosc */
-      .dot { fill: #ffffff; }
+      .bg-inner { fill: #1a1a24; }
+      .letter { fill: #ffffff; }
     }
   </style>
 
-  <rect class="base-frame" width="528" height="528" rx="0" />
+  <rect class="base-frame" width="544" height="544" rx="0" />
 
-  <rect class="bg-inner" x="8" y="8" width="512" height="512" rx="0" />
+  <rect class="bg-inner" x="16" y="16" width="512" height="512" rx="0" />
 
-  <g transform="translate(8,8)">
-    <path class="letter" d="M 356 160 A 136 136 0 1 0 392 272 L 312 272" />
-    <circle class="dot" cx="224" cy="272" r="28" />
-  </g>
+  <text class="letter" x="272" y="286" text-anchor="middle" dominant-baseline="central">G</text>
 </svg>
