@@ -102,10 +102,57 @@ _CICLOS_PAYLOAD_BASE = {
 }
 
 
-def fetch_ciclos_fp(session: requests.Session, cert_id: int, timeout: int = 20) -> list[dict]:
+_D_PREFIXES = (
+    'Título Profesional Básico en ',
+    'Técnico Superior en ',
+    'Técnico en ',
+)
+
+
+def _build_d_index(records: list[dict]) -> dict:
+    """
+    Construeix un índex per trobar la ficha_url d'un cicle D a partir del
+    nom curt que retorna ciclosFP.
+
+    Retorna dos nivells:
+      primary:   {denominacion_curta.lower(): ficha_url}
+      secondary: {(denominacion_curta.lower(), familia.lower()): ficha_url}
+
+    La denominació curta s'obté eliminant els prefixos canònics de la
+    denominació completa del registre D.
+    """
+    primary: dict[str, str] = {}
+    secondary: dict[tuple, str] = {}
+    for r in records:
+        if r.get('grado') != 'D':
+            continue
+        ficha_url = r.get('ficha_url')
+        if not ficha_url:
+            continue
+        den = r.get('denominacion') or ''
+        fam = (r.get('familia') or '').lower()
+        short = den
+        for prefix in _D_PREFIXES:
+            if den.startswith(prefix):
+                short = den[len(prefix):]
+                break
+        key = short.lower()
+        primary[key] = ficha_url
+        secondary[(key, fam)] = ficha_url
+    return {'primary': primary, 'secondary': secondary}
+
+
+def fetch_ciclos_fp(
+    session: requests.Session,
+    cert_id: int,
+    timeout: int = 20,
+    d_index: dict | None = None,
+) -> list[dict]:
     """
     POST /ciclosFP per a un cert_id → llista de cicles D que el convaliden.
-    Cada cicle: {'denominacion': str, 'familia': str}
+    Cada cicle: {'denominacion': str, 'familia': str, 'ficha_url': str | None}
+
+    d_index: sortida de _build_d_index(). Si és None, ficha_url serà None.
     """
     payload = {**_CICLOS_PAYLOAD_BASE, 'certificadoID': str(cert_id)}
     try:
@@ -117,30 +164,44 @@ def fetch_ciclos_fp(session: requests.Session, cert_id: int, timeout: int = 20) 
 
     soup = BeautifulSoup(resp.text, 'html.parser')
     ciclos = []
+    primary   = (d_index or {}).get('primary', {})
+    secondary = (d_index or {}).get('secondary', {})
+
     for row in soup.select('table tr'):
         cells = [td.get_text(strip=True) for td in row.find_all(['td', 'th'])]
         if len(cells) >= 2 and cells[0] and cells[0] != 'Ciclo formativo':
-            ciclos.append({'denominacion': cells[0], 'familia': cells[1] if len(cells) > 1 else ''})
+            den = cells[0]
+            fam = cells[1] if len(cells) > 1 else ''
+            key_primary = den.lower()
+            key_secondary = (key_primary, fam.lower())
+            ficha_url = secondary.get(key_secondary) or primary.get(key_primary)
+            ciclos.append({'denominacion': den, 'familia': fam, 'ficha_url': ficha_url})
     return ciclos
 
 
-def build_ciclos_index(cert_data: dict[str, dict]) -> dict[str, list[dict]]:
+def build_ciclos_index(
+    cert_data: dict[str, dict],
+    all_records: list[dict] | None = None,
+) -> dict[str, list[dict]]:
     """
     Per a cada codi C LOE (clau de cert_data), crida ciclosFP i retorna
-    {codigo_C: [{'denominacion': ..., 'familia': ...}]}.
+    {codigo_C: [{'denominacion': ..., 'familia': ..., 'ficha_url': ...}]}.
 
-    cert_data: sortida de fetch_all() → {codigo: {'cert_id': int, ...}}
+    cert_data:   sortida de fetch_all() → {codigo: {'cert_id': int, ...}}
+    all_records: llista completa d'ofertes (conté els registres D amb ficha_url).
+                 Si és None, ficha_url serà None per a tots els cicles.
     """
     if not cert_data:
         return {}
 
+    d_index = _build_d_index(all_records) if all_records else None
     session = _bootstrap_session()
     result = {}
     for codigo, data in cert_data.items():
         cert_id = data.get('cert_id')
         if not cert_id:
             continue
-        ciclos = fetch_ciclos_fp(session, cert_id)
+        ciclos = fetch_ciclos_fp(session, cert_id, d_index=d_index)
         result[codigo] = ciclos
         logger.debug("build_ciclos_index: %s → %d cicles", codigo, len(ciclos))
 

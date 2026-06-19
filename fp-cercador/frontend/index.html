@@ -1737,7 +1737,15 @@
                             <span x-text="t('index.itinerari.ciclos_d_cap')"></span>
                             <ul class="ciclos-d-list">
                               <template x-for="cicle in ciclosDData[row.codigo]" :key="cicle.denominacion">
-                                <li x-text="cicle.denominacion + (cicle.familia ? ' (' + cicle.familia + ')' : '')"></li>
+                                <li>
+                                  <template x-if="cicle.ficha_url">
+                                    <a :href="cicle.ficha_url" target="_blank" rel="noopener"
+                                       x-text="cicle.denominacion + (cicle.familia ? ' (' + cicle.familia + ')' : '')"></a>
+                                  </template>
+                                  <template x-if="!cicle.ficha_url">
+                                    <span x-text="cicle.denominacion + (cicle.familia ? ' (' + cicle.familia + ')' : '')"></span>
+                                  </template>
+                                </li>
                               </template>
                             </ul>
                           </div>

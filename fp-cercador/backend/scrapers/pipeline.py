@@ -155,7 +155,7 @@ def run() -> dict:
         # --- F5: Ciclos FP (C→D) ---
         try:
             from scrapers.certificados_scraper import build_ciclos_index
-            ciclos_index = build_ciclos_index(cert_data)
+            ciclos_index = build_ciclos_index(cert_data, all_records=all_records)
             ciclos_path = os.path.join(os.path.dirname(DATA_PATH), 'ciclos_fp.json')
             with open(ciclos_path, 'w', encoding='utf-8') as f:
                 import json as _json
