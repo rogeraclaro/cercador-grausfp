@@ -54,6 +54,8 @@ amb quins prerequisits i quins passos manuals calen al servidor.
 | 038 | [F4-A] Backend seguiment de centres (BD + servei + endpoints + hook) | P2 | M | 022, 028, 037 | DONE |
 | 039 | [F4-B] Frontend seguiment de centres (botó index + seguiment.html) | P2 | M | 038 | DONE |
 | 040 | [F9] Multiidioma CA/ES — `i18n.js` global + selector topbar + totes les pàgines | P2 | L | — | DONE |
+| 041 | [SPIKE — F5] Itineraris formatius A→B→C→D — validació de fonts | P2 | M | — | DONE |
+| 042 | [F5] Itineraris formatius A→B (local) + C→D via ciclosFP | P2 | L | 041 DONE | DONE |
 
 Valors de Status: `TODO` | `IN PROGRESS` | `DONE` | `BLOCKED (motiu en una línia)` | `REJECTED (motiu en una línia)`
 
