@@ -187,3 +187,49 @@ def test_refresh_status_idle(client):
     assert "by_grado" in data
     assert "duration_seconds" in data
     assert "errors" in data
+
+
+# ---------------------------------------------------------------------------
+# F5: GET /api/itinerari — itineraris formatius A→B
+# ---------------------------------------------------------------------------
+
+_FAKE_OFERTES_ITINERARI = '[{"grado":"A","codigo":"ADG_A_3001_01","denominacion":"Preparación equipos","nivel":1,"familia":"ADG"},{"grado":"A","codigo":"ADG_A_3001_02","denominacion":"Grabación datos","nivel":1,"familia":"ADG"},{"grado":"B","codigo":"ADG_B_3001","denominacion":"Tratamiento datos","nivel":2,"familia":"ADG"}]'
+
+
+def test_itinerari_grado_a_returns_parent_b(client, monkeypatch):
+    """F5: GET /api/itinerari?grado=A retorna el B pare correcte."""
+    import app as flask_app_module
+    monkeypatch.setattr(flask_app_module, "_itinerary_index_cache", {"mtime": None, "index": None})
+    with mock.patch(PATCH_OS_PATH_EXISTS, return_value=True), \
+         mock.patch("app.os.path.getmtime", return_value=42.0), \
+         mock.patch("builtins.open", mock.mock_open(read_data=_FAKE_OFERTES_ITINERARI)):
+        r = client.get("/api/itinerari?grado=A&codigo=ADG_A_3001_01")
+    assert r.status_code == 200
+    data = r.get_json()
+    assert data.get("parent_b") is not None
+    assert data["parent_b"]["codigo"] == "ADG_B_3001"
+
+
+def test_itinerari_grado_b_returns_children_a(client, monkeypatch):
+    """F5: GET /api/itinerari?grado=B retorna la llista de fills A."""
+    import app as flask_app_module
+    monkeypatch.setattr(flask_app_module, "_itinerary_index_cache", {"mtime": None, "index": None})
+    with mock.patch(PATCH_OS_PATH_EXISTS, return_value=True), \
+         mock.patch("app.os.path.getmtime", return_value=42.0), \
+         mock.patch("builtins.open", mock.mock_open(read_data=_FAKE_OFERTES_ITINERARI)):
+        r = client.get("/api/itinerari?grado=B&codigo=ADG_B_3001")
+    assert r.status_code == 200
+    data = r.get_json()
+    assert "children_a" in data
+    assert len(data["children_a"]) == 2
+    codigos = {c["codigo"] for c in data["children_a"]}
+    assert "ADG_A_3001_01" in codigos
+    assert "ADG_A_3001_02" in codigos
+
+
+def test_itinerari_grado_invalide_returns_400(client):
+    """F5: GET /api/itinerari?grado=D retorna 400."""
+    r = client.get("/api/itinerari?grado=D&codigo=QUELCOM")
+    assert r.status_code == 400
+    data = r.get_json()
+    assert "error" in data
