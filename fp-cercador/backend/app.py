@@ -36,12 +36,13 @@ import logging
 import os
 import re
 import threading
+import time
 from datetime import datetime, timezone
 
 import requests
 from bs4 import BeautifulSoup
 from dotenv import load_dotenv
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, redirect, request
 from flask_cors import CORS
 
 import feed
@@ -49,7 +50,7 @@ import history
 import notifier
 import refresh_state
 import scheduler_service
-from scrapers import pipeline
+from scrapers import buscador_scraper, pipeline
 from scrapers.centres_scraper import build_centres_data
 
 # ---------------------------------------------------------------------------
@@ -633,6 +634,82 @@ def get_certificado_detail(codigo):
     except Exception as exc:
         logger.error("get_certificado_detail: error cridant fichaCP per %s: %s", codigo, exc)
         return jsonify({'error': str(exc)}), 502
+
+
+# ---------------------------------------------------------------------------
+# Redirecció a la fitxa oficial dels Graus A/B/C (pla nou)
+#
+# El ministeri reassigna els 'id' interns cada cop que refà la seva BD, així que
+# el ficha_id guardat al refresc queda obsolet i l'enllaç directe acaba portant
+# a una fitxa equivocada. Aquest endpoint resol l'id VIU per codigo (estable)
+# en el moment del clic i redirigeix, amb una cache TTL per no escanejar a cada
+# petició. Vegeu el mòdul buscador_scraper per al detall del scraping.
+# ---------------------------------------------------------------------------
+
+_FICHA_BASE = 'https://www.todofp.es/buscadorgradosfp'
+_FICHA_INDEX_TTL = 3600  # segons
+# {codigo: id_viu}. Reconstruït quan expira el TTL o davant un miss.
+_ficha_index = {"built_at": 0.0, "map": {}}
+_ficha_index_lock = threading.Lock()
+
+
+def _build_ficha_index() -> dict:
+    """Escaneja l'API viva de todofp i retorna {codigo: id} per a tots els A/B/C."""
+    data = buscador_scraper.parse_buscador_all()
+    index = {}
+    for records in data.values():
+        for r in records:
+            fid = r.get('ficha_id')
+            if r.get('codigo') and fid is not None:
+                index[r['codigo']] = fid
+    return index
+
+
+def _resolve_ficha_id(codigo: str):
+    """Retorna l'id viu per codigo, reconstruint la cache si cal (amb lock)."""
+    now = time.monotonic()
+    cached = _ficha_index["map"].get(codigo)
+    fresh = (now - _ficha_index["built_at"]) < _FICHA_INDEX_TTL
+    if cached is not None and fresh:
+        return cached
+
+    with _ficha_index_lock:
+        # Pot haver-se reconstruït mentre esperàvem el lock.
+        now = time.monotonic()
+        if (now - _ficha_index["built_at"]) >= _FICHA_INDEX_TTL or codigo not in _ficha_index["map"]:
+            new_map = _build_ficha_index()
+            _ficha_index.update(built_at=time.monotonic(), map=new_map)
+        return _ficha_index["map"].get(codigo)
+
+
+@app.route('/api/ficha-redirect')
+def ficha_redirect():
+    """302 cap a la fitxa oficial del Grau, resolent l'id viu per codigo.
+
+    GET /api/ficha-redirect?grado=A&codigo=AGA_A_3050_01
+    Si no es pot resoldre l'id, redirigeix a la pàgina del buscador del grau
+    perquè l'usuari no acabi en una fitxa equivocada.
+    """
+    grado = (request.args.get('grado') or '').upper()
+    codigo = request.args.get('codigo') or ''
+
+    if grado not in ('A', 'B', 'C'):
+        return jsonify({'error': 'grado ha de ser A, B o C'}), 400
+    if not _CODIGO_RE.match(codigo):
+        return jsonify({'error': 'Codi invàlid'}), 400
+
+    fallback = f'{_FICHA_BASE}/buscador?grado={grado}'
+    try:
+        ficha_id = _resolve_ficha_id(codigo)
+    except Exception as exc:
+        logger.error("ficha_redirect: no s'ha pogut resoldre %s: %s", codigo, exc)
+        return redirect(fallback, code=302)
+
+    if ficha_id is None:
+        logger.warning("ficha_redirect: codigo %s no trobat a l'índex viu", codigo)
+        return redirect(fallback, code=302)
+
+    return redirect(f'{_FICHA_BASE}/ficha?grado={grado}&id={ficha_id}', code=302)
 
 
 # ---------------------------------------------------------------------------

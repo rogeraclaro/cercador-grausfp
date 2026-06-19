@@ -1620,7 +1620,7 @@
                   row.grado === 'C' && row.plan_antiguo
                     ? (expandedId = (expandedId === row.id ? null : row.id))
                     : ['A','B','C'].includes(row.grado) && row.ficha_id
-                      ? window.open('https://www.todofp.es/buscadorgradosfp/ficha?grado=' + row.grado + '&id=' + row.ficha_id, '_blank')
+                      ? window.open(API_BASE + '/api/ficha-redirect?grado=' + row.grado + '&codigo=' + encodeURIComponent(row.codigo), '_blank')
                       : ['D','E'].includes(row.grado) && row.ficha_url
                         ? window.open(row.ficha_url, '_blank')
                         : null
