@@ -151,6 +151,19 @@ def run() -> dict:
                 if enrichment:
                     record.update(enrich_record(record, enrichment))
         logger.info("Enriquiment Grado C: %d certificats processats", len(cert_data))
+
+        # --- F5: Ciclos FP (C→D) ---
+        try:
+            from scrapers.certificados_scraper import build_ciclos_index
+            ciclos_index = build_ciclos_index(cert_data)
+            ciclos_path = os.path.join(os.path.dirname(DATA_PATH), 'ciclos_fp.json')
+            with open(ciclos_path, 'w', encoding='utf-8') as f:
+                import json as _json
+                _json.dump(ciclos_index, f, ensure_ascii=False)
+            logger.info("pipeline: ciclos_fp.json escrit (%d entrades)", len(ciclos_index))
+        except Exception as exc:
+            logger.warning("pipeline: build_ciclos_index ha fallat (no fatal): %s", exc)
+
     except Exception as exc:
         logger.warning("Enriquiment Grado C fallat (continua sense dades extra): %s", exc)
 

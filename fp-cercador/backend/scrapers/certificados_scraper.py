@@ -95,6 +95,59 @@ def fetch_all() -> dict[str, dict]:
     return result
 
 
+_CICLOS_PAYLOAD_BASE = {
+    'limite': '0', 'paso': '10', 'total': '588',
+    'codigo': '', 'denominacion': '', 'familia': '0',
+    'nivelFiltro': '0', 'origen': 'busquedaCP',
+}
+
+
+def fetch_ciclos_fp(session: requests.Session, cert_id: int, timeout: int = 20) -> list[dict]:
+    """
+    POST /ciclosFP per a un cert_id → llista de cicles D que el convaliden.
+    Cada cicle: {'denominacion': str, 'familia': str}
+    """
+    payload = {**_CICLOS_PAYLOAD_BASE, 'certificadoID': str(cert_id)}
+    try:
+        resp = session.post(BASE_CERT_URL + '/ciclosFP', data=payload, timeout=timeout)
+        resp.raise_for_status()
+    except Exception as exc:
+        logger.warning("fetch_ciclos_fp cert_id=%s: error HTTP: %s", cert_id, exc)
+        return []
+
+    soup = BeautifulSoup(resp.text, 'html.parser')
+    ciclos = []
+    for row in soup.select('table tr'):
+        cells = [td.get_text(strip=True) for td in row.find_all(['td', 'th'])]
+        if len(cells) >= 2 and cells[0] and cells[0] != 'Ciclo formativo':
+            ciclos.append({'denominacion': cells[0], 'familia': cells[1] if len(cells) > 1 else ''})
+    return ciclos
+
+
+def build_ciclos_index(cert_data: dict[str, dict]) -> dict[str, list[dict]]:
+    """
+    Per a cada codi C LOE (clau de cert_data), crida ciclosFP i retorna
+    {codigo_C: [{'denominacion': ..., 'familia': ...}]}.
+
+    cert_data: sortida de fetch_all() → {codigo: {'cert_id': int, ...}}
+    """
+    if not cert_data:
+        return {}
+
+    session = _bootstrap_session()
+    result = {}
+    for codigo, data in cert_data.items():
+        cert_id = data.get('cert_id')
+        if not cert_id:
+            continue
+        ciclos = fetch_ciclos_fp(session, cert_id)
+        result[codigo] = ciclos
+        logger.debug("build_ciclos_index: %s → %d cicles", codigo, len(ciclos))
+
+    logger.info("build_ciclos_index: %d certificats processats", len(result))
+    return result
+
+
 def enrich_record(record: dict, cert_data: dict) -> dict:
     """
     Afegeix camps derivats a un registre Grado C plan_antiguo=True.
