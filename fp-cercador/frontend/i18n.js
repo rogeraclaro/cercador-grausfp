@@ -137,6 +137,15 @@
       /* ── index.html — footer ── */
       'index.footer.historial': 'Historial d\'actualitzacions',
       'index.footer.obs': 'Observatori',
+      'index.footer.ocupacions': 'Cerca per ocupació',
+
+      /* ── ocupacions.html ── */
+      'ocupacions.hero.h1': 'Cerca per ocupació',
+      'ocupacions.hero.sub': 'Escriu què vols fer i descobreix quins graus FP hi porten.',
+      'ocupacions.placeholder': 'soldador, programador, cuidador…',
+      'ocupacions.meta': '{n} graus amb ocupacions que coincideixen',
+      'ocupacions.empty': 'Cap resultat. Prova un altre terme (en castellà).',
+      'page.title.ocupacions': 'Cerca per ocupació — Cercador Graus FP',
 
       /* ── alertes.html ── */
       'alertes.hero.h1': 'Les meves',
@@ -409,6 +418,15 @@
       /* ── index.html — footer ── */
       'index.footer.historial': 'Historial de actualizaciones',
       'index.footer.obs': 'Observatorio',
+      'index.footer.ocupacions': 'Búsqueda por ocupación',
+
+      /* ── ocupacions.html ── */
+      'ocupacions.hero.h1': 'Búsqueda por ocupación',
+      'ocupacions.hero.sub': 'Escribe qué quieres hacer y descubre qué grados FP te llevan.',
+      'ocupacions.placeholder': 'soldador, programador, cuidador…',
+      'ocupacions.meta': '{n} grados con ocupaciones que coinciden',
+      'ocupacions.empty': 'Sin resultados. Prueba otro término.',
+      'page.title.ocupacions': 'Búsqueda por ocupación — Buscador Grados FP',
 
       /* ── alertes.html ── */
       'alertes.hero.h1': 'Mis',

@@ -427,3 +427,16 @@ Triga ~6 min. `bc_loe.json` es genera a `backend/data/bc_loe.json`.
 No cal rellançar el servei: Flask llegeix el fitxer a cada petició.
 
 Re-executa el script si s'afegeixen nous certificats C LOE (rarament).
+
+### ocupaciones.json (Pla 047)
+
+Després del primer desplegament del pla 047, executa al VPS:
+
+```bash
+cd /ruta/al/repo
+python3 scripts/generate_ocupaciones.py
+```
+
+Triga ~2-3 min. Genera `backend/data/ocupaciones.json`. No cal rellançar el
+servei (Flask llegeix el fitxer amb cache per mtime). Re-executa el script si
+s'actualitza el catàleg de certificats o cicles.

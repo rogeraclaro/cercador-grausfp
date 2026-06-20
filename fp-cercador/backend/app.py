@@ -74,6 +74,7 @@ DATA_PATH = os.path.normpath(
 _DATA_DIR = os.path.join(os.path.dirname(__file__), "data")
 CICLOS_PATH = os.path.join(_DATA_DIR, "ciclos_fp.json")
 BC_LOE_PATH = os.path.join(_DATA_DIR, "bc_loe.json")
+OCUPACIONES_PATH = os.path.join(_DATA_DIR, "ocupaciones.json")
 _CENTRES_PATH = os.path.join(_DATA_DIR, "centres.json")
 _OFERTA_CENTRES_PATH = os.path.join(_DATA_DIR, "oferta_centres.json")
 _centres_index: dict | None = None
@@ -765,6 +766,74 @@ def _get_bc_loe_inverse() -> dict:
     except (OSError, json.JSONDecodeError) as exc:
         logger.warning("_get_bc_loe_inverse: error llegint bc_loe.json: %s", exc)
         return {}
+
+
+import re as _re_ocup
+import unicodedata as _ud_ocup
+
+_ocupaciones_cache: dict = {"mtime": None, "entries": None}
+
+
+def _get_ocupaciones() -> list[dict]:
+    """
+    Retorna la llista d'entrades ocupació→grau de ocupaciones.json.
+    Cache invalidat per mtime. Retorna [] si el fitxer no existeix.
+    """
+    if not os.path.exists(OCUPACIONES_PATH):
+        return []
+    mtime = os.path.getmtime(OCUPACIONES_PATH)
+    if _ocupaciones_cache["mtime"] == mtime and _ocupaciones_cache["entries"] is not None:
+        return _ocupaciones_cache["entries"]
+    try:
+        with open(OCUPACIONES_PATH, 'r', encoding='utf-8') as f:
+            entries = json.load(f)
+        _ocupaciones_cache.update(mtime=mtime, entries=entries)
+        return entries
+    except (OSError, json.JSONDecodeError) as exc:
+        logger.warning("_get_ocupaciones: error llegint ocupaciones.json: %s", exc)
+        return []
+
+
+def _norm_ocup(s: str) -> str:
+    s = (s or '').lower()
+    s = ''.join(c for c in _ud_ocup.normalize('NFD', s) if _ud_ocup.category(c) != 'Mn')
+    s = _re_ocup.sub(r'/\s+', '/', s)
+    return _re_ocup.sub(r'\s+', ' ', s).strip()
+
+
+@app.route('/api/ocupaciones')
+def api_ocupaciones():
+    """F6: cerca de graus per ocupació/sortida professional (castellà).
+
+    GET /api/ocupaciones?q=soldador
+      → {"query": "soldador", "n": 8, "resultados": [
+            {"grado": "C", "codigo": "FMEC0110", "id": 123,
+             "denominacion": "...", "familia": "...", "ficha_url": null,
+             "ocupaciones": ["Soldadores por TIG", ...]}, ...]}
+    """
+    q = request.args.get('q', '')
+    tokens = [t for t in _norm_ocup(q).split() if len(t) >= 2]
+    if not tokens:
+        return jsonify({'query': q, 'n': 0, 'resultados': []})
+
+    entries = _get_ocupaciones()
+    # Match per paraula completa: cada token ha de ser una paraula del 'norm'.
+    patterns = [_re_ocup.compile(r'\b' + _re_ocup.escape(t) + r'\b') for t in tokens]
+
+    grouped: dict = {}
+    for e in entries:
+        hay = e.get('norm', '')
+        if all(p.search(hay) for p in patterns):
+            key = e['codigo'] if e['grado'] == 'C' else f"{e['grado']}-{e['id']}"
+            g = grouped.setdefault(key, {
+                'grado': e['grado'], 'codigo': e.get('codigo'), 'id': e.get('id'),
+                'denominacion': e['denominacion'], 'familia': e.get('familia', ''),
+                'ficha_url': e.get('ficha_url'), 'ocupaciones': [],
+            })
+            g['ocupaciones'].append(e['ocupacio'])
+
+    resultados = sorted(grouped.values(), key=lambda g: -len(g['ocupaciones']))
+    return jsonify({'query': q, 'n': len(resultados), 'resultados': resultados})
 
 
 @app.route('/api/itinerari')

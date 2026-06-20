@@ -313,3 +313,42 @@ def test_itinerari_grado_c_retorna_parent_b_loe(client, monkeypatch):
     codigos_b = {b["codigo"] for b in data["parent_b_loe"]}
     assert "MF0969_1" in codigos_b
     assert "MF0970_1" in codigos_b
+
+
+# ---------------------------------------------------------------------------
+# F6: GET /api/ocupaciones
+# ---------------------------------------------------------------------------
+
+_FAKE_OCUP = [
+    {'ocupacio': 'Soldador por TIG', 'norm': 'soldador por tig', 'grado': 'C',
+     'codigo': 'FMEC0110', 'id': 1, 'denominacion': 'Soldadura TIG', 'ficha_url': None, 'familia': 'FME'},
+    {'ocupacio': 'Soldador por MIG', 'norm': 'soldador por mig', 'grado': 'C',
+     'codigo': 'FMEC0110', 'id': 1, 'denominacion': 'Soldadura TIG', 'ficha_url': None, 'familia': 'FME'},
+    {'ocupacio': 'Programador web', 'norm': 'programador web', 'grado': 'D',
+     'codigo': None, 'id': 99, 'denominacion': 'DAW', 'ficha_url': 'https://x/daw', 'familia': 'IFC'},
+]
+
+
+def test_ocupaciones_match_agrupa_per_grau(client, monkeypatch):
+    """F6: 'soldador' retorna el grau C agrupant les seves 2 ocupacions."""
+    import app as flask_app_module
+    monkeypatch.setattr(flask_app_module, "_get_ocupaciones", lambda: _FAKE_OCUP)
+    r = client.get('/api/ocupaciones?q=soldador')
+    assert r.status_code == 200
+    d = r.get_json()
+    assert d['n'] == 1
+    res = d['resultados'][0]
+    assert res['codigo'] == 'FMEC0110'
+    assert len(res['ocupaciones']) == 2
+
+
+def test_ocupaciones_match_paraula_completa(client, monkeypatch):
+    """F6: el match és per paraula completa, no substring."""
+    import app as flask_app_module
+    monkeypatch.setattr(flask_app_module, "_get_ocupaciones", lambda: _FAKE_OCUP)
+    # 'program' (substring de 'programador') NO ha de coincidir (vora de paraula)
+    assert client.get('/api/ocupaciones?q=program').get_json()['n'] == 0
+    # 'programador' sí
+    assert client.get('/api/ocupaciones?q=programador').get_json()['n'] == 1
+    # query buida → 0
+    assert client.get('/api/ocupaciones?q=').get_json()['n'] == 0
