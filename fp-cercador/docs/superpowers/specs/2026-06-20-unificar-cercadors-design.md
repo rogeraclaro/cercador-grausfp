@@ -1,8 +1,8 @@
 # Disseny: Unificar el cercador d'ocupació amb el cercador principal
 
-> **Estat: BRAINSTORM EN CURS** (no és un pla executable encara).
-> Aquest document és l'àncora de continuïtat entre sessions. Es va omplint
-> decisió a decisió. Quan estigui complet i aprovat → es genera un pla a `plans/`.
+> **Estat: DISSENY APROVAT (2026-06-20)** — pendent escriure el pla executable a `plans/`.
+> Aquest document és l'àncora de continuïtat entre sessions i l'spec de referència.
+> El disseny final aprovat és a la secció "## Disseny final (aprovat)".
 
 - **Data inici**: 2026-06-20
 - **Branca de treball**: (cap encara — brainstorm en `master`)
@@ -75,8 +75,12 @@ la unificació), però l'objectiu del propietari és impulsar registres.
 
 - [x] **Q-repr** → **RESOLT: opció 2, preferència d'usuari** (veure D3).
 - [x] **Q-gate-gran** → **RESOLT: preview + mur** (com centres, Pla 027). Veure D4.
-- [ ] Q-repr-default — Representació per defecte. **Proposta: Targetes** (lleugera, = preview anònim). Confirmar al disseny.
-- [ ] Q-repr-persist — On es desa la preferència. **Proposta: `localStorage`** (v1 sense canvis backend; BD com a millora futura). Confirmar al disseny.
+- [x] Q-repr-default → **RESOLT: Targetes** (default; també el que veu l'anònim al preview).
+- [x] Q-repr-persist → **RESOLT: `localStorage`** (v1 sense canvis backend; BD com a millora futura).
+
+Nota Q2 (idioma) i Q3/Q4 originals: Q2 → acceptat (ocupacions segueixen sent **només ES** en v1;
+traducció CA↔ES és millora futura ja documentada a [[project-f6-spike]]). Q3 → resolt per D3
+(targetes o taula, a elecció). Q4 (criteri d'èxit) → recollit a "Criteris d'èxit" més avall.
 
 ### D3 (2026-06-20) — Representació: preferència d'usuari (opció 2)
 El registrat tria entre dues representacions del **mateix** conjunt de resultats d'ocupació:
@@ -93,7 +97,74 @@ El mode "Cerca per ocupació" segueix el patró de centres (Pla 027): l'anònim 
 els **primers 3 resultats**; la resta queda tapada amb un mur convidant a registrar-se. Manté
 descobribilitat (SEO, prova abans de registre) i empeny el registre.
 
+## Disseny final (aprovat)
+
+Mockup de referència: `.superpowers/brainstorm/.../content/design-final.html` (gitignored).
+
+### Arquitectura
+- **Tot a `frontend/index.html`** (component Alpine `cercador` existent). Cap framework nou.
+- Nou estat `searchMode: 'nom' | 'ocupacio'`, amb un **commutador** a dalt al costat de la caixa de cerca.
+- **Mode "nom"** = comportament actual SENSE canvis (substring sobre denom+codi, filtres, taula rica).
+- **Mode "ocupació"** = es porta la lògica de `frontend/ocupacions.html` (vanilla) dins del component
+  Alpine; consumeix el `GET /api/ocupaciones?q=` **existent** (cap canvi de backend).
+
+### Components / estat nou (Alpine)
+- `searchMode` ('nom' default).
+- `ocupQuery`, `ocupResults` (resposta de `/api/ocupaciones`), `ocupLoading`.
+- `reprOcup: 'targetes' | 'taula'` — default **'targetes'**, persistit a **`localStorage`**.
+- Debounce de la cerca d'ocupació (com el mode nom, ~250ms).
+
+### Representacions del resultat d'ocupació (D3)
+1. **Targetes** (default): targetes per grau amb les ocupacions coincidents. Cada targeta porta
+   **les dues accions**: "Veure al cercador →" (pont) i "Fitxa ↗".
+2. **Taula**: es mapegen els graus de `ocupResults` (clau `codigo` per C, `id`/`grado` per D/E) als
+   registres ja a `allRecords` i es renderitzen amb la **taula existent**, afegint una marca
+   "Coincideix: [ocupacions]" per fila. Manté centres/favorits/itineraris/CSV.
+   - *Escape hatch*: si algun grau de `/api/ocupaciones` no casa amb cap registre d'`allRecords`
+     (codis que no reconcilien — limitació coneguda F6), es mostra igualment com a targeta/fila
+     mínima amb el que torni l'API; NO es perd el resultat. Documentar-ho.
+- **"Veure al cercador →"**: posa `searchMode='nom'` i filtra pel grau/codi d'aquella targeta.
+
+### Gating (D4 — preview + mur, patró Pla 027)
+- **Anònim**: pot cercar per ocupació i veure els **primers 3 resultats**; la resta, tapada amb
+  un mur "Registra't" (reutilitza el patró/modal de centres del Pla 027).
+- **Registrat**: tots els resultats + commutador de representació Targetes/Taula.
+- El límit (3) i el text del mur reutilitzen el mecanisme existent de gating de centres.
+
+### `ocupacions.html`
+- Deixa d'existir com a pàgina autònoma. L'enllaç del footer d'`index.html`
+  (`index.footer.ocupacions`) passa a `index.html?mode=ocupacio`; en carregar, el component
+  llegeix `?mode=` i posa `searchMode` en conseqüència. (Query param, no hash: enllaçable i
+  llegible al càrrec inicial sense dependre de l'historial.) Si hi havia enllaços externs a
+  `ocupacions.html`, es deixa un redirect mínim a `index.html?mode=ocupacio`.
+- Es retiren `frontend/ocupacions.html` i les seves claus i18n específiques que ja no s'usin
+  (revisar quines reutilitza el mode nou abans d'esborrar).
+
+### i18n
+- Reutilitzar les claus `ocupacions.*` existents on apliqui; afegir claus noves per al commutador
+  de mode, el commutador de representació i el mur de gating (CA + ES).
+
+### Criteris d'èxit
+- Des d'`index.html`, un usuari pot alternar "nom"/"ocupació" sense recarregar.
+- Cercar "soldador" en mode ocupació retorna graus; "Veure al cercador" porta a la fila del catàleg.
+- L'anònim veu 3 resultats + mur; el registrat els veu tots i pot canviar Targetes/Taula (recordat).
+- Mode "nom" intacte (cap regressió a la cerca actual).
+- `ocupacions.html` ja no és necessària; l'enllaç antic continua funcionant (redirigeix al mode).
+
+### Fora d'abast (v1)
+- Traducció/sinònims CA↔ES de les ocupacions (segueix només ES) — millora futura ([[project-f6-spike]]).
+- Persistència de la preferència a BD (v1 és localStorage).
+- Barrejar les dues semàntiques de cerca en una sola caixa (descartat a D1).
+- Rànquing semàntic d'ocupacions.
+
+### Riscos / notes de manteniment
+- `index.html` ja és gran (~2.100 línies); el mode ocupació afegeix estat i markup. Vigilar que el
+  component Alpine no creixi inmanejable; considerar separar la lògica d'ocupació en funcions netes.
+- Reutilitzar EXACTAMENT el patró de gating del Pla 027 per no divergir.
+- Recordar [[feedback_alpine_xif_single_root]] (x-if requereix un sol element arrel) en afegir els
+  blocs condicionals de mode/representació.
+
 ## Pròxima passa
 
-Presentar el disseny complet (amb mockup de l'estat final), confirmar Q-repr-default i
-Q-repr-persist, obtenir aprovació per seccions → escriure spec final → writing-plans.
+Escriure el pla executable a `plans/048-unificar-cercadors.md` (estil improve, autocontingut), o
+via writing-plans. Aquest doc és l'spec de referència.
