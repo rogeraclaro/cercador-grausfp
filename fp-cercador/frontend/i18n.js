@@ -121,7 +121,8 @@
       'index.err.watch.network': 'Error de xarxa',
 
       /* ── F5: Itineraris formatius ── */
-      'index.itinerari.parent_b_title': 'Part de la unitat de competència: ',
+      'index.itinerari.parent_b_title':  'Part de la unitat de competència: ',
+      'index.itinerari.parent_b_prefix': 'és acreditació parcial de competència de: ',
       'index.itinerari.ciclos_d_btn':   'Cicles FP (D)',
       'index.itinerari.ciclos_d_cap':   'Cicles formatius que convaliden aquest certificat:',
       'index.itinerari.ciclos_d_none':  'No hi ha cicles associats.',
@@ -392,7 +393,8 @@
       'index.err.watch.network': 'Error de red',
 
       /* ── F5: Itineraris formatius ── */
-      'index.itinerari.parent_b_title': 'Parte de la unidad de competencia: ',
+      'index.itinerari.parent_b_title':  'Parte de la unidad de competencia: ',
+      'index.itinerari.parent_b_prefix': 'es acreditación parcial de competencia de: ',
       'index.itinerari.ciclos_d_btn':   'Ciclos FP (D)',
       'index.itinerari.ciclos_d_cap':   'Ciclos formativos que convalidan este certificado:',
       'index.itinerari.ciclos_d_none':  'No hay ciclos asociados.',
