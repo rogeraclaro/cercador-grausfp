@@ -1407,6 +1407,9 @@
         },
 
         get filteredRecords() {
+          if (this.searchMode === 'ocupacio' && this.reprOcup === 'taula' && this.loggedIn) {
+            return this.ocupMatchedRecords();
+          }
           const q = this.search.normalize('NFD')
             .replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
           const result = this.allRecords.filter(r => {
@@ -2036,6 +2039,13 @@
                   </button>
                   <span x-text="row.denominacion"></span>
                   <span x-show="row.plan_antiguo" class="badge-old" x-text="t('index.badge.old')"></span>
+                  <template x-if="searchMode === 'ocupacio' && ocupMatchByRec[row.id] && ocupMatchByRec[row.id].length > 0">
+                    <div class="ocup-tags" style="margin-top:4px;">
+                      <template x-for="m in ocupMatchByRec[row.id]" :key="m">
+                        <span class="ocup-tag" x-text="m"></span>
+                      </template>
+                    </div>
+                  </template>
                   <template x-if="centres_count(row) > 0">
                     <span class="badge-centres" @click.stop="toggleCentres(row)"
                       x-text="t('index.centres.count', {n: centres_count(row)})">
