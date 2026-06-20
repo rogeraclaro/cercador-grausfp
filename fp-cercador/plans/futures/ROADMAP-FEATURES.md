@@ -88,7 +88,7 @@ ONADA 5 (diferenciar): F5 itineraris · F6 cerca per ocupació [spikes propis]
 | F9 | pendent de generar spike | TODO — independent, esforç S-M |
 | F10 | pendent de generar spike | TODO — depèn de F1 ✓ |
 | F5 | pendent de generar spike | TODO — necessita spike de fonts (itineraris A→B→C→D) |
-| F6 | pendent de generar spike | TODO — necessita spike de fonts SEPE |
+| F6 | spike `.planning/spikes/001-003` | DONE 2026-06-20 — font `/pdfPT` validada (C 99,8%, D 100%, E 93%); pendent de planificar implementació |
 
 ## Ordre recomanat per als propers plans
 
