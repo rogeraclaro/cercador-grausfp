@@ -1963,6 +1963,18 @@
     <!-- Error -->
     <div x-show="state === 'error'" class="error-state" role="alert" x-text="t('index.error')"></div>
 
+    <!-- Commutador repr. quan mode ocupació+taula+loggedIn (sobre la taula) -->
+    <template x-if="state === 'ready' && searchMode === 'ocupacio' && reprOcup === 'taula' && loggedIn">
+      <div style="padding: 16px 48px 0;">
+        <div class="repr-toggle">
+          <button :class="{ active: reprOcup === 'targetes' }" @click="setRepr('targetes')"
+            x-text="t('ocup.repr.targetes')"></button>
+          <button :class="{ active: reprOcup === 'taula' }" @click="setRepr('taula')"
+            x-text="t('ocup.repr.taula')"></button>
+        </div>
+      </div>
+    </template>
+
     <!-- Main content (nom mode or ocupacio+taula+loggedIn) -->
     <div
       x-show="state === 'ready' && (searchMode === 'nom' || (searchMode === 'ocupacio' && reprOcup === 'taula' && loggedIn))"
@@ -2350,18 +2362,6 @@
         <template x-if="ocupQuery.trim() && !ocupLoading && ocupResults.length === 0">
           <div class="empty" x-text="t('ocupacions.empty')"></div>
         </template>
-      </div>
-    </template>
-
-    <!-- Commutador repr. quan mode ocupació+taula+loggedIn (sobre la taula) -->
-    <template x-if="state === 'ready' && searchMode === 'ocupacio' && reprOcup === 'taula' && loggedIn">
-      <div style="padding: 16px 48px 0;">
-        <div class="repr-toggle">
-          <button :class="{ active: reprOcup === 'targetes' }" @click="setRepr('targetes')"
-            x-text="t('ocup.repr.targetes')"></button>
-          <button :class="{ active: reprOcup === 'taula' }" @click="setRepr('taula')"
-            x-text="t('ocup.repr.taula')"></button>
-        </div>
       </div>
     </template>
 
