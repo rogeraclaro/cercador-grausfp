@@ -603,10 +603,16 @@
 
     .detall-inner {
       display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding: 10px 16px;
+    }
+
+    .detall-btns {
+      display: flex;
       align-items: center;
       flex-wrap: wrap;
       gap: 8px;
-      padding: 10px 16px;
     }
 
     .detall-inner .detall-hores {
@@ -1803,15 +1809,17 @@
               <tr x-show="expandedId === row.id && row.grado === 'C' && row.plan_antiguo">
                 <td colspan="5" class="detall-certificat">
                   <div class="detall-inner">
-                    <span class="detall-hores" x-show="row.duracion_horas" x-text="row.duracion_horas + ' h.'"></span>
-                    <a :href="row.url_anexo_pdf" target="_blank" rel="noopener" class="btn-doc"
-                      x-text="t('index.detall.annexe')"></a>
-                    <a :href="row.url_europass_es" target="_blank" rel="noopener" class="btn-doc">Europass ES</a>
-                    <a :href="row.url_europass_en" target="_blank" rel="noopener" class="btn-doc">Europass EN</a>
-                    <button @click.stop="fetchBoe(row.codigo)" class="btn-doc">BOE / RD</button>
+                    <div class="detall-btns">
+                      <span class="detall-hores" x-show="row.duracion_horas" x-text="row.duracion_horas + ' h.'"></span>
+                      <a :href="row.url_anexo_pdf" target="_blank" rel="noopener" class="btn-doc"
+                        x-text="t('index.detall.annexe')"></a>
+                      <a :href="row.url_europass_es" target="_blank" rel="noopener" class="btn-doc">Europass ES</a>
+                      <a :href="row.url_europass_en" target="_blank" rel="noopener" class="btn-doc">Europass EN</a>
+                      <button @click.stop="fetchBoe(row.codigo)" class="btn-doc">BOE / RD</button>
+                      <button @click.stop="fetchCiclosD(row.codigo)" class="btn-doc"
+                        x-text="t('index.itinerari.ciclos_d_btn')"></button>
+                    </div>
                     <!-- F5: Cicles D -->
-                    <button @click.stop="fetchCiclosD(row.codigo)" class="btn-doc"
-                      x-text="t('index.itinerari.ciclos_d_btn')"></button>
                     <template x-if="ciclosDData[row.codigo] && ciclosDData[row.codigo] !== 'loading'">
                       <div class="detall-ciclos-d">
                         <template x-if="ciclosDData[row.codigo] === 'error'">
@@ -1821,7 +1829,7 @@
                           <span x-text="t('index.itinerari.ciclos_d_none')"></span>
                         </template>
                         <template x-if="Array.isArray(ciclosDData[row.codigo]) && ciclosDData[row.codigo].length > 0">
-                          <div class="cicles-grauD">
+                          <div>
                             <span x-text="t('index.itinerari.ciclos_d_cap')"></span>
                             <ul class="ciclos-d-list">
                               <template x-for="cicle in ciclosDData[row.codigo]" :key="cicle.denominacion">
@@ -1841,13 +1849,15 @@
                         </template>
                       </div>
                     </template>
-                    <!-- B→C LOE: mòduls B LOE acreditats -->
+                    <!-- F5: Mòduls B LOE acreditats -->
                     <template x-if="parentBLoeData[row.codigo] && parentBLoeData[row.codigo].length > 0">
-                      <div class="detall-ciclos-d" style="margin-top:6px">
+                      <div class="detall-ciclos-d">
                         <span x-text="t('index.itinerari.parent_b_loe_cap')"></span>
                         <ul class="ciclos-d-list">
                           <template x-for="bmod in parentBLoeData[row.codigo]" :key="bmod.codigo">
-                            <li x-text="bmod.codigo + ' — ' + bmod.denominacion"></li>
+                            <li><a :href="API_BASE + '/api/ficha-redirect?grado=B&codigo=' + bmod.codigo"
+                              target="_blank" rel="noopener"
+                              x-text="bmod.codigo + ' — ' + bmod.denominacion"></a></li>
                           </template>
                         </ul>
                       </div>
