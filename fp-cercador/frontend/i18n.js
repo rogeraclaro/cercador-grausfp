@@ -134,6 +134,16 @@
       'index.itinerari.children_c_loe_err': 'Error carregant certificats C.',
       'index.itinerari.children_c_loe_loading': 'Carregant...',
 
+      /* ── index.html — mode toggle + ocupació ── */
+      'index.mode.nom': 'Cerca per nom',
+      'index.mode.ocupacio': 'Cerca per ocupació',
+      'ocup.repr.targetes': 'Targetes',
+      'ocup.repr.taula': 'Taula',
+      'ocup.search.placeholder': 'soldador, programador, cuidador…',
+      'ocup.veure.cercador': 'Veure al cercador',
+      'ocup.fitxa': 'Fitxa',
+      'ocup.wall.msg': 'Registra\'t per veure tots els graus i triar la vista.',
+
       /* ── index.html — footer ── */
       'index.footer.historial': 'Historial d\'actualitzacions',
       'index.footer.obs': 'Observatori',
@@ -414,6 +424,16 @@
       'index.itinerari.children_c_loe_none': 'Ningún certificado C asociado.',
       'index.itinerari.children_c_loe_err': 'Error cargando certificados C.',
       'index.itinerari.children_c_loe_loading': 'Cargando...',
+
+      /* ── index.html — mode toggle + ocupació ── */
+      'index.mode.nom': 'Buscar por nombre',
+      'index.mode.ocupacio': 'Buscar por ocupación',
+      'ocup.repr.targetes': 'Tarjetas',
+      'ocup.repr.taula': 'Tabla',
+      'ocup.search.placeholder': 'soldador, programador, cuidador…',
+      'ocup.veure.cercador': 'Ver en el buscador',
+      'ocup.fitxa': 'Ficha',
+      'ocup.wall.msg': 'Regístrate para ver todos los grados y elegir la vista.',
 
       /* ── index.html — footer ── */
       'index.footer.historial': 'Historial de actualizaciones',
