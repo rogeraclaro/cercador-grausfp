@@ -1767,10 +1767,11 @@
                     </span>
                   </template>
                   <template x-if="parentBOf(row)">
-                    <span x-text="t('index.itinerari.parent_b_prefix')"></span>
-                    <span class="badge-itinerari-b"
-                      :title="t('index.itinerari.parent_b_title') + (parentBOf(row)||{}).denominacion"
-                      x-text="'→ ' + ((parentBOf(row)||{}).codigo || '')"></span>
+                    <span>
+                      <span x-text="t('index.itinerari.parent_b_prefix')"></span><span class="badge-itinerari-b"
+                        :title="t('index.itinerari.parent_b_title') + (parentBOf(row)||{}).denominacion"
+                        x-text="'→ ' + ((parentBOf(row)||{}).codigo || '')"></span>
+                    </span>
                   </template>
                   <template x-if="row.grado === 'B' && row.codigo && /^MF\d{4}_\d+$/.test(row.codigo)">
                     <span class="badge-itinerari-b" style="cursor:pointer"
