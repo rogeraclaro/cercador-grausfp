@@ -1863,7 +1863,9 @@
                         <span x-text="t('index.itinerari.children_c_loe_cap')"></span>
                         <ul class="ciclos-d-list">
                           <template x-for="cert in childrenCLoeData[row.id]" :key="cert.codigo">
-                            <li x-text="cert.codigo + ' — ' + cert.denominacion"></li>
+                            <li><a :href="API_BASE + '/api/ficha-redirect?grado=C&codigo=' + cert.codigo"
+                              target="_blank" rel="noopener"
+                              x-text="cert.codigo + ' — ' + cert.denominacion"></a></li>
                           </template>
                         </ul>
                       </div>
