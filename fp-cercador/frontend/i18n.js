@@ -135,7 +135,7 @@
       'index.itinerari.children_c_loe_loading': 'Carregant...',
 
       /* ── index.html — mode toggle + ocupació ── */
-      'index.mode.nom': 'Cerca per nom',
+      'index.mode.nom': 'Cerca per nom/codi de grau',
       'index.mode.ocupacio': 'Cerca per ocupació',
       'ocup.repr.targetes': 'Targetes',
       'ocup.repr.taula': 'Taula',
@@ -426,7 +426,7 @@
       'index.itinerari.children_c_loe_loading': 'Cargando...',
 
       /* ── index.html — mode toggle + ocupació ── */
-      'index.mode.nom': 'Buscar por nombre',
+      'index.mode.nom': 'Buscar por nombre/código de grado',
       'index.mode.ocupacio': 'Buscar por ocupación',
       'ocup.repr.targetes': 'Tarjetas',
       'ocup.repr.taula': 'Tabla',
