@@ -147,6 +147,148 @@
       font-weight: 600;
     }
 
+    /* ── Mode toggle (nom / ocupació) ── */
+    .mode-toggle {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .mode-toggle button {
+      padding: 8px 20px;
+      border: 2px solid var(--dark);
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      font-family: inherit;
+      font-weight: 500;
+      background: transparent;
+      color: var(--dark);
+      transition: background 0.15s, color 0.15s;
+    }
+
+    .mode-toggle button:hover {
+      background: rgba(0,0,0,0.05);
+    }
+
+    .mode-toggle button.active {
+      background: var(--dark);
+      color: var(--white);
+    }
+
+    /* ── Representació toggle (targetes/taula) ── */
+    .repr-toggle {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 16px;
+    }
+
+    .repr-toggle button {
+      padding: 6px 16px;
+      border: 1.5px solid var(--border);
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 13px;
+      font-family: inherit;
+      background: transparent;
+      color: var(--warm);
+      transition: background 0.15s, color 0.15s;
+    }
+
+    .repr-toggle button.active {
+      background: var(--dark);
+      color: var(--white);
+      border-color: var(--dark);
+    }
+
+    /* ── Targetes d'ocupació ── */
+    .ocup-results {
+      padding: 24px 48px;
+    }
+
+    .ocup-card {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px 20px;
+      margin-bottom: 12px;
+      background: var(--white);
+    }
+
+    .ocup-card h3 {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--dark);
+      margin-bottom: 8px;
+    }
+
+    .ocup-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 12px;
+    }
+
+    .ocup-tag {
+      display: inline-block;
+      padding: 3px 10px;
+      background: var(--warm2);
+      border-radius: 12px;
+      font-size: 12px;
+      color: var(--warm);
+    }
+
+    .ocup-actions {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .ocup-btn {
+      padding: 6px 14px;
+      border: 1.5px solid var(--dark);
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 13px;
+      font-family: inherit;
+      background: transparent;
+      color: var(--dark);
+      font-weight: 500;
+      transition: background 0.15s, color 0.15s;
+    }
+
+    .ocup-btn:hover {
+      background: var(--dark);
+      color: var(--white);
+    }
+
+    .ocup-link {
+      font-size: 13px;
+      color: var(--warm);
+      text-decoration: none;
+    }
+
+    .ocup-link:hover {
+      color: var(--dark);
+      text-decoration: underline;
+    }
+
+    .ocup-wall {
+      margin-top: 8px;
+      padding: 20px;
+      border: 2px dashed var(--border);
+      border-radius: 8px;
+      text-align: center;
+      color: var(--warm);
+      font-size: 14px;
+      cursor: pointer;
+      transition: border-color 0.15s;
+    }
+
+    .ocup-wall:hover {
+      border-color: var(--dark);
+      color: var(--dark);
+    }
+
     /* ── Secondary filters ── */
     .filter-bar {
       background: var(--warm2);
@@ -1153,6 +1295,15 @@
         favorites: new Set(),
         filterFavs: false,
 
+        // F8 — Mode toggle (nom / ocupació)
+        searchMode: 'nom',          // 'nom' | 'ocupacio'
+        ocupQuery: '',
+        ocupResults: [],            // resultados de /api/ocupaciones
+        ocupLoading: false,
+        ocupTimer: null,
+        reprOcup: (localStorage.getItem('reprOcup') === 'taula' ? 'taula' : 'targetes'),
+        ocupMatchByRec: {},
+
         // F5 — Itineraris formatius
         ciclosDData: {},        // {codigo: [{denominacion, familia}] | 'loading' | 'error'}
         parentBLoeData: {},     // parent B LOE per codigo C
@@ -1212,6 +1363,8 @@
               fetch(API_BASE + '/api/auth/me', { credentials: 'include' }).catch(() => ({ ok: false }))
             ]);
             this.loggedIn = authRes.ok;
+            const _params = new URLSearchParams(location.search);
+            if (_params.get('mode') === 'ocupacio') this.searchMode = 'ocupacio';
             if (this.loggedIn) {
               this.loadFavorites();
               this.loadWatches();
@@ -1576,6 +1729,80 @@
           }
         },
 
+        // F8 — Mode toggle + cerca per ocupació
+        setSearchMode(m) {
+          this.searchMode = m;
+          if (m === 'ocupacio' && this.ocupQuery.trim()) this.runOcupSearch();
+        },
+
+        setRepr(r) {
+          this.reprOcup = r;
+          try { localStorage.setItem('reprOcup', r); } catch (e) {}
+        },
+
+        async runOcupSearch() {
+          const q = this.ocupQuery.trim();
+          if (!q) { this.ocupResults = []; return; }
+          this.ocupLoading = true;
+          try {
+            const r = await fetch(API_BASE + '/api/ocupaciones?q=' + encodeURIComponent(q));
+            const d = await r.json();
+            this.ocupResults = d.resultados || [];
+          } catch (e) {
+            this.ocupResults = [];
+          } finally {
+            this.ocupLoading = false;
+          }
+        },
+
+        onOcupInput() {
+          clearTimeout(this.ocupTimer);
+          this.ocupTimer = setTimeout(() => this.runOcupSearch(), 250);
+        },
+
+        ocupFichaHref(g) {
+          if (g.grado === 'C' && g.codigo)
+            return API_BASE + '/api/ficha-redirect?grado=C&codigo=' + encodeURIComponent(g.codigo);
+          return g.ficha_url || '#';
+        },
+
+        ocupVisibleResults() {
+          return this.loggedIn ? this.ocupResults : this.ocupResults.slice(0, 3);
+        },
+
+        ocupHasWall() {
+          return !this.loggedIn && this.ocupResults.length > 3;
+        },
+
+        veureAlCercador(g) {
+          this.searchMode = 'nom';
+          this.filterGrado = g.grado || '';
+          this.search = g.codigo || g.denominacion || '';
+          this.resetPage();
+        },
+
+        ocupMatchedRecords() {
+          this.ocupMatchByRec = {};
+          const byCod = new Map();
+          const byId = new Map();
+          for (const r of this.allRecords) {
+            if (r.codigo) byCod.set(r.codigo, r);
+            if (r.id != null) byId.set(String(r.id), r);
+          }
+          const out = [];
+          const seen = new Set();
+          for (const g of this.ocupResults) {
+            let rec = (g.codigo && byCod.get(g.codigo)) || (g.id != null && byId.get(String(g.id))) || null;
+            if (rec) {
+              if (seen.has(rec.id)) continue;
+              seen.add(rec.id);
+              this.ocupMatchByRec[rec.id] = g.ocupaciones;
+              out.push(rec);
+            }
+          }
+          return out;
+        },
+
         async fetchBoe(codigo) {
           try {
             const res = await fetch(API_BASE + '/api/certificado/' + codigo);
@@ -1616,21 +1843,41 @@
       <h1><span data-i18n="index.hero.h1.line1">Formació</span><br><em data-i18n="index.hero.h1.line2">Professional</em>
       </h1>
       <p class="hero-sub" data-i18n="index.hero.sub">Explora els graus disponibles a l'estat espanyol</p>
-      <div class="search-wrap">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2.5"
-          stroke-linecap="round">
-          <circle cx="11" cy="11" r="8" />
-          <path d="m21 21-4.35-4.35" />
-        </svg>
-        <label for="search" class="sr-only" data-i18n="index.search.label">Cerca</label>
-        <input type="search" id="search" x-model.debounce.250ms="search" @input="resetPage()"
-          data-i18n-placeholder="index.search.placeholder" placeholder="Cerca per denominació o codi..."
-          autocomplete="off">
+      <div class="mode-toggle" role="tablist">
+        <button :class="{ active: searchMode === 'nom' }" @click="setSearchMode('nom')"
+          x-text="t('index.mode.nom')"></button>
+        <button :class="{ active: searchMode === 'ocupacio' }" @click="setSearchMode('ocupacio')"
+          x-text="t('index.mode.ocupacio')"></button>
       </div>
+      <template x-if="searchMode === 'nom'">
+        <div class="search-wrap">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2.5"
+            stroke-linecap="round">
+            <circle cx="11" cy="11" r="8" />
+            <path d="m21 21-4.35-4.35" />
+          </svg>
+          <label for="search" class="sr-only" data-i18n="index.search.label">Cerca</label>
+          <input type="search" id="search" x-model.debounce.250ms="search" @input="resetPage()"
+            data-i18n-placeholder="index.search.placeholder" placeholder="Cerca per denominació o codi..."
+            autocomplete="off">
+        </div>
+      </template>
+      <template x-if="searchMode === 'ocupacio'">
+        <div class="search-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2.5" stroke-linecap="round"
+            width="18" height="18" aria-hidden="true">
+            <circle cx="11" cy="11" r="8"/>
+            <path d="m21 21-4.35-4.35"/>
+          </svg>
+          <input type="search" x-model="ocupQuery" @input="onOcupInput()"
+            :placeholder="t('ocup.search.placeholder')" autocomplete="off">
+        </div>
+      </template>
     </div>
 
-    <!-- Grau tabs -->
-    <div class="grau-tabs" role="tablist" data-i18n-aria="index.tabs.aria" aria-label="Filtre per grau">
+    <!-- Grau tabs (only in nom mode) -->
+    <div class="grau-tabs" role="tablist" data-i18n-aria="index.tabs.aria" aria-label="Filtre per grau"
+      x-show="searchMode === 'nom'">
       <button :class="{ active: filterGrado === '' }" @click="filterGrado=''; resetPage()"
         x-text="t('index.tabs.all')"></button>
       <template x-for="g in ['A','B','C','D','E']" :key="g">
@@ -1639,8 +1886,8 @@
       </template>
     </div>
 
-    <!-- Secondary filter bar -->
-    <div class="filter-bar">
+    <!-- Secondary filter bar (only in nom mode) -->
+    <div class="filter-bar" x-show="searchMode === 'nom'">
       <span class="filter-bar-label" data-i18n="index.filter.label">Filtrar per:</span>
 
       <label for="filter-familia" class="sr-only">Família</label>
@@ -1708,8 +1955,8 @@
     <!-- Error -->
     <div x-show="state === 'error'" class="error-state" role="alert" x-text="t('index.error')"></div>
 
-    <!-- Main content -->
-    <div x-show="state === 'ready'" class="content">
+    <!-- Main content (nom mode or ocupacio+taula+loggedIn) -->
+    <div x-show="state === 'ready' && (searchMode === 'nom' || (searchMode === 'ocupacio' && reprOcup === 'taula' && loggedIn))" class="content">
 
       <p class="results-count"
         x-text="filteredCount === 0 ? t('index.results.zero') : (filteredCount === 1 ? t('index.results.one') : t('index.results.many', {n: filteredCount}))">
@@ -2048,6 +2295,58 @@
       </nav>
 
     </div>
+
+    <!-- Resultats d'ocupació (mode ocupació + targetes) -->
+    <template x-if="state === 'ready' && searchMode === 'ocupacio' && (reprOcup === 'targetes' || !loggedIn)">
+      <div class="ocup-results">
+        <!-- Commutador de representació: només registrats -->
+        <template x-if="loggedIn">
+          <div class="repr-toggle">
+            <button :class="{ active: reprOcup === 'targetes' }" @click="setRepr('targetes')"
+              x-text="t('ocup.repr.targetes')"></button>
+            <button :class="{ active: reprOcup === 'taula' }" @click="setRepr('taula')"
+              x-text="t('ocup.repr.taula')"></button>
+          </div>
+        </template>
+        <template x-for="g in ocupVisibleResults()" :key="(g.codigo||'') + '-' + (g.id||'') + '-' + g.grado">
+          <div class="ocup-card">
+            <h3 x-text="g.denominacion + ' · ' + g.grado"></h3>
+            <div class="ocup-tags">
+              <template x-for="m in g.ocupaciones" :key="m">
+                <span class="ocup-tag" x-text="m"></span>
+              </template>
+            </div>
+            <div class="ocup-actions">
+              <button class="ocup-btn" @click="veureAlCercador(g)"
+                x-text="t('ocup.veure.cercador') + ' →'"></button>
+              <a class="ocup-link" :href="ocupFichaHref(g)" target="_blank" rel="noopener"
+                x-text="t('ocup.fitxa') + ' ↗'"></a>
+            </div>
+          </div>
+        </template>
+        <!-- Mur per anònims -->
+        <template x-if="ocupHasWall()">
+          <div class="ocup-wall" @click="showCentresModal()">
+            <span x-text="t('ocup.wall.msg')"></span>
+          </div>
+        </template>
+        <template x-if="ocupQuery.trim() && !ocupLoading && ocupResults.length === 0">
+          <div class="empty" x-text="t('ocupacions.empty')"></div>
+        </template>
+      </div>
+    </template>
+
+    <!-- Commutador repr. quan mode ocupació+taula+loggedIn (sobre la taula) -->
+    <template x-if="state === 'ready' && searchMode === 'ocupacio' && reprOcup === 'taula' && loggedIn">
+      <div style="padding: 16px 48px 0;">
+        <div class="repr-toggle">
+          <button :class="{ active: reprOcup === 'targetes' }" @click="setRepr('targetes')"
+            x-text="t('ocup.repr.targetes')"></button>
+          <button :class="{ active: reprOcup === 'taula' }" @click="setRepr('taula')"
+            x-text="t('ocup.repr.taula')"></button>
+        </div>
+      </div>
+    </template>
 
     <!-- Modal confirmació alerta desada -->
     <div x-show="alertModalVisible" @click="alertModalVisible = false" class="centres-modal-overlay" x-cloak>
