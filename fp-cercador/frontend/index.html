@@ -1821,7 +1821,7 @@
                           <span x-text="t('index.itinerari.ciclos_d_none')"></span>
                         </template>
                         <template x-if="Array.isArray(ciclosDData[row.codigo]) && ciclosDData[row.codigo].length > 0">
-                          <div>
+                          <div class="cicles-grauD">
                             <span x-text="t('index.itinerari.ciclos_d_cap')"></span>
                             <ul class="ciclos-d-list">
                               <template x-for="cicle in ciclosDData[row.codigo]" :key="cicle.denominacion">
