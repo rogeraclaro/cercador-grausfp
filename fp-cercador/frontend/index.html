@@ -1397,7 +1397,7 @@
               : 'id=' + row.id;
             const resp = await fetch(API_BASE + '/api/centres?' + param);
             this.centresData[row.id] = await resp.json();
-            this.centresCCAA[row.id] = t('index.centres.all.ccaa');
+            this.centresCCAA[row.id] = '';
             this.centresSearch[row.id] = '';
           } finally {
             this.centresLoading[row.id] = false;
