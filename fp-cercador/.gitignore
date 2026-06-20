@@ -34,3 +34,4 @@ backend/data/
 # Artefactes de testing i planificació local
 .playwright-mcp/
 .planning/
+.superpowers/
