@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="ca">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title data-i18n="perque.page.title">Per què GrausFP? — Cercador Graus FP</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=DM+Serif+Display:ital@0;1&family=Geist+Mono:wght@400;500&display=swap"
+    rel="stylesheet">
+
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --dark: #1c1410;
+      --warm: #8a7060;
+      --warm2: #f5ece2;
+      --border: #e8ddd4;
+      --bg: #fdf8f2;
+      --white: #ffffff;
+    }
+
+    body {
+      font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 14px;
+      color: var(--dark);
+      background: var(--bg);
+    }
+
+    .topbar {
+      background: var(--dark);
+      padding: 0 48px;
+    }
+
+    .topbar-inner {
+      display: flex;
+      align-items: center;
+      height: 52px;
+    }
+
+    .topbar-logo {
+      font-family: 'DM Serif Display', serif;
+      color: var(--white);
+      font-size: 20px;
+      letter-spacing: -0.3px;
+      text-decoration: none;
+    }
+
+    .hero {
+      border-bottom: 2px solid var(--dark);
+      padding: 40px 48px 32px;
+    }
+
+    .hero h1 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 48px;
+      font-weight: 400;
+      line-height: 1.05;
+      color: var(--dark);
+      margin-bottom: 10px;
+    }
+
+    .hero-sub {
+      font-size: 15px;
+      color: var(--warm);
+    }
+
+    .content {
+      padding: 40px 48px 80px;
+      max-width: 860px;
+    }
+
+    /* Tipografia de contingut */
+    .content h2 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 28px;
+      font-weight: 400;
+      margin: 48px 0 16px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 10px;
+    }
+
+    .content h2:first-child {
+      margin-top: 0;
+    }
+
+    .content h3 {
+      font-size: 15px;
+      font-weight: 600;
+      margin: 28px 0 8px;
+      color: var(--dark);
+    }
+
+    .content p {
+      line-height: 1.7;
+      color: #3a2e28;
+      margin-bottom: 12px;
+    }
+
+    .content strong {
+      font-weight: 600;
+      color: var(--dark);
+    }
+
+    .content em {
+      font-style: italic;
+    }
+
+    /* Taula de grados */
+    .grade-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0 32px;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .grade-table thead tr {
+      background: var(--warm2);
+      border-bottom: 2px solid var(--dark);
+    }
+
+    .grade-table th {
+      text-align: left;
+      padding: 10px 16px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--dark);
+    }
+
+    .grade-table td {
+      padding: 11px 16px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+
+    .grade-table tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    .grade-table tbody tr:hover td {
+      background: var(--warm2);
+    }
+
+    .grade-badge {
+      display: inline-block;
+      font-weight: 700;
+      font-size: 13px;
+      color: var(--dark);
+    }
+
+    /* Taula de comparació */
+    .compare-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0 32px;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      overflow: hidden;
+      font-size: 13px;
+    }
+
+    .compare-table thead tr {
+      background: var(--warm2);
+      border-bottom: 2px solid var(--dark);
+    }
+
+    .compare-table th {
+      padding: 10px 12px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--dark);
+      text-align: left;
+    }
+
+    .compare-table th:not(:first-child) {
+      text-align: center;
+    }
+
+    .compare-table td {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: middle;
+    }
+
+    .compare-table td:not(:first-child) {
+      text-align: center;
+    }
+
+    .compare-table tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    .compare-table tbody tr:hover td {
+      background: var(--warm2);
+    }
+
+    .compare-table td:first-child {
+      font-weight: 500;
+    }
+
+    .check-yes { color: #166534; font-size: 16px; }
+    .check-no  { color: #991b1b; font-size: 16px; }
+    .check-partial { color: #92400e; font-size: 13px; }
+
+    /* Bloc de perfil (estudiant / orientador / educador) */
+    .profile-block {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 24px 28px;
+      margin: 16px 0 32px;
+    }
+
+    .profile-block h3 {
+      margin-top: 0;
+      font-size: 16px;
+      font-weight: 600;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 10px;
+      margin-bottom: 16px;
+    }
+
+    .feature-item {
+      margin-bottom: 14px;
+      line-height: 1.65;
+    }
+
+    .feature-item:last-child {
+      margin-bottom: 0;
+    }
+
+    /* FAQ */
+    .faq-item {
+      border-bottom: 1px solid var(--border);
+      padding: 18px 0;
+    }
+
+    .faq-item:last-child {
+      border-bottom: none;
+    }
+
+    .faq-q {
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .faq-a {
+      color: #3a2e28;
+      line-height: 1.65;
+    }
+
+    /* CTA final */
+    .cta-box {
+      background: var(--dark);
+      color: var(--white);
+      border-radius: 4px;
+      padding: 32px 36px;
+      margin-top: 40px;
+      text-align: center;
+    }
+
+    .cta-box p {
+      color: rgba(255,255,255,0.75);
+      margin-bottom: 20px;
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    .cta-btn {
+      display: inline-block;
+      background: var(--white);
+      color: var(--dark);
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 600;
+      padding: 10px 28px;
+      border-radius: 4px;
+      text-decoration: none;
+      transition: background 0.15s;
+    }
+
+    .cta-btn:hover {
+      background: var(--warm2);
+    }
+
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 20px 48px;
+      text-align: right;
+    }
+
+    footer a {
+      font-size: 13px;
+      color: var(--warm);
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      color: var(--dark);
+    }
+
+    @media (max-width: 768px) {
+      .topbar { padding: 0 16px; }
+      .hero { padding: 24px 16px 20px; }
+      .hero h1 { font-size: 32px; }
+      .content { padding: 24px 16px 48px; }
+      footer { padding: 20px 16px; }
+      .compare-table { font-size: 12px; }
+      .compare-table th, .compare-table td { padding: 8px 8px; }
+      .cta-box { padding: 24px 20px; }
+    }
+
+    /* Auth widget al topbar */
+    #auth-widget {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .auth-greeting {
+      color: rgba(255, 255, 255, 0.75);
+      font-size: 13px;
+    }
+
+    .auth-btn {
+      font-size: 13px;
+      padding: 5px 14px;
+      border-radius: 4px;
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      color: var(--white);
+      background: transparent;
+      cursor: pointer;
+      text-decoration: none;
+      font-family: inherit;
+      transition: background 0.15s;
+    }
+
+    .auth-btn:hover { background: rgba(255, 255, 255, 0.12); }
+
+    .auth-btn--primary {
+      background: var(--white);
+      color: var(--dark);
+      border-color: var(--white);
+    }
+
+    .auth-btn--primary:hover { background: var(--warm2); }
+
+    .lang-selector {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      margin-left: 16px;
+    }
+
+    .lang-btn {
+      font-size: 11px;
+      font-weight: 700;
+      font-family: inherit;
+      padding: 3px 8px;
+      border-radius: 3px;
+      cursor: pointer;
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      color: rgba(255, 255, 255, 0.6);
+      letter-spacing: 0.04em;
+      transition: background 0.15s, color 0.15s;
+    }
+
+    .lang-btn:hover { background: rgba(255, 255, 255, 0.12); color: var(--white); }
+
+    .lang-btn--active {
+      background: rgba(255, 255, 255, 0.18);
+      color: var(--white);
+      border-color: rgba(255, 255, 255, 0.6);
+    }
+  </style>
+  <script src="i18n.js"></script>
+  <script src="auth.js"></script>
+</head>
+
+<body>
+
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a href="index.html" class="topbar-logo">GrausFP</a>
+      <div id="auth-widget"></div>
+      <div class="lang-selector" aria-label="Language selector">
+        <button class="lang-btn" data-lang="ca" onclick="setLang('ca')">CA</button>
+        <button class="lang-btn" data-lang="es" onclick="setLang('es')">ES</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="hero">
+    <h1 data-i18n="perque.hero.h1">Per què<br><em>GrausFP?</em></h1>
+    <p class="hero-sub" data-i18n="perque.hero.sub">Tot l'FP espanyol en un sol lloc, per a estudiants, orientadors i educadors</p>
+  </div>
+
+  <main class="content">
+
+    <h2 data-i18n="perque.s1.h2">Quin problema resol</h2>
+    <p data-i18n="perque.s1.p1">L'oferta de Formació Professional a Espanya és enorme i està dispersa. Grados A, B, C, D i E. Famílies professionals. Nivells. Comunitats autònomes. Centres. Cada font en un lloc diferent, amb formats incompatibles, sense manera de comparar ni fer seguiment.</p>
+    <p data-i18n="perque.s1.p2"><strong>Cercador FP España</strong> consolida <em>tota</em> l'oferta formativa del sistema FP espanyol (Llei Orgànica 3/2022) en un únic cercador de resposta instantània. Sense instal·lar res. Sense pagar res. Sense frustracions.</p>
+
+    <h2 data-i18n="perque.s2.h2">Quins grados trobaràs</h2>
+    <table class="grade-table">
+      <thead>
+        <tr>
+          <th data-i18n="perque.table.grau">Grau</th>
+          <th data-i18n="perque.table.nom">Nom</th>
+          <th data-i18n="perque.table.exemple">Exemple</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="grade-badge">A</span></td>
+          <td data-i18n="perque.grau.a.nom">Cicles Formatius de Grau Bàsic</td>
+          <td data-i18n="perque.grau.a.ex">Aux. Administratiu Bàsic</td>
+        </tr>
+        <tr>
+          <td><span class="grade-badge">B</span></td>
+          <td data-i18n="perque.grau.b.nom">Cicles Formatius de Grau Mitjà</td>
+          <td data-i18n="perque.grau.b.ex">Cures Auxiliars d'Infermeria</td>
+        </tr>
+        <tr>
+          <td><span class="grade-badge">C</span></td>
+          <td data-i18n="perque.grau.c.nom">Cicles Formatius de Grau Superior</td>
+          <td data-i18n="perque.grau.c.ex">Desenvolupament d'Aplicacions Web</td>
+        </tr>
+        <tr>
+          <td><span class="grade-badge">D</span></td>
+          <td data-i18n="perque.grau.d.nom">Cursos d'Especialització</td>
+          <td data-i18n="perque.grau.d.ex">Ciberseguretat en Entorns de les TIC</td>
+        </tr>
+        <tr>
+          <td><span class="grade-badge">E</span></td>
+          <td data-i18n="perque.grau.e.nom">Microcredencials</td>
+          <td data-i18n="perque.grau.e.ex">Nova modalitat, en desplegament</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2 data-i18n="perque.s3.h2">Funcionalitats per a cada perfil</h2>
+
+    <div class="profile-block">
+      <h3 data-i18n="perque.perfil.estudiant.h3">Si ets estudiant</h3>
+      <div class="feature-item"><p><strong data-i18n="perque.feat.cerca.title">Cerca en temps real</strong> — <span data-i18n="perque.feat.cerca.desc">escriu "infermeria", "informàtica", "cuina" o qualsevol paraula i els resultats apareixen a l'instant. Sense fer clic a "Cercar". Pots filtrar per família professional, nivell i comunitat autònoma.</span></p></div>
+      <div class="feature-item"><p><strong data-i18n="perque.feat.itineraris.title">Itineraris formatius</strong> — <span data-i18n="perque.feat.itineraris.desc">veus d'un cop d'ull el camí sencer: de Grau Bàsic a Grau Mitjà a Grau Superior a Especialització. Saps d'on pots venir i on pots arribar. Cap altra eina et mostra això.</span></p></div>
+      <div class="feature-item"><p><strong data-i18n="perque.feat.ocupacio.title">Cerca per ocupació</strong> — <span data-i18n="perque.feat.ocupacio.desc">no saps com es diu el cicle que t'interessa, però saps que vols treballar de dissenyador gràfic, d'electricista o de tècnic de so? Cerca per la sortida professional i el cercador et troba els cicles que hi porten.</span></p></div>
+      <div class="feature-item"><p><strong data-i18n="perque.feat.favorits.title">Desa els teus favorits</strong> — <span data-i18n="perque.feat.favorits.desc">guarda les enseñanzas que t'interessen i consulta-les quan vulguis, des de qualsevol dispositiu.</span></p></div>
+      <div class="feature-item"><p><strong data-i18n="perque.feat.alertes.title">Alertes personalitzades</strong> — <span data-i18n="perque.feat.alertes.desc">configura un filtre i rep un email automàtic quan aparegui nova oferta que hi coincideixi. No te n'assabentaràs mai a última hora.</span></p></div>
+      <div class="feature-item"><p><strong data-i18n="perque.feat.seguiment.title">Seguiment de centres</strong> — <span data-i18n="perque.feat.seguiment.desc">t'interessa un centre concret? Dóna't d'alta per rebre un avís quan aquell centre afegeixi nova oferta formativa.</span></p></div>
+      <div class="feature-item"><p><strong data-i18n="perque.feat.fitxes.title">Fitxes oficials</strong> — <span data-i18n="perque.feat.fitxes.desc">cada resultat té un accés directe a la fitxa oficial del ministeri (todofp.es). Tota la informació tècnica, hores, mòduls i BOE en un clic.</span></p></div>
+    </div>
+
+    <div class="profile-block">
+      <h3 data-i18n="perque.perfil.orientador.h3">Si ets orientador</h3>
+      <div class="feature-item"><p><strong data-i18n="perque.feat.visio.title">Visió completa del sistema</strong> — <span data-i18n="perque.feat.visio.desc">A, B, C, D i E simultàniament. No cal canviar de pàgina ni recórrer a PDFs. Una sola cerca et mostra tot el que existeix en una família professional o nivell.</span></p></div>
+      <div class="feature-item"><p><strong data-i18n="perque.feat.itineraris.title">Itineraris visualitzats</strong> — <span data-i18n="perque.feat.itineraris.orient.desc">mostra a l'estudiant el camí sencer d'un sol cop d'ull. D'on pot partir i fins on pot arribar. Una eina pedagògica de primer ordre per a la sessió d'orientació.</span></p></div>
+      <div class="feature-item"><p><strong data-i18n="perque.feat.csv.title">Exportació CSV</strong> — <span data-i18n="perque.feat.csv.desc">exporta els resultats d'una cerca per incloure'ls en una presentació, un informe o un full de càlcul per al teu centre. Un clic.</span></p></div>
+      <div class="feature-item"><p><strong data-i18n="perque.feat.alertes.title">Alertes per als teus alumnes</strong> — <span data-i18n="perque.feat.alertes.orient.desc">orienta cada alumne a configurar la seva pròpia alerta per a l'oferta que l'interessa. Quan apareguin places noves, l'alumne ho sabrà automàticament.</span></p></div>
+      <div class="feature-item"><p><strong data-i18n="perque.feat.lang.title">Multilingüe català/castellà</strong> — <span data-i18n="perque.feat.lang.desc">la interfície és disponible en castellà i en català. Canvi instantani sense recarregar la pàgina.</span></p></div>
+    </div>
+
+    <div class="profile-block">
+      <h3 data-i18n="perque.perfil.educador.h3">Si ets educador o cap d'estudis</h3>
+      <div class="feature-item"><p><strong data-i18n="perque.feat.sectorial.title">Visió sectorial en temps real</strong> — <span data-i18n="perque.feat.sectorial.desc">vols saber quina és l'oferta de cicles de la teva família professional a tota Espanya? En 30 segons tens la resposta, amb dades del ministeri.</span></p></div>
+      <div class="feature-item"><p><strong data-i18n="perque.feat.obs.title">Observatori</strong> — <span data-i18n="perque.feat.obs.desc">gràfics sobre l'evolució de l'oferta formativa: quantes enseñanzas hi ha, com creix la nova FP, distribució per grado i família. Dades reals, actualitzades.</span></p></div>
+      <div class="feature-item"><p><strong data-i18n="perque.feat.seguiment.title">Seguiment de centres</strong> — <span data-i18n="perque.feat.seguiment.educ.desc">rebeu avisos quan altres centres del vostre àmbit incorporin nova oferta. Informació estratègica sense cost.</span></p></div>
+      <div class="feature-item"><p><strong data-i18n="perque.feat.csv.title">CSV per a informes</strong> — <span data-i18n="perque.feat.csv.educ.desc">exportació directa en format CSV, llesta per incloure en memòries anuals, sol·licituds d'autorització o reunions d'equip directiu.</span></p></div>
+    </div>
+
+    <h2 data-i18n="perque.s4.h2">Per què és diferent de tot el que ja existeix</h2>
+    <table class="compare-table">
+      <thead>
+        <tr>
+          <th></th>
+          <th>GrausFP</th>
+          <th data-i18n="perque.cmp.ministeri">Web Ministeri</th>
+          <th>Buscadorcertificados</th>
+          <th data-i18n="perque.cmp.auton">Webs autonòmiques</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td data-i18n="perque.cmp.graus">Tots els grados (A–E)</td>
+          <td><span class="check-yes">✓</span></td>
+          <td><span class="check-partial" data-i18n="perque.cmp.dispersos">Dispersos</span></td>
+          <td><span class="check-no">✗</span></td>
+          <td><span class="check-partial" data-i18n="perque.cmp.parcial">Parcial</span></td>
+        </tr>
+        <tr>
+          <td data-i18n="perque.cmp.realtime">Cerca en temps real</td>
+          <td><span class="check-yes">✓</span></td>
+          <td><span class="check-no">✗</span></td>
+          <td><span class="check-no">✗</span></td>
+          <td><span class="check-no">✗</span></td>
+        </tr>
+        <tr>
+          <td data-i18n="perque.cmp.ocupacio">Cerca per ocupació</td>
+          <td><span class="check-yes">✓</span></td>
+          <td><span class="check-no">✗</span></td>
+          <td><span class="check-no">✗</span></td>
+          <td><span class="check-no">✗</span></td>
+        </tr>
+        <tr>
+          <td data-i18n="perque.cmp.itineraris">Itineraris A→B→C→D</td>
+          <td><span class="check-yes">✓</span></td>
+          <td><span class="check-no">✗</span></td>
+          <td><span class="check-no">✗</span></td>
+          <td><span class="check-no">✗</span></td>
+        </tr>
+        <tr>
+          <td data-i18n="perque.cmp.alertes">Alertes automàtiques</td>
+          <td><span class="check-yes">✓</span></td>
+          <td><span class="check-no">✗</span></td>
+          <td><span class="check-no">✗</span></td>
+          <td><span class="check-no">✗</span></td>
+        </tr>
+        <tr>
+          <td data-i18n="perque.cmp.seguiment">Seguiment de centres</td>
+          <td><span class="check-yes">✓</span></td>
+          <td><span class="check-no">✗</span></td>
+          <td><span class="check-no">✗</span></td>
+          <td><span class="check-no">✗</span></td>
+        </tr>
+        <tr>
+          <td data-i18n="perque.cmp.csv">Exportació CSV</td>
+          <td><span class="check-yes">✓</span></td>
+          <td><span class="check-no">✗</span></td>
+          <td><span class="check-no">✗</span></td>
+          <td><span class="check-no">✗</span></td>
+        </tr>
+        <tr>
+          <td data-i18n="perque.cmp.lang">Multilingüe CA/ES</td>
+          <td><span class="check-yes">✓</span></td>
+          <td><span class="check-no">✗</span></td>
+          <td><span class="check-no">✗</span></td>
+          <td><span class="check-partial" data-i18n="perque.cmp.parcial">Parcial</span></td>
+        </tr>
+        <tr>
+          <td data-i18n="perque.cmp.gratuit">Gratuït</td>
+          <td><span class="check-yes">✓</span></td>
+          <td><span class="check-yes">✓</span></td>
+          <td><span class="check-yes">✓</span></td>
+          <td><span class="check-yes">✓</span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2 data-i18n="perque.s5.h2">Com funciona el registre</h2>
+    <p data-i18n="perque.s5.p1">El registre és <strong>gratuït i en 30 segons</strong>. Pots fer-ho amb el teu email o directament amb el teu compte de Google (un sol clic, sense recordar cap contrasenya nova).</p>
+    <p data-i18n="perque.s5.p2">El registre dona accés a: favorits, alertes, seguiment de centres i exportació. L'ús bàsic (cerca i consulta) no requereix registre.</p>
+
+    <h2 data-i18n="perque.s6.h2">Preguntes freqüents</h2>
+
+    <div class="faq-item">
+      <p class="faq-q" data-i18n="perque.faq.1.q">Les dades són oficials?</p>
+      <p class="faq-a" data-i18n="perque.faq.1.a">Sí. Totes les dades provenen de les fonts oficials del Ministeri d'Educació (todofp.es) i dels PDFs normatius publicats al BOE. El sistema s'actualitza automàticament quan el ministeri publica canvis.</p>
+    </div>
+    <div class="faq-item">
+      <p class="faq-q" data-i18n="perque.faq.2.q">Cobreix totes les comunitats autònomes?</p>
+      <p class="faq-a" data-i18n="perque.faq.2.a">Sí, l'oferta recollida abasta tot el territori estatal. Les competències educatives estan transferides, però el catàleg de títols és nacional.</p>
+    </div>
+    <div class="faq-item">
+      <p class="faq-q" data-i18n="perque.faq.3.q">Els Grados E (microcredencials) ja hi són?</p>
+      <p class="faq-a" data-i18n="perque.faq.3.a">Sí, tot i que la nova modalitat encara s'està desplegant per part del Ministeri. El cercador els recull a mesura que es publiquen.</p>
+    </div>
+    <div class="faq-item">
+      <p class="faq-q" data-i18n="perque.faq.4.q">Es pot usar en mòbil?</p>
+      <p class="faq-a" data-i18n="perque.faq.4.a">Sí, la interfície és responsiva i funciona correctament en telèfons i tauletes.</p>
+    </div>
+    <div class="faq-item">
+      <p class="faq-q" data-i18n="perque.faq.5.q">Quant costa?</p>
+      <p class="faq-a" data-i18n="perque.faq.5.a">Res. Ni ara ni en el futur previsible. La plataforma és un projecte sense ànim de lucre orientat al servei públic educatiu.</p>
+    </div>
+
+    <div class="cta-box">
+      <p data-i18n="perque.cta.p">La primera eina que dona una visió completa, instantània i personalitzable de tota l'oferta de Formació Professional a Espanya.</p>
+      <a href="index.html" class="cta-btn" data-i18n="perque.cta.btn">Entra al cercador →</a>
+    </div>
+
+  </main>
+
+  <footer>
+    <a href="index.html" data-i18n="perque.footer.back">← Tornar al cercador</a>
+    <a href="historial.html" style="margin-left:30px;" data-i18n="perque.footer.historial">Historial d'actualitzacions</a>
+  </footer>
+
+</body>
+</html>

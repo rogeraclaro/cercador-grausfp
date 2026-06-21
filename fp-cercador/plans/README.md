@@ -66,6 +66,7 @@ amb quins prerequisits i quins passos manuals calen al servidor.
 | 050 | Cerca d'ocupació en català: sinònims CA↔ES + regles de sufix | P2 | S–M | — | DONE |
 | 051 | Dashboard d'usuari centralitzat (`perfil.html`) | P2 | M | 023–029 DONE | DONE |
 | 052 | Sign in with Google (OAuth 2.0) | P2 | M | 023–026 DONE | DONE |
+| 053 | Preferències d'email: toggle global per a notificacions automàtiques | P2 | M | 023–026, 051 DONE | TODO |
 
 Valors de Status: `TODO` | `IN PROGRESS` | `DONE` | `BLOCKED (motiu en una línia)` | `REJECTED (motiu en una línia)`
 
