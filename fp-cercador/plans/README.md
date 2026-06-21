@@ -63,7 +63,7 @@ amb quins prerequisits i quins passos manuals calen al servidor.
 | 047 | [F6] Cerca per ocupació/sortida professional (MVP castellà, C+D+E) | P2 | L | — (spike `.planning/spikes/001-003` DONE) | DONE (en producció: master + `ocupaciones.json` al VPS) |
 | 048 | Unificar cercador d'ocupació dins index.html (mode toggle + gating preview/mur + repr Targetes/Taula) | P2 | L | 047, 023–027 DONE | DONE |
 | 049 | Renovació automàtica de l'índex d'ocupacions (endpoint admin + job mensual) | P2 | S | — | DONE |
-| 050 | Cerca d'ocupació en català: sinònims CA↔ES + regles de sufix | P2 | S–M | — | TODO |
+| 050 | Cerca d'ocupació en català: sinònims CA↔ES + regles de sufix | P2 | S–M | — | DONE |
 
 Valors de Status: `TODO` | `IN PROGRESS` | `DONE` | `BLOCKED (motiu en una línia)` | `REJECTED (motiu en una línia)`
 
