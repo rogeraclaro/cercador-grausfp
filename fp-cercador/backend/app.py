@@ -1246,6 +1246,136 @@ def auth_logout():
     return resp
 
 
+@app.route("/api/auth/google", methods=["GET"])
+def auth_google_start():
+    """Pas 1 OAuth: redirigeix a Google amb state anti-CSRF."""
+    import secrets as _secrets
+    import urllib.parse
+    client_id = os.environ.get("GOOGLE_CLIENT_ID", "")
+    if not client_id:
+        return jsonify({"error": "Google OAuth no configurat"}), 503
+    state = _secrets.token_hex(16)
+    redirect_uri = BASE_URL + "/api/auth/google/callback"
+    params = urllib.parse.urlencode({
+        "client_id": client_id,
+        "redirect_uri": redirect_uri,
+        "response_type": "code",
+        "scope": "openid email",
+        "state": state,
+        "prompt": "select_account",
+    })
+    resp = redirect("https://accounts.google.com/o/oauth2/v2/auth?" + params, code=302)
+    secure = not app.debug
+    resp.set_cookie("oauth_state", state, httponly=True, secure=secure,
+                    samesite="Lax", max_age=300)
+    return resp
+
+
+@app.route("/api/auth/google/callback", methods=["GET"])
+def auth_google_callback():
+    """Pas 2 OAuth: intercanvia el codi, crea/troba l'usuari i inicia sessió."""
+    import secrets as _secrets
+    import db as _db
+    from datetime import datetime, timezone, timedelta
+    from flask import redirect as _redirect
+
+    # Verificació anti-CSRF
+    state_cookie = request.cookies.get("oauth_state", "")
+    state_param  = request.args.get("state", "")
+    if not state_cookie or state_cookie != state_param:
+        return _redirect("/?google_error=state")
+
+    code = request.args.get("code", "")
+    if not code:
+        return _redirect("/?google_error=no_code")
+
+    client_id     = os.environ.get("GOOGLE_CLIENT_ID", "")
+    client_secret = os.environ.get("GOOGLE_CLIENT_SECRET", "")
+    redirect_uri  = BASE_URL + "/api/auth/google/callback"
+
+    # Intercanvi codi → tokens
+    token_resp = requests.post(
+        "https://oauth2.googleapis.com/token",
+        data={
+            "code": code,
+            "client_id": client_id,
+            "client_secret": client_secret,
+            "redirect_uri": redirect_uri,
+            "grant_type": "authorization_code",
+        },
+        timeout=10,
+    )
+    if not token_resp.ok:
+        logger.error("Google token error: %s", token_resp.text)
+        return _redirect("/?google_error=token")
+
+    access_token = token_resp.json().get("access_token", "")
+    if not access_token:
+        return _redirect("/?google_error=no_token")
+
+    # Obtenir info de l'usuari
+    userinfo_resp = requests.get(
+        "https://www.googleapis.com/oauth2/v3/userinfo",
+        headers={"Authorization": "Bearer " + access_token},
+        timeout=10,
+    )
+    if not userinfo_resp.ok:
+        return _redirect("/?google_error=userinfo")
+
+    info       = userinfo_resp.json()
+    google_sub = info.get("sub", "")
+    email      = (info.get("email") or "").strip().lower()
+    if not email or not google_sub:
+        return _redirect("/?google_error=no_email")
+
+    conn = _db.get_db()
+    try:
+        # Cerca per google_id primer, després per email (merge de compte existent)
+        user = _db.query_one(conn, "SELECT id, is_admin FROM users WHERE google_id = ?", (google_sub,))
+        if not user:
+            user = _db.query_one(
+                conn,
+                "SELECT id, is_admin FROM users WHERE email = ? AND deleted_at IS NULL AND is_active = 1",
+                (email,),
+            )
+            if user:
+                # Vincula google_id a compte existent
+                conn.execute("UPDATE users SET google_id = ?, verified = 1 WHERE id = ?",
+                             (google_sub, user["id"]))
+            else:
+                # Nou usuari
+                conn.execute(
+                    "INSERT INTO users (email, password_hash, verified, google_id) VALUES (?, 'google', 1, ?)",
+                    (email, google_sub),
+                )
+                conn.commit()
+                user = _db.query_one(conn, "SELECT id, is_admin FROM users WHERE google_id = ?", (google_sub,))
+
+        conn.commit()
+        uid      = user["id"]
+        is_admin = bool(user["is_admin"])
+
+        # Crea sessió (idèntic al login normal)
+        session_token = _secrets.token_hex(32)
+        expires = (datetime.now(timezone.utc) + timedelta(days=30)).strftime("%Y-%m-%d %H:%M:%S")
+        ip = request.remote_addr or ""
+        conn.execute(
+            "INSERT INTO sessions (user_id, token, expires_at, ip, user_agent) VALUES (?, ?, ?, ?, ?)",
+            (uid, session_token, expires, ip, request.headers.get("User-Agent", "")),
+        )
+        conn.commit()
+    finally:
+        conn.close()
+
+    secure = not app.debug
+    resp = _redirect("/?google=1")
+    resp.set_cookie("session", session_token,
+                    httponly=True, secure=secure, samesite="Lax",
+                    max_age=30 * 24 * 3600)
+    resp.set_cookie("oauth_state", "", max_age=0)
+    return resp
+
+
 @app.route("/api/auth/me", methods=["GET"])
 def auth_me():
     import db as _db

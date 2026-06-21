@@ -9,6 +9,8 @@
       'nav.lang.ca': 'CA',
       'nav.lang.es': 'ES',
       'nav.admin': 'Admin',
+      'auth.google.btn': 'Continua amb Google',
+      'auth.google.separator': 'o',
       'nav.profile': 'El meu perfil',
 
       /* ── perfil.html ── */
@@ -319,6 +321,8 @@
       'nav.lang.ca': 'CA',
       'nav.lang.es': 'ES',
       'nav.admin': 'Admin',
+      'auth.google.btn': 'Continuar con Google',
+      'auth.google.separator': 'o',
       'nav.profile': 'Mi perfil',
 
       /* ── perfil.html ── */
