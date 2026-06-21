@@ -57,6 +57,7 @@
       color: var(--white);
       font-size: 20px;
       letter-spacing: -0.3px;
+      text-decoration: none;
     }
 
     /* ── Hero ── */
@@ -1798,9 +1799,9 @@
           const seen = new Set();
           for (const g of this.ocupResults) {
             let rec = (g.codigo && byCod.get(g.codigo))
-                   || (g.id != null && byId.get(String(g.id)))
-                   || (g.ficha_url && byFicha.get(g.ficha_url))
-                   || null;
+              || (g.id != null && byId.get(String(g.id)))
+              || (g.ficha_url && byFicha.get(g.ficha_url))
+              || null;
             if (rec) {
               if (seen.has(rec.id)) continue;
               seen.add(rec.id);
@@ -2348,7 +2349,8 @@
             </div>
             <div class="ocup-actions">
               <button class="ocup-btn" @click="veureAlCercador(g)" x-text="t('ocup.veure.cercador') + ' →'"></button>
-              <a class="ocup-link" :href="ocupFichaHref(g)" target="_blank" rel="noopener"
+              <a class="ocup-link" href="#"
+                @click.prevent="loggedIn ? window.open(ocupFichaHref(g), '_blank') : showCentresModal()"
                 x-text="t('ocup.fitxa') + ' ↗'"></a>
             </div>
           </div>
