@@ -62,6 +62,8 @@ amb quins prerequisits i quins passos manuals calen al servidor.
 | 046 | [F5] Índex invers B→C LOE — des d'un Grado B mostrar els Certificats C | P2 | S | 045 DONE | DONE |
 | 047 | [F6] Cerca per ocupació/sortida professional (MVP castellà, C+D+E) | P2 | L | — (spike `.planning/spikes/001-003` DONE) | DONE (en producció: master + `ocupaciones.json` al VPS) |
 | 048 | Unificar cercador d'ocupació dins index.html (mode toggle + gating preview/mur + repr Targetes/Taula) | P2 | L | 047, 023–027 DONE | DONE |
+| 049 | Renovació automàtica de l'índex d'ocupacions (endpoint admin + job mensual) | P2 | S | — | DONE |
+| 050 | Cerca d'ocupació en català: sinònims CA↔ES + regles de sufix | P2 | S–M | — | TODO |
 
 Valors de Status: `TODO` | `IN PROGRESS` | `DONE` | `BLOCKED (motiu en una línia)` | `REJECTED (motiu en una línia)`
 
