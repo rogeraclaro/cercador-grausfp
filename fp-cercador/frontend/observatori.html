@@ -1,111 +1,372 @@
 <!DOCTYPE html>
 <html lang="ca">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title data-i18n="page.title.obs">Observatori de l'oferta FP — Cercador Graus FP</title>
-  <meta name="description" content="Evolución semanal de las titulaciones de Formación Profesional en España (Grados A–E). Estadísticas actualizadas automáticamente desde el Ministerio de Educación.">
+  <meta name="description"
+    content="Evolución semanal de las titulaciones de Formación Profesional en España (Grados A–E). Estadísticas actualizadas automáticamente desde el Ministerio de Educación.">
 
   <!-- Mateixes fonts que historial.html -->
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=DM+Serif+Display:ital@0;1&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=DM+Serif+Display:ital@0;1&family=Geist+Mono:wght@400;500&display=swap"
+    rel="stylesheet">
 
   <!-- uPlot vendoritzat -->
   <link rel="stylesheet" href="vendor/uplot.css">
   <script src="vendor/uplot.min.js"></script>
 
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root {
-      --dark: #1c1410; --warm: #8a7060; --warm2: #f5ece2;
-      --border: #e8ddd4; --bg: #fdf8f2; --white: #ffffff;
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
-    body { font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 14px; color: var(--dark); background: var(--bg); }
+
+    :root {
+      --dark: #1c1410;
+      --warm: #8a7060;
+      --warm2: #f5ece2;
+      --border: #e8ddd4;
+      --bg: #fdf8f2;
+      --white: #ffffff;
+    }
+
+    body {
+      font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 14px;
+      color: var(--dark);
+      background: var(--bg);
+    }
 
     /* Topbar idèntic */
-    .topbar { background: var(--dark); padding: 0 48px; }
-    .topbar-inner { display: flex; align-items: center; height: 52px; }
-    .topbar-logo { font-family: 'DM Serif Display', serif; color: var(--white); font-size: 20px; letter-spacing: -0.3px; text-decoration: none; }
+    .topbar {
+      background: var(--dark);
+      padding: 0 48px;
+    }
+
+    .topbar-inner {
+      display: flex;
+      align-items: center;
+      height: 52px;
+    }
+
+    .topbar-logo {
+      font-family: 'DM Serif Display', serif;
+      color: var(--white);
+      font-size: 20px;
+      letter-spacing: -0.3px;
+      text-decoration: none;
+    }
 
     /* Hero */
-    .hero { border-bottom: 2px solid var(--dark); padding: 40px 48px 32px; }
-    .hero h1 { font-family: 'DM Serif Display', serif; font-size: 48px; font-weight: 400; line-height: 1.05; color: var(--dark); margin-bottom: 10px; }
-    .hero-sub { font-size: 15px; color: var(--warm); }
+    .hero {
+      border-bottom: 2px solid var(--dark);
+      padding: 40px 48px 32px;
+    }
+
+    .hero h1 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 48px;
+      font-weight: 400;
+      line-height: 1.05;
+      color: var(--dark);
+      margin-bottom: 10px;
+    }
+
+    .hero-sub {
+      font-size: 15px;
+      color: var(--warm);
+    }
 
     /* Stats strip al hero */
-    .stats-strip { display: flex; gap: 32px; margin-top: 24px; flex-wrap: wrap; }
-    .stat-card { display: flex; flex-direction: column; gap: 4px; }
-    .stat-value { font-family: 'DM Serif Display', serif; font-size: 36px; line-height: 1; color: var(--dark); }
-    .stat-label { font-size: 12px; color: var(--warm); text-transform: uppercase; letter-spacing: 0.06em; }
+    .stats-strip {
+      display: flex;
+      gap: 32px;
+      margin-top: 24px;
+      flex-wrap: wrap;
+    }
+
+    .stat-card {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .stat-value {
+      font-family: 'DM Serif Display', serif;
+      font-size: 36px;
+      line-height: 1;
+      color: var(--dark);
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: var(--warm);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
 
     /* Contingut */
-    .content { padding: 28px 48px 64px; }
-    .chart-section { margin-bottom: 48px; }
-    .chart-section h2 { font-family: 'DM Serif Display', serif; font-size: 24px; font-weight: 400; margin-bottom: 16px; }
-    .chart-wrap { background: var(--white); border: 1px solid var(--border); border-radius: 2px; padding: 20px; }
+    .content {
+      padding: 28px 48px 64px;
+    }
+
+    .chart-section {
+      margin-bottom: 48px;
+    }
+
+    .chart-section h2 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 24px;
+      font-weight: 400;
+      margin-bottom: 16px;
+    }
+
+    .chart-wrap {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      padding: 20px;
+    }
 
     /* Barres SVG distribució */
-    .bar-chart { display: flex; flex-direction: column; gap: 10px; max-width: 480px; }
-    .bar-row { display: flex; align-items: center; gap: 12px; }
-    .bar-label { width: 56px; font-size: 13px; font-weight: 600; color: var(--dark); }
-    .bar-track { flex: 1; height: 20px; background: var(--warm2); border-radius: 2px; overflow: hidden; }
-    .bar-fill { height: 100%; background: var(--dark); border-radius: 2px; transition: width 0.4s ease; }
-    .bar-value { width: 64px; font-size: 12px; color: var(--warm); text-align: right; font-family: 'Geist Mono', monospace; }
+    .bar-chart {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-width: 480px;
+    }
+
+    .bar-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .bar-label {
+      width: 56px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--dark);
+    }
+
+    .bar-track {
+      flex: 1;
+      height: 20px;
+      background: var(--warm2);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      height: 100%;
+      background: var(--dark);
+      border-radius: 2px;
+      transition: width 0.4s ease;
+    }
+
+    .bar-value {
+      width: 64px;
+      font-size: 12px;
+      color: var(--warm);
+      text-align: right;
+      font-family: 'Geist Mono', monospace;
+    }
 
     /* Llista novetats */
-    .novetats-list { list-style: none; padding: 0; }
-    .noveta-item { padding: 12px 0; border-bottom: 1px solid var(--border); }
-    .noveta-item:last-child { border-bottom: none; }
-    .noveta-date { font-family: 'Geist Mono', monospace; font-size: 11px; color: var(--warm); margin-bottom: 6px; }
-    .noveta-chips { display: flex; flex-wrap: wrap; gap: 4px; }
-    .chip { border-radius: 4px; padding: 2px 8px; font-size: 11px; font-weight: 600; }
-    .chip-new { background: #dcfce7; color: #166534; }
-    .chip-link { text-decoration: none; cursor: pointer; }
-    .chip-link:hover { filter: brightness(0.9); }
+    .novetats-list {
+      list-style: none;
+      padding: 0;
+    }
+
+    .noveta-item {
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .noveta-item:last-child {
+      border-bottom: none;
+    }
+
+    .noveta-date {
+      font-family: 'Geist Mono', monospace;
+      font-size: 11px;
+      color: var(--warm);
+      margin-bottom: 6px;
+    }
+
+    .noveta-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+
+    .chip {
+      border-radius: 4px;
+      padding: 2px 8px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .chip-new {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .chip-link {
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .chip-link:hover {
+      filter: brightness(0.9);
+    }
 
     /* Auth widget al topbar */
-    #auth-widget { margin-left: auto; display: flex; align-items: center; gap: 8px; }
-    .auth-greeting { color: rgba(255,255,255,0.75); font-size: 13px; }
-    .auth-btn { font-size: 13px; padding: 5px 14px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.35); color: var(--white); background: transparent; cursor: pointer; text-decoration: none; font-family: inherit; }
-    .auth-btn:hover { background: rgba(255,255,255,0.12); }
-    .auth-btn--primary { background: var(--white); color: var(--dark); border-color: var(--white); }
+    #auth-widget {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .auth-greeting {
+      color: rgba(255, 255, 255, 0.75);
+      font-size: 13px;
+    }
+
+    .auth-btn {
+      font-size: 13px;
+      padding: 5px 14px;
+      border-radius: 4px;
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      color: var(--white);
+      background: transparent;
+      cursor: pointer;
+      text-decoration: none;
+      font-family: inherit;
+    }
+
+    .auth-btn:hover {
+      background: rgba(255, 255, 255, 0.12);
+    }
+
+    .auth-btn--primary {
+      background: var(--white);
+      color: var(--dark);
+      border-color: var(--white);
+    }
 
     /* States */
-    .loading-state { text-align: center; padding: 64px 48px; color: var(--warm); }
-    .empty-state { text-align: center; color: var(--warm); padding: 32px; font-style: italic; }
+    .loading-state {
+      text-align: center;
+      padding: 64px 48px;
+      color: var(--warm);
+    }
+
+    .empty-state {
+      text-align: center;
+      color: var(--warm);
+      padding: 32px;
+      font-style: italic;
+    }
 
     /* Footer */
-    footer { border-top: 1px solid var(--border); padding: 20px 48px; }
-    .footer-note { font-size: 12px; color: var(--warm); margin-bottom: 8px; }
-    footer a { font-size: 13px; color: var(--warm); text-decoration: none; }
-    footer a:hover { color: var(--dark); }
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 20px 48px;
+    }
+
+    .footer-note {
+      font-size: 12px;
+      color: var(--warm);
+      margin-bottom: 8px;
+    }
+
+    footer a {
+      font-size: 13px;
+      color: var(--warm);
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      color: var(--dark);
+    }
 
     /* ── Lang selector ── */
-    .lang-selector { display: flex; align-items: center; gap: 2px; margin-left: 16px; }
+    .lang-selector {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      margin-left: 16px;
+    }
+
     .lang-btn {
-      font-size: 11px; font-weight: 700; font-family: inherit;
-      padding: 3px 8px; border-radius: 3px; cursor: pointer;
-      background: transparent; border: 1px solid rgba(255,255,255,0.3);
-      color: rgba(255,255,255,0.6); letter-spacing: 0.04em;
+      font-size: 11px;
+      font-weight: 700;
+      font-family: inherit;
+      padding: 3px 8px;
+      border-radius: 3px;
+      cursor: pointer;
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      color: rgba(255, 255, 255, 0.6);
+      letter-spacing: 0.04em;
       transition: background 0.15s, color 0.15s;
     }
-    .lang-btn:hover { background: rgba(255,255,255,0.12); color: var(--white); }
-    .lang-btn--active { background: rgba(255,255,255,0.18); color: var(--white); border-color: rgba(255,255,255,0.6); }
+
+    .lang-btn:hover {
+      background: rgba(255, 255, 255, 0.12);
+      color: var(--white);
+    }
+
+    .lang-btn--active {
+      background: rgba(255, 255, 255, 0.18);
+      color: var(--white);
+      border-color: rgba(255, 255, 255, 0.6);
+    }
 
     /* Responsive */
     @media (max-width: 768px) {
-      .topbar { padding: 0 16px; }
-      .hero { padding: 24px 16px 20px; }
-      .hero h1 { font-size: 30px; }
-      .content { padding: 16px 16px 32px; }
-      footer { padding: 20px 16px; }
-      .stats-strip { gap: 20px; }
-      .stat-value { font-size: 28px; }
+      .topbar {
+        padding: 0 16px;
+      }
+
+      .hero {
+        padding: 24px 16px 20px;
+      }
+
+      .hero h1 {
+        font-size: 30px;
+      }
+
+      .content {
+        padding: 16px 16px 32px;
+      }
+
+      footer {
+        padding: 20px 16px;
+      }
+
+      .stats-strip {
+        gap: 20px;
+      }
+
+      .stat-value {
+        font-size: 28px;
+      }
     }
   </style>
   <script src="i18n.js"></script>
   <script src="auth.js"></script>
 </head>
+
 <body>
 
   <header class="topbar">
@@ -123,9 +384,12 @@
     <h1 data-i18n="obs.hero.h1">Observatori<br><em>de l'oferta FP</em></h1>
     <p class="hero-sub" data-i18n="obs.hero.sub">Evolució setmanal del catàleg de Formació Professional espanyol</p>
     <div class="stats-strip" id="stats-strip">
-      <div class="stat-card"><span class="stat-value" id="stat-total">—</span><span class="stat-label" data-i18n="obs.stat.total.label">Titulacions actives</span></div>
-      <div class="stat-card"><span class="stat-value">5</span><span class="stat-label" data-i18n="obs.stat.graus.label">Graus (A–E)</span></div>
-      <div class="stat-card"><span class="stat-value" id="stat-date">—</span><span class="stat-label" data-i18n="obs.stat.date.label">Darrera actualització</span></div>
+      <div class="stat-card"><span class="stat-value" id="stat-total">—</span><span class="stat-label"
+          data-i18n="obs.stat.total.label">Titulacions actives</span></div>
+      <div class="stat-card"><span class="stat-value">5</span><span class="stat-label"
+          data-i18n="obs.stat.graus.label">Graus (A–E)</span></div>
+      <div class="stat-card"><span class="stat-value" id="stat-date">—</span><span class="stat-label"
+          data-i18n="obs.stat.date.label">Darrera actualització</span></div>
     </div>
   </div>
 
@@ -158,7 +422,8 @@
   </main>
 
   <footer>
-    <p class="footer-note" data-i18n="obs.footer.note">Font: Ministerio de Educación, FP.es (todofp.es). Actualitzat automàticament cada setmana.</p>
+    <p class="footer-note" data-i18n="obs.footer.note">Font: Ministerio de Educación, FP.es (todofp.es). Actualitzat
+      automàticament cada setmana.</p>
     <a href="historial.html" data-i18n="obs.footer.historial">← Veure l'historial complet</a>
   </footer>
 
@@ -284,4 +549,5 @@
     load();
   </script>
 </body>
+
 </html>

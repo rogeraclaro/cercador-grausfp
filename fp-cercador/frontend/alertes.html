@@ -1,95 +1,349 @@
 <!DOCTYPE html>
 <html lang="ca">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title data-i18n="page.title.alertes">Les meves alertes — Cercador Graus FP</title>
-
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link
     href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=DM+Serif+Display:ital@0;1&family=Geist+Mono:wght@400;500&display=swap"
     rel="stylesheet">
 
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root {
-      --dark: #1c1410; --warm: #8a7060; --warm2: #f5ece2;
-      --border: #e8ddd4; --bg: #fdf8f2; --white: #ffffff;
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
-    body { font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 14px; color: var(--dark); background: var(--bg); }
 
-    .topbar { background: var(--dark); padding: 0 48px; }
-    .topbar-inner { display: flex; align-items: center; height: 52px; }
-    .topbar-logo { font-family: 'DM Serif Display', serif; color: var(--white); font-size: 20px; letter-spacing: -0.3px; text-decoration: none; }
-    #auth-widget { margin-left: auto; display: flex; align-items: center; gap: 8px; }
-    .auth-greeting { color: rgba(255,255,255,0.75); font-size: 13px; }
-    .auth-btn { font-size: 13px; padding: 5px 14px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.35); color: var(--white); background: transparent; cursor: pointer; text-decoration: none; font-family: inherit; transition: background 0.15s; }
-    .auth-btn:hover { background: rgba(255,255,255,0.12); }
-    .auth-btn--primary { background: var(--white); color: var(--dark); border-color: var(--white); }
-    .auth-btn--primary:hover { background: var(--warm2); }
+    :root {
+      --dark: #1c1410;
+      --warm: #8a7060;
+      --warm2: #f5ece2;
+      --border: #e8ddd4;
+      --bg: #fdf8f2;
+      --white: #ffffff;
+    }
 
-    .hero { border-bottom: 2px solid var(--dark); padding: 40px 48px 32px; }
-    .hero h1 { font-family: 'DM Serif Display', serif; font-size: 48px; font-weight: 400; line-height: 1.05; color: var(--dark); margin-bottom: 10px; }
-    .hero-sub { font-size: 15px; color: var(--warm); }
+    body {
+      font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 14px;
+      color: var(--dark);
+      background: var(--bg);
+    }
 
-    .content { padding: 28px 48px 64px; }
+    .topbar {
+      background: var(--dark);
+      padding: 0 48px;
+    }
 
-    .results-table { width: 100%; border-collapse: collapse; font-size: 14px; background: var(--white); border: 1px solid var(--border); border-radius: 2px; overflow: hidden; }
-    .results-table thead tr { background: var(--warm2); border-bottom: 2px solid var(--dark); }
-    .results-table th { text-align: left; padding: 11px 16px; font-weight: 600; color: var(--dark); font-size: 11px; text-transform: uppercase; letter-spacing: 0.07em; }
-    .results-table th.col-created, .results-table th.col-sent { width: 140px; }
-    .results-table th.col-active { width: 100px; }
-    .results-table th.col-actions { width: 48px; }
-    .results-table td { padding: 13px 16px; border-bottom: 1px solid var(--border); vertical-align: middle; }
-    .results-table tbody tr:hover td { background: var(--warm2); }
-    .results-table tbody tr:last-child td { border-bottom: none; }
-    .results-table td.col-created, .results-table td.col-sent { font-family: 'Geist Mono', monospace; font-size: 12px; color: var(--warm); white-space: nowrap; }
+    .topbar-inner {
+      display: flex;
+      align-items: center;
+      height: 52px;
+    }
 
-    .toggle-btn { font-size: 12px; font-weight: 600; font-family: inherit; padding: 4px 10px; border-radius: 4px; cursor: pointer; border: none; }
-    .toggle-btn--active { background: #dcfce7; color: #166534; }
-    .toggle-btn--inactive { background: var(--warm2); color: var(--warm); }
-    .toggle-btn:hover { filter: brightness(0.92); }
-    .toggle-btn:disabled { opacity: 0.5; cursor: default; }
+    .topbar-logo {
+      font-family: 'DM Serif Display', serif;
+      color: var(--white);
+      font-size: 20px;
+      letter-spacing: -0.3px;
+      text-decoration: none;
+    }
 
-    .delete-btn { background: none; border: none; cursor: pointer; color: var(--warm); font-size: 14px; padding: 4px 8px; border-radius: 4px; }
-    .delete-btn:hover { color: #991b1b; background: #fee2e2; }
-    .delete-btn:disabled { opacity: 0.5; cursor: default; }
+    #auth-widget {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
 
-    .empty-state { text-align: center; color: var(--warm); padding: 64px 48px; }
-    .empty-state a { color: var(--dark); }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    .loading-state { display: flex; flex-direction: column; align-items: center; gap: 16px; padding: 64px 48px; color: var(--warm); }
-    .spinner { border: 3px solid var(--border); border-top-color: var(--dark); border-radius: 50%; width: 32px; height: 32px; animation: spin 0.8s linear infinite; }
+    .auth-greeting {
+      color: rgba(255, 255, 255, 0.75);
+      font-size: 13px;
+    }
 
-    footer { border-top: 1px solid var(--border); padding: 20px 48px; text-align: right; }
-    footer a { font-size: 13px; color: var(--warm); text-decoration: none; }
-    footer a:hover { color: var(--dark); }
+    .auth-btn {
+      font-size: 13px;
+      padding: 5px 14px;
+      border-radius: 4px;
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      color: var(--white);
+      background: transparent;
+      cursor: pointer;
+      text-decoration: none;
+      font-family: inherit;
+      transition: background 0.15s;
+    }
+
+    .auth-btn:hover {
+      background: rgba(255, 255, 255, 0.12);
+    }
+
+    .auth-btn--primary {
+      background: var(--white);
+      color: var(--dark);
+      border-color: var(--white);
+    }
+
+    .auth-btn--primary:hover {
+      background: var(--warm2);
+    }
+
+    .hero {
+      border-bottom: 2px solid var(--dark);
+      padding: 40px 48px 32px;
+    }
+
+    .hero h1 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 48px;
+      font-weight: 400;
+      line-height: 1.05;
+      color: var(--dark);
+      margin-bottom: 10px;
+    }
+
+    .hero-sub {
+      font-size: 15px;
+      color: var(--warm);
+    }
+
+    .content {
+      padding: 28px 48px 64px;
+    }
+
+    .results-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .results-table thead tr {
+      background: var(--warm2);
+      border-bottom: 2px solid var(--dark);
+    }
+
+    .results-table th {
+      text-align: left;
+      padding: 11px 16px;
+      font-weight: 600;
+      color: var(--dark);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+    }
+
+    .results-table th.col-created,
+    .results-table th.col-sent {
+      width: 140px;
+    }
+
+    .results-table th.col-active {
+      width: 100px;
+    }
+
+    .results-table th.col-actions {
+      width: 48px;
+    }
+
+    .results-table td {
+      padding: 13px 16px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: middle;
+    }
+
+    .results-table tbody tr:hover td {
+      background: var(--warm2);
+    }
+
+    .results-table tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    .results-table td.col-created,
+    .results-table td.col-sent {
+      font-family: 'Geist Mono', monospace;
+      font-size: 12px;
+      color: var(--warm);
+      white-space: nowrap;
+    }
+
+    .toggle-btn {
+      font-size: 12px;
+      font-weight: 600;
+      font-family: inherit;
+      padding: 4px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+      border: none;
+    }
+
+    .toggle-btn--active {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .toggle-btn--inactive {
+      background: var(--warm2);
+      color: var(--warm);
+    }
+
+    .toggle-btn:hover {
+      filter: brightness(0.92);
+    }
+
+    .toggle-btn:disabled {
+      opacity: 0.5;
+      cursor: default;
+    }
+
+    .delete-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--warm);
+      font-size: 14px;
+      padding: 4px 8px;
+      border-radius: 4px;
+    }
+
+    .delete-btn:hover {
+      color: #991b1b;
+      background: #fee2e2;
+    }
+
+    .delete-btn:disabled {
+      opacity: 0.5;
+      cursor: default;
+    }
+
+    .empty-state {
+      text-align: center;
+      color: var(--warm);
+      padding: 64px 48px;
+    }
+
+    .empty-state a {
+      color: var(--dark);
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .loading-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      padding: 64px 48px;
+      color: var(--warm);
+    }
+
+    .spinner {
+      border: 3px solid var(--border);
+      border-top-color: var(--dark);
+      border-radius: 50%;
+      width: 32px;
+      height: 32px;
+      animation: spin 0.8s linear infinite;
+    }
+
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 20px 48px;
+      text-align: right;
+    }
+
+    footer a {
+      font-size: 13px;
+      color: var(--warm);
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      color: var(--dark);
+    }
 
     /* ── Lang selector ── */
-    .lang-selector { display: flex; align-items: center; gap: 2px; margin-left: 16px; }
+    .lang-selector {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      margin-left: 16px;
+    }
+
     .lang-btn {
-      font-size: 11px; font-weight: 700; font-family: inherit;
-      padding: 3px 8px; border-radius: 3px; cursor: pointer;
-      background: transparent; border: 1px solid rgba(255,255,255,0.3);
-      color: rgba(255,255,255,0.6); letter-spacing: 0.04em;
+      font-size: 11px;
+      font-weight: 700;
+      font-family: inherit;
+      padding: 3px 8px;
+      border-radius: 3px;
+      cursor: pointer;
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      color: rgba(255, 255, 255, 0.6);
+      letter-spacing: 0.04em;
       transition: background 0.15s, color 0.15s;
     }
-    .lang-btn:hover { background: rgba(255,255,255,0.12); color: var(--white); }
-    .lang-btn--active { background: rgba(255,255,255,0.18); color: var(--white); border-color: rgba(255,255,255,0.6); }
+
+    .lang-btn:hover {
+      background: rgba(255, 255, 255, 0.12);
+      color: var(--white);
+    }
+
+    .lang-btn--active {
+      background: rgba(255, 255, 255, 0.18);
+      color: var(--white);
+      border-color: rgba(255, 255, 255, 0.6);
+    }
 
     @media (max-width: 768px) {
-      .topbar { padding: 0 16px; }
-      .hero { padding: 24px 16px 20px; }
-      .hero h1 { font-size: 30px; }
-      .content { padding: 16px 16px 32px; }
-      .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-      .results-table { min-width: 500px; }
-      footer { padding: 20px 16px; }
+      .topbar {
+        padding: 0 16px;
+      }
+
+      .hero {
+        padding: 24px 16px 20px;
+      }
+
+      .hero h1 {
+        font-size: 30px;
+      }
+
+      .content {
+        padding: 16px 16px 32px;
+      }
+
+      .table-wrap {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .results-table {
+        min-width: 500px;
+      }
+
+      footer {
+        padding: 20px 16px;
+      }
     }
   </style>
   <script src="i18n.js"></script>
   <script src="auth.js"></script>
 </head>
+
 <body>
 
   <header class="topbar">
@@ -105,7 +359,8 @@
 
   <div class="hero">
     <h1><span data-i18n="alertes.hero.h1">Les meves</span><br><em data-i18n="alertes.hero.h1.em">alertes</em></h1>
-    <p class="hero-sub" data-i18n="alertes.hero.sub">Rebràs un email quan apareguin nous ensenyaments que encaixin amb els teus filtres</p>
+    <p class="hero-sub" data-i18n="alertes.hero.sub">Rebràs un email quan apareguin nous ensenyaments que encaixin amb
+      els teus filtres</p>
   </div>
 
   <main class="content" id="main-content">
@@ -121,4 +376,5 @@
 
   <script src="alertes.js"></script>
 </body>
+
 </html>
