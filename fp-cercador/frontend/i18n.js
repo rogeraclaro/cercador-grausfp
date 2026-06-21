@@ -8,6 +8,23 @@
       'nav.register': "Registra't",
       'nav.lang.ca': 'CA',
       'nav.lang.es': 'ES',
+      'nav.profile': 'El meu perfil',            // ← NOU
+
+      /* ── perfil.html ── */
+      'page.title.perfil': 'El meu perfil — Cercador Graus FP',
+      'perfil.hero.h1': 'El meu',
+      'perfil.hero.h1.em': 'perfil',
+      'perfil.hero.sub': 'Favorits, alertes i seguiment de centres en un sol lloc',
+      'perfil.nav.favorits': 'Favorits',
+      'perfil.nav.alertes': 'Alertes',
+      'perfil.nav.seguiment': 'Seguiment',
+      'perfil.favs.title': 'Graus desats',
+      'perfil.favs.empty': 'Encara no tens cap grau desat. <a href="index.html">Ves al cercador</a> i desa els que t\'interessin.',
+      'perfil.favs.view': 'Veure favorits al cercador →',
+      'perfil.login.required': 'Cal <a href="login.html">iniciar sessió</a> per veure el teu perfil.',
+      'perfil.loading': 'Carregant el teu perfil...',
+      'perfil.error': 'Error carregant les dades del perfil.',
+      'perfil.footer.back': '← Tornar al cercador',
 
       /* ── Topbar logos (per a <title> de pàgina) ── */
       'page.title.index': 'Cercador Graus FP',
@@ -299,6 +316,23 @@
       'nav.register': 'Regístrate',
       'nav.lang.ca': 'CA',
       'nav.lang.es': 'ES',
+      'nav.profile': 'Mi perfil',                // ← NOU
+
+      /* ── perfil.html ── */
+      'page.title.perfil': 'Mi perfil — Cercador Graus FP',
+      'perfil.hero.h1': 'Mi',
+      'perfil.hero.h1.em': 'perfil',
+      'perfil.hero.sub': 'Favoritos, alertas y seguimiento de centros en un solo lugar',
+      'perfil.nav.favorits': 'Favoritos',
+      'perfil.nav.alertes': 'Alertas',
+      'perfil.nav.seguiment': 'Seguimiento',
+      'perfil.favs.title': 'Enseñanzas guardadas',
+      'perfil.favs.empty': 'Todavía no tienes ninguna enseñanza guardada. <a href="index.html">Ve al buscador</a> y guarda las que te interesen.',
+      'perfil.favs.view': 'Ver favoritos en el buscador →',
+      'perfil.login.required': 'Es necesario <a href="login.html">iniciar sesión</a> para ver tu perfil.',
+      'perfil.loading': 'Cargando tu perfil...',
+      'perfil.error': 'Error al cargar los datos del perfil.',
+      'perfil.footer.back': '← Volver al buscador',
 
       /* ── Títols de pàgina ── */
       'page.title.index': 'Buscador Grados FP',
