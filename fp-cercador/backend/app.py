@@ -18,6 +18,8 @@ Rutes:
   DELETE /api/admin/scheduler          → desactiva scheduler (Phase 6, D-08)
   POST   /api/admin/refresh-centres    → llança scraping de centres en background (requereix Bearer token)
   GET    /api/admin/centres-status     → estat del darrer scraping de centres (sense auth)
+  POST   /api/admin/refresh-ocupaciones → regenera ocupaciones.json (requereix Bearer token)
+  GET    /api/admin/ocupaciones-status  → estat de la darrera regeneració (sense auth)
   GET    /api/favorites                → favorits de l'usuari autenticat
   POST   /api/favorites                → afegeix oferta als favorits
   DELETE /api/favorites/<oferta_id>   → elimina oferta dels favorits
@@ -35,6 +37,7 @@ import json
 import logging
 import os
 import re
+import sys
 import threading
 import time
 from datetime import datetime, timezone
@@ -523,6 +526,87 @@ _centres_scrape_state: dict = {"status": "idle", "started_at": None,
                                 "finished_at": None, "total_centres": None,
                                 "total_ofertes": None, "error": None}
 _centres_scrape_lock = threading.Lock()
+
+# ---------------------------------------------------------------------------
+# Generació de l'índex d'ocupacions (F6) — admin manual o job mensual
+# ---------------------------------------------------------------------------
+
+_ocup_build_state: dict = {
+    "status": "idle", "started_at": None,
+    "finished_at": None, "total_entries": None, "error": None,
+}
+_ocup_build_lock = threading.Lock()
+
+
+@app.route("/api/admin/ocupaciones-status")
+def ocupaciones_build_status():
+    """Retorna l'estat de la darrera regeneració de l'índex d'ocupacions."""
+    return jsonify(_ocup_build_state), 200
+
+
+@app.route("/api/admin/refresh-ocupaciones", methods=["POST"])
+def admin_refresh_ocupaciones():
+    """Regenera ocupaciones.json en background (requereix Bearer token).
+
+    Crida scripts/generate_ocupaciones.py com a subprocess per aïllament i per
+    reutilitzar el codi existent sense moure-ho. Tarda ~2-3 min.
+    Retorna 409 si ja hi ha una regeneració en curs.
+    """
+    if not _check_admin(request):
+        return jsonify({"error": "Unauthorized"}), 401
+
+    if not _ocup_build_lock.acquire(blocking=False):
+        return jsonify({"error": "Regeneració d'ocupacions ja en curs"}), 409
+
+    _ocup_build_state.update(
+        status="running",
+        started_at=datetime.now(timezone.utc).isoformat(),
+        finished_at=None, total_entries=None, error=None,
+    )
+
+    def _run():
+        repo_root = os.path.normpath(os.path.join(os.path.dirname(__file__), '..'))
+        script = os.path.join(repo_root, 'scripts', 'generate_ocupaciones.py')
+        try:
+            import subprocess
+            result = subprocess.run(
+                [sys.executable, script],
+                capture_output=True, text=True, check=True,
+            )
+            logger.info("refresh-ocupaciones: completat\n%s", result.stdout[-2000:])
+            # Recompta les entrades del fitxer generat
+            total = 0
+            if os.path.exists(OCUPACIONES_PATH):
+                try:
+                    with open(OCUPACIONES_PATH, encoding='utf-8') as f:
+                        total = len(json.load(f))
+                except (OSError, json.JSONDecodeError):
+                    pass
+            # Invalida la cache en memòria perquè el proper /api/ocupaciones llegeixi
+            # el fitxer nou.
+            _ocupaciones_cache.update(mtime=None, entries=None)
+            _ocup_build_state.update(
+                status="done",
+                finished_at=datetime.now(timezone.utc).isoformat(),
+                total_entries=total, error=None,
+            )
+        except subprocess.CalledProcessError as exc:
+            logger.error("refresh-ocupaciones: error\n%s", exc.stderr[-2000:])
+            _ocup_build_state.update(
+                status="error", error=exc.stderr[-500:],
+                finished_at=datetime.now(timezone.utc).isoformat(),
+            )
+        except Exception as exc:
+            logger.error("refresh-ocupaciones: error inesperat: %s", exc)
+            _ocup_build_state.update(
+                status="error", error=str(exc),
+                finished_at=datetime.now(timezone.utc).isoformat(),
+            )
+        finally:
+            _ocup_build_lock.release()
+
+    threading.Thread(target=_run, daemon=True).start()
+    return jsonify({"status": "started"}), 200
 
 
 @app.route("/api/admin/centres-status")

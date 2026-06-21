@@ -26,6 +26,7 @@ CONFIG_PATH = os.path.normpath(
 )
 
 JOB_ID = "weekly_refresh"
+_OCUP_JOB_ID = "monthly_ocupaciones"
 
 VALID_DAYS = {"mon", "tue", "wed", "thu", "fri", "sat", "sun", "*"}
 
@@ -91,6 +92,20 @@ def save_config(cfg: dict) -> dict:
     validated["minute"] = m
     _write_atomic(validated, CONFIG_PATH)
     return validated
+
+
+def _run_ocupaciones_job() -> None:
+    """Job mensual: regenera l'índex d'ocupacions (F6) via subprocess."""
+    import subprocess
+    import sys as _sys
+    import os as _os
+    repo_root = _os.path.normpath(_os.path.join(_os.path.dirname(__file__), '..'))
+    script = _os.path.join(repo_root, 'scripts', 'generate_ocupaciones.py')
+    try:
+        subprocess.run([_sys.executable, script], check=True)
+        logger.info("monthly_ocupaciones: completat")
+    except Exception as exc:
+        logger.error("monthly_ocupaciones: error: %s", exc)
 
 
 def _scheduled_refresh() -> None:
@@ -172,3 +187,12 @@ def init_scheduler() -> None:
     _scheduler.start()
     cfg = load_config()
     apply_config(cfg)
+    # Job mensual per regenerar l'índex d'ocupacions de F6.
+    # S'executa el 1r de cada mes a les 04:00 UTC, DESPRÉS del refresh setmanal
+    # (que sol ser dilluns a les 03:00).
+    if _scheduler.get_job(_OCUP_JOB_ID) is None:
+        _scheduler.add_job(
+            _run_ocupaciones_job, 'cron',
+            day=1, hour=4, minute=0,
+            id=_OCUP_JOB_ID, replace_existing=True,
+        )
