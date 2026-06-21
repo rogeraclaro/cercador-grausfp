@@ -402,7 +402,7 @@
     .results-table {
       width: 100%;
       border-collapse: collapse;
-      font-size: 14px;
+      font-size: 0.9em;
       background: var(--white);
       border: 1px solid var(--border);
       border-radius: 2px;
@@ -2119,7 +2119,8 @@
                               <template x-for="cicle in ciclosDData[row.codigo]" :key="cicle.denominacion">
                                 <li>
                                   <template x-if="cicle.ficha_url">
-                                    <a href="#" @click.prevent="loggedIn ? window.open(cicle.ficha_url, '_blank') : showCentresModal()"
+                                    <a href="#"
+                                      @click.prevent="loggedIn ? window.open(cicle.ficha_url, '_blank') : showCentresModal()"
                                       x-text="cicle.denominacion + (cicle.familia ? ' (' + cicle.familia + ')' : '')"></a>
                                   </template>
                                   <template x-if="!cicle.ficha_url">
@@ -2139,7 +2140,8 @@
                         <span x-text="t('index.itinerari.parent_b_loe_cap')"></span>
                         <ul class="ciclos-d-list">
                           <template x-for="bmod in parentBLoeData[row.codigo]" :key="bmod.codigo">
-                            <li><a href="#" @click.prevent="loggedIn ? window.open(API_BASE + '/api/ficha-redirect?grado=B&codigo=' + bmod.codigo, '_blank') : showCentresModal()"
+                            <li><a href="#"
+                                @click.prevent="loggedIn ? window.open(API_BASE + '/api/ficha-redirect?grado=B&codigo=' + bmod.codigo, '_blank') : showCentresModal()"
                                 x-text="bmod.codigo + ' — ' + bmod.denominacion"></a>
                             </li>
                           </template>
@@ -2167,7 +2169,8 @@
                         <span x-text="t('index.itinerari.children_c_loe_cap')"></span>
                         <ul class="ciclos-d-list">
                           <template x-for="cert in childrenCLoeData[row.id]" :key="cert.codigo">
-                            <li><a href="#" @click.prevent="loggedIn ? window.open(API_BASE + '/api/ficha-redirect?grado=C&codigo=' + cert.codigo, '_blank') : showCentresModal()"
+                            <li><a href="#"
+                                @click.prevent="loggedIn ? window.open(API_BASE + '/api/ficha-redirect?grado=C&codigo=' + cert.codigo, '_blank') : showCentresModal()"
                                 x-text="cert.codigo + ' — ' + cert.denominacion"></a>
                             </li>
                           </template>
@@ -2403,7 +2406,8 @@
         <button class="centres-modal-close" @click="centresModalVisible = false">✕</button>
         <p class="centres-modal-msg" data-i18n="modal.gate.msg">Registra't o entra amb el teu usuari per a accedir a
           tota la informació</p>
-        <p style="font-size:13px;color:var(--warm);text-align:center;margin-top:6px;" data-i18n="modal.gate.free">El registre és gratuït</p>
+        <p style="font-size:13px;color:var(--warm);text-align:center;margin-top:6px;" data-i18n="modal.gate.free">El
+          registre és gratuït</p>
         <div class="centres-modal-actions">
           <a href="register.html" class="centres-modal-btn centres-modal-btn--primary"
             data-i18n="modal.gate.register">Registrar-me</a>
