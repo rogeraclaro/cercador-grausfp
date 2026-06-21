@@ -855,6 +855,72 @@ def _get_bc_loe_inverse() -> dict:
 import re as _re_ocup
 import unicodedata as _ud_ocup
 
+# Diccionari CA→ES per a arrels divergents (termes comuns del domini FP).
+# Claus i valors ja estan en forma normalitzada (minúscules, sense accents).
+_CA_ES_TERMS: dict[str, str] = {
+    # Alimentació i hoteleria
+    'cuina': 'cocina', 'cuiner': 'cocinero', 'cuinera': 'cocinera',
+    'pastisseria': 'pasteleria', 'hostaleria': 'hosteleria',
+    'turisme': 'turismo',
+    # Artesania i fusta
+    'fusteria': 'carpinteria', 'fuster': 'carpintero',
+    'cuir': 'cuero', 'vidre': 'vidrio',
+    # Bellesa i imatge personal
+    'perruqueria': 'peluqueria', 'bellesa': 'belleza',
+    # Construcció i instal·lacions
+    'paleta': 'albanil',
+    # Comerç i màrqueting
+    'comerc': 'comercio',  # comerç normalitzat: comerc (ç→c)
+    'vendes': 'ventas', 'venda': 'venta',
+    'publicitat': 'publicidad',
+    # Educació i serveis socials
+    'infermeria': 'enfermeria', 'infermer': 'enfermero', 'infermera': 'enfermera',
+    # Esport i activitats físiques
+    'esport': 'deporte', 'esports': 'deportes',
+    # Finances i assegurances
+    'assegurances': 'seguros', 'asseguranca': 'seguro',  # ç→c
+    'inmobiliaria': 'inmobiliaria',  # immobiliària→inmobiliaria (doble m→m)
+    # Imatge i so
+    'imatge': 'imagen',
+    # Seguretat i emergències
+    'bombers': 'bomberos',
+    # Arts i espectacle
+    'dansa': 'danza', 'teatre': 'teatro', 'cinema': 'cine',
+    'arts': 'artes', 'art': 'arte',
+    'grafic': 'grafico',  # gràfic→grafic
+    # Transport
+    'transport': 'transporte',
+    # Muntatge i instal·lació
+    'muntatge': 'montaje', 'muntador': 'montador',
+}
+
+# Regles de sufix CA→ES (sobre text ja normalitzat, en ordre d'aplicació).
+# Exemple: 'comunicacio' → 'comunicacion', 'electricitat' → 'electricidad'.
+_CA_ES_SUFFIXES: list[tuple[str, str]] = [
+    ('acio', 'acion'),   # -ació → -ación   (comunicació, educació, animació…)
+    ('itat', 'idad'),    # -itat → -idad     (electricitat, seguretat, activitat…)
+    ('ment', 'miento'),  # -ment → -miento   (manteniment, funcionament…)
+    ('atge', 'aje'),     # -atge → -aje      (muntatge, emmagatzematge…)
+]
+
+
+def _expand_token(t: str) -> list[str]:
+    """Retorna [t] + variants ES si t sembla un terme en català.
+
+    Ordre: primer el diccionari d'arrels (prioritat), després les regles de sufix.
+    Si es troba coincidència al diccionari, NO s'apliquen les regles de sufix
+    (evita dobles transformacions).
+    """
+    if t in _CA_ES_TERMS:
+        es = _CA_ES_TERMS[t]
+        return [t, es] if es != t else [t]
+    for ca_sfx, es_sfx in _CA_ES_SUFFIXES:
+        if t.endswith(ca_sfx) and len(t) > len(ca_sfx) + 2:
+            es_form = t[:-len(ca_sfx)] + es_sfx
+            return [t, es_form]
+    return [t]
+
+
 _ocupaciones_cache: dict = {"mtime": None, "entries": None}
 
 
@@ -902,12 +968,18 @@ def api_ocupaciones():
 
     entries = _get_ocupaciones()
     # Match per paraula completa: cada token ha de ser una paraula del 'norm'.
-    patterns = [_re_ocup.compile(r'\b' + _re_ocup.escape(t) + r'\b') for t in tokens]
+    # Cada token s'expandeix a [original, equivalent_ES] (si és terme en català).
+    token_groups = [_expand_token(t) for t in tokens]
+    # Compile patterns per grup: per a cada grup, almenys una variant ha de coincidir.
+    compiled_groups = [
+        [_re_ocup.compile(r'\b' + _re_ocup.escape(v) + r'\b') for v in grp]
+        for grp in token_groups
+    ]
 
     grouped: dict = {}
     for e in entries:
         hay = e.get('norm', '')
-        if all(p.search(hay) for p in patterns):
+        if all(any(p.search(hay) for p in grp) for grp in compiled_groups):
             key = e['codigo'] if e['grado'] == 'C' else f"{e['grado']}-{e['id']}"
             g = grouped.setdefault(key, {
                 'grado': e['grado'], 'codigo': e.get('codigo'), 'id': e.get('id'),
