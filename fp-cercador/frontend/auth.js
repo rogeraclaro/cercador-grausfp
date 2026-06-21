@@ -11,6 +11,7 @@
         var data = await res.json();
         widget.innerHTML =
           '<span class="auth-greeting">' + t('nav.greeting', { email: escHtml(data.email) }) + '</span>' +
+          (data.is_admin ? '<a class="auth-btn" href="admin.html">' + t('nav.admin') + '</a>' : '') +
           '<a class="auth-btn" href="perfil.html">' + t('nav.profile') + '</a>' +
           '<button class="auth-btn auth-btn--logout" id="btn-logout">' + t('nav.logout') + '</button>';
         document.getElementById('btn-logout').addEventListener('click', logout);

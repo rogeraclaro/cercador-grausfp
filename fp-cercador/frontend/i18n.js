@@ -8,7 +8,8 @@
       'nav.register': "Registra't",
       'nav.lang.ca': 'CA',
       'nav.lang.es': 'ES',
-      'nav.profile': 'El meu perfil',            // ← NOU
+      'nav.admin': 'Admin',
+      'nav.profile': 'El meu perfil',
 
       /* ── perfil.html ── */
       'page.title.perfil': 'El meu perfil — Cercador Graus FP',
@@ -316,7 +317,8 @@
       'nav.register': 'Regístrate',
       'nav.lang.ca': 'CA',
       'nav.lang.es': 'ES',
-      'nav.profile': 'Mi perfil',                // ← NOU
+      'nav.admin': 'Admin',
+      'nav.profile': 'Mi perfil',
 
       /* ── perfil.html ── */
       'page.title.perfil': 'Mi perfil — Cercador Graus FP',
