@@ -4,6 +4,10 @@
 > aprovat pel propietari: **les 10 funcionalitats seleccionades**. Aquest
 > document és la referència; els plans de spike/disseny individuals (016+)
 > es generen per onades a mesura que s'ataquen.
+>
+> **Actualitzat 2026-06-21 (commit `2b4fa22`)**: F1–F9 DONE (F7 ~80%, pla 033
+> pendent ~juliol), F10 descartat a curt termini. Afegida secció de
+> **Pròximes direccions post-F10** amb les oportunitats A–E identificades.
 
 ## Context
 
@@ -92,10 +96,56 @@ ONADA 5 (diferenciar): F5 itineraris · F6 cerca per ocupació [spikes propis]
 
 ## Ordre recomanat per als propers plans
 
-1. **F4** — Seguiment de centres (infraestructura d'alertes ja feta, valor alt)
-2. **F9** — Multiidioma ca/es (independent, S-M, es pot fer entre features grosses)
-3. **F10** — API pública documentada (F1 ja feta)
-4. **F5** — Itineraris formatius (spike previ de fonts necessari)
-5. **F6** — Cerca per ocupació/SEPE (spike previ de fonts necessari)
+> **OBSOLET (F1–F9 DONE).** Vegeu secció «Pròximes direccions post-F10» per a l'ordre actual.
+
+1. ~~**F4** — Seguiment de centres~~ DONE
+2. ~~**F9** — Multiidioma ca/es~~ DONE
+3. ~~**F10** — API pública documentada~~ DESCARTAT a curt termini
+4. ~~**F5** — Itineraris formatius~~ DONE
+5. ~~**F6** — Cerca per ocupació/SEPE~~ DONE
+
+---
+
+## Pròximes direccions post-F10
+
+Auditoria de direcció del 2026-06-21 (commit `2b4fa22`). Amb el roadmap F1–F10
+completat, aquestes són les oportunitats de major palanca identificades.
+
+| # | Direcció | Valor | Esforç | Pla | Estat |
+|---|----------|-------|--------|-----|-------|
+| A | **Renovació automàtica d'`ocupaciones.json`** al pipeline (nou endpoint admin + job) | Manteniment dades F6 | S | [049](../049-renovacio-automatica-ocupaciones.md) | TODO |
+| B | **Cerca d'ocupació en català** — sinònims CA↔ES + regles de sufix `-ació/-ació→-acion`, `-tat→-dad` | UX / accessibilitat lingüística | S–M | [050](../050-sinonims-ca-es-cerca-ocupacio.md) | TODO |
+| C | **SEO: pàgines de grau amb URL pròpia** (`/grau/<codigo>`) — SSR Jinja2, 1.500+ pàgines indexables | Creixement orgànic | L | pendent | — |
+| D | **Dashboard d'usuari centralitzat** (`perfil.html`) — favorits + alertes + seguiment en una sola pàgina | Retenció | M | [051](../051-dashboard-perfil-usuari.md) | TODO |
+| E | **Analytics bàsiques d'ús** — event log anònim a SQLite (cerques, clics, accions) | Decisió de producte | S–M | pendent | — |
+
+### Evidència per direcció
+
+**A** — `scripts/generate_ocupaciones.py` és d'execució manual (~2-3 min). El
+`pipeline.py:run()` no l'inclou. Si el ministeri afegeix titulacions noves (passa
+cada trimestre), `ocupaciones.json` queda desactualitzat sense avís.
+
+**B** — Spike 003 (`.planning/spikes/003-reverse-search-feel`) anota explícitament:
+«les queries en català retornen 0 resultats sobre dades castellanes». La funció
+`_norm_ocup()` a `app.py:797` fa word-boundary match directament sense cap capa
+de traducció. Sufixos sistemàtics: `-ació` (CA) ≠ `-acion` (ES), `-itat` ≠ `-idad`,
+`-ment` ≠ `-miento/-amiento`, `-atge` ≠ `-aje`.
+
+**C** — Tot el cercador és SPA client-side; Google no indexa cap grau concret.
+`/api/ficha-redirect` fa un redirect temporal. 1.500+ graus sense URL indexable
+= oportunitat SEO perduda.
+
+**D** — Features d'usuari disperses entre 3 llocs: favorits (inline a `index.html`),
+alertes (`alertes.html`), seguiment (`seguiment.html`). No hi ha pàgina de perfil.
+
+**E** — No hi ha cap registre d'ús (cerques, graus visitats, famílies populars).
+Sense dades d'ús les decisions de producte es prenen intuïtivament.
+
+### Ordre recomanat
+
+**Ara (curt termini):** A + B — baix cost, manteniment de la qualitat de F6.
+**Mig termini:** D — consolida la inversió de F1–F4.
+**Inversió:** C — alta palanca SEO si el creixement orgànic és objectiu.
+**Quan hi hagi usuaris actius:** E — les analítiques valen quan hi ha mostra.
 
 Quan toqui una feature, demanar `/improve plan <descripció>` per generar el pla corresponent.

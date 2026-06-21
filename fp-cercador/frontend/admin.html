@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ca">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,7 +12,13 @@
     rel="stylesheet">
 
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
     :root {
       --dark: #1c1410;
@@ -30,20 +37,36 @@
     }
 
     /* ── Top bar ── */
-    .topbar { background: var(--dark); padding: 0 48px; }
-    .topbar-inner { display: flex; align-items: center; height: 52px; }
+    .topbar {
+      background: var(--dark);
+      padding: 0 48px;
+    }
+
+    .topbar-inner {
+      display: flex;
+      align-items: center;
+      height: 52px;
+    }
+
     .topbar-logo {
       font-family: 'DM Serif Display', serif;
       color: var(--white);
       font-size: 20px;
       letter-spacing: -0.3px;
+      text-decoration: none;
     }
 
     /* ── Spinner ── */
-    @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
     .spinner {
       display: inline-block;
-      width: 18px; height: 18px;
+      width: 18px;
+      height: 18px;
       border: 2px solid var(--border);
       border-top-color: var(--dark);
       border-radius: 50%;
@@ -53,10 +76,19 @@
     }
 
     /* ── Error state ── */
-    .error-state { background: #fee2e2; color: #991b1b; padding: 16px; border-radius: 6px; }
+    .error-state {
+      background: #fee2e2;
+      color: #991b1b;
+      padding: 16px;
+      border-radius: 6px;
+    }
 
     /* ── Admin layout ── */
-    .container { max-width: 800px; margin: 0 auto; padding: 32px 48px 64px; }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 32px 48px 64px;
+    }
 
     h1 {
       font-family: 'DM Serif Display', serif;
@@ -122,8 +154,14 @@
       margin-top: 12px;
     }
 
-    button:hover { opacity: 0.9; }
-    button:disabled { opacity: 0.5; cursor: not-allowed; }
+    button:hover {
+      opacity: 0.9;
+    }
+
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
 
     .status-msg {
       margin-top: 16px;
@@ -132,9 +170,20 @@
       font-size: 13px;
     }
 
-    .status-msg.info  { background: var(--warm2); color: var(--dark); }
-    .status-msg.success { background: #d1fae5; color: #065f46; }
-    .status-msg.error { background: #fee2e2; color: #991b1b; }
+    .status-msg.info {
+      background: var(--warm2);
+      color: var(--dark);
+    }
+
+    .status-msg.success {
+      background: #d1fae5;
+      color: #065f46;
+    }
+
+    .status-msg.error {
+      background: #fee2e2;
+      color: #991b1b;
+    }
 
     .by-grado-table {
       width: 100%;
@@ -150,7 +199,9 @@
       font-size: 13px;
     }
 
-    details { margin-top: 12px; }
+    details {
+      margin-top: 12px;
+    }
 
     summary {
       cursor: pointer;
@@ -160,8 +211,14 @@
       padding: 6px 0;
     }
 
-    summary:hover { color: var(--dark); }
-    details[open] summary { color: var(--dark); margin-bottom: 12px; }
+    summary:hover {
+      color: var(--dark);
+    }
+
+    details[open] summary {
+      color: var(--dark);
+      margin-bottom: 12px;
+    }
 
     .form-row {
       display: flex;
@@ -170,7 +227,10 @@
       flex-wrap: wrap;
     }
 
-    .form-row > div { flex: 1; min-width: 120px; }
+    .form-row>div {
+      flex: 1;
+      min-width: 120px;
+    }
 
     .next-run {
       margin-top: 12px;
@@ -180,13 +240,16 @@
     }
   </style>
 </head>
+
 <body>
 
   <header class="topbar">
     <div class="topbar-inner" style="justify-content: space-between;">
       <a class="topbar-logo" href="index.html">GrausFP — Administració</a>
       <span id="admin-identity" style="color:#ccc;font-size:13px;"></span>
-      <button id="btn-logout" style="background:transparent;border:1px solid #555;color:#ccc;padding:6px 14px;margin-top:0;font-size:13px;" onclick="adminLogout()">Sortir</button>
+      <button id="btn-logout"
+        style="background:transparent;border:1px solid #555;color:#ccc;padding:6px 14px;margin-top:0;font-size:13px;"
+        onclick="adminLogout()">Sortir</button>
     </div>
   </header>
 
@@ -313,7 +376,7 @@
     function renderDone(state) {
       const rows = state.by_grado
         ? Object.entries(state.by_grado)
-            .map(([g, n]) => `<tr><td>Grau ${g}</td><td>${n}</td></tr>`).join('')
+          .map(([g, n]) => `<tr><td>Grau ${g}</td><td>${n}</td></tr>`).join('')
         : '';
       setStatus(`
         <strong>Refresh completat.</strong><br>
@@ -605,4 +668,5 @@
     }
   </script>
 </body>
+
 </html>
