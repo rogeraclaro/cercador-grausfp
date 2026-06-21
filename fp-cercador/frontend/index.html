@@ -2042,9 +2042,9 @@
                   row.grado === 'C' && row.plan_antiguo
                     ? (expandedRows = { ...expandedRows, [row.id]: !expandedRows[row.id] })
                     : ['A','B','C'].includes(row.grado) && row.ficha_id
-                      ? window.open(API_BASE + '/api/ficha-redirect?grado=' + row.grado + '&codigo=' + encodeURIComponent(row.codigo), '_blank')
+                      ? (loggedIn ? window.open(API_BASE + '/api/ficha-redirect?grado=' + row.grado + '&codigo=' + encodeURIComponent(row.codigo), '_blank') : showCentresModal())
                       : ['D','E'].includes(row.grado) && row.ficha_url
-                        ? window.open(row.ficha_url, '_blank')
+                        ? (loggedIn ? window.open(row.ficha_url, '_blank') : showCentresModal())
                         : null
                 ">
                 <td class="col-nom">
@@ -2119,7 +2119,7 @@
                               <template x-for="cicle in ciclosDData[row.codigo]" :key="cicle.denominacion">
                                 <li>
                                   <template x-if="cicle.ficha_url">
-                                    <a :href="cicle.ficha_url" target="_blank" rel="noopener"
+                                    <a href="#" @click.prevent="loggedIn ? window.open(cicle.ficha_url, '_blank') : showCentresModal()"
                                       x-text="cicle.denominacion + (cicle.familia ? ' (' + cicle.familia + ')' : '')"></a>
                                   </template>
                                   <template x-if="!cicle.ficha_url">
@@ -2139,8 +2139,8 @@
                         <span x-text="t('index.itinerari.parent_b_loe_cap')"></span>
                         <ul class="ciclos-d-list">
                           <template x-for="bmod in parentBLoeData[row.codigo]" :key="bmod.codigo">
-                            <li><a :href="API_BASE + '/api/ficha-redirect?grado=B&codigo=' + bmod.codigo"
-                                target="_blank" rel="noopener" x-text="bmod.codigo + ' — ' + bmod.denominacion"></a>
+                            <li><a href="#" @click.prevent="loggedIn ? window.open(API_BASE + '/api/ficha-redirect?grado=B&codigo=' + bmod.codigo, '_blank') : showCentresModal()"
+                                x-text="bmod.codigo + ' — ' + bmod.denominacion"></a>
                             </li>
                           </template>
                         </ul>
@@ -2167,8 +2167,8 @@
                         <span x-text="t('index.itinerari.children_c_loe_cap')"></span>
                         <ul class="ciclos-d-list">
                           <template x-for="cert in childrenCLoeData[row.id]" :key="cert.codigo">
-                            <li><a :href="API_BASE + '/api/ficha-redirect?grado=C&codigo=' + cert.codigo"
-                                target="_blank" rel="noopener" x-text="cert.codigo + ' — ' + cert.denominacion"></a>
+                            <li><a href="#" @click.prevent="loggedIn ? window.open(API_BASE + '/api/ficha-redirect?grado=C&codigo=' + cert.codigo, '_blank') : showCentresModal()"
+                                x-text="cert.codigo + ' — ' + cert.denominacion"></a>
                             </li>
                           </template>
                         </ul>
