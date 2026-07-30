@@ -186,6 +186,11 @@
       color: #991b1b;
     }
 
+    .table-wrap {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
     .by-grado-table {
       width: 100%;
       margin-top: 12px;
@@ -383,7 +388,7 @@
         <strong>Refresh completat.</strong><br>
         Total: ${state.total} registres<br>
         Durada: ${state.duration_seconds} s
-        ${rows ? `<table class="by-grado-table"><thead><tr><th>Grau</th><th>Registres</th></tr></thead><tbody>${rows}</tbody></table>` : ''}
+        ${rows ? `<div class="table-wrap"><table class="by-grado-table"><thead><tr><th>Grau</th><th>Registres</th></tr></thead><tbody>${rows}</tbody></table></div>` : ''}
       `, 'success');
     }
 
@@ -607,12 +612,14 @@
           </td>
         </tr>`).join('');
       usersContainer.innerHTML = `
-        <table class="by-grado-table">
-          <thead><tr>
-            <th>ID</th><th>Email</th><th>Verificat</th><th>Actiu</th><th>Creat</th><th>Accions</th>
-          </tr></thead>
-          <tbody>${rows}</tbody>
-        </table>`;
+        <div class="table-wrap">
+          <table class="by-grado-table">
+            <thead><tr>
+              <th>ID</th><th>Email</th><th>Verificat</th><th>Actiu</th><th>Creat</th><th>Accions</th>
+            </tr></thead>
+            <tbody>${rows}</tbody>
+          </table>
+        </div>`;
     }
 
     usersLoadBtn.addEventListener('click', async () => {

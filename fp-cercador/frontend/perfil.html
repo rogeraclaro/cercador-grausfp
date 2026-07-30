@@ -621,8 +621,9 @@
               if (!r.ok) throw new Error('HTTP ' + r.status);
               await loadAlertes();
             } catch (e) {
+              console.error('toggle alerta failed:', e);
               btn.disabled = false;
-              alert(t('alertes.err.toggle') + e.message);
+              alert(t('alertes.err.toggle'));
             }
           });
         });
@@ -637,8 +638,9 @@
               if (!r.ok) throw new Error('HTTP ' + r.status);
               await loadAlertes();
             } catch (e) {
+              console.error('delete alerta failed:', e);
               btn.disabled = false;
-              alert(t('alertes.err.delete') + e.message);
+              alert(t('alertes.err.delete'));
             }
           });
         });
@@ -716,8 +718,9 @@
               if (!r.ok) throw new Error('HTTP ' + r.status);
               await loadSeguiment();
             } catch (e) {
+              console.error('toggle seguiment failed:', e);
               btn.disabled = false;
-              alert(t('seguiment.err.toggle') + e.message);
+              alert(t('seguiment.err.toggle'));
             }
           });
         });
@@ -731,8 +734,9 @@
               if (!r.ok) throw new Error('HTTP ' + r.status);
               await loadSeguiment();
             } catch (e) {
+              console.error('delete seguiment failed:', e);
               btn.disabled = false;
-              alert(t('seguiment.err.toggle') + e.message);
+              alert(t('seguiment.err.delete'));
             }
           });
         });

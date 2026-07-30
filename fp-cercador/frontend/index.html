@@ -99,9 +99,8 @@
       padding: 14px 18px 14px 50px;
       border: 2px solid var(--dark);
       border-radius: 6px;
-      font-size: 15px;
+      font-size: 16px;
       font-family: inherit;
-      outline: none;
       background: var(--white);
       color: var(--dark);
       letter-spacing: -0.1px;
@@ -113,6 +112,11 @@
 
     input[type="search"]:focus {
       border-color: var(--dark);
+    }
+
+    input[type="search"]:focus-visible {
+      outline: 2px solid var(--warm);
+      outline-offset: 2px;
     }
 
     /* ── Grau tabs ── */
@@ -316,7 +320,11 @@
       color: var(--dark);
       background: var(--white);
       cursor: pointer;
-      outline: none;
+    }
+
+    select:focus-visible {
+      outline: 2px solid var(--warm);
+      outline-offset: 2px;
     }
 
     .checkbox-label {
@@ -875,6 +883,12 @@
     .badge-centres:hover {
       background: #1a73e8;
       color: #fff;
+    }
+
+    .badge-centres:focus-visible,
+    .badge-itinerari-b[role="button"]:focus-visible {
+      outline: 2px solid var(--warm);
+      outline-offset: 2px;
     }
 
     /* ── F5: Itineraris formatius ──────────────────────── */
@@ -1822,7 +1836,8 @@
               alert(t('index.err.boe.missing'));
             }
           } catch (e) {
-            alert(t('index.err.boe.fetch') + e.message);
+            console.error('fetchBoe failed:', e);
+            alert(t('index.err.boe.fetch'));
           }
         }
       }));
@@ -1956,13 +1971,15 @@
     </div>
 
     <!-- Loading -->
-    <div x-show="state === 'loading'" class="loading-state" role="status">
+    <div x-show="state === 'loading'" class="loading-state" role="status"
+      x-transition:enter.opacity.duration.150ms x-transition:leave.opacity.duration.100ms>
       <div class="spinner"></div>
       <p x-text="t('index.loading')"></p>
     </div>
 
     <!-- Error -->
-    <div x-show="state === 'error'" class="error-state" role="alert" x-text="t('index.error')"></div>
+    <div x-show="state === 'error'" class="error-state" role="alert" x-text="t('index.error')"
+      x-transition:enter.opacity.duration.150ms x-transition:leave.opacity.duration.100ms></div>
 
     <!-- Commutador repr. quan mode ocupació+taula+loggedIn (sobre la taula) -->
     <template x-if="state === 'ready' && searchMode === 'ocupacio' && reprOcup === 'taula' && loggedIn">
@@ -2068,7 +2085,8 @@
                     </div>
                   </template>
                   <template x-if="centres_count(row) > 0">
-                    <span class="badge-centres" @click.stop="toggleCentres(row)"
+                    <span class="badge-centres" role="button" tabindex="0" @click.stop="toggleCentres(row)"
+                      @keydown.enter.stop="toggleCentres(row)" @keydown.space.prevent.stop="toggleCentres(row)"
                       x-text="t('index.centres.count', {n: centres_count(row)})">
                     </span>
                   </template>
@@ -2081,7 +2099,9 @@
                     </span>
                   </template>
                   <template x-if="row.grado === 'B' && row.codigo && /^MF\d{4}_\d+$/.test(row.codigo)">
-                    <span class="badge-itinerari-b" style="cursor:pointer" @click.stop="fetchChildrenCLoe(row)"
+                    <span class="badge-itinerari-b" style="cursor:pointer" role="button" tabindex="0"
+                      @click.stop="fetchChildrenCLoe(row)" @keydown.enter.stop="fetchChildrenCLoe(row)"
+                      @keydown.space.prevent.stop="fetchChildrenCLoe(row)"
                       x-text="t('index.itinerari.children_c_loe_btn')"></span>
                   </template>
                 </td>
@@ -2371,9 +2391,15 @@
     </template>
 
     <!-- Modal confirmació alerta desada -->
-    <div x-show="alertModalVisible" @click="alertModalVisible = false" class="centres-modal-overlay" x-cloak>
+    <div x-show="alertModalVisible" @click="alertModalVisible = false"
+      @keydown.escape.window="alertModalVisible && (alertModalVisible = false)"
+      x-effect="if (alertModalVisible) { $data._prevFocusAlert = document.activeElement; $nextTick(() => $refs.alertModalClose && $refs.alertModalClose.focus()); } else if ($data._prevFocusAlert) { $data._prevFocusAlert.focus(); $data._prevFocusAlert = null; }"
+      class="centres-modal-overlay" x-cloak role="dialog" aria-modal="true" data-i18n-aria="modal.alert.aria"
+      aria-label="Confirmació d'alerta"
+      x-transition:enter.opacity.duration.150ms x-transition:leave.opacity.duration.100ms>
       <div class="centres-modal" @click.stop>
-        <button class="centres-modal-close" @click="alertModalVisible = false">✕</button>
+        <button class="centres-modal-close" x-ref="alertModalClose" @click="alertModalVisible = false"
+          data-i18n-aria="modal.close.aria" aria-label="Tanca"><span aria-hidden="true">✕</span></button>
         <template x-if="!alertSaveError">
           <div>
             <p class="centres-modal-msg" style="color:#166534;" data-i18n="modal.alert.ok">✓ Alerta desada correctament
@@ -2401,9 +2427,15 @@
     </div>
 
     <!-- Modal gating centres -->
-    <div x-show="centresModalVisible" @click="centresModalVisible = false" class="centres-modal-overlay" x-cloak>
+    <div x-show="centresModalVisible" @click="centresModalVisible = false"
+      @keydown.escape.window="centresModalVisible && (centresModalVisible = false)"
+      x-effect="if (centresModalVisible) { $data._prevFocusCentres = document.activeElement; $nextTick(() => $refs.centresModalClose && $refs.centresModalClose.focus()); } else if ($data._prevFocusCentres) { $data._prevFocusCentres.focus(); $data._prevFocusCentres = null; }"
+      class="centres-modal-overlay" x-cloak role="dialog" aria-modal="true" data-i18n-aria="modal.gate.aria"
+      aria-label="Registre requerit"
+      x-transition:enter.opacity.duration.150ms x-transition:leave.opacity.duration.100ms>
       <div class="centres-modal" @click.stop>
-        <button class="centres-modal-close" @click="centresModalVisible = false">✕</button>
+        <button class="centres-modal-close" x-ref="centresModalClose" @click="centresModalVisible = false"
+          data-i18n-aria="modal.close.aria" aria-label="Tanca"><span aria-hidden="true">✕</span></button>
         <p class="centres-modal-msg" data-i18n="modal.gate.msg">Registra't o entra amb el teu usuari per a accedir a
           tota la informació</p>
         <p style="font-size:13px;color:var(--warm);text-align:center;margin-top:6px;" data-i18n="modal.gate.free">El

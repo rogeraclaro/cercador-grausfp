@@ -478,8 +478,9 @@
               '<p class="empty-state">' + t('seguiment.empty') + '</p>';
           }
         } catch (e) {
+          console.error('delete seguiment failed:', e);
           if (btn) btn.disabled = false;
-          alert(t('seguiment.err.delete') + e.message);
+          alert(t('seguiment.err.delete'));
         }
       };
 
@@ -496,8 +497,9 @@
             btn.setAttribute('onclick', `handleToggle(${id}, ${updated.active ? 0 : 1})`);
           }
         } catch (e) {
+          console.error('toggle seguiment failed:', e);
           if (btn) btn.disabled = false;
-          alert(t('seguiment.err.toggle') + e.message);
+          alert(t('seguiment.err.toggle'));
         }
       };
 
