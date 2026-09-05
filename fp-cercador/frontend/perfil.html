@@ -895,11 +895,15 @@
             : '<span style="color:var(--warm)">' + t('seguiment.all.prov') + '</span>';
           var created = w.created_at ? w.created_at.slice(0, 10) : '—';
           var lastSent = w.last_sent_at ? w.last_sent_at.slice(0, 10) : '—';
+          var newCountNote = (w.last_new_count && w.last_new_count > 0)
+            ? '<br><span style="font-size:11px;color:var(--warm)">' +
+              t('seguiment.newCentres', { n: w.last_new_count }) + '</span>'
+            : '';
           return '<tr id="watch-pf-' + w.id + '">' +
             '<td>' + esc(w.oferta_denom) + '</td>' +
             '<td class="col-prov">' + prov + '</td>' +
             '<td class="col-created">' + created + '</td>' +
-            '<td class="col-sent">' + lastSent + '</td>' +
+            '<td class="col-sent">' + lastSent + newCountNote + '</td>' +
             '<td class="col-active">' +
             '<button class="toggle-btn ' + (active ? 'toggle-btn--active' : 'toggle-btn--inactive') + '"' +
             ' data-id="' + w.id + '" data-active="' + (active ? '1' : '0') + '">' +

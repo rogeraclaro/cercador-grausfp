@@ -148,8 +148,9 @@ def dispatch_centres_watch(base_url: str = "https://grausfp.masellas.info") -> i
                 try:
                     email_service.send_email(watch["email"], subject, body)
                     conn.execute(
-                        "UPDATE centres_watch SET last_sent_at = ?, snapshot_json = ? WHERE id = ?",
-                        (today, new_snapshot, watch["id"]),
+                        "UPDATE centres_watch SET last_sent_at = ?, snapshot_json = ?, "
+                        "last_new_count = ? WHERE id = ?",
+                        (today, new_snapshot, len(new_centres), watch["id"]),
                     )
                     conn.commit()
                     sent += 1

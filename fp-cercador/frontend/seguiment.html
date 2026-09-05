@@ -438,7 +438,9 @@
           <td>${esc(w.oferta_denom)}</td>
           <td class="col-prov">${w.provincia_filter ? esc(w.provincia_filter) : '<span style="color:var(--warm)">' + t('seguiment.all.prov') + '</span>'}</td>
           <td class="col-created">${formatDate(w.created_at)}</td>
-          <td class="col-sent">${formatDate(w.last_sent_at)}</td>
+          <td class="col-sent">${formatDate(w.last_sent_at)}${w.last_new_count > 0
+            ? '<br><span style="font-size:11px;color:var(--warm)">' + t('seguiment.newCentres', { n: w.last_new_count }) + '</span>'
+            : ''}</td>
           <td class="col-active">
             <button class="toggle-btn ${w.active ? 'toggle-btn--active' : 'toggle-btn--inactive'}"
               data-id="${w.id}" data-active="${w.active ? '1' : '0'}"

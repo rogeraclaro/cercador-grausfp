@@ -1942,7 +1942,8 @@ def centres_watch_get():
     try:
         rows = _db.query_all(
             conn,
-            "SELECT id, oferta_key, oferta_denom, provincia_filter, active, created_at, last_sent_at "
+            "SELECT id, oferta_key, oferta_denom, provincia_filter, active, created_at, "
+            "last_sent_at, last_new_count "
             "FROM centres_watch WHERE user_id = ? ORDER BY created_at DESC",
             (user_id,),
         )
