@@ -78,9 +78,13 @@ def _write_atomic(data: list, output_path: str) -> None:
 # ---------------------------------------------------------------------------
 
 
-def run() -> dict:
+def run(on_progress=None) -> dict:
     """
     Executa el pipeline complet per Grados A, B, C, D i E.
+
+    on_progress(phase: str) — callback opcional cridat a l'inici de cada fase
+    (Buscador A/B/C, cada bloc HTML de D/E, enriquiment de certificats). Mai
+    ha de trencar el pipeline si falla, per això els errors s'ignoren.
 
     Comportament:
     - Grados A/B/C: crida parse_grado() de buscador_scraper (API REST, 9 crides)
@@ -103,11 +107,19 @@ def run() -> dict:
 
     start = time.time()
 
+    def _report(phase: str) -> None:
+        if on_progress:
+            try:
+                on_progress(phase)
+            except Exception:
+                pass
+
     all_records: list = []
     by_grado: dict = {}
 
     # Una sola Session compartida per A/B/C — todofp.es rota JSESSIONID a cada
     # resposta i la Session propaga les cookies actualitzades (D-Phase6 fix).
+    _report('Buscador Graus A/B/C')
     buscador_data = parse_buscador_all()
     for grado_letter in ['A', 'B', 'C']:
         records = buscador_data[grado_letter]
@@ -124,14 +136,15 @@ def run() -> dict:
     # NO es crida (ofertes.json roman intacte).
     # -----------------------------------------------------------------------
     html_parsers = [
-        (HTML_URLS['D_BASICO'],   parse_grado_d_basico,   'D'),
-        (HTML_URLS['D_MEDIO'],    parse_grado_d_medio,    'D'),
-        (HTML_URLS['D_SUPERIOR'], parse_grado_d_superior, 'D'),
-        (HTML_URLS['E'],          parse_grado_e,          'E'),
+        (HTML_URLS['D_BASICO'],   parse_grado_d_basico,   'D', 'Grau D bàsic'),
+        (HTML_URLS['D_MEDIO'],    parse_grado_d_medio,    'D', 'Grau D mitjà'),
+        (HTML_URLS['D_SUPERIOR'], parse_grado_d_superior, 'D', 'Grau D superior'),
+        (HTML_URLS['E'],          parse_grado_e,          'E', 'Grau E'),
     ]
 
     html_by_grado: dict = {'D': 0, 'E': 0}
-    for url, parser_fn, grado_letter in html_parsers:
+    for url, parser_fn, grado_letter, label in html_parsers:
+        _report(label)
         records = parser_fn(url)  # fail fast: excepció propagada (D-01)
         for r in records:
             r['grado'] = grado_letter
@@ -142,6 +155,7 @@ def run() -> dict:
     by_grado['E'] = html_by_grado['E']
 
     # Enriquiment Grado C LOE (plan_antiguo=True) amb dades del buscador de certificats
+    _report('Enriquiment certificats (Grau C pla antic)')
     try:
         from scrapers.certificados_scraper import fetch_all as fetch_certificados, enrich_record
         cert_data = fetch_certificados()

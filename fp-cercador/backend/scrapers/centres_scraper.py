@@ -148,11 +148,15 @@ def _load_ofertes() -> tuple[list, list, list]:
 
 # ── pipeline principal ───────────────────────────────────────────────────────
 
-def scrape_centres() -> tuple[dict, dict]:
+def scrape_centres(on_progress=None) -> tuple[dict, dict]:
     """
     Retorna:
       centres_by_id: {codigoMinisterio: centre_dict}
       oferta_centres: {oferta_key: [codigoMinisterio, ...]}
+
+    on_progress(phase: str, current: int, total: int, unique_centres: int) —
+    callback opcional cridat periòdicament (a l'inici de cada fase i cada
+    50/10 ofertes processades). Mai ha de trencar el scraping si falla.
     """
     c_loe, d_list, e_list = _load_ofertes()
     session = _bootstrap()
@@ -160,6 +164,13 @@ def scrape_centres() -> tuple[dict, dict]:
     centres_by_id: dict[str, dict] = {}
     oferta_centres: dict[str, list[str]] = {}
     req_count = 0
+
+    def _report(phase: str, current: int, total: int) -> None:
+        if on_progress:
+            try:
+                on_progress(phase, current, total, len(centres_by_id))
+            except Exception:
+                pass
 
     def _do_fetch(params: dict) -> list[str]:
         nonlocal session, req_count
@@ -178,6 +189,7 @@ def scrape_centres() -> tuple[dict, dict]:
 
     # ── Grado C LOE (per ofertaCodigo) ──
     logger.info('=== Grado C LOE: %d ofertes ===', len(c_loe))
+    _report('Grau C (pla antic)', 0, len(c_loe))
     for i, oferta in enumerate(c_loe):
         codigo = oferta['codigo']
         ids = _do_fetch({
@@ -190,12 +202,15 @@ def scrape_centres() -> tuple[dict, dict]:
         if (i + 1) % 50 == 0:
             logger.info('C LOE %d/%d — centres únics: %d', i + 1, len(c_loe), len(centres_by_id))
             _save(centres_by_id, oferta_centres)
+            _report('Grau C (pla antic)', i + 1, len(c_loe))
 
     logger.info('C LOE complet: %d centres únics', len(centres_by_id))
     _save(centres_by_id, oferta_centres)
+    _report('Grau C (pla antic)', len(c_loe), len(c_loe))
 
     # ── Grado D (per ofertaDenominacion + gradoProfesional=4) ──
     logger.info('=== Grado D: %d ofertes ===', len(d_list))
+    _report('Grau D', 0, len(d_list))
     for i, oferta in enumerate(d_list):
         key = str(oferta['id'])
         denom = _short_denom(oferta['denominacion'])
@@ -210,12 +225,15 @@ def scrape_centres() -> tuple[dict, dict]:
         if (i + 1) % 50 == 0:
             logger.info('D %d/%d — centres únics: %d', i + 1, len(d_list), len(centres_by_id))
             _save(centres_by_id, oferta_centres)
+            _report('Grau D', i + 1, len(d_list))
 
     logger.info('D complet: %d centres únics', len(centres_by_id))
     _save(centres_by_id, oferta_centres)
+    _report('Grau D', len(d_list), len(d_list))
 
     # ── Grado E (per ofertaDenominacion + gradoProfesional=5) ──
     logger.info('=== Grado E: %d ofertes ===', len(e_list))
+    _report('Grau E', 0, len(e_list))
     for i, oferta in enumerate(e_list):
         key = str(oferta['id'])
         denom = _short_denom(oferta['denominacion'])
@@ -229,8 +247,10 @@ def scrape_centres() -> tuple[dict, dict]:
         oferta_centres[key] = ids
         if (i + 1) % 10 == 0:
             logger.info('E %d/%d — centres únics: %d', i + 1, len(e_list), len(centres_by_id))
+            _report('Grau E', i + 1, len(e_list))
 
     logger.info('E complet: %d centres únics', len(centres_by_id))
+    _report('Grau E', len(e_list), len(e_list))
 
     return centres_by_id, oferta_centres
 
@@ -248,12 +268,12 @@ def _save(centres_by_id: dict, oferta_centres: dict):
 
 # ── entry point ──────────────────────────────────────────────────────────────
 
-def build_centres_data():
+def build_centres_data(on_progress=None):
     logging.basicConfig(
         level=logging.INFO,
         format='%(asctime)s %(levelname)s %(message)s',
     )
-    centres_by_id, oferta_centres = scrape_centres()
+    centres_by_id, oferta_centres = scrape_centres(on_progress=on_progress)
     _save(centres_by_id, oferta_centres)
 
     total_c = len(centres_by_id)

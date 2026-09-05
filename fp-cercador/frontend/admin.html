@@ -404,7 +404,8 @@
         const state = await res.json();
         if (state.status === 'running') {
           refreshBtn.disabled = true;
-          setStatus('<span class="spinner"></span> Actualitzant…', 'info');
+          const phaseTxt = state.phase ? ` — ${escapeHtml(state.phase)}` : '';
+          setStatus(`<span class="spinner"></span> Actualitzant${phaseTxt}…`, 'info');
           if (pollTimer === null) {
             pollTimer = setInterval(pollOnce, 3000);
           }
@@ -552,7 +553,13 @@
         const state = await res.json();
         if (state.status === 'running') {
           centresBtn.disabled = true;
-          setCentresStatus('<span class="spinner"></span> Scraping en curs (~15–18 min)…', 'info');
+          const parts = ['<span class="spinner"></span> Scraping en curs (~15–18 min)'];
+          if (state.phase) {
+            parts.push(` — ${escapeHtml(state.phase)}`);
+            if (state.phase_total) parts.push(` (${state.phase_current}/${state.phase_total})`);
+          }
+          if (state.unique_centres) parts.push(` · ${state.unique_centres.toLocaleString('ca-ES')} centres únics`);
+          setCentresStatus(parts.join('') + '…', 'info');
           if (centresPollTimer === null) {
             centresPollTimer = setInterval(pollCentresOnce, 10000);
           }

@@ -362,17 +362,19 @@ def admin_refresh():
         by_grado=None,
         duration_seconds=None,
         errors=[],
+        phase=None,
     )
 
     def _run():
         try:
-            result = pipeline.run()
+            result = pipeline.run(on_progress=lambda phase: refresh_state.set_state(phase=phase))
             refresh_state.set_state(
                 status="done",
                 total=result["total"],
                 by_grado=result["by_grado"],
                 duration_seconds=result["duration_seconds"],
                 errors=result["errors"],
+                phase=None,
             )
             try:
                 history.append(result)
@@ -389,7 +391,7 @@ def admin_refresh():
                 logger.error("Could not dispatch alerts: %s", exc_a)
         except Exception as exc:
             logger.error("Pipeline refresh failed: %s", exc)
-            refresh_state.set_state(status="error", errors=[str(exc)])
+            refresh_state.set_state(status="error", errors=[str(exc)], phase=None)
         finally:
             refresh_state._lock.release()
 
@@ -526,7 +528,9 @@ def admin_users_delete(user_id):
 
 _centres_scrape_state: dict = {"status": "idle", "started_at": None,
                                 "finished_at": None, "total_centres": None,
-                                "total_ofertes": None, "error": None}
+                                "total_ofertes": None, "error": None,
+                                "phase": None, "phase_current": None,
+                                "phase_total": None, "unique_centres": None}
 _centres_scrape_lock = threading.Lock()
 
 # ---------------------------------------------------------------------------
@@ -629,12 +633,19 @@ def admin_refresh_centres():
     _centres_scrape_state.update(status="running",
                                   started_at=datetime.now(timezone.utc).isoformat(),
                                   finished_at=None, total_centres=None,
-                                  total_ofertes=None, error=None)
+                                  total_ofertes=None, error=None,
+                                  phase=None, phase_current=None,
+                                  phase_total=None, unique_centres=None)
 
     def _run():
         global _centres_index, _oferta_centres
+
+        def _on_progress(phase, current, total, unique_centres):
+            _centres_scrape_state.update(phase=phase, phase_current=current,
+                                          phase_total=total, unique_centres=unique_centres)
+
         try:
-            build_centres_data()
+            build_centres_data(on_progress=_on_progress)
             # Recarrega la cache en memòria perquè les noves dades siguin visibles
             _centres_index = None
             _oferta_centres = None
@@ -645,6 +656,7 @@ def admin_refresh_centres():
                 total_centres=len(_centres_index),
                 total_ofertes=len(_oferta_centres),
                 error=None,
+                phase=None,
             )
             try:
                 import centres_watch_service
@@ -653,7 +665,7 @@ def admin_refresh_centres():
                 logger.error("Could not dispatch centres watch notifications: %s", exc_cw)
         except Exception as exc:
             logger.error("Centres scraping failed: %s", exc)
-            _centres_scrape_state.update(status="error", error=str(exc),
+            _centres_scrape_state.update(status="error", error=str(exc), phase=None,
                                           finished_at=datetime.now(timezone.utc).isoformat())
         finally:
             _centres_scrape_lock.release()

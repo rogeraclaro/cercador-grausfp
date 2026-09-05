@@ -23,6 +23,7 @@ _state = {
     "by_grado": None,
     "duration_seconds": None,
     "errors": [],
+    "phase": None,             # nom de la fase en curs (només durant "running")
 }
 
 
