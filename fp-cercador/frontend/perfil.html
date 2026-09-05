@@ -295,31 +295,36 @@
     /* Denominació: estreta i amb salt de línia — el nom del grau pot ocupar
        vàries línies sense problema. Centres: la columna més important de
        la vista de favorits, se li dona molt més espai. */
-    .results-table th.col-nom,
-    .results-table td.col-nom {
-      width: 29%;
-      white-space: normal;
-      word-break: break-word;
-    }
-
-    .results-table th.col-codi,
-    .results-table td.col-codi {
-      width: 9%;
-    }
-
-    .results-table th.col-fam,
-    .results-table td.col-fam {
-      width: 15%;
-    }
-
+    /* Grau, Nivell i Codi: contingut curt i fix — píxels, no %, perquè no
+       creixin en pantalles amples (amb table-layout:fixed un % es calcula
+       sobre l'amplada total de la taula, que aquí no té límit màxim). */
     .results-table th.col-grau,
     .results-table td.col-grau {
-      width: 6%;
+      width: 40px;
     }
 
     .results-table th.col-niv,
     .results-table td.col-niv {
-      width: 6%;
+      width: 48px;
+    }
+
+    .results-table th.col-codi,
+    .results-table td.col-codi {
+      width: 80px;
+    }
+
+    /* Denominació i Família: contingut variable — es reparteixen l'espai
+       restant en %, junt amb Centres. */
+    .results-table th.col-nom,
+    .results-table td.col-nom {
+      width: 30%;
+      white-space: normal;
+      word-break: break-word;
+    }
+
+    .results-table th.col-fam,
+    .results-table td.col-fam {
+      width: 18%;
     }
 
     .results-table thead tr {
