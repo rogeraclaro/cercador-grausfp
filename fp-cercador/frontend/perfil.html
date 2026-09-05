@@ -169,42 +169,103 @@
       color: var(--warm);
     }
 
-    .favs-view-btn {
+    .results-table th.col-centres {
+      width: 260px;
+    }
+
+    .btn-fav-remove {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--dark);
+      padding: 2px 6px 2px 0;
+      vertical-align: middle;
+      line-height: 1;
+    }
+
+    .btn-fav-remove:hover {
+      opacity: 0.6;
+    }
+
+    .badge-old {
       display: inline-block;
-      margin-top: 16px;
-      font-size: 13px;
+      margin-left: 6px;
+      font-size: 10px;
       font-weight: 600;
-      font-family: inherit;
-      padding: 8px 20px;
-      border-radius: 4px;
-      background: var(--dark);
-      color: var(--white);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--warm);
+      background: var(--warm2);
+      border-radius: 3px;
+      padding: 2px 6px;
+      vertical-align: middle;
+    }
+
+    .fav-denom-link {
+      color: var(--dark);
       text-decoration: none;
-      transition: opacity 0.15s;
     }
 
-    .favs-view-btn:hover {
-      opacity: 0.85;
+    .fav-denom-link:hover {
+      text-decoration: underline;
     }
 
-    .favs-list {
-      margin-top: 16px;
+    .centres-chips {
       display: flex;
       flex-wrap: wrap;
-      gap: 8px;
+      gap: 6px;
+      margin-bottom: 6px;
     }
 
-    .fav-tag {
-      font-family: 'Geist Mono', monospace;
+    .centre-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
       font-size: 12px;
       background: var(--warm2);
       color: var(--dark);
-      padding: 4px 10px;
+      padding: 3px 8px;
       border-radius: 3px;
       border: 1px solid var(--border);
     }
 
-    /* ── Tables (alertes i seguiment) ── */
+    .centre-chip-remove {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--warm);
+      font-size: 12px;
+      line-height: 1;
+      padding: 0;
+    }
+
+    .centre-chip-remove:hover {
+      color: #991b1b;
+    }
+
+    .centres-manage-link {
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--dark);
+      text-decoration: none;
+    }
+
+    .centres-manage-link:hover {
+      text-decoration: underline;
+    }
+
+    .centres-none {
+      color: var(--warm);
+      font-size: 12px;
+    }
+
+    /* ── Tables (favorits, alertes i seguiment) ── */
+    .table-wrap {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
     .results-table {
       width: 100%;
       border-collapse: collapse;
@@ -529,29 +590,138 @@
       }
 
       /* ── Secció Favorits ── */
+      function fichaHref(row) {
+        if (row.grado === 'C' && row.plan_antiguo) return null;
+        if (['A', 'B', 'C'].includes(row.grado) && row.ficha_id) {
+          return API_BASE + '/api/ficha-redirect?grado=' + row.grado + '&codigo=' + encodeURIComponent(row.codigo);
+        }
+        if (['D', 'E'].includes(row.grado) && row.ficha_url) return row.ficha_url;
+        return null;
+      }
+
+      function centresClau(row) {
+        return row.grado === 'C' && row.plan_antiguo ? row.codigo : String(row.oferta_id ?? row.id);
+      }
+
       async function loadFavorits() {
         var section = document.getElementById('section-favorits');
         try {
-          var res = await fetch(API_BASE + '/api/favorites', { credentials: 'include' });
-          if (res.status === 401) {
+          var favRes = await fetch(API_BASE + '/api/favorites', { credentials: 'include' });
+          if (favRes.status === 401) {
             section.innerHTML = '<p class="empty-state">' + t('perfil.login.required') + '</p>';
             return;
           }
-          var favs = await res.json();
+          var favs = await favRes.json();
           if (!favs.length) {
             section.innerHTML = '<p class="empty-state">' + t('perfil.favs.empty') + '</p>';
             return;
           }
-          var tags = favs.map(function (f) {
-            return '<span class="fav-tag">' + esc(f.oferta_codigo || String(f.oferta_id)) + '</span>';
+
+          var ofertesRes = await fetch(API_BASE + '/api/ofertes');
+          var ofertes = ofertesRes.ok ? await ofertesRes.json() : [];
+          var byId = {};
+          ofertes.forEach(function (r) { byId[r.id] = r; });
+
+          var rows = favs
+            .map(function (f) {
+              var oferta = byId[f.oferta_id];
+              if (!oferta) return null;
+              return Object.assign({}, oferta, { oferta_id: f.oferta_id, centreIds: f.centres || [] });
+            })
+            .filter(Boolean);
+
+          // Carrega els noms dels centres seleccionats per a cada favorit
+          await Promise.all(rows.map(async function (row) {
+            if (!row.centreIds.length) { row.centres = []; return; }
+            try {
+              var clau = centresClau(row);
+              var param = (row.grado === 'C' && row.plan_antiguo) ? 'codigo=' : 'id=';
+              var cRes = await fetch(API_BASE + '/api/centres?' + param + encodeURIComponent(clau));
+              var all = cRes.ok ? await cRes.json() : [];
+              row.centres = all.filter(function (c) { return row.centreIds.includes(c.id); });
+            } catch (e) {
+              row.centres = [];
+            }
+          }));
+
+          var trs = rows.map(function (row) {
+            var href = fichaHref(row);
+            var denomInner = href
+              ? '<a class="fav-denom-link" href="' + esc(href) + '" target="_blank" rel="noopener">' + esc(row.denominacion) + '</a>'
+              : esc(row.denominacion);
+            var oldBadge = row.plan_antiguo ? '<span class="badge-old">' + t('index.badge.old') + '</span>' : '';
+
+            var centresHtml;
+            if (row.centres.length) {
+              var chips = row.centres.map(function (c) {
+                return '<span class="centre-chip">' + esc(c.nombre) +
+                  (c.localitat ? ' <span style="color:var(--warm)">(' + esc(c.localitat) + ')</span>' : '') +
+                  ' <button class="centre-chip-remove" data-oferta="' + row.oferta_id + '" data-centre="' + c.id +
+                  '" aria-label="' + t('index.fav.remove') + '">✕</button></span>';
+              }).join('');
+              centresHtml = '<div class="centres-chips">' + chips + '</div>';
+            } else {
+              centresHtml = '<div class="centres-none">' + t('perfil.favs.centres.none') + '</div>';
+            }
+            centresHtml += '<a class="centres-manage-link" href="index.html?oferta=' + row.oferta_id + '">' +
+              t('perfil.favs.centres.manage') + '</a>';
+
+            return '<tr>' +
+              '<td class="col-nom">' +
+              '<button class="btn-fav-remove" data-oferta="' + row.oferta_id + '" title="' + t('index.fav.remove') + '">★</button>' +
+              denomInner + oldBadge +
+              '</td>' +
+              '<td class="col-codi">' + esc(row.codigo ?? '—') + '</td>' +
+              '<td class="col-fam">' + esc(row.familia) + '</td>' +
+              '<td class="col-grau">' + esc(row.grado) + '</td>' +
+              '<td class="col-niv">' + esc(row.nivel ?? '—') + '</td>' +
+              '<td class="col-centres">' + centresHtml + '</td>' +
+              '</tr>';
           }).join('');
+
           section.innerHTML =
             '<div class="favs-summary">' +
-            '<span class="favs-count">' + favs.length + '</span>' +
+            '<span class="favs-count">' + rows.length + '</span>' +
             '<span class="favs-label">' + t('perfil.favs.title') + '</span>' +
             '</div>' +
-            '<div class="favs-list">' + tags + '</div>' +
-            '<a class="favs-view-btn" href="index.html">' + t('perfil.favs.view') + '</a>';
+            '<div class="table-wrap"><table class="results-table"><thead><tr>' +
+            '<th>' + t('index.col.nom') + '</th>' +
+            '<th>' + t('index.col.codi') + '</th>' +
+            '<th>' + t('index.col.fam') + '</th>' +
+            '<th>' + t('index.col.grau') + '</th>' +
+            '<th>' + t('index.col.niv') + '</th>' +
+            '<th class="col-centres">' + t('perfil.favs.centres.title') + '</th>' +
+            '</tr></thead><tbody>' + trs + '</tbody></table></div>';
+
+          section.querySelectorAll('.btn-fav-remove').forEach(function (btn) {
+            btn.addEventListener('click', async function () {
+              var ofertaId = btn.dataset.oferta;
+              btn.disabled = true;
+              try {
+                var r = await fetch(API_BASE + '/api/favorites/' + ofertaId, { method: 'DELETE', credentials: 'include' });
+                if (!r.ok) throw new Error('HTTP ' + r.status);
+                await loadFavorits();
+              } catch (e) {
+                btn.disabled = false;
+              }
+            });
+          });
+
+          section.querySelectorAll('.centre-chip-remove').forEach(function (btn) {
+            btn.addEventListener('click', async function () {
+              var ofertaId = btn.dataset.oferta;
+              var centreId = btn.dataset.centre;
+              btn.disabled = true;
+              try {
+                var r = await fetch(API_BASE + '/api/favorites/' + ofertaId + '/centres/' + centreId,
+                  { method: 'DELETE', credentials: 'include' });
+                if (!r.ok) throw new Error('HTTP ' + r.status);
+                await loadFavorits();
+              } catch (e) {
+                btn.disabled = false;
+              }
+            });
+          });
         } catch (e) {
           section.innerHTML = '<p class="empty-state" style="color:#991b1b;">' + t('perfil.error') + '</p>';
         }

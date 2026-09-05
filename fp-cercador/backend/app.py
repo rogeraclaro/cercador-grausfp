@@ -20,9 +20,11 @@ Rutes:
   GET    /api/admin/centres-status     → estat del darrer scraping de centres (sense auth)
   POST   /api/admin/refresh-ocupaciones → regenera ocupaciones.json (requereix Bearer token)
   GET    /api/admin/ocupaciones-status  → estat de la darrera regeneració (sense auth)
-  GET    /api/favorites                → favorits de l'usuari autenticat
+  GET    /api/favorites                → favorits de l'usuari autenticat (amb centres seleccionats)
   POST   /api/favorites                → afegeix oferta als favorits
   DELETE /api/favorites/<oferta_id>   → elimina oferta dels favorits
+  POST   /api/favorites/<oferta_id>/centres         → marca un centre dins d'un favorit
+  DELETE /api/favorites/<oferta_id>/centres/<centre_id> → desmarca un centre d'un favorit
 
 Decisions de disseny:
   - Sense Blueprints: rutes no justifiquen la complexitat addicional
@@ -1487,10 +1489,23 @@ def favorites_get():
             return jsonify([]), 200
         items = _db.query_all(
             conn,
-            "SELECT oferta_id, oferta_codigo, added_at FROM list_items WHERE list_id = ? ORDER BY added_at DESC",
+            "SELECT id, oferta_id, oferta_codigo, added_at FROM list_items WHERE list_id = ? ORDER BY added_at DESC",
             (list_id_row["id"],),
         )
-        return jsonify([dict(r) for r in items]), 200
+        result = []
+        for item in items:
+            centres = _db.query_all(
+                conn,
+                "SELECT centre_id FROM list_item_centres WHERE list_item_id = ? ORDER BY added_at",
+                (item["id"],),
+            )
+            result.append({
+                "oferta_id": item["oferta_id"],
+                "oferta_codigo": item["oferta_codigo"],
+                "added_at": item["added_at"],
+                "centres": [c["centre_id"] for c in centres],
+            })
+        return jsonify(result), 200
     finally:
         conn.close()
 
@@ -1540,6 +1555,81 @@ def favorites_remove(oferta_id):
         conn.execute(
             "DELETE FROM list_items WHERE list_id = ? AND oferta_id = ?",
             (list_id_row["id"], oferta_id),
+        )
+        conn.commit()
+        return "", 204
+    finally:
+        conn.close()
+
+
+FAVORITE_CENTRES_MAX = 5
+
+
+def _get_favorite_list_item(conn, user_id, oferta_id):
+    """Retorna la fila de list_items del favorit indicat, o None."""
+    import db as _db
+    return _db.query_one(
+        conn,
+        "SELECT list_items.id FROM list_items "
+        "JOIN lists ON lists.id = list_items.list_id "
+        "WHERE lists.user_id = ? AND list_items.oferta_id = ?",
+        (user_id, oferta_id),
+    )
+
+
+@app.route("/api/favorites/<int:oferta_id>/centres", methods=["POST"])
+def favorites_add_centre(oferta_id):
+    """Marca un centre dins d'un favorit. Body: {centre_id}."""
+    import db as _db
+    user_id = _get_session_user(request)
+    if not user_id:
+        return jsonify({"error": "No autenticat"}), 401
+    data = request.get_json(silent=True) or {}
+    centre_id = data.get("centre_id")
+    if not isinstance(centre_id, str) or not centre_id.strip():
+        return jsonify({"error": "centre_id és obligatori i ha de ser una cadena no buida"}), 400
+    conn = _db.get_db()
+    try:
+        item = _get_favorite_list_item(conn, user_id, oferta_id)
+        if not item:
+            return jsonify({"error": "Favorit no trobat"}), 404
+        count_row = _db.query_one(
+            conn, "SELECT COUNT(*) AS n FROM list_item_centres WHERE list_item_id = ?", (item["id"],)
+        )
+        existing = _db.query_one(
+            conn,
+            "SELECT id FROM list_item_centres WHERE list_item_id = ? AND centre_id = ?",
+            (item["id"], centre_id),
+        )
+        if not existing and count_row["n"] >= FAVORITE_CENTRES_MAX:
+            return jsonify({"error": "Màxim %d centres per favorit" % FAVORITE_CENTRES_MAX}), 400
+        if existing:
+            return jsonify({"status": "already_exists"}), 200
+        conn.execute(
+            "INSERT INTO list_item_centres (list_item_id, centre_id) VALUES (?, ?)",
+            (item["id"], centre_id),
+        )
+        conn.commit()
+        return jsonify({"status": "added"}), 201
+    finally:
+        conn.close()
+
+
+@app.route("/api/favorites/<int:oferta_id>/centres/<centre_id>", methods=["DELETE"])
+def favorites_remove_centre(oferta_id, centre_id):
+    """Desmarca un centre d'un favorit."""
+    import db as _db
+    user_id = _get_session_user(request)
+    if not user_id:
+        return jsonify({"error": "No autenticat"}), 401
+    conn = _db.get_db()
+    try:
+        item = _get_favorite_list_item(conn, user_id, oferta_id)
+        if not item:
+            return jsonify({"status": "not_found"}), 404
+        conn.execute(
+            "DELETE FROM list_item_centres WHERE list_item_id = ? AND centre_id = ?",
+            (item["id"], centre_id),
         )
         conn.commit()
         return "", 204
