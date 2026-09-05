@@ -1729,10 +1729,8 @@
           const wasSelected = sel.has(centreId);
           if (wasSelected) {
             sel.delete(centreId);
-          } else if (sel.size < 5) {
-            sel.add(centreId);
           } else {
-            return;
+            sel.add(centreId);
           }
           this.selectedCentres = { ...this.selectedCentres, [rowId]: sel };
           if (!this.loggedIn) return;
@@ -2339,9 +2337,8 @@
                         <template x-for="centre in centresNoSeleccionats(row)" :key="'rest-'+centre.id">
                           <div class="centre-item">
                             <input type="checkbox" class="centre-checkbox" :checked="false"
-                              :disabled="(selectedCentres[row.id] || new Set()).size >= 5"
                               @click.stop="toggleCentreSelect(row, centre.id)"
-                              :title="(selectedCentres[row.id] || new Set()).size >= 5 ? t('index.centres.maxSel') : 'Marca ' + sc(centre.nombre)"
+                              :title="'Marca ' + sc(centre.nombre)"
                               x-show="loggedIn">
                             <div>
                               <div class="centre-nom">

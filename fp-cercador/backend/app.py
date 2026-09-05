@@ -1698,8 +1698,6 @@ def favorites_remove(oferta_id):
         conn.close()
 
 
-FAVORITE_CENTRES_MAX = 5
-
 
 def _get_favorite_list_item(conn, user_id, oferta_id):
     """Retorna la fila de list_items del favorit indicat, o None."""
@@ -1729,16 +1727,11 @@ def favorites_add_centre(oferta_id):
         item = _get_favorite_list_item(conn, user_id, oferta_id)
         if not item:
             return jsonify({"error": "Favorit no trobat"}), 404
-        count_row = _db.query_one(
-            conn, "SELECT COUNT(*) AS n FROM list_item_centres WHERE list_item_id = ?", (item["id"],)
-        )
         existing = _db.query_one(
             conn,
             "SELECT id FROM list_item_centres WHERE list_item_id = ? AND centre_id = ?",
             (item["id"], centre_id),
         )
-        if not existing and count_row["n"] >= FAVORITE_CENTRES_MAX:
-            return jsonify({"error": "Màxim %d centres per favorit" % FAVORITE_CENTRES_MAX}), 400
         if existing:
             return jsonify({"status": "already_exists"}), 200
         conn.execute(
