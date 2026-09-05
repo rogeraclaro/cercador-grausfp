@@ -553,6 +553,21 @@
       vertical-align: middle;
     }
 
+    .badge-nou {
+      display: inline-block;
+      background: #dcfce7;
+      color: #166534;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      padding: 1px 6px;
+      border-radius: 3px;
+      margin-left: 6px;
+      white-space: nowrap;
+      vertical-align: middle;
+    }
+
     /* Empty / loading / error */
     .empty-row td {
       text-align: center;
@@ -1295,6 +1310,7 @@
         expandedRows: {},
 
         centresCount: {},
+        centresNous: {},
         centresVisible: {},
         centresData: {},
         centresCCAA: {},
@@ -1415,6 +1431,10 @@
             fetch(API_BASE + '/api/centres/count')
               .then(r => r.json())
               .then(d => { this.centresCount = d; })
+              .catch(() => { });
+            fetch(API_BASE + '/api/centres/nous')
+              .then(r => r.json())
+              .then(d => { this.centresNous = d; })
               .catch(() => { });
             const ofertaParam = _params.get('oferta');
             if (ofertaParam) this.openOfertaFromLink(parseInt(ofertaParam));
@@ -1574,6 +1594,11 @@
           if (this.centresData[row.id]) return this.centresData[row.id].length;
           const clau = row.grado === 'C' && row.plan_antiguo ? row.codigo : String(row.id);
           return this.centresCount[clau] || 0;
+        },
+
+        esCentreNou(row, centreId) {
+          const clau = row.grado === 'C' && row.plan_antiguo ? row.codigo : String(row.id);
+          return (this.centresNous[clau] || []).includes(centreId);
         },
 
         async toggleCentres(row) {
@@ -2292,6 +2317,7 @@
                                 <template x-if="!centre.url_web">
                                   <span x-text="sc(centre.nombre)"></span>
                                 </template>
+                                <span class="badge-nou" x-show="esCentreNou(row, centre.id)" x-text="t('index.centres.nou')"></span>
                               </div>
                               <div class="centre-meta">
                                 <span x-text="tc(centre.direccio) || ''"></span>
@@ -2326,6 +2352,7 @@
                                 <template x-if="!centre.url_web">
                                   <span x-text="sc(centre.nombre)"></span>
                                 </template>
+                                <span class="badge-nou" x-show="esCentreNou(row, centre.id)" x-text="t('index.centres.nou')"></span>
                               </div>
                               <div class="centre-meta">
                                 <span x-text="tc(centre.direccio) || ''"></span>

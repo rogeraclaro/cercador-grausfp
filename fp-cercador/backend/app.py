@@ -82,6 +82,7 @@ BC_LOE_PATH = os.path.join(_DATA_DIR, "bc_loe.json")
 OCUPACIONES_PATH = os.path.join(_DATA_DIR, "ocupaciones.json")
 _CENTRES_PATH = os.path.join(_DATA_DIR, "centres.json")
 _OFERTA_CENTRES_PATH = os.path.join(_DATA_DIR, "oferta_centres.json")
+_CENTRES_NOUS_PATH = os.path.join(_DATA_DIR, "centres_nous_per_oferta.json")
 _centres_index: dict | None = None
 _oferta_centres: dict | None = None
 
@@ -227,6 +228,23 @@ def get_centres_count():
     except FileNotFoundError:
         return jsonify({}), 200
     return jsonify({k: len(v) for k, v in _oferta_centres.items()})
+
+
+@app.route("/api/centres/nous")
+def get_centres_nous():
+    """
+    GET /api/centres/nous → {clau: [centre_id, ...]} amb els centres que van
+    aparèixer vinculats a cada oferta al darrer scraping (calculat a
+    admin_refresh_centres). Buit si mai s'ha fet cap scraping des que es va
+    afegir aquesta funcionalitat.
+    """
+    if not os.path.exists(_CENTRES_NOUS_PATH):
+        return jsonify({}), 200
+    try:
+        with open(_CENTRES_NOUS_PATH, encoding="utf-8") as f:
+            return app.response_class(f.read(), mimetype="application/json")
+    except (OSError, json.JSONDecodeError):
+        return jsonify({}), 200
 
 
 _ofertes_cache = {"mtime": None, "body": None}
@@ -662,6 +680,7 @@ def admin_refresh_centres():
             except FileNotFoundError:
                 pass  # primer scraping — no hi ha estat previ per comparar
             ids_abans = _all_linked_centre_ids(_oferta_centres)
+            oferta_centres_abans = dict(_oferta_centres) if _oferta_centres else {}
 
             build_centres_data(on_progress=_on_progress)
             # Recarrega la cache en memòria perquè les noves dades siguin visibles
@@ -672,6 +691,20 @@ def admin_refresh_centres():
             ids_despres = _all_linked_centre_ids(_oferta_centres)
             centres_nous = ids_despres - ids_abans
             centres_eliminats = ids_abans - ids_despres
+
+            # Diff per oferta (per resaltar centres nous a cada fitxa) — només
+            # es guarden les ofertes que en tenen algun, per no inflar el fitxer.
+            nous_per_oferta = {}
+            for oferta_key, ids_now in _oferta_centres.items():
+                ids_abans_oferta = set(oferta_centres_abans.get(oferta_key, []))
+                nous_oferta = [i for i in ids_now if i not in ids_abans_oferta]
+                if nous_oferta:
+                    nous_per_oferta[oferta_key] = nous_oferta
+            try:
+                with open(_CENTRES_NOUS_PATH, "w", encoding="utf-8") as f:
+                    json.dump(nous_per_oferta, f, ensure_ascii=False)
+            except OSError as exc_w:
+                logger.error("No s'ha pogut escriure %s: %s", _CENTRES_NOUS_PATH, exc_w)
 
             _centres_scrape_state.update(
                 status="done",
