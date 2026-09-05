@@ -146,6 +146,21 @@ def _load_ofertes() -> tuple[list, list, list]:
     return c_loe, d_list, e_list
 
 
+def _load_existing_centres() -> dict[str, dict]:
+    """Carrega el catàleg de centres existent, si n'hi ha. Fail-soft: si el
+    fitxer no existeix o està corrupte, torna un catàleg buit en lloc de
+    trencar el scraping."""
+    if not os.path.exists(_CENTRES_PATH):
+        return {}
+    try:
+        with open(_CENTRES_PATH, encoding='utf-8') as f:
+            centres_list = json.load(f)
+        return {c['id']: c for c in centres_list}
+    except (OSError, json.JSONDecodeError) as exc:
+        logger.warning('No s\'ha pogut carregar el catàleg existent (%s) — es comença de zero', exc)
+        return {}
+
+
 # ── pipeline principal ───────────────────────────────────────────────────────
 
 def scrape_centres(on_progress=None) -> tuple[dict, dict]:
@@ -161,7 +176,12 @@ def scrape_centres(on_progress=None) -> tuple[dict, dict]:
     c_loe, d_list, e_list = _load_ofertes()
     session = _bootstrap()
 
-    centres_by_id: dict[str, dict] = {}
+    # Catàleg acumulatiu: comença amb el que ja hi havia (si hi ha) perquè un
+    # centre que deixi d'impartir cap oferta es mantingui amb les seves
+    # últimes dades conegudes, en lloc de desaparèixer del catàleg. Els
+    # centres que sí es tornen a veure sobreescriuen les seves dades amb les
+    # fresques més avall (centres_by_id[c['id']] = c a _do_fetch).
+    centres_by_id: dict[str, dict] = _load_existing_centres()
     oferta_centres: dict[str, list[str]] = {}
     req_count = 0
 
