@@ -622,6 +622,9 @@
           var byId = {};
           ofertes.forEach(function (r) { byId[r.id] = r; });
 
+          var countRes = await fetch(API_BASE + '/api/centres/count');
+          var centresCount = countRes.ok ? await countRes.json() : {};
+
           var rows = favs
             .map(function (f) {
               var oferta = byId[f.oferta_id];
@@ -651,6 +654,7 @@
               : esc(row.denominacion);
             var oldBadge = row.plan_antiguo ? '<span class="badge-old">' + t('index.badge.old') + '</span>' : '';
 
+            var totalCentres = centresCount[centresClau(row)] || 0;
             var centresHtml;
             if (row.centres.length) {
               var chips = row.centres.map(function (c) {
@@ -659,12 +663,16 @@
                   ' <button class="centre-chip-remove" data-oferta="' + row.oferta_id + '" data-centre="' + c.id +
                   '" aria-label="' + t('index.fav.remove') + '">✕</button></span>';
               }).join('');
-              centresHtml = '<div class="centres-chips">' + chips + '</div>';
+              centresHtml = '<div class="centres-chips">' + chips + '</div>' +
+                '<a class="centres-manage-link" href="index.html?oferta=' + row.oferta_id + '">' +
+                t('perfil.favs.centres.manage') + '</a>';
+            } else if (totalCentres > 0) {
+              centresHtml = '<div class="centres-none">' + t('perfil.favs.centres.none') + '</div>' +
+                '<a class="centres-manage-link" href="index.html?oferta=' + row.oferta_id + '">' +
+                t('perfil.favs.centres.manage') + '</a>';
             } else {
-              centresHtml = '<div class="centres-none">' + t('perfil.favs.centres.none') + '</div>';
+              centresHtml = '';
             }
-            centresHtml += '<a class="centres-manage-link" href="index.html?oferta=' + row.oferta_id + '">' +
-              t('perfil.favs.centres.manage') + '</a>';
 
             return '<tr>' +
               '<td class="col-nom">' +
