@@ -61,12 +61,15 @@ def test_second_append_diffs_against_snapshot():
     assert entry["changes"]["has_changes"] is True
 
 
-def test_history_max_truncation():
-    for i in range(history.HISTORY_MAX + 2):
+def test_history_keeps_every_entry_unbounded():
+    """L'historial ja no es trunca — es guarden totes les entrades, la
+    paginació la fa l'endpoint /api/refresh-history, no aquest mòdul."""
+    n = 25
+    for i in range(n):
         r = {**RESULT_A, "total": i}
         history.append(r)
     data = json.loads(open(history.HISTORY_PATH, encoding="utf-8").read())
-    assert len(data) == history.HISTORY_MAX
+    assert len(data) == n
 
 
 def test_snapshot_updated():

@@ -18,7 +18,6 @@ HISTORY_PATH = os.path.normpath(
 SNAPSHOT_PATH = os.path.normpath(
     os.path.join(os.path.dirname(__file__), "data", "last_snapshot.json")
 )
-HISTORY_MAX = 20
 
 
 def _load_json(path: str):
@@ -160,7 +159,6 @@ def append(result: dict) -> None:
     }
     history = _load_json(HISTORY_PATH) or []
     history.insert(0, entry)
-    history = history[:HISTORY_MAX]
     _write_atomic(history, HISTORY_PATH)
     _write_atomic(full, SNAPSHOT_PATH)
     # Persistència a l'Observatori (no-fatal)

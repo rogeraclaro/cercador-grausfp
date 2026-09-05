@@ -84,7 +84,6 @@ _CENTRES_PATH = os.path.join(_DATA_DIR, "centres.json")
 _OFERTA_CENTRES_PATH = os.path.join(_DATA_DIR, "oferta_centres.json")
 _CENTRES_NOUS_PATH = os.path.join(_DATA_DIR, "centres_nous_per_oferta.json")
 _CENTRES_REFRESH_HISTORY_PATH = os.path.join(_DATA_DIR, "centres_refresh_history.json")
-_CENTRES_REFRESH_HISTORY_MAX = 20
 
 
 def _append_centres_history(entry: dict) -> None:
@@ -103,7 +102,6 @@ def _append_centres_history(entry: dict) -> None:
     except (OSError, json.JSONDecodeError):
         hist = []
     hist.insert(0, entry)
-    hist = hist[:_CENTRES_REFRESH_HISTORY_MAX]
     try:
         with open(_CENTRES_REFRESH_HISTORY_PATH, "w", encoding="utf-8") as f:
             json.dump(hist, f, ensure_ascii=False)
@@ -258,16 +256,26 @@ def get_centres_count():
 
 @app.route("/api/centres-refresh-history")
 def get_centres_refresh_history():
-    """GET /api/centres-refresh-history → array (més recent primer) amb
-    l'historial del scraping de centres. Públic, sense auth (mateix criteri
-    que /api/refresh-history)."""
+    """
+    GET /api/centres-refresh-history → historial paginat (més recent
+    primer) del scraping de centres. Públic, sense auth (mateix criteri
+    que /api/refresh-history). Query params: page, limit (mateix contracte).
+    """
     if not os.path.exists(_CENTRES_REFRESH_HISTORY_PATH):
-        return jsonify([]), 200
+        return jsonify({"items": [], "total": 0, "page": 1, "limit": 20}), 200
     try:
         with open(_CENTRES_REFRESH_HISTORY_PATH, encoding="utf-8") as f:
-            return app.response_class(f.read(), mimetype="application/json")
+            data = json.load(f)
     except (OSError, json.JSONDecodeError):
-        return jsonify([]), 200
+        return jsonify({"items": [], "total": 0, "page": 1, "limit": 20}), 200
+    page, limit = _parse_pagination(request)
+    start = (page - 1) * limit
+    return jsonify({
+        "items": data[start:start + limit],
+        "total": len(data),
+        "page": page,
+        "limit": limit,
+    }), 200
 
 
 @app.route("/api/centres/info")
@@ -330,17 +338,40 @@ def refresh_status():
     return jsonify(refresh_state.get_state()), 200
 
 
+def _parse_pagination(req) -> tuple[int, int]:
+    """Llegeix i sanititza page/limit dels query params. page >= 1, 1 <= limit <= 100."""
+    try:
+        page = max(1, int(req.args.get("page", 1)))
+    except (TypeError, ValueError):
+        page = 1
+    try:
+        limit = min(100, max(1, int(req.args.get("limit", 20))))
+    except (TypeError, ValueError):
+        limit = 20
+    return page, limit
+
+
 @app.route("/api/refresh-history")
 def refresh_history():
-    """Retorna l'historial de refreshos (públic, sense auth)."""
+    """
+    Retorna l'historial de refreshos, paginat (públic, sense auth).
+    Query params: page (1-indexed, default 1), limit (default 20, max 100).
+    """
     if not os.path.exists(history.HISTORY_PATH):
-        return jsonify([]), 200
+        return jsonify({"items": [], "total": 0, "page": 1, "limit": 20}), 200
     try:
         with open(history.HISTORY_PATH, "r", encoding="utf-8") as f:
             data = json.load(f)
     except (json.JSONDecodeError, OSError):
-        return jsonify([]), 200
-    return jsonify(data), 200
+        return jsonify({"items": [], "total": 0, "page": 1, "limit": 20}), 200
+    page, limit = _parse_pagination(request)
+    start = (page - 1) * limit
+    return jsonify({
+        "items": data[start:start + limit],
+        "total": len(data),
+        "page": page,
+        "limit": limit,
+    }), 200
 
 
 @app.route("/api/observatory")

@@ -511,12 +511,27 @@
       });
     }
 
-    async function load() {
+    const HIST_LIMIT = 20;
+
+    function renderPagination(page, limit, total, onLoadFn) {
+      const totalPages = Math.max(1, Math.ceil(total / limit));
+      if (totalPages <= 1) return '';
+      return `
+        <div class="pagination" style="display:flex;gap:12px;align-items:center;justify-content:center;margin-top:16px;">
+          <button ${page <= 1 ? 'disabled' : ''} onclick="${onLoadFn}(${page - 1})">← Anterior</button>
+          <span>Pàgina ${page} de ${totalPages}</span>
+          <button ${page >= totalPages ? 'disabled' : ''} onclick="${onLoadFn}(${page + 1})">Següent →</button>
+        </div>`;
+    }
+
+    async function load(page) {
+      page = page || 1;
       const main = document.getElementById('main-content');
       try {
-        const res = await fetch(API_BASE + '/api/refresh-history');
+        const res = await fetch(API_BASE + '/api/refresh-history?page=' + page + '&limit=' + HIST_LIMIT);
         if (!res.ok) throw new Error('HTTP ' + res.status);
-        const history = await res.json();
+        const resp = await res.json();
+        const history = resp.items;
 
         if (!history.length) {
           main.innerHTML = '<p class="empty-state">' + t('hist.empty') + '</p>';
@@ -598,7 +613,7 @@
             return `<td class="col-grado">${n != null ? n : '—'}</td>`;
           }).join('');
           return `<tr>
-            <td class="col-num">${i + 1}</td>
+            <td class="col-num">${(resp.page - 1) * resp.limit + i + 1}</td>
             <td class="col-date">${formatDate(entry.ts)}</td>
             <td class="col-total">${entry.total ?? '—'}</td>
             ${gradoCells}
@@ -622,23 +637,26 @@
               </thead>
               <tbody>${rows}</tbody>
             </table>
-          </div>`;
+          </div>
+          ${renderPagination(resp.page, resp.limit, resp.total, 'load')}`;
       } catch (e) {
         main.innerHTML = '<p class="empty-state" style="color:#991b1b;">Error carregant l\'historial.</p>';
       }
     }
 
-    async function loadCentresHistory() {
+    async function loadCentresHistory(page) {
+      page = page || 1;
       const section = document.getElementById('centres-history-section');
       try {
-        const res = await fetch(API_BASE + '/api/centres-refresh-history');
+        const res = await fetch(API_BASE + '/api/centres-refresh-history?page=' + page + '&limit=' + HIST_LIMIT);
         if (!res.ok) throw new Error('HTTP ' + res.status);
-        const hist = await res.json();
+        const resp = await res.json();
+        const hist = resp.items;
         if (!hist.length) { section.innerHTML = ''; return; }
 
         const rows = hist.map((e, i) => `
           <tr>
-            <td class="col-num">${hist.length - i}</td>
+            <td class="col-num">${(resp.page - 1) * resp.limit + i + 1}</td>
             <td>${formatDate(e.ts)}</td>
             <td>${(e.total_centres ?? 0).toLocaleString('ca-ES')}</td>
             <td>${(e.total_ofertes ?? 0).toLocaleString('ca-ES')}</td>
@@ -664,7 +682,8 @@
               </thead>
               <tbody>${rows}</tbody>
             </table>
-          </div>`;
+          </div>
+          ${renderPagination(resp.page, resp.limit, resp.total, 'loadCentresHistory')}`;
       } catch (e) {
         section.innerHTML = '';
       }
