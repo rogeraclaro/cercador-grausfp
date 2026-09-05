@@ -230,6 +230,22 @@ def get_centres_count():
     return jsonify({k: len(v) for k, v in _oferta_centres.items()})
 
 
+@app.route("/api/centres/info")
+def get_centres_info():
+    """
+    GET /api/centres/info?ids=id1,id2,... → array de centres del catàleg,
+    existeixin o no vinculats a cap oferta actualment. Pensat per mostrar
+    centres que un usuari va marcar com a favorits i que ja no imparteixen
+    cap grau (amb el catàleg acumulatiu, encara en tenim les dades).
+    """
+    try:
+        _load_centres_data()
+    except FileNotFoundError:
+        return jsonify([]), 200
+    ids = [i for i in (request.args.get("ids") or "").split(",") if i]
+    return jsonify([_centres_index[i] for i in ids if i in _centres_index])
+
+
 @app.route("/api/centres/nous")
 def get_centres_nous():
     """

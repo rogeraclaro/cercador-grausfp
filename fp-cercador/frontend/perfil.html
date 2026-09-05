@@ -229,6 +229,19 @@
       border: 1px solid var(--border);
     }
 
+    .centre-chip--inactiu {
+      background: transparent;
+      border-style: dashed;
+      color: var(--warm);
+      opacity: 0.8;
+    }
+
+    .centre-inactiu-tag {
+      font-size: 10px;
+      font-style: italic;
+      color: var(--warm);
+    }
+
     .centre-chip-remove {
       background: none;
       border: none;
@@ -635,7 +648,10 @@
             })
             .filter(Boolean);
 
-          // Carrega els noms dels centres seleccionats per a cada favorit
+          // Carrega els noms dels centres seleccionats per a cada favorit.
+          // Un centre seleccionat que ja no imparteix aquest grau es manté
+          // igualment (consultant el catàleg complet) amb actiu=false, en
+          // lloc de desaparèixer de la llista sense explicació.
           await Promise.all(rows.map(async function (row) {
             if (!row.centreIds.length) { row.centres = []; return; }
             try {
@@ -643,7 +659,22 @@
               var param = (row.grado === 'C' && row.plan_antiguo) ? 'codigo=' : 'id=';
               var cRes = await fetch(API_BASE + '/api/centres?' + param + encodeURIComponent(clau));
               var all = cRes.ok ? await cRes.json() : [];
-              row.centres = all.filter(function (c) { return row.centreIds.includes(c.id); });
+              var activeIds = {};
+              all.forEach(function (c) { activeIds[c.id] = true; });
+              var actius = all
+                .filter(function (c) { return row.centreIds.includes(c.id); })
+                .map(function (c) { return Object.assign({}, c, { actiu: true }); });
+              var idsInactius = row.centreIds.filter(function (id) { return !activeIds[id]; });
+              var inactius = [];
+              if (idsInactius.length) {
+                try {
+                  var infoRes = await fetch(API_BASE + '/api/centres/info?ids=' +
+                    idsInactius.map(encodeURIComponent).join(','));
+                  var infoAll = infoRes.ok ? await infoRes.json() : [];
+                  inactius = infoAll.map(function (c) { return Object.assign({}, c, { actiu: false }); });
+                } catch (e) { /* si falla, simplement no es mostren els inactius */ }
+              }
+              row.centres = actius.concat(inactius);
             } catch (e) {
               row.centres = [];
             }
@@ -660,8 +691,12 @@
             var centresHtml;
             if (row.centres.length) {
               var chips = row.centres.map(function (c) {
-                return '<span class="centre-chip">' + esc(c.nombre) +
+                var inactiveTag = c.actiu === false
+                  ? ' <span class="centre-inactiu-tag">' + t('perfil.favs.centres.inactive') + '</span>'
+                  : '';
+                return '<span class="centre-chip' + (c.actiu === false ? ' centre-chip--inactiu' : '') + '">' + esc(c.nombre) +
                   (c.localitat ? ' <span style="color:var(--warm)">(' + esc(c.localitat) + ')</span>' : '') +
+                  inactiveTag +
                   ' <button class="centre-chip-remove" data-oferta="' + row.oferta_id + '" data-centre="' + c.id +
                   '" aria-label="' + t('index.fav.remove') + '">✕</button></span>';
               }).join('');
