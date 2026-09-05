@@ -1698,7 +1698,8 @@
           });
         },
 
-        toggleCentreSelect(rowId, centreId) {
+        toggleCentreSelect(row, centreId) {
+          const rowId = row.id;
           const sel = new Set(this.selectedCentres[rowId] || []);
           const wasSelected = sel.has(centreId);
           if (wasSelected) {
@@ -1709,17 +1710,24 @@
             return;
           }
           this.selectedCentres = { ...this.selectedCentres, [rowId]: sel };
-          if (this.loggedIn && this.favorites.has(rowId)) {
-            if (wasSelected) {
-              fetch(API_BASE + '/api/favorites/' + rowId + '/centres/' + centreId,
-                { method: 'DELETE', credentials: 'include' }).catch(() => { });
-            } else {
-              fetch(API_BASE + '/api/favorites/' + rowId + '/centres', {
-                method: 'POST', credentials: 'include',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ centre_id: centreId })
-              }).catch(() => { });
-            }
+          if (!this.loggedIn) return;
+
+          // Seleccionar un centre marca automàticament l'oferta com a favorit
+          // si encara no ho era — no té sentit fer seguiment d'un centre
+          // d'una oferta que no tens desada.
+          if (!wasSelected && !this.favorites.has(rowId)) {
+            this.toggleFavorite(row);
+          }
+
+          if (wasSelected) {
+            fetch(API_BASE + '/api/favorites/' + rowId + '/centres/' + centreId,
+              { method: 'DELETE', credentials: 'include' }).catch(() => { });
+          } else {
+            fetch(API_BASE + '/api/favorites/' + rowId + '/centres', {
+              method: 'POST', credentials: 'include',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ centre_id: centreId })
+            }).catch(() => { });
           }
         },
 
@@ -2273,7 +2281,7 @@
                         <template x-for="centre in centresSeleccionats(row)" :key="'sel-'+centre.id">
                           <div class="centre-item">
                             <input type="checkbox" class="centre-checkbox" checked
-                              @click.stop="toggleCentreSelect(row.id, centre.id)"
+                              @click.stop="toggleCentreSelect(row, centre.id)"
                               :title="'Treu ' + sc(centre.nombre) + ' de la selecció'">
                             <div>
                               <div class="centre-nom">
@@ -2306,7 +2314,7 @@
                           <div class="centre-item">
                             <input type="checkbox" class="centre-checkbox" :checked="false"
                               :disabled="(selectedCentres[row.id] || new Set()).size >= 5"
-                              @click.stop="toggleCentreSelect(row.id, centre.id)"
+                              @click.stop="toggleCentreSelect(row, centre.id)"
                               :title="(selectedCentres[row.id] || new Set()).size >= 5 ? t('index.centres.maxSel') : 'Marca ' + sc(centre.nombre)"
                               x-show="loggedIn">
                             <div>
