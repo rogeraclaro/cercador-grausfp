@@ -566,10 +566,16 @@
         } else if (state.status === 'done') {
           stopCentresPoll();
           centresBtn.disabled = false;
+          let diffLine = '';
+          if (state.centres_nous !== null && state.centres_nous !== undefined) {
+            diffLine = `<br>${state.centres_nous.toLocaleString('ca-ES')} centres nous · ` +
+              `${state.centres_eliminats.toLocaleString('ca-ES')} centres que ja no apareixen a cap oferta`;
+          }
           setCentresStatus(
             `<strong>Scraping completat.</strong><br>` +
             `${state.total_centres.toLocaleString('ca-ES')} centres únics · ` +
-            `${state.total_ofertes.toLocaleString('ca-ES')} relacions oferta↔centres`,
+            `${state.total_ofertes.toLocaleString('ca-ES')} relacions oferta↔centres` +
+            diffLine,
             'success'
           );
         } else if (state.status === 'error') {

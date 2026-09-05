@@ -530,7 +530,18 @@ _centres_scrape_state: dict = {"status": "idle", "started_at": None,
                                 "finished_at": None, "total_centres": None,
                                 "total_ofertes": None, "error": None,
                                 "phase": None, "phase_current": None,
-                                "phase_total": None, "unique_centres": None}
+                                "phase_total": None, "unique_centres": None,
+                                "centres_nous": None, "centres_eliminats": None}
+
+
+def _all_linked_centre_ids(oferta_centres: dict | None) -> set:
+    """Unió de tots els ids de centre vinculats a alguna oferta."""
+    if not oferta_centres:
+        return set()
+    ids: set = set()
+    for lst in oferta_centres.values():
+        ids.update(lst)
+    return ids
 _centres_scrape_lock = threading.Lock()
 
 # ---------------------------------------------------------------------------
@@ -635,7 +646,8 @@ def admin_refresh_centres():
                                   finished_at=None, total_centres=None,
                                   total_ofertes=None, error=None,
                                   phase=None, phase_current=None,
-                                  phase_total=None, unique_centres=None)
+                                  phase_total=None, unique_centres=None,
+                                  centres_nous=None, centres_eliminats=None)
 
     def _run():
         global _centres_index, _oferta_centres
@@ -645,11 +657,22 @@ def admin_refresh_centres():
                                           phase_total=total, unique_centres=unique_centres)
 
         try:
+            try:
+                _load_centres_data()
+            except FileNotFoundError:
+                pass  # primer scraping — no hi ha estat previ per comparar
+            ids_abans = _all_linked_centre_ids(_oferta_centres)
+
             build_centres_data(on_progress=_on_progress)
             # Recarrega la cache en memòria perquè les noves dades siguin visibles
             _centres_index = None
             _oferta_centres = None
             _load_centres_data()
+
+            ids_despres = _all_linked_centre_ids(_oferta_centres)
+            centres_nous = ids_despres - ids_abans
+            centres_eliminats = ids_abans - ids_despres
+
             _centres_scrape_state.update(
                 status="done",
                 finished_at=datetime.now(timezone.utc).isoformat(),
@@ -657,6 +680,8 @@ def admin_refresh_centres():
                 total_ofertes=len(_oferta_centres),
                 error=None,
                 phase=None,
+                centres_nous=len(centres_nous),
+                centres_eliminats=len(centres_eliminats),
             )
             try:
                 import centres_watch_service
