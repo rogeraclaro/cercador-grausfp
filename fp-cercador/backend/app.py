@@ -83,6 +83,32 @@ OCUPACIONES_PATH = os.path.join(_DATA_DIR, "ocupaciones.json")
 _CENTRES_PATH = os.path.join(_DATA_DIR, "centres.json")
 _OFERTA_CENTRES_PATH = os.path.join(_DATA_DIR, "oferta_centres.json")
 _CENTRES_NOUS_PATH = os.path.join(_DATA_DIR, "centres_nous_per_oferta.json")
+_CENTRES_REFRESH_HISTORY_PATH = os.path.join(_DATA_DIR, "centres_refresh_history.json")
+_CENTRES_REFRESH_HISTORY_MAX = 20
+
+
+def _append_centres_history(entry: dict) -> None:
+    """Afegeix una entrada a l'historial de scraping de centres (fail-soft).
+
+    Historial separat del de refresh d'ofertes (history.py) perquè aquell
+    mòdul està especialitzat en families/denominacions/grados — forçar-hi
+    el domini de centres seria pitjor que aquesta petita duplicació.
+    """
+    try:
+        if os.path.exists(_CENTRES_REFRESH_HISTORY_PATH):
+            with open(_CENTRES_REFRESH_HISTORY_PATH, encoding="utf-8") as f:
+                hist = json.load(f)
+        else:
+            hist = []
+    except (OSError, json.JSONDecodeError):
+        hist = []
+    hist.insert(0, entry)
+    hist = hist[:_CENTRES_REFRESH_HISTORY_MAX]
+    try:
+        with open(_CENTRES_REFRESH_HISTORY_PATH, "w", encoding="utf-8") as f:
+            json.dump(hist, f, ensure_ascii=False)
+    except OSError as exc:
+        logger.error("No s'ha pogut escriure %s: %s", _CENTRES_REFRESH_HISTORY_PATH, exc)
 _centres_index: dict | None = None
 _oferta_centres: dict | None = None
 
@@ -228,6 +254,20 @@ def get_centres_count():
     except FileNotFoundError:
         return jsonify({}), 200
     return jsonify({k: len(v) for k, v in _oferta_centres.items()})
+
+
+@app.route("/api/centres-refresh-history")
+def get_centres_refresh_history():
+    """GET /api/centres-refresh-history → array (més recent primer) amb
+    l'historial del scraping de centres. Públic, sense auth (mateix criteri
+    que /api/refresh-history)."""
+    if not os.path.exists(_CENTRES_REFRESH_HISTORY_PATH):
+        return jsonify([]), 200
+    try:
+        with open(_CENTRES_REFRESH_HISTORY_PATH, encoding="utf-8") as f:
+            return app.response_class(f.read(), mimetype="application/json")
+    except (OSError, json.JSONDecodeError):
+        return jsonify([]), 200
 
 
 @app.route("/api/centres/info")
@@ -685,6 +725,7 @@ def admin_refresh_centres():
 
     def _run():
         global _centres_index, _oferta_centres
+        _start_time = time.time()
 
         def _on_progress(phase, current, total, unique_centres):
             _centres_scrape_state.update(phase=phase, phase_current=current,
@@ -721,6 +762,15 @@ def admin_refresh_centres():
                     json.dump(nous_per_oferta, f, ensure_ascii=False)
             except OSError as exc_w:
                 logger.error("No s'ha pogut escriure %s: %s", _CENTRES_NOUS_PATH, exc_w)
+
+            _append_centres_history({
+                "ts": datetime.now(timezone.utc).isoformat(),
+                "duration_seconds": round(time.time() - _start_time, 2),
+                "total_centres": len(_centres_index),
+                "total_ofertes": len(_oferta_centres),
+                "centres_nous": len(centres_nous),
+                "centres_eliminats": len(centres_eliminats),
+            })
 
             _centres_scrape_state.update(
                 status="done",
