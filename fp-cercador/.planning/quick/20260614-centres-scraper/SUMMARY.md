@@ -28,6 +28,16 @@ commit: ec61fc4
 - Clau D/E a `oferta_centres.json`: `str(oferta.id)` intern (ex. `"12664"`)
 - Session refresh cada 200 req per evitar caducitat JSESSIONID
 
+## Ampliació 2026-09-06 (Pla 055) — Grado C LOMLOE
+
+- Spike previ: `plans/outputs/spike_centres_abc_results.md`. El mateix endpoint respon
+  amb `ofertaCodigo={codi complet FAM_C_NNN_NL}`; A i B no existeixen al registre.
+- +397 consultes C LOMLOE (mostra de 25: 16 amb centres). Total ~1.212 consultes, ~20 min.
+- Clau a `oferta_centres.json`: `str(oferta.id)` (com D/E) — el frontend ja envia `id=`
+  per a tot el que no és C LOE, així que no calen canvis a `index.html`/`perfil.html`.
+- Tests: `backend/tests/test_centres_scraper.py` (nou).
+- Xifres reals post-scraping a producció: _pendent d'omplir després del primer run_.
+
 ## Arxius modificats
 
 - `backend/scrapers/centres_scraper.py` (nou)

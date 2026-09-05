@@ -4,19 +4,23 @@ centres_scraper.py — Scraping de centres de la Font 1 (Registre Estatal Entita
 Flow:
   1. GET /buscarPublico → JSESSIONID (sense captcha)
   2. Per cada oferta C LOE: GET /datosTablaPublico?ofertaCodigo={code} → JSON centres
-  3. Per cada oferta D: GET /datosTablaPublico?ofertaDenominacion={short}&gradoProfesional=4
-  4. Per cada oferta E: GET /datosTablaPublico?ofertaDenominacion={short}&gradoProfesional=5
+  3. Per cada oferta C LOMLOE: GET /datosTablaPublico?ofertaCodigo={code} (codi complet
+     FAM_C_NNN_NL; el filtre és LIKE, mai passar prefixos)
+  4. Per cada oferta D: GET /datosTablaPublico?ofertaDenominacion={short}&gradoProfesional=4
+  5. Per cada oferta E: GET /datosTablaPublico?ofertaDenominacion={short}&gradoProfesional=5
 
 Genera:
   backend/data/centres.json       — catàleg de centres únics
   backend/data/oferta_centres.json — relació {oferta_key: [codigoMinisterio, ...]}
 
 Clau dels resultats:
-  - Grado C LOE: clau = código SEPE (ex. "ADGG0408")
-  - Grado D/E:   clau = id intern de l'oferta a ofertes.json (ex. "12664")
+  - Grado C LOE:    clau = código SEPE (ex. "ADGG0408")
+  - Grado C LOMLOE: clau = id intern de l'oferta (com D/E), perquè el frontend
+                    ja envia id= per a tot el que no sigui C LOE
+  - Grado D/E:      clau = id intern de l'oferta a ofertes.json (ex. "12664")
 
 Execució directa: python3 -m backend.scrapers.centres_scraper
-Rate-limit: 1 req/s (~15 min per al conjunt complet de 815 consultes).
+Rate-limit: 1 req/s (~20 min per al conjunt complet de ~1.212 consultes).
 """
 
 import json
@@ -137,13 +141,14 @@ def _short_denom(denominacion: str) -> str:
 
 # ── càrrega ofertes ──────────────────────────────────────────────────────────
 
-def _load_ofertes() -> tuple[list, list, list]:
+def _load_ofertes() -> tuple[list, list, list, list]:
     with open(_OFERTES_PATH, encoding='utf-8') as f:
         all_ofertes = json.load(f)
     c_loe = [r for r in all_ofertes if r.get('grado') == 'C' and r.get('plan_antiguo')]
+    c_lomloe = [r for r in all_ofertes if r.get('grado') == 'C' and not r.get('plan_antiguo')]
     d_list = [r for r in all_ofertes if r.get('grado') == 'D']
     e_list = [r for r in all_ofertes if r.get('grado') == 'E']
-    return c_loe, d_list, e_list
+    return c_loe, c_lomloe, d_list, e_list
 
 
 def _load_existing_centres() -> dict[str, dict]:
@@ -173,7 +178,7 @@ def scrape_centres(on_progress=None) -> tuple[dict, dict]:
     callback opcional cridat periòdicament (a l'inici de cada fase i cada
     50/10 ofertes processades). Mai ha de trencar el scraping si falla.
     """
-    c_loe, d_list, e_list = _load_ofertes()
+    c_loe, c_lomloe, d_list, e_list = _load_ofertes()
     session = _bootstrap()
 
     # Catàleg acumulatiu: comença amb el que ja hi havia (si hi ha) perquè un
@@ -227,6 +232,27 @@ def scrape_centres(on_progress=None) -> tuple[dict, dict]:
     logger.info('C LOE complet: %d centres únics', len(centres_by_id))
     _save(centres_by_id, oferta_centres)
     _report('Grau C (pla antic)', len(c_loe), len(c_loe))
+
+    # ── Grado C LOMLOE (per ofertaCodigo, clau = id intern com D/E) ──
+    logger.info('=== Grado C LOMLOE: %d ofertes ===', len(c_lomloe))
+    _report('Grau C (pla nou)', 0, len(c_lomloe))
+    for i, oferta in enumerate(c_lomloe):
+        key = str(oferta['id'])
+        ids = _do_fetch({
+            'ofertaCodigo': oferta['codigo'],
+            'iDisplayLength': PAGE_SIZE,
+            'iDisplayStart': 0,
+            'draw': 1,
+        })
+        oferta_centres[key] = ids
+        if (i + 1) % 50 == 0:
+            logger.info('C LOMLOE %d/%d — centres únics: %d', i + 1, len(c_lomloe), len(centres_by_id))
+            _save(centres_by_id, oferta_centres)
+            _report('Grau C (pla nou)', i + 1, len(c_lomloe))
+
+    logger.info('C LOMLOE complet: %d centres únics', len(centres_by_id))
+    _save(centres_by_id, oferta_centres)
+    _report('Grau C (pla nou)', len(c_lomloe), len(c_lomloe))
 
     # ── Grado D (per ofertaDenominacion + gradoProfesional=4) ──
     logger.info('=== Grado D: %d ofertes ===', len(d_list))
