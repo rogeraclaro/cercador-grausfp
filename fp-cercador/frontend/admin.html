@@ -403,7 +403,11 @@
         if (!res.ok) { setStatus('Error consultant l\'estat (HTTP ' + res.status + ')', 'error'); stopPolling(); return; }
         const state = await res.json();
         if (state.status === 'running') {
+          refreshBtn.disabled = true;
           setStatus('<span class="spinner"></span> Actualitzant…', 'info');
+          if (pollTimer === null) {
+            pollTimer = setInterval(pollOnce, 3000);
+          }
         } else if (state.status === 'done') {
           stopPolling();
           renderDone(state);
@@ -440,6 +444,9 @@
         refreshBtn.disabled = false;
       }
     });
+
+    // Recupera l'estat en carregar la pàgina (mateix motiu que amb centres).
+    pollOnce();
 
     // ── Scheduler ───────────────────────────────────────────
     const schedLoadBtn = document.getElementById('sched-load-btn');
