@@ -544,7 +544,11 @@
         const res = await fetch(API_BASE + '/api/admin/centres-status');
         const state = await res.json();
         if (state.status === 'running') {
+          centresBtn.disabled = true;
           setCentresStatus('<span class="spinner"></span> Scraping en curs (~15–18 min)…', 'info');
+          if (centresPollTimer === null) {
+            centresPollTimer = setInterval(pollCentresOnce, 10000);
+          }
         } else if (state.status === 'done') {
           stopCentresPoll();
           centresBtn.disabled = false;
@@ -585,6 +589,10 @@
         centresBtn.disabled = false;
       }
     });
+
+    // Recupera l'estat en carregar la pàgina (p.ex. si es va tancar la
+    // pestanya amb un scraping en curs i es torna més tard).
+    pollCentresOnce();
 
     // ── Gestió d'usuaris ──────────────────────────────────────
     const usersLoadBtn = document.getElementById('users-load-btn');
