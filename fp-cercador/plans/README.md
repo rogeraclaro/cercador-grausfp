@@ -70,6 +70,7 @@ amb quins prerequisits i quins passos manuals calen al servidor.
 | 054 | Verbositat processos admin + gestió de canvis de centres | P2 | M | 016 DONE | DONE |
 | 055 | Centres per a Grado C LOMLOE (spike `plans/outputs/spike_centres_abc_results.md`) | P2 | S | 016 DONE | DONE (desplegat 2026-09-06: 1.213 relacions, 249/400 C-nou amb centres) |
 | 056 | Centres heretats per a graus A/B LOE via certificat C pare (derivació en memòria) | P2 | S–M | 045, 055 DONE | DONE (desplegat 2026-09-06: 3.643 ofertes A/B amb centres heretats; RSS 26 MB) |
+| 057 | `bc_lomloe.json` (B→C LOMLOE via fitxa todofp) + centres heretats A/B pla nou + `/api/itinerari` LOMLOE | P2 | M | 055, 056 DONE, spike 043 | TODO |
 
 Valors de Status: `TODO` | `IN PROGRESS` | `DONE` | `BLOCKED (motiu en una línia)` | `REJECTED (motiu en una línia)`
 
