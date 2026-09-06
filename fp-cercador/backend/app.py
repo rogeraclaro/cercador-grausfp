@@ -50,6 +50,7 @@ from dotenv import load_dotenv
 from flask import Flask, jsonify, redirect, request
 from flask_cors import CORS
 
+import cd_lomloe
 import feed
 import history
 import itinerary
@@ -81,6 +82,7 @@ _DATA_DIR = os.path.join(os.path.dirname(__file__), "data")
 CICLOS_PATH = os.path.join(_DATA_DIR, "ciclos_fp.json")
 BC_LOE_PATH = os.path.join(_DATA_DIR, "bc_loe.json")
 BC_LOMLOE_PATH = os.path.join(_DATA_DIR, "bc_lomloe.json")  # Pla 057: {codigo_c: [codigo_b]}
+D_MODULOS_PATH = os.path.join(_DATA_DIR, "d_modulos.json")  # Pla 058: {str(id_d): {modulos, ensenanzaFP}}
 OCUPACIONES_PATH = os.path.join(_DATA_DIR, "ocupaciones.json")
 _CENTRES_PATH = os.path.join(_DATA_DIR, "centres.json")
 _OFERTA_CENTRES_PATH = os.path.join(_DATA_DIR, "oferta_centres.json")
@@ -1070,6 +1072,60 @@ def _get_bc_lomloe_inverse() -> dict:
     return inverse
 
 
+_d_modulos_cache: dict = {"mtime": None, "index": None}
+
+
+def _get_d_modulos() -> dict:
+    """
+    Pla 058: {str(id_d): {modulos: [{num, name}], ensenanzaFP}} de d_modulos.json.
+    Cache invalidada per mtime. {} si el fitxer no existeix o és corrupte.
+    """
+    if not os.path.exists(D_MODULOS_PATH):
+        return {}
+    mtime = os.path.getmtime(D_MODULOS_PATH)
+    if _d_modulos_cache["mtime"] == mtime and _d_modulos_cache["index"] is not None:
+        return _d_modulos_cache["index"]
+    try:
+        with open(D_MODULOS_PATH, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+        if not isinstance(data, dict):
+            logger.warning("_get_d_modulos: d_modulos.json no és un objecte — s'ignora")
+            return {}
+        _d_modulos_cache.update(mtime=mtime, index=data)
+        return data
+    except (OSError, json.JSONDecodeError) as exc:
+        logger.warning("_get_d_modulos: error llegint d_modulos.json: %s", exc)
+        return {}
+
+
+_cd_lomloe_cache: dict = {"key": None, "data": None}
+
+
+def _get_c_lomloe_to_d() -> dict:
+    """
+    Pla 058: derivació C LOMLOE → [cicles D] via mòduls compartits.
+    Retorna {'index': {codigo_c: [{id, shared, total}]}, 'd_by_id': {str(id): rec_d}}.
+    Cache invalidada per mtimes d'ofertes.json, bc_lomloe.json i d_modulos.json.
+    """
+    def _mt(path):
+        return os.path.getmtime(path) if os.path.exists(path) else None
+
+    key = (_mt(DATA_PATH), _mt(BC_LOMLOE_PATH), _mt(D_MODULOS_PATH))
+    if _cd_lomloe_cache["key"] == key and _cd_lomloe_cache["data"] is not None:
+        return _cd_lomloe_cache["data"]
+    try:
+        with open(DATA_PATH, 'r', encoding='utf-8') as f:
+            records = json.load(f)
+    except (OSError, json.JSONDecodeError) as exc:
+        logger.warning("_get_c_lomloe_to_d: error llegint ofertes.json: %s", exc)
+        records = []
+    index = cd_lomloe.build_c_lomloe_to_d(records, _get_bc_lomloe(), _get_d_modulos())
+    d_by_id = {str(r['id']): r for r in records if r.get('grado') == 'D'}
+    data = {'index': index, 'd_by_id': d_by_id}
+    _cd_lomloe_cache.update(key=key, data=data)
+    return data
+
+
 _bc_loe_inverse_cache: dict = {"mtime": None, "index": None}
 
 
@@ -1273,6 +1329,26 @@ def api_itinerari():
         _b_by_code = _idx_c.get('b_by_code', {}) if _idx_c else {}
         parent_b_lomloe = [_serialize(_b_by_code[b]) for b in _get_bc_lomloe().get(codigo, [])
                            if b in _b_by_code]
+
+        # Pla 058: C LOMLOE → cicles D via mòduls compartits (no passa per ciclos_fp.json).
+        if re.match(r'^[A-Z]{3}_C_\d+_\w+$', codigo):
+            cd = _get_c_lomloe_to_d()
+            d_by_id = cd['d_by_id']
+            ciclos_lomloe = []
+            for e in cd['index'].get(codigo, []):
+                d = d_by_id.get(str(e['id']))
+                if not d:
+                    continue
+                ciclos_lomloe.append({
+                    'id': int(e['id']),
+                    'denominacion': d.get('denominacion'),
+                    'familia': d.get('familia'),
+                    'ficha_url': d.get('ficha_url'),
+                    'shared': e['shared'],
+                    'total': e['total'],
+                })
+            return jsonify({'ciclos_d': ciclos_lomloe, 'parent_b_loe': [],
+                            'parent_b_lomloe': parent_b_lomloe})
 
         if not os.path.exists(CICLOS_PATH):
             return jsonify({'ciclos_d': [], 'parent_b_loe': [],

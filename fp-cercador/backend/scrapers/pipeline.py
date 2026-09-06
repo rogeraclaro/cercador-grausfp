@@ -214,6 +214,19 @@ def run(on_progress=None) -> dict:
     except Exception as exc:
         logger.warning("pipeline: build_bc_lomloe ha fallat (no fatal): %s", exc)
 
+    # --- Pla 058: mòduls de cada cicle D via fitxes todofp (no fatal) ---
+    _report('Mòduls dels cicles D (fitxes todofp)')
+    try:
+        from scrapers.d_modulos_scraper import build_d_modulos, write_d_modulos
+        d_modulos = build_d_modulos(
+            all_records,
+            on_progress=lambda phase, i, n: _report(f'{phase} {i}/{n}'),
+        )
+        write_d_modulos(d_modulos, os.path.join(os.path.dirname(DATA_PATH), 'd_modulos.json'))
+        logger.info("pipeline: d_modulos.json escrit (%d cicles D)", len(d_modulos))
+    except Exception as exc:
+        logger.warning("pipeline: build_d_modulos ha fallat (no fatal): %s", exc)
+
     families = sorted({r['familia'] for r in all_records if r['familia'] != 'Desconeguda'})
     denominacions = sorted({r['denominacion'] for r in all_records if r.get('denominacion')})
     denominacions_by_grado = {

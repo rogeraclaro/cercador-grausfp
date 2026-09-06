@@ -1338,6 +1338,7 @@
         // F5 — Itineraris formatius
         ciclosDData: {},        // {codigo: [{denominacion, familia}] | 'loading' | 'error'}
         parentBLoeData: {},     // parent B LOE per codigo C
+        parentBLomloeData: {},  // parent B LOMLOE per codigo C (Pla 058)
         childrenCLoeData: {},   // {row.id: [{codigo, denominacion}] | 'loading' | 'error'}
         childrenCLoeVisible: {}, // {row.id: bool}
 
@@ -1790,9 +1791,11 @@
             const data = await res.json();
             this.ciclosDData = { ...this.ciclosDData, [codigo]: data.ciclos_d || [] };
             this.parentBLoeData = { ...this.parentBLoeData, [codigo]: data.parent_b_loe || [] };
+            this.parentBLomloeData = { ...this.parentBLomloeData, [codigo]: data.parent_b_lomloe || [] };
           } catch (e) {
             this.ciclosDData = { ...this.ciclosDData, [codigo]: 'error' };
             this.parentBLoeData = { ...this.parentBLoeData, [codigo]: [] };
+            this.parentBLomloeData = { ...this.parentBLomloeData, [codigo]: [] };
           }
         },
 
@@ -2122,9 +2125,9 @@
             <tbody>
               <tr
                 :data-row-id="row.id"
-                :class="{ 'row-link': (row.grado === 'C' && row.plan_antiguo) || (['A','B','C'].includes(row.grado) && row.ficha_id) || (['D','E'].includes(row.grado) && row.ficha_url), 'row-fav': favorites.has(row.id) }"
+                :class="{ 'row-link': (row.grado === 'C') || (['A','B','C'].includes(row.grado) && row.ficha_id) || (['D','E'].includes(row.grado) && row.ficha_url), 'row-fav': favorites.has(row.id) }"
                 @click="
-                  row.grado === 'C' && row.plan_antiguo
+                  row.grado === 'C'
                     ? (expandedRows = { ...expandedRows, [row.id]: !expandedRows[row.id] })
                     : ['A','B','C'].includes(row.grado) && row.ficha_id
                       ? (loggedIn ? window.open(API_BASE + '/api/ficha-redirect?grado=' + row.grado + '&codigo=' + encodeURIComponent(row.codigo), '_blank') : showCentresModal())
@@ -2228,6 +2231,65 @@
                         <span x-text="t('index.itinerari.parent_b_loe_cap')"></span>
                         <ul class="ciclos-d-list">
                           <template x-for="bmod in parentBLoeData[row.codigo]" :key="bmod.codigo">
+                            <li><a href="#"
+                                @click.prevent="loggedIn ? window.open(API_BASE + '/api/ficha-redirect?grado=B&codigo=' + bmod.codigo, '_blank') : showCentresModal()"
+                                x-text="bmod.codigo + ' — ' + bmod.denominacion"></a>
+                            </li>
+                          </template>
+                        </ul>
+                      </div>
+                    </template>
+                  </div>
+                </td>
+              </tr>
+              <!-- Pla 058: panell de detall per a C de pla nou (LOMLOE) -->
+              <tr x-show="expandedRows[row.id] && row.grado === 'C' && !row.plan_antiguo">
+                <td colspan="5" class="detall-certificat">
+                  <div class="detall-inner">
+                    <div class="detall-btns">
+                      <a class="btn-doc" href="#"
+                        @click.prevent="loggedIn ? window.open(API_BASE + '/api/ficha-redirect?grado=C&codigo=' + encodeURIComponent(row.codigo), '_blank') : showCentresModal()"
+                        x-text="t('index.detall.ficha_todofp')"></a>
+                      <button @click.stop="fetchCiclosD(row.codigo)" class="btn-doc"
+                        x-text="t('index.itinerari.ciclos_d_btn')"></button>
+                    </div>
+                    <!-- Cicles D via mòduls compartits -->
+                    <template x-if="ciclosDData[row.codigo] && ciclosDData[row.codigo] !== 'loading'">
+                      <div class="detall-ciclos-d">
+                        <template x-if="ciclosDData[row.codigo] === 'error'">
+                          <span x-text="t('index.itinerari.ciclos_d_err')"></span>
+                        </template>
+                        <template x-if="Array.isArray(ciclosDData[row.codigo]) && ciclosDData[row.codigo].length === 0">
+                          <span x-text="t('index.itinerari.ciclos_d_none')"></span>
+                        </template>
+                        <template x-if="Array.isArray(ciclosDData[row.codigo]) && ciclosDData[row.codigo].length > 0">
+                          <div>
+                            <span x-text="t('index.itinerari.ciclos_d_cap')"></span>
+                            <ul class="ciclos-d-list">
+                              <template x-for="cicle in ciclosDData[row.codigo]" :key="cicle.id ?? cicle.denominacion">
+                                <li>
+                                  <template x-if="cicle.ficha_url">
+                                    <a href="#"
+                                      @click.prevent="loggedIn ? window.open(cicle.ficha_url, '_blank') : showCentresModal()"
+                                      x-text="cicle.denominacion + (cicle.familia ? ' (' + cicle.familia + ')' : '') + (cicle.total && cicle.shared < cicle.total ? ' — ' + t('index.itinerari.ciclos_d_parcial', {n: cicle.shared, m: cicle.total}) : '')"></a>
+                                  </template>
+                                  <template x-if="!cicle.ficha_url">
+                                    <span
+                                      x-text="cicle.denominacion + (cicle.familia ? ' (' + cicle.familia + ')' : '') + (cicle.total && cicle.shared < cicle.total ? ' — ' + t('index.itinerari.ciclos_d_parcial', {n: cicle.shared, m: cicle.total}) : '')"></span>
+                                  </template>
+                                </li>
+                              </template>
+                            </ul>
+                          </div>
+                        </template>
+                      </div>
+                    </template>
+                    <!-- Mòduls B LOMLOE d'aquest certificat -->
+                    <template x-if="parentBLomloeData[row.codigo] && parentBLomloeData[row.codigo].length > 0">
+                      <div class="detall-ciclos-d">
+                        <span x-text="t('index.itinerari.parent_b_lomloe_cap')"></span>
+                        <ul class="ciclos-d-list">
+                          <template x-for="bmod in parentBLomloeData[row.codigo]" :key="bmod.codigo">
                             <li><a href="#"
                                 @click.prevent="loggedIn ? window.open(API_BASE + '/api/ficha-redirect?grado=B&codigo=' + bmod.codigo, '_blank') : showCentresModal()"
                                 x-text="bmod.codigo + ' — ' + bmod.denominacion"></a>

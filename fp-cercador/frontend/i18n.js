@@ -144,6 +144,7 @@
 
       /* ── index.html — errors inline JS ── */
       'index.detall.annexe': 'Annexe PDF',
+      'index.detall.ficha_todofp': 'Fitxa a todofp.es',
       'index.err.boe.missing': 'URL del BOE no disponible per a aquest certificat.',
       'index.err.boe.fetch': 'No s\'ha pogut obrir el BOE. Torna-ho a provar.',
       'index.err.watch.unknown': 'Error desconegut',
@@ -156,6 +157,8 @@
       'index.itinerari.ciclos_d_cap': 'Cicles formatius de grau D que convaliden aquest certificat:',
       'index.itinerari.ciclos_d_none': 'No hi ha cicles associats.',
       'index.itinerari.ciclos_d_err': 'Error carregant cicles: ',
+      'index.itinerari.ciclos_d_parcial': 'cobreix {n} de {m} mòduls',
+      'index.itinerari.parent_b_lomloe_cap': 'Mòduls professionals (graus B) d\'aquest certificat:',
       'index.itinerari.parent_b_loe_cap': 'Mòduls B (LOE) acreditats per aquest certificat:',
       'index.itinerari.children_c_loe_btn': 'Mòdul professional en aquests graus C:',
       'index.itinerari.children_c_loe_cap': 'Certificats C que acrediten aquest mòdul:',
@@ -552,6 +555,7 @@
 
       /* ── index.html — errors inline JS ── */
       'index.detall.annexe': 'Anexo PDF',
+      'index.detall.ficha_todofp': 'Ficha en todofp.es',
       'index.err.boe.missing': 'URL del BOE no disponible para este certificado.',
       'index.err.boe.fetch': 'No se ha podido abrir el BOE. Inténtalo de nuevo.',
       'index.err.watch.unknown': 'Error desconocido',
@@ -564,6 +568,8 @@
       'index.itinerari.ciclos_d_cap': 'Ciclos formativos de grado D que convalidan este certificado:',
       'index.itinerari.ciclos_d_none': 'No hay ciclos asociados.',
       'index.itinerari.ciclos_d_err': 'Error cargando ciclos: ',
+      'index.itinerari.ciclos_d_parcial': 'cubre {n} de {m} módulos',
+      'index.itinerari.parent_b_lomloe_cap': 'Módulos profesionales (grados B) de este certificado:',
       'index.itinerari.parent_b_loe_cap': 'Módulos B (LOE) acreditados por este certificado:',
       'index.itinerari.children_c_loe_btn': 'Módulo profesional en estos grados C:',
       'index.itinerari.children_c_loe_cap': 'Certificados C que acreditan este módulo:',

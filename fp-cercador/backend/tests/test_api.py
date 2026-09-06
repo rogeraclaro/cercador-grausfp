@@ -293,6 +293,8 @@ def test_itinerari_grado_c_retorna_parent_b_loe(client, monkeypatch):
     def _fake_open(path, *args, **kwargs):
         import builtins
         path_str = str(path)
+        if 'd_modulos' in path_str:  # Pla 058: sense mòduls D en aquest test
+            return mock.mock_open(read_data='{}')()
         if 'bc_lomloe' in path_str:  # Pla 057: sense relació LOMLOE en aquest test
             return mock.mock_open(read_data='{}')()
         if 'bc_loe' in path_str:

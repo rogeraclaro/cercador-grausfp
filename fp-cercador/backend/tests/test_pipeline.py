@@ -74,6 +74,9 @@ def isolate_data_path(tmp_path, monkeypatch):
     # per defecte; els tests que el volen el mockegen explícitament.
     import scrapers.bc_lomloe_scraper as bcs
     monkeypatch.setattr(bcs, 'build_bc_lomloe', lambda records, **kw: {})
+    # Pla 058: el bloc d_modulos faria xarxa (fitxes D) — desactivat per defecte.
+    import scrapers.d_modulos_scraper as dms
+    monkeypatch.setattr(dms, 'build_d_modulos', lambda records, **kw: {})
 
 
 def _run_with_mocks(buscador_data, d_basico=None, d_medio=None, d_superior=None, e=None):
@@ -256,3 +259,26 @@ def test_run_no_falla_si_bc_lomloe_peta(tmp_path):
     assert result['errors'] == []
     assert (tmp_path / 'ofertes.json').exists()
     assert not (tmp_path / 'bc_lomloe.json').exists()
+
+
+# ---------------------------------------------------------------------------
+# Pla 058 — d_modulos.json (mòduls dels cicles D) es genera dins run(), no fatal
+# ---------------------------------------------------------------------------
+
+PATCH_BUILD_D_MODULOS = 'scrapers.d_modulos_scraper.build_d_modulos'
+
+
+def test_run_escriu_d_modulos_json(tmp_path):
+    with mock.patch(PATCH_BUILD_D_MODULOS, return_value={'700': {'modulos': [], 'ensenanzaFP': None}}) as m:
+        _run_with_mocks(buscador_data={'A': [], 'B': [], 'C': [_rec_c_lomloe()]})
+    assert m.called
+    out = tmp_path / 'd_modulos.json'
+    assert json.loads(out.read_text(encoding='utf-8')) == {'700': {'modulos': [], 'ensenanzaFP': None}}
+
+
+def test_run_no_falla_si_d_modulos_peta(tmp_path):
+    with mock.patch(PATCH_BUILD_D_MODULOS, side_effect=RuntimeError('todofp caigut')):
+        result = _run_with_mocks(buscador_data={'A': [], 'B': [], 'C': [_rec_c_lomloe()]})
+    assert result['errors'] == []
+    assert (tmp_path / 'ofertes.json').exists()
+    assert not (tmp_path / 'd_modulos.json').exists()

@@ -21,6 +21,9 @@ OFERTES = [
     {'id': 50, 'codigo': 'HOT_B_0171', 'grado': 'B', 'plan_antiguo': False, 'denominacion': 'B nou', 'familia': 'H', 'nivel': 3},
     {'id': 51, 'codigo': 'HOT_A_0171_01', 'grado': 'A', 'plan_antiguo': False, 'denominacion': 'A nou', 'familia': 'H', 'nivel': 3},
     {'id': 52, 'codigo': 'HOT_B_9999', 'grado': 'B', 'plan_antiguo': False, 'denominacion': 'B nou orfe', 'familia': 'H', 'nivel': 3},
+    # Pla 058: un cicle D de la mateixa família que HOT_C_005_5B
+    {'id': 700, 'codigo': None, 'grado': 'D', 'plan_antiguo': False, 'denominacion': 'T.S. Prova',
+     'familia': 'H', 'nivel': 3, 'ficha_url': 'https://x/y.html'},
 ]
 CENTRES = [
     {'id': 'M1', 'nombre': 'IES A', 'provincia': 'BARCELONA', 'localitat': 'BCN'},
@@ -30,6 +33,9 @@ CENTRES = [
 OFERTA_CENTRES = {'ADGG0408': ['M1', 'M2'], '60': ['M3']}
 BC_LOE = {'ADGG0408': ['UC0969_1']}
 BC_LOMLOE = {'HOT_C_005_5B': ['HOT_B_0171']}
+# Pla 058: el mòdul del D 700 coincideix amb la denominació del B id 50 ('B nou').
+D_MODULOS = {'700': {'modulos': [{'num': None, 'name': 'B nou'}], 'ensenanzaFP': None}}
+CICLOS_FP = {'ADGG0408': [{'denominacion': 'X', 'familia': 'F', 'ficha_url': None}]}
 
 
 @pytest.fixture
@@ -40,14 +46,22 @@ def data_dir(tmp_path, monkeypatch):
         'oferta_centres': tmp_path / 'oferta_centres.json',
         'bc_loe': tmp_path / 'bc_loe.json',
         'bc_lomloe': tmp_path / 'bc_lomloe.json',
+        'd_modulos': tmp_path / 'd_modulos.json',
+        'ciclos': tmp_path / 'ciclos_fp.json',
     }
     paths['ofertes'].write_text(json.dumps(OFERTES), encoding='utf-8')
     paths['centres'].write_text(json.dumps(CENTRES), encoding='utf-8')
     paths['oferta_centres'].write_text(json.dumps(OFERTA_CENTRES), encoding='utf-8')
     paths['bc_loe'].write_text(json.dumps(BC_LOE), encoding='utf-8')
     paths['bc_lomloe'].write_text(json.dumps(BC_LOMLOE), encoding='utf-8')
+    paths['d_modulos'].write_text(json.dumps(D_MODULOS), encoding='utf-8')
+    paths['ciclos'].write_text(json.dumps(CICLOS_FP), encoding='utf-8')
 
     monkeypatch.setattr(app_module, 'DATA_PATH', str(paths['ofertes']))
+    monkeypatch.setattr(app_module, 'CICLOS_PATH', str(paths['ciclos']))
+    monkeypatch.setattr(app_module, 'D_MODULOS_PATH', str(paths['d_modulos']))
+    monkeypatch.setattr(app_module, '_d_modulos_cache', {'mtime': None, 'index': None})
+    monkeypatch.setattr(app_module, '_cd_lomloe_cache', {'key': None, 'data': None})
     monkeypatch.setattr(app_module, '_CENTRES_PATH', str(paths['centres']))
     monkeypatch.setattr(app_module, '_OFERTA_CENTRES_PATH', str(paths['oferta_centres']))
     monkeypatch.setattr(app_module, 'BC_LOE_PATH', str(paths['bc_loe']))
@@ -157,3 +171,16 @@ def test_itinerari_b_loe_children_c_es_alies(client):
 def test_itinerari_c_lomloe_retorna_parent_b_lomloe(client):
     d = client.get('/api/itinerari?grado=C&codigo=HOT_C_005_5B').get_json()
     assert [b['codigo'] for b in d['parent_b_lomloe']] == ['HOT_B_0171']
+
+
+def test_itinerari_c_lomloe_ciclos_d(client):
+    d = client.get('/api/itinerari?grado=C&codigo=HOT_C_005_5B').get_json()
+    assert d['ciclos_d'] == [{
+        'id': 700, 'denominacion': 'T.S. Prova', 'familia': 'H',
+        'ficha_url': 'https://x/y.html', 'shared': 1, 'total': 1,
+    }]
+
+
+def test_itinerari_c_loe_ciclos_d_no_canvia(client):
+    d = client.get('/api/itinerari?grado=C&codigo=ADGG0408').get_json()
+    assert d['ciclos_d'] == [{'denominacion': 'X', 'familia': 'F', 'ficha_url': None}]
