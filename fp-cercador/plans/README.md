@@ -71,7 +71,7 @@ amb quins prerequisits i quins passos manuals calen al servidor.
 | 055 | Centres per a Grado C LOMLOE (spike `plans/outputs/spike_centres_abc_results.md`) | P2 | S | 016 DONE | DONE (desplegat 2026-09-06: 1.213 relacions, 249/400 C-nou amb centres) |
 | 056 | Centres heretats per a graus A/B LOE via certificat C pare (derivació en memòria) | P2 | S–M | 045, 055 DONE | DONE (desplegat 2026-09-06: 3.643 ofertes A/B amb centres heretats; RSS 26 MB) |
 | 057 | `bc_lomloe.json` (B→C LOMLOE via fitxa todofp) + centres heretats A/B pla nou + `/api/itinerari` LOMLOE | P2 | M | 055, 056 DONE, spike 043 | DONE (desplegat 2026-09-06 d3f9d0f; bc_lomloe.json 400/400, /count 9.079 claus, RSS 26 MB) |
-| 058 | C LOMLOE → D via mòduls compartits (`d_modulos.json` + derivació) + panell de detall per a C de pla nou | P2 | S–M | 057 DONE, spike `spike_c_lomloe_d_results.md` | CODE DONE (tests verds local: 169 pass, 2 preexistents test_db; pendent desplegament VPS + 1a generació `d_modulos.json` i xifres reals) |
+| 058 | C LOMLOE → D via mòduls compartits (`d_modulos.json` + derivació) + panell de detall per a C de pla nou | P2 | S–M | 057 DONE, spike `spike_c_lomloe_d_results.md` | DONE (desplegat 2026-09-06 8b75187; `d_modulos.json` 194/195 D — 1 fitxa todofp amb bucle de redirecció, saltada; 381/400 C LOMLOE amb ≥1 cicle D, 355 coberts sencers) |
 
 Valors de Status: `TODO` | `IN PROGRESS` | `DONE` | `BLOCKED (motiu en una línia)` | `REJECTED (motiu en una línia)`
 
