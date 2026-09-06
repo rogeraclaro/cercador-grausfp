@@ -2925,6 +2925,15 @@
             <tbody>
               <tr class="row-link" @click="toggleFpoDetall(esp.codi)">
                 <td class="col-nom">
+                  <button class="btn-fav" @click.stop="loggedIn ? toggleFpoFav(esp.codi) : showCentresModal()"
+                    :class="{ 'btn-fav--active': fpoFavSet.has(esp.codi) }"
+                    :title="fpoFavSet.has(esp.codi) ? t('index.fav.remove') : t('index.fav.add')">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16">
+                      <path :fill="fpoFavSet.has(esp.codi) ? 'currentColor' : 'none'" stroke="currentColor"
+                        stroke-width="2" stroke-linejoin="round"
+                        d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                    </svg>
+                  </button>
                   <span x-text="(esp.titol || {})[fpoLang()] || esp.codi"></span>
                   <span x-show="esp.esCertProf" class="badge-old" x-text="t('fpo.badge.certprof')"></span>
                 </td>
