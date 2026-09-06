@@ -97,7 +97,13 @@ def build_d_modulos(records: list[dict], session=None, on_progress=None) -> dict
     for i, r in enumerate(d_recs):
         if on_progress and i % 25 == 0:
             on_progress('Mòduls D', i, total)
-        html = _fetch_with_retry(session, r['ficha_url'])
+        try:
+            html = _fetch_with_retry(session, r['ficha_url'])
+        except Exception as exc:
+            logger.warning('fitxa D %s (id %s) inabastable, saltada: %s',
+                           r['ficha_url'], r['id'], exc)
+            time.sleep(RATE_LIMIT_SEC)
+            continue
         result[str(r['id'])] = {
             'modulos': parse_modulos(html),
             'ensenanzaFP': parse_ensenanza_fp(html),

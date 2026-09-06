@@ -65,6 +65,28 @@ def test_build_d_modulos_clau_per_id_i_salta_sense_ficha_url(monkeypatch):
     }
 
 
+def test_build_d_modulos_salta_fitxa_que_falla_i_continua(monkeypatch, caplog):
+    def fetch(session, url):
+        if 'boom' in url:
+            raise RuntimeError('Exceeded 30 redirects.')
+        return FICHA_HTML
+
+    monkeypatch.setattr(dms, '_fetch_with_retry', fetch)
+    monkeypatch.setattr(dms.time, 'sleep', lambda s: None)
+
+    records = [
+        _rec(1, 'D', ficha_url='https://www.todofp.es/d/boom.html'),
+        _rec(2, 'D', ficha_url='https://www.todofp.es/d/ok.html'),
+    ]
+
+    import logging
+    with caplog.at_level(logging.WARNING):
+        result = dms.build_d_modulos(records, session=object())
+
+    assert list(result) == ['2']
+    assert 'boom' in caplog.text
+
+
 def test_build_d_modulos_sense_d_recs_no_fa_xarxa(monkeypatch):
     def boom(*a, **kw):
         raise AssertionError('no hauria de fer xarxa')
