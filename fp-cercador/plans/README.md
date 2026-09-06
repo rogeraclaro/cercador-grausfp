@@ -56,7 +56,7 @@ amb quins prerequisits i quins passos manuals calen al servidor.
 | 040 | [F9] Multiidioma CA/ES — `i18n.js` global + selector topbar + totes les pàgines | P2 | L | — | DONE |
 | 041 | [SPIKE — F5] Itineraris formatius A→B→C→D — validació de fonts | P2 | M | — | DONE |
 | 042 | [F5] Itineraris formatius A→B (local) + C→D via ciclosFP | P2 | L | 041 DONE | DONE |
-| 043 | [SPIKE — F5] Investigació fonts C LOMLOE→D i B→C LOE | P2 | M | 042 DONE | DONE |
+| 043 | [SPIKE — F5] Investigació fonts C LOMLOE→D i B→C LOE — reorientat 2026-09-06 a B LOMLOE→C LOMLOE (`plans/outputs/spike_043_results.md`: VIABLE, 99 % cobertura) | P2 | M | 042 DONE | DONE (C LOMLOE→D pendent) |
 | 044 | [F5] Enriquir ciclos_fp.json amb ficha_url de cada cicle D | P2 | S | 043 DONE | DONE |
 | 045 | [F5] B→C LOE — índex UC codes (Annexo PDF) + endpoint + UI | P2 | L | 044 DONE | DONE |
 | 046 | [F5] Índex invers B→C LOE — des d'un Grado B mostrar els Certificats C | P2 | S | 045 DONE | DONE |
