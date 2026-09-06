@@ -841,25 +841,48 @@
           (colors[estat] || colors.informacio) + '">' + esc(t('fpo.estat.' + estat)) + '</span>';
       }
 
+      function fpoHorariText(h) {
+        var e = Object.keys(h || {}).filter(function (k) { return h[k] && String(h[k]).trim(); });
+        return e.map(function (k) { return esc(k.charAt(0).toUpperCase() + k.slice(1)) + ' ' + esc(h[k]); }).join(' · ');
+      }
+
       function fpoCursCard(codi, c) {
         var fin = c.finalitzat === true;
         var centre = c.centre || {};
-        var lines = [];
+        var removeBtn = '<button class="btn-fpo-curs-remove" data-codi="' + esc(codi) + '" data-curs="' + esc(c.curs_id) +
+          '" title="' + t('index.fav.remove') + '" style="float:right;border:0;background:none;cursor:pointer;color:var(--warm);">✕</button>';
+
         if (fin) {
-          lines.push('<span style="color:var(--warm);font-style:italic;">' + t('perfil.fpo.curs_finalitzat') + '</span>');
-          if (c.centre_id) lines.push('<span style="color:var(--warm);font-size:11px;">id ' + esc(c.centre_id) + '</span>');
-        } else {
-          lines.push('<strong>' + esc(centre.nom || '') + '</strong>');
-          var loc = [centre.municipi, centre.comarca ? '(' + centre.comarca + ')' : ''].filter(Boolean).join(' ');
-          if (loc) lines.push('<span style="color:var(--warm);font-size:11px;">' + esc(loc) + '</span>');
-          if (c.dataInici || c.dataFi) lines.push('<span style="font-size:11px;">' + esc((c.dataInici || '?') + ' – ' + (c.dataFi || '?')) + '</span>');
-          lines.push(fpoEstatBadge(c.estat));
+          var finLines = ['<span style="color:var(--warm);font-style:italic;">' + t('perfil.fpo.curs_finalitzat') + '</span>'];
+          if (c.centre_id) finLines.push('<span style="color:var(--warm);font-size:11px;">id ' + esc(c.centre_id) + '</span>');
+          return '<div style="border:1px solid var(--border);border-radius:6px;padding:8px 10px;margin-top:6px;font-size:13px;opacity:.6;">' +
+            removeBtn + finLines.join('<br>') + '</div>';
         }
-        return '<div style="border:1px solid var(--border);border-radius:6px;padding:8px 10px;margin-top:6px;font-size:13px;' +
-          (fin ? 'opacity:.6;' : '') + '">' +
-          '<button class="btn-fpo-curs-remove" data-codi="' + esc(codi) + '" data-curs="' + esc(c.curs_id) +
-          '" title="' + t('index.fav.remove') + '" style="float:right;border:0;background:none;cursor:pointer;color:var(--warm);">✕</button>' +
-          lines.join('<br>') + '</div>';
+
+        var rows = [];
+        rows.push('<strong>' + esc(centre.nom || '') + '</strong>');
+        var addr = [centre.carrer,
+          [centre.cp, centre.municipi].filter(Boolean).join(' '),
+          centre.comarca ? '(' + centre.comarca + ')' : ''].filter(Boolean).join(', ');
+        if (addr) rows.push('<span style="color:var(--warm);font-size:11px;">' + esc(addr) + '</span>');
+        var contact = [];
+        if (centre.telefon) contact.push('📞 <a href="tel:' + esc(centre.telefon) + '" style="color:inherit;text-decoration:none;">' + esc(centre.telefon) + '</a>');
+        if (centre.email) contact.push('<a href="mailto:' + esc(centre.email) + '" style="color:inherit;">' + esc(centre.email) + '</a>');
+        if (centre.web) {
+          var url = /^https?:\/\//.test(centre.web) ? centre.web : 'https://' + centre.web;
+          contact.push('<a href="' + esc(url) + '" target="_blank" rel="noopener" style="color:inherit;">' + esc(centre.web) + '</a>');
+        }
+        if (contact.length) rows.push('<span style="font-size:11px;color:var(--warm);">' + contact.join(' · ') + '</span>');
+        var hor = fpoHorariText(centre.horari);
+        if (hor) rows.push('<span style="font-size:11px;"><strong>' + t('fpo.detall.horari') + ':</strong> ' + hor + '</span>');
+        if (c.dataInici || c.dataFi) rows.push('<span style="font-size:11px;"><strong>' + t('fpo.detall.dates') + ':</strong> ' + esc((c.dataInici || '?') + ' – ' + (c.dataFi || '?')) + '</span>');
+        var badgeLine = fpoEstatBadge(c.estat);
+        if (c.modalitat) badgeLine += ' <span style="font-size:11px;color:var(--warm);">' + esc(c.modalitat) + '</span>';
+        if (c.fitxaUrl) badgeLine += ' <a href="' + esc(c.fitxaUrl) + '" target="_blank" rel="noopener" style="font-size:11px;">' + t('fpo.detall.fitxa_soc') + '</a>';
+        rows.push(badgeLine);
+
+        return '<div style="border:1px solid var(--border);border-radius:6px;padding:8px 10px;margin-top:6px;font-size:13px;line-height:1.5;">' +
+          removeBtn + rows.join('<br>') + '</div>';
       }
 
       async function loadFpo() {
@@ -881,19 +904,34 @@
             var area = (e.area || {}).desc ? (e.area.desc[fpoLang] || '') : '';
             var meta = [fam, area, e.nivell ? t('fpo.col.nivell') + ' ' + e.nivell : '',
                         e.hores ? Math.round(e.hores) + ' h' : ''].filter(Boolean).join(' · ');
-            var cursosHtml = '';
-            if ((e.cursos || []).length) {
-              cursosHtml = '<div style="margin-top:8px;font-size:12px;color:var(--warm);">' +
-                t('perfil.fpo.cursos_marcats') + '</div>' +
-                e.cursos.map(function (c) { return fpoCursCard(e.especialitat_codi, c); }).join('');
+            var nCursos = (e.cursos || []).length;
+
+            var bodyParts = [];
+            if (e.programaUrl) {
+              bodyParts.push('<a class="btn-doc" href="' + esc(e.programaUrl) + '" target="_blank" rel="noopener" ' +
+                'style="display:inline-block;margin:8px 0;">' + t('fpo.detall.programa') + '</a>');
             }
+            if (nCursos) {
+              bodyParts.push('<div style="margin-top:4px;font-size:12px;color:var(--warm);">' +
+                t('perfil.fpo.cursos_marcats') + '</div>' +
+                e.cursos.map(function (c) { return fpoCursCard(e.especialitat_codi, c); }).join(''));
+            } else {
+              bodyParts.push('<p style="font-size:12px;color:var(--warm);margin:6px 0 0;">' +
+                t('perfil.fpo.cap_curs_marcat') + '</p>');
+            }
+            var body = '<div class="fpo-card-body" hidden style="margin-top:8px;border-top:1px solid var(--border);padding-top:8px;">' +
+              bodyParts.join('') + '</div>';
+
             return '<div style="border:1px solid var(--border);border-radius:8px;padding:14px 16px;margin-bottom:12px;">' +
               '<button class="btn-fpo-remove" data-codi="' + esc(e.especialitat_codi) + '" title="' + t('index.fav.remove') +
               '" style="float:right;border:0;background:none;cursor:pointer;color:var(--warm);font-size:16px;">✕</button>' +
-              '<div style="font-weight:600;">' + esc(titol) +
+              '<div class="fpo-card-toggle" data-codi="' + esc(e.especialitat_codi) + '" role="button" tabindex="0" ' +
+              'style="cursor:pointer;padding-right:20px;">' +
+              '<div style="font-weight:600;"><span class="fpo-card-caret" style="display:inline-block;width:14px;color:var(--warm);">▸</span> ' + esc(titol) +
               ' <span class="badge-old" style="font-weight:400;">' + esc(e.especialitat_codi) + '</span></div>' +
-              '<div style="font-size:12px;color:var(--warm);margin-top:2px;">' + esc(meta) + '</div>' +
-              cursosHtml + '</div>';
+              '<div style="font-size:12px;color:var(--warm);margin-top:2px;margin-left:14px;">' + esc(meta) +
+              (nCursos ? ' · <span title="' + t('perfil.fpo.cursos_marcats').replace(':', '') + '">⭐ ' + nCursos + '</span>' : '') + '</div>' +
+              '</div>' + body + '</div>';
           }).join('');
 
           section.innerHTML =
@@ -920,6 +958,19 @@
                 if (!r.ok) throw new Error('HTTP ' + r.status);
                 await loadFpo();
               } catch (e) { btn.disabled = false; }
+            });
+          });
+          section.querySelectorAll('.fpo-card-toggle').forEach(function (hdr) {
+            function toggle() {
+              var body = hdr.parentElement.querySelector('.fpo-card-body');
+              var caret = hdr.querySelector('.fpo-card-caret');
+              var open = body.hasAttribute('hidden');
+              if (open) { body.removeAttribute('hidden'); if (caret) caret.textContent = '▾'; }
+              else { body.setAttribute('hidden', ''); if (caret) caret.textContent = '▸'; }
+            }
+            hdr.addEventListener('click', toggle);
+            hdr.addEventListener('keydown', function (ev) {
+              if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); toggle(); }
             });
           });
         } catch (e) {
