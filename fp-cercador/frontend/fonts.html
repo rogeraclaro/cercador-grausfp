@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="ca">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title data-i18n="fonts.page.title">Fonts de dades — Cercador Graus FP</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=DM+Serif+Display:ital@0;1&family=Geist+Mono:wght@400;500&display=swap"
+    rel="stylesheet">
+
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --dark: #1c1410;
+      --warm: #8a7060;
+      --warm2: #f5ece2;
+      --border: #e8ddd4;
+      --bg: #fdf8f2;
+      --white: #ffffff;
+    }
+
+    body {
+      font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 14px;
+      color: var(--dark);
+      background: var(--bg);
+    }
+
+    .topbar {
+      background: var(--dark);
+      padding: 0 48px;
+    }
+
+    .topbar-inner {
+      display: flex;
+      align-items: center;
+      height: 52px;
+    }
+
+    .topbar-logo {
+      font-family: 'DM Serif Display', serif;
+      color: var(--white);
+      font-size: 20px;
+      letter-spacing: -0.3px;
+      text-decoration: none;
+    }
+
+    .hero {
+      border-bottom: 2px solid var(--dark);
+      padding: 40px 48px 32px;
+    }
+
+    .hero h1 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 48px;
+      font-weight: 400;
+      line-height: 1.05;
+      color: var(--dark);
+      margin-bottom: 10px;
+    }
+
+    .hero-sub {
+      font-size: 15px;
+      color: var(--warm);
+    }
+
+    .content {
+      padding: 40px 48px 80px;
+      max-width: 900px;
+    }
+
+    .content h2 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 28px;
+      font-weight: 400;
+      margin: 48px 0 8px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 10px;
+    }
+
+    .content h2:first-child {
+      margin-top: 0;
+    }
+
+    .content p {
+      line-height: 1.7;
+      color: #3a2e28;
+      margin-bottom: 12px;
+    }
+
+    .content p.src-host {
+      font-family: 'Geist Mono', ui-monospace, monospace;
+      font-size: 12px;
+      color: var(--warm);
+      margin-bottom: 16px;
+      word-break: break-all;
+    }
+
+    .content strong {
+      font-weight: 600;
+      color: var(--dark);
+    }
+
+    .content a {
+      color: var(--dark);
+      text-decoration: underline;
+      text-decoration-color: var(--warm);
+      text-underline-offset: 2px;
+    }
+
+    .src-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 12px 0 24px;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      overflow: hidden;
+      font-size: 13px;
+    }
+
+    .src-table thead tr {
+      background: var(--warm2);
+      border-bottom: 2px solid var(--dark);
+    }
+
+    .src-table th {
+      text-align: left;
+      padding: 10px 14px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--dark);
+    }
+
+    .src-table td {
+      padding: 11px 14px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+      line-height: 1.55;
+    }
+
+    .src-table tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    .src-table tbody tr:hover td {
+      background: var(--warm2);
+    }
+
+    .src-table td:first-child {
+      font-weight: 600;
+      color: var(--dark);
+      white-space: nowrap;
+    }
+
+    .src-table td code {
+      font-family: 'Geist Mono', ui-monospace, monospace;
+      font-size: 11px;
+      background: var(--warm2);
+      padding: 1px 4px;
+      border-radius: 3px;
+    }
+
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 20px 48px;
+      text-align: right;
+    }
+
+    footer a {
+      font-size: 13px;
+      color: var(--warm);
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      color: var(--dark);
+    }
+
+    footer a + a {
+      margin-left: 30px;
+    }
+
+    @media (max-width: 768px) {
+      .topbar { padding: 0 16px; }
+      .hero { padding: 24px 16px 20px; }
+      .hero h1 { font-size: 32px; }
+      .content { padding: 24px 16px 48px; }
+      footer { padding: 20px 16px; }
+      .src-table { font-size: 12px; }
+      .src-table th, .src-table td { padding: 8px 9px; }
+      .src-table td:first-child { white-space: normal; }
+    }
+
+    #auth-widget {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .auth-greeting {
+      color: rgba(255, 255, 255, 0.75);
+      font-size: 13px;
+    }
+
+    .auth-btn {
+      font-size: 13px;
+      padding: 5px 14px;
+      border-radius: 4px;
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      color: var(--white);
+      background: transparent;
+      cursor: pointer;
+      text-decoration: none;
+      font-family: inherit;
+      transition: background 0.15s;
+    }
+
+    .auth-btn:hover { background: rgba(255, 255, 255, 0.12); }
+
+    .auth-btn--primary {
+      background: var(--white);
+      color: var(--dark);
+      border-color: var(--white);
+    }
+
+    .auth-btn--primary:hover { background: var(--warm2); }
+
+    .lang-selector {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      margin-left: 16px;
+    }
+
+    .lang-btn {
+      font-size: 11px;
+      font-weight: 700;
+      font-family: inherit;
+      padding: 3px 8px;
+      border-radius: 3px;
+      cursor: pointer;
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      color: rgba(255, 255, 255, 0.6);
+      letter-spacing: 0.04em;
+      transition: background 0.15s, color 0.15s;
+    }
+
+    .lang-btn:hover { background: rgba(255, 255, 255, 0.12); color: var(--white); }
+
+    .lang-btn--active {
+      background: rgba(255, 255, 255, 0.18);
+      color: var(--white);
+      border-color: rgba(255, 255, 255, 0.6);
+    }
+  </style>
+  <script src="i18n.js"></script>
+  <script src="auth.js"></script>
+</head>
+
+<body>
+
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a href="index.html" class="topbar-logo">GrausFP</a>
+      <div id="auth-widget"></div>
+      <div class="lang-selector" aria-label="Language selector">
+        <button class="lang-btn" data-lang="ca" onclick="setLang('ca')">CA</button>
+        <button class="lang-btn" data-lang="es" onclick="setLang('es')">ES</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="hero">
+    <h1 data-i18n="fonts.hero.h1">Fonts de dades</h1>
+    <p class="hero-sub" data-i18n="fonts.hero.sub">D'on surt tota la informació que mostra el cercador</p>
+  </div>
+
+  <main class="content">
+
+    <p data-i18n="fonts.intro.p1">Totes les dades del cercador provenen de <strong>fonts públiques i oficials</strong> de l'Administració General de l'Estat. Cap dada s'introdueix manualment: el sistema llegeix automàticament les fonts que es descriuen a continuació i les consolida en un únic índex.</p>
+    <p data-i18n="fonts.intro.p2">El marc de referència és la <strong>Llei Orgànica 3/2022</strong>, d'ordenació i integració de la Formació Professional, que estableix els Grados A, B, C, D i E i el catàleg de famílies professionals.</p>
+
+    <h2 data-i18n="fonts.s1.h2">Ministeri d'Educació, Formació Professional i Esports</h2>
+    <p class="src-host">todofp.es</p>
+    <p data-i18n="fonts.s1.p">El portal oficial de la FP a Espanya. En són l'origen el catàleg de títols i certificats, les fitxes tècniques i els documents normatius.</p>
+    <table class="src-table">
+      <thead>
+        <tr>
+          <th data-i18n="fonts.tbl.font">Font</th>
+          <th data-i18n="fonts.tbl.detall">Què se n'obté</th>
+          <th data-i18n="fonts.tbl.us">On es fa servir</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td data-i18n="fonts.r1.font">Buscador de Grados FP</td>
+          <td data-i18n="fonts.r1.detall">Catàleg complet dels Grados A, B i C (pla actual i pla anterior): codi, denominació, família professional, nivell i enllaç a la fitxa oficial.</td>
+          <td data-i18n="fonts.r1.us">Base del llistat principal del cercador.</td>
+        </tr>
+        <tr>
+          <td data-i18n="fonts.r2.font">Pàgines «Qué estudiar»</td>
+          <td data-i18n="fonts.r2.detall">Cursos d'Especialització (Grado D) — bàsic, mitjà i superior — i microcredencials (Grado E), amb denominació, família i nivell.</td>
+          <td data-i18n="fonts.r2.us">Grados D i E del llistat principal.</td>
+        </tr>
+        <tr>
+          <td data-i18n="fonts.r3.font">Buscador de Certificados de Profesionalidad</td>
+          <td data-i18n="fonts.r3.detall">Dades complementàries dels certificats de pla anterior: durada en hores i cicles formatius equivalents.</td>
+          <td data-i18n="fonts.r3.us">Fitxa de detall dels Grados C de pla anterior i itinerari cap a Grado D.</td>
+        </tr>
+        <tr>
+          <td data-i18n="fonts.r4.font">Documents oficials (repositori DAM)</td>
+          <td data-i18n="fonts.r4.detall">Annexos publicats al BOE / reials decrets (PDF) i suplements Europass en castellà i anglès. Els annexos també es processen per extreure les unitats de competència de cada certificat.</td>
+          <td data-i18n="fonts.r4.us">Botons de documents a la fitxa de detall i relació entre mòduls (Grado B) i certificats (Grado C) de pla anterior.</td>
+        </tr>
+        <tr>
+          <td data-i18n="fonts.r5.font">Fitxes dels certificats de Grado C (pla actual)</td>
+          <td data-i18n="fonts.r5.detall">Llista de mòduls professionals de cada certificat de pla actual.</td>
+          <td data-i18n="fonts.r5.us">Relació entre mòduls (Grado B) i certificats (Grado C) de pla actual, i itinerari cap a Grado D.</td>
+        </tr>
+        <tr>
+          <td data-i18n="fonts.r6.font">Fitxes dels cicles de Grado D</td>
+          <td data-i18n="fonts.r6.detall">Secció «Plan de formación» de cada cicle: mòduls que el componen i codi d'ensenyament.</td>
+          <td data-i18n="fonts.r6.us">Càlcul de quins Cursos d'Especialització continuen cada certificat de pla actual.</td>
+        </tr>
+        <tr>
+          <td data-i18n="fonts.r7.font">Seccions «Salidas profesionales»</td>
+          <td data-i18n="fonts.r7.detall">Ocupacions i llocs de treball associats a cada ensenyament (dels PDF dels certificats i de les fitxes dels Grados D i E).</td>
+          <td data-i18n="fonts.r7.us">Cerca per ocupació.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2 data-i18n="fonts.s2.h2">Registre Estatal d'Entitats de Formació de la FP</h2>
+    <p class="src-host">registrosfp.educacion.gob.es</p>
+    <p data-i18n="fonts.s2.p">El registre públic dels centres autoritzats per impartir Formació Professional a tot l'Estat.</p>
+    <table class="src-table">
+      <thead>
+        <tr>
+          <th data-i18n="fonts.tbl.font">Font</th>
+          <th data-i18n="fonts.tbl.detall">Què se n'obté</th>
+          <th data-i18n="fonts.tbl.us">On es fa servir</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td data-i18n="fonts.r8.font">Consulta pública d'oferta</td>
+          <td data-i18n="fonts.r8.detall">Centres que imparteixen cada ensenyament (Grados A–E), amb població, província i comunitat autònoma.</td>
+          <td data-i18n="fonts.r8.us">Panell de centres de cada resultat i seguiment de novetats.</td>
+        </tr>
+        <tr>
+          <td data-i18n="fonts.r9.font">Fitxa de centre</td>
+          <td data-i18n="fonts.r9.detall">Adreça web de cada centre, quan consta al registre.</td>
+          <td data-i18n="fonts.r9.us">Enllaç al web del centre dins el panell de centres.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2 data-i18n="fonts.s3.h2">Catàleg de famílies professionals</h2>
+    <p data-i18n="fonts.s3.p">Les 24 famílies professionals (i les variants històriques del pla anterior) es normalitzen amb una taula de correspondència interna, derivada del catàleg de la Llei Orgànica 3/2022. Serveix per unificar sota un mateix nom les famílies que apareixen amb formats diferents segons la font.</p>
+
+    <h2 data-i18n="fonts.s4.h2">Dades que no provenen de tercers</h2>
+    <p data-i18n="fonts.s4.p">El compte d'usuari (registre, favorits, alertes i seguiments de centres) es desa en una base de dades pròpia i no es comparteix amb cap tercer. L'<a href="historial.html">Historial d'actualitzacions</a> i l'<a href="observatori.html">Observatori</a> es generen a partir dels registres de les actualitzacions periòdiques del mateix cercador.</p>
+
+    <h2 data-i18n="fonts.s5.h2">Amb quina freqüència s'actualitza</h2>
+    <p data-i18n="fonts.s5.p">El cercador torna a llegir les fonts de manera periòdica i automàtica. Cada actualització queda registrada, amb el detall dels canvis, a l'<a href="historial.html">Historial d'actualitzacions</a>.</p>
+
+  </main>
+
+  <footer>
+    <a href="index.html" data-i18n="fonts.footer.back">← Tornar al cercador</a>
+    <a href="per-que-grausfp.html" data-i18n="fonts.footer.perque">Per què GrausFP?</a>
+    <a href="historial.html" data-i18n="fonts.footer.historial">Historial d'actualitzacions</a>
+  </footer>
+
+</body>
+</html>
