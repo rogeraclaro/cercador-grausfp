@@ -36,7 +36,8 @@ commit: ec61fc4
 - Clau a `oferta_centres.json`: `str(oferta.id)` (com D/E) — el frontend ja envia `id=`
   per a tot el que no és C LOE, així que no calen canvis a `index.html`/`perfil.html`.
 - Tests: `backend/tests/test_centres_scraper.py` (nou).
-- Xifres reals post-scraping a producció: _pendent d'omplir després del primer run_.
+- Xifres reals (VPS, 2026-09-06 01:36, 1.763 s): **1.213 relacions** (abans 815),
+  **249/400 C LOMLOE amb centres**, 17.809 centres únics (+22 nous, 0 eliminats).
 
 ## Arxius modificats
 

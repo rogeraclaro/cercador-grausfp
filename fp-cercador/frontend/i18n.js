@@ -95,6 +95,7 @@
       'index.fav.remove': 'Treu dels favorits',
       'index.badge.old': 'Pla antic',
       'index.centres.count': '{n} centres',
+      'index.centres.inherited': 'Centres acreditats per al certificat de professionalitat que inclou aquest mòdul o unitat formativa.',
 
       /* ── index.html — centres panel ── */
       'index.centres.placeholder': 'Cerca centre o població…',
@@ -502,6 +503,7 @@
       'index.fav.remove': 'Quitar de favoritos',
       'index.badge.old': 'Plan antiguo',
       'index.centres.count': '{n} centros',
+      'index.centres.inherited': 'Centros acreditados para el certificado de profesionalidad que incluye este módulo o unidad formativa.',
 
       /* ── index.html — centres panel ── */
       'index.centres.placeholder': 'Buscar centro o población…',

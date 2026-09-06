@@ -2272,6 +2272,9 @@
                 <tr class="centres-panel">
                   <td colspan="5">
                     <div class="centres-container">
+                      <template x-if="row.grado === 'A' || row.grado === 'B'">
+                        <p class="textpetit" x-text="t('index.centres.inherited')"></p>
+                      </template>
                       <div class="centres-header">
                         <span
                           x-text="centresVisibles(row).length + ' / ' + (centresData[row.id] || []).length + ' ' + t('index.centres.word')"></span>

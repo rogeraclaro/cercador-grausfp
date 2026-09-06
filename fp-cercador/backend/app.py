@@ -53,6 +53,7 @@ from flask_cors import CORS
 import feed
 import history
 import itinerary
+import centres_inherit
 import notifier
 import refresh_state
 import scheduler_service
@@ -120,6 +121,42 @@ def _load_centres_data():
     if _oferta_centres is None:
         with open(_OFERTA_CENTRES_PATH, encoding="utf-8") as f:
             _oferta_centres = json.load(f)
+
+
+_effective_oc_cache: dict = {"key": None, "data": None}
+
+
+def _get_effective_oferta_centres() -> dict:
+    """
+    oferta_centres.json (dades crues del scraping) + centres heretats per a
+    A/B LOE via el certificat C pare (Pla 056), amb clau str(id) com D/E.
+    Cache invalidada per mtimes de ofertes.json, bc_loe.json i
+    oferta_centres.json. No es persisteix mai: seria ~20 MB de duplicats.
+    """
+    _load_centres_data()
+
+    def _mtime(path):
+        return os.path.getmtime(path) if os.path.exists(path) else None
+
+    key = (_mtime(DATA_PATH), _mtime(BC_LOE_PATH), _mtime(_OFERTA_CENTRES_PATH))
+    if _effective_oc_cache["key"] == key and _effective_oc_cache["data"] is not None:
+        return _effective_oc_cache["data"]
+
+    inherited: dict = {}
+    if os.path.exists(DATA_PATH):
+        try:
+            with open(DATA_PATH, encoding="utf-8") as f:
+                records = json.load(f)
+            inherited = centres_inherit.build_inherited(
+                records, _get_itinerary_index(), _get_bc_loe_inverse(), _oferta_centres,
+            )
+        except (OSError, json.JSONDecodeError) as exc:
+            logger.warning("_get_effective_oferta_centres: sense herència A/B: %s", exc)
+
+    data = {**_oferta_centres, **inherited}
+    _effective_oc_cache.update(key=key, data=data)
+    return data
+
 
 app = Flask(__name__)
 CORS(app)  # wildcard per a l'API pública
@@ -227,11 +264,11 @@ def health():
 def get_centres():
     """
     GET /api/centres?codigo=ADGG0408   (Grado C LOE)
-    GET /api/centres?id=12664          (Grado D/E)
+    GET /api/centres?id=12664          (Grado D/E, C LOMLOE, i A/B LOE heretats)
     Retorna array JSON de centres per a l'oferta indicada.
     """
     try:
-        _load_centres_data()
+        oferta_centres = _get_effective_oferta_centres()
     except FileNotFoundError:
         return jsonify({"error": "centres.json no disponible"}), 503
 
@@ -239,19 +276,19 @@ def get_centres():
     if not clau:
         return jsonify({"error": "cal el paràmetre codigo o id"}), 400
 
-    ids = _oferta_centres.get(clau, [])
+    ids = oferta_centres.get(clau, [])
     centres = [_centres_index[i] for i in ids if i in _centres_index]
     return jsonify(centres)
 
 
 @app.route("/api/centres/count")
 def get_centres_count():
-    """GET /api/centres/count → {clau: recompte} per a totes les ofertes."""
+    """GET /api/centres/count → {clau: recompte} per a totes les ofertes (heretats inclosos)."""
     try:
-        _load_centres_data()
+        oferta_centres = _get_effective_oferta_centres()
     except FileNotFoundError:
         return jsonify({}), 200
-    return jsonify({k: len(v) for k, v in _oferta_centres.items()})
+    return jsonify({k: len(v) for k, v in oferta_centres.items()})
 
 
 @app.route("/api/centres-refresh-history")
@@ -774,6 +811,7 @@ def admin_refresh_centres():
             # Recarrega la cache en memòria perquè les noves dades siguin visibles
             _centres_index = None
             _oferta_centres = None
+            _effective_oc_cache.update(key=None, data=None)
             _load_centres_data()
 
             ids_despres = _all_linked_centre_ids(_oferta_centres)
@@ -2004,10 +2042,9 @@ def centres_watch_create():
     if not oferta_key or not oferta_denom:
         return jsonify({"error": "oferta_key i oferta_denom són obligatoris"}), 400
 
-    # Snapshot inicial: centres actuals per a aquesta oferta
+    # Snapshot inicial: centres actuals per a aquesta oferta (heretats inclosos)
     try:
-        _load_centres_data()
-        initial_ids = list(_oferta_centres.get(oferta_key, []))
+        initial_ids = list(_get_effective_oferta_centres().get(oferta_key, []))
     except Exception:
         initial_ids = []
     snapshot_json = _json.dumps(initial_ids)

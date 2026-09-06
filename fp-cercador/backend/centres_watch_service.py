@@ -10,8 +10,10 @@ import os
 import secrets
 from datetime import datetime, timezone, timedelta
 
+import centres_inherit
 import db as _db
 import email_service
+import itinerary
 
 logger = logging.getLogger(__name__)
 
@@ -21,15 +23,44 @@ UNSUBSCRIBE_TOKEN_DAYS = 365
 _DATA_DIR = os.path.normpath(os.path.join(os.path.dirname(__file__), "data"))
 _OFERTA_CENTRES_PATH = os.path.join(_DATA_DIR, "oferta_centres.json")
 _CENTRES_PATH = os.path.join(_DATA_DIR, "centres.json")
+_OFERTES_PATH = os.path.join(_DATA_DIR, "ofertes.json")
+_BC_LOE_PATH = os.path.join(_DATA_DIR, "bc_loe.json")
+
+
+def _inherited_ab_loe(oferta_centres: dict) -> dict:
+    """Centres heretats per a A/B LOE (Pla 056). Fail-soft: {} si falta cap fitxer."""
+    if not (os.path.exists(_OFERTES_PATH) and os.path.exists(_BC_LOE_PATH)):
+        return {}
+    try:
+        with open(_OFERTES_PATH, encoding="utf-8") as f:
+            records = json.load(f)
+        with open(_BC_LOE_PATH, encoding="utf-8") as f:
+            bc_loe = json.load(f)
+    except (OSError, json.JSONDecodeError) as exc:
+        logger.warning("centres_watch: sense herència A/B LOE: %s", exc)
+        return {}
+    inverse: dict = {}
+    for codigo_c, uc_codes in bc_loe.items():
+        for uc in uc_codes:
+            inverse.setdefault(uc, []).append(codigo_c)
+    return centres_inherit.build_inherited(
+        records, itinerary.build_ab_index(records), inverse, oferta_centres,
+    )
 
 
 def _load_centres_data() -> tuple[dict, dict]:
-    """Llegeix oferta_centres.json i centres.json des de disc. Retorna (oferta_centres, centres_index)."""
+    """
+    Llegeix oferta_centres.json i centres.json des de disc, i hi afegeix els
+    centres heretats A/B LOE (mateixa derivació que app.py, perquè el snapshot
+    inicial d'un seguiment i el job de notificacions vegin el mateix conjunt).
+    Retorna (oferta_centres, centres_index).
+    """
     with open(_OFERTA_CENTRES_PATH, encoding="utf-8") as f:
         oferta_centres = json.load(f)
     with open(_CENTRES_PATH, encoding="utf-8") as f:
         centres_list = json.load(f)
     centres_index = {c["id"]: c for c in centres_list}
+    oferta_centres = {**oferta_centres, **_inherited_ab_loe(oferta_centres)}
     return oferta_centres, centres_index
 
 
