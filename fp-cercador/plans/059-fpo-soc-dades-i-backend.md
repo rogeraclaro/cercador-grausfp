@@ -1,5 +1,10 @@
 # Pla 059 — FPO (SOC Catalunya): scraper, pipeline, endpoints i historial
 
+> **DONE 2026-09-06.** Nota d'execució: l'endpoint `browse` d'Algolia retorna
+> **403** amb la clau pública (només té l'ACL `search`). L'scraper pagina amb
+> `POST /1/indexes/<idx>/query` + `hitsPerPage=1000&page=N` fins a `nbPages`.
+> Funcions reals: `_algolia_query`, `_fetch_all` (no `_algolia_browse`/`_browse_all`).
+
 Origen: `docs/superpowers/specs/2026-09-06-fpo-soc-catalunya-design.md` (§4, §5, §10, §11).
 Depèn de: res (font nova i independent).
 Primer dels 3 plans de la feature FPO. Els altres (060 mode UI + integració, 061

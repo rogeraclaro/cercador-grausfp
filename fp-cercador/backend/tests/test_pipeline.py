@@ -77,6 +77,9 @@ def isolate_data_path(tmp_path, monkeypatch):
     # Pla 058: el bloc d_modulos faria xarxa (fitxes D) — desactivat per defecte.
     import scrapers.d_modulos_scraper as dms
     monkeypatch.setattr(dms, 'build_d_modulos', lambda records, **kw: {})
+    # Pla 059: el bloc soc faria xarxa (Algolia) — desactivat per defecte.
+    import scrapers.soc_scraper as soc
+    monkeypatch.setattr(soc, 'build_soc_data', lambda **kw: {'cursos': [], 'especs': [], 'centres': []})
 
 
 def _run_with_mocks(buscador_data, d_basico=None, d_medio=None, d_superior=None, e=None):
@@ -282,3 +285,47 @@ def test_run_no_falla_si_d_modulos_peta(tmp_path):
     assert result['errors'] == []
     assert (tmp_path / 'ofertes.json').exists()
     assert not (tmp_path / 'd_modulos.json').exists()
+
+
+# ---------------------------------------------------------------------------
+# Pla 059 — soc_*.json (cursos FPO del SOC) es genera dins run(), no fatal
+# ---------------------------------------------------------------------------
+
+PATCH_BUILD_SOC = 'scrapers.soc_scraper.build_soc_data'
+
+
+def test_run_escriu_soc_json(tmp_path):
+    payload = {'cursos': [{'idCurs': '1'}], 'especs': [{'codi': 'X'}], 'centres': [{'idCentre': '9'}]}
+    with mock.patch(PATCH_BUILD_SOC, return_value=payload) as m:
+        _run_with_mocks(buscador_data={'A': [], 'B': [], 'C': [_rec_c_lomloe()]})
+    assert m.called
+    assert json.loads((tmp_path / 'soc_cursos.json').read_text(encoding='utf-8')) == payload['cursos']
+    assert json.loads((tmp_path / 'soc_especs.json').read_text(encoding='utf-8')) == payload['especs']
+    assert json.loads((tmp_path / 'soc_centres.json').read_text(encoding='utf-8')) == payload['centres']
+
+
+def test_run_no_falla_si_soc_peta(tmp_path):
+    with mock.patch(PATCH_BUILD_SOC, side_effect=RuntimeError('algolia caigut')):
+        result = _run_with_mocks(buscador_data={'A': [], 'B': [], 'C': [_rec_c_lomloe()]})
+    assert result['errors'] == []
+    assert (tmp_path / 'ofertes.json').exists()
+    assert not (tmp_path / 'soc_cursos.json').exists()
+
+
+def test_run_soc_registra_historial(tmp_path):
+    payload = {'cursos': [{'idCurs': '1'}, {'idCurs': '2'}], 'especs': [], 'centres': []}
+    with mock.patch(PATCH_BUILD_SOC, return_value=payload):
+        _run_with_mocks(buscador_data={'A': [], 'B': [], 'C': [_rec_c_lomloe()]})
+    hist = json.loads((tmp_path / 'soc_refresh_history.json').read_text(encoding='utf-8'))
+    assert hist[0]['ok'] is True
+    assert hist[0]['n_cursos'] == 2
+    assert hist[0]['font'] == 'soc'
+
+
+def test_run_soc_error_avisa_admin_amb_ratelimit(tmp_path):
+    sent = []
+    with mock.patch(PATCH_BUILD_SOC, side_effect=RuntimeError('algolia caigut')), \
+         mock.patch('email_service.send_email', side_effect=lambda *a, **k: sent.append(a)):
+        _run_with_mocks(buscador_data={'A': [], 'B': [], 'C': [_rec_c_lomloe()]})
+        _run_with_mocks(buscador_data={'A': [], 'B': [], 'C': [_rec_c_lomloe()]})
+    assert len(sent) == 1   # el segon avís queda dins el rate-limit de 24 h

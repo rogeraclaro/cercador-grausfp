@@ -74,6 +74,71 @@ def _write_atomic(data: list, output_path: str) -> None:
 
 
 # ---------------------------------------------------------------------------
+# Pla 059 — historial i avís d'admin del snapshot FPO (SOC)
+# ---------------------------------------------------------------------------
+
+_SOC_ALERT_INTERVAL = 24 * 3600  # 1 avís per dia com a màxim
+
+
+def _read_json_or(path: str, default):
+    try:
+        with open(path, 'r', encoding='utf-8') as f:
+            return json.load(f)
+    except (OSError, json.JSONDecodeError):
+        return default
+
+
+def _soc_diff_entry(prev_cursos: list, curr_cursos: list, *, ok: bool, error: str | None = None) -> dict:
+    prev_ids = {c.get('idCurs') for c in (prev_cursos or []) if isinstance(c, dict)}
+    curr_ids = {c.get('idCurs') for c in (curr_cursos or []) if isinstance(c, dict)}
+    return {
+        'ts': time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime()),
+        'font': 'soc',
+        'ok': ok,
+        'error': error,
+        'n_cursos': len(curr_cursos or []),
+        'n_afegits': len(curr_ids - prev_ids) if ok else 0,
+        'n_retirats': len(prev_ids - curr_ids) if ok else 0,
+    }
+
+
+def _soc_history_append(data_dir: str, entry: dict) -> None:
+    """Insereix una entrada a data/soc_refresh_history.json (fail-soft)."""
+    path = os.path.join(data_dir, 'soc_refresh_history.json')
+    hist = _read_json_or(path, [])
+    if not isinstance(hist, list):
+        hist = []
+    hist.insert(0, entry)
+    try:
+        _write_atomic(hist, path)
+    except OSError as exc:
+        logger.warning("pipeline: no s'ha pogut escriure soc_refresh_history.json: %s", exc)
+
+
+def _notify_admin_soc_failure(data_dir: str, exc: Exception) -> None:
+    """Avisa l'admin per email que el snapshot FPO ha fallat (rate-limit 24 h)."""
+    stamp_path = os.path.join(data_dir, 'last_soc_alert.json')
+    last = _read_json_or(stamp_path, {}) or {}
+    if time.time() - float(last.get('ts', 0)) < _SOC_ALERT_INTERVAL:
+        return
+    try:
+        import email_service
+        to = os.environ.get('ADMIN_ALERT_EMAIL') or os.environ.get('EMAIL_FROM', 'noreply@masellas.info')
+        email_service.send_email(
+            to,
+            'Snapshot FPO (SOC) ha fallat',
+            f"El snapshot de cursos FPO del SOC ha fallat.\n\n{exc!r}\n\n"
+            f"Hora (UTC): {time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime())}",
+        )
+    except Exception as send_exc:  # no bloquejar el pipeline si l'email falla
+        logger.warning("pipeline: no s'ha pogut avisar l'admin del fallo FPO: %s", send_exc)
+    try:
+        _write_atomic({'ts': time.time()}, stamp_path)
+    except OSError:
+        pass
+
+
+# ---------------------------------------------------------------------------
 # API pública
 # ---------------------------------------------------------------------------
 
@@ -226,6 +291,23 @@ def run(on_progress=None) -> dict:
         logger.info("pipeline: d_modulos.json escrit (%d cicles D)", len(d_modulos))
     except Exception as exc:
         logger.warning("pipeline: build_d_modulos ha fallat (no fatal): %s", exc)
+
+    # --- Pla 059: cursos FPO del SOC (Catalunya) via Algolia (no fatal) ---
+    _report('Cursos FPO (SOC Catalunya)')
+    try:
+        from scrapers.soc_scraper import build_soc_data, write_soc_data
+        _soc_dir = os.path.dirname(DATA_PATH)
+        _prev_cursos = _read_json_or(os.path.join(_soc_dir, 'soc_cursos.json'), [])
+        soc = build_soc_data()
+        write_soc_data(soc, _soc_dir)
+        logger.info("pipeline: soc_*.json escrit (%d cursos, %d especialitats, %d centres)",
+                    len(soc['cursos']), len(soc['especs']), len(soc['centres']))
+        _soc_history_append(_soc_dir, _soc_diff_entry(_prev_cursos, soc['cursos'], ok=True))
+    except Exception as exc:
+        logger.warning("pipeline: build_soc_data ha fallat (no fatal): %s", exc)
+        _soc_dir = os.path.dirname(DATA_PATH)
+        _soc_history_append(_soc_dir, _soc_diff_entry([], [], ok=False, error=repr(exc)))
+        _notify_admin_soc_failure(_soc_dir, exc)
 
     families = sorted({r['familia'] for r in all_records if r['familia'] != 'Desconeguda'})
     denominacions = sorted({r['denominacion'] for r in all_records if r.get('denominacion')})

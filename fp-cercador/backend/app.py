@@ -83,11 +83,16 @@ CICLOS_PATH = os.path.join(_DATA_DIR, "ciclos_fp.json")
 BC_LOE_PATH = os.path.join(_DATA_DIR, "bc_loe.json")
 BC_LOMLOE_PATH = os.path.join(_DATA_DIR, "bc_lomloe.json")  # Pla 057: {codigo_c: [codigo_b]}
 D_MODULOS_PATH = os.path.join(_DATA_DIR, "d_modulos.json")  # Pla 058: {str(id_d): {modulos, ensenanzaFP}}
+SOC_CURSOS_PATH = os.path.join(_DATA_DIR, "soc_cursos.json")    # Pla 059: cursos FPO (SOC)
+SOC_ESPECS_PATH = os.path.join(_DATA_DIR, "soc_especs.json")    # Pla 059: especialitats formatives (SOC)
+SOC_CENTRES_PATH = os.path.join(_DATA_DIR, "soc_centres.json")  # Pla 059: centres de formació (SOC)
+_SOC_STALE_DAYS = 7  # llindar per avisar de dades FPO velles
 OCUPACIONES_PATH = os.path.join(_DATA_DIR, "ocupaciones.json")
 _CENTRES_PATH = os.path.join(_DATA_DIR, "centres.json")
 _OFERTA_CENTRES_PATH = os.path.join(_DATA_DIR, "oferta_centres.json")
 _CENTRES_NOUS_PATH = os.path.join(_DATA_DIR, "centres_nous_per_oferta.json")
 _CENTRES_REFRESH_HISTORY_PATH = os.path.join(_DATA_DIR, "centres_refresh_history.json")
+SOC_REFRESH_HISTORY_PATH = os.path.join(_DATA_DIR, "soc_refresh_history.json")  # Pla 059
 
 
 def _append_centres_history(entry: dict) -> None:
@@ -307,6 +312,26 @@ def get_centres_refresh_history():
         return jsonify({"items": [], "total": 0, "page": 1, "limit": 20}), 200
     try:
         with open(_CENTRES_REFRESH_HISTORY_PATH, encoding="utf-8") as f:
+            data = json.load(f)
+    except (OSError, json.JSONDecodeError):
+        return jsonify({"items": [], "total": 0, "page": 1, "limit": 20}), 200
+    page, limit = _parse_pagination(request)
+    start = (page - 1) * limit
+    return jsonify({
+        "items": data[start:start + limit],
+        "total": len(data),
+        "page": page,
+        "limit": limit,
+    }), 200
+
+
+@app.route("/api/fpo-refresh-history")
+def get_fpo_refresh_history():
+    """Pla 059: historial paginat dels snapshots de cursos FPO (SOC). Públic."""
+    if not os.path.exists(SOC_REFRESH_HISTORY_PATH):
+        return jsonify({"items": [], "total": 0, "page": 1, "limit": 20}), 200
+    try:
+        with open(SOC_REFRESH_HISTORY_PATH, encoding="utf-8") as f:
             data = json.load(f)
     except (OSError, json.JSONDecodeError):
         return jsonify({"items": [], "total": 0, "page": 1, "limit": 20}), 200
@@ -1124,6 +1149,183 @@ def _get_c_lomloe_to_d() -> dict:
     data = {'index': index, 'd_by_id': d_by_id}
     _cd_lomloe_cache.update(key=key, data=data)
     return data
+
+
+# ---------------------------------------------------------------------------
+# Pla 059 — FPO (SOC Catalunya): soc_*.json + /api/fpo/*
+# ---------------------------------------------------------------------------
+
+_soc_cursos_cache: dict = {"mtime": None, "index": None}
+_soc_especs_cache: dict = {"mtime": None, "index": None}
+_soc_centres_cache: dict = {"mtime": None, "index": None}
+_soc_espec_index_cache: dict = {"key": None, "data": None}
+
+_SOC_CERCADOR_URL = ("https://serveiocupacio.gencat.cat/ca/persones/vull-formar-me/"
+                     "cercadors-formacio-especialitats/cercador-integrat/resultats.html")
+
+
+def _read_soc_list(path: str, cache: dict) -> list:
+    """Llegeix un soc_*.json (llista). Cache per mtime. [] si falta/corrupte."""
+    if not os.path.exists(path):
+        return []
+    mtime = os.path.getmtime(path)
+    if cache["mtime"] == mtime and cache["index"] is not None:
+        return cache["index"]
+    try:
+        with open(path, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+        if not isinstance(data, list):
+            logger.warning("_read_soc_list: %s no és una llista — s'ignora", path)
+            return []
+        cache.update(mtime=mtime, index=data)
+        return data
+    except (OSError, json.JSONDecodeError) as exc:
+        logger.warning("_read_soc_list: error llegint %s: %s", path, exc)
+        return []
+
+
+def _get_soc_cursos() -> list:
+    return _read_soc_list(SOC_CURSOS_PATH, _soc_cursos_cache)
+
+
+def _get_soc_especs() -> list:
+    return _read_soc_list(SOC_ESPECS_PATH, _soc_especs_cache)
+
+
+def _get_soc_centres() -> list:
+    return _read_soc_list(SOC_CENTRES_PATH, _soc_centres_cache)
+
+
+def _soc_warning() -> str | None:
+    if not os.path.exists(SOC_ESPECS_PATH) or not _get_soc_especs():
+        return "L'oferta de cursos FPO no està disponible temporalment."
+    age = time.time() - os.path.getmtime(SOC_ESPECS_PATH)
+    if age > _SOC_STALE_DAYS * 86400:
+        return "Les dades de cursos FPO poden estar desactualitzades."
+    return None
+
+
+def _soc_fitxa_url(curs: dict) -> str:
+    """Enllaç al cercador del SOC pre-filtrat per l'especialitat del curs.
+
+    El SOC no exposa un patró estable de deep-link a la fitxa individual del
+    curs; enllacem al llistat filtrat, que hi porta amb un clic.
+    """
+    from urllib.parse import quote
+    codi = (curs.get('especialitat') or {}).get('codi') or ''
+    return f"{_SOC_CERCADOR_URL}?nomCurso={quote(codi)}&comarca=&municipi=&tabCercador=1"
+
+
+def _soc_espec_index() -> dict:
+    """
+    {'list': [entrada_llista, ...], 'cursos_by_espec': {codi: [curs, ...]}}
+    Només especialitats amb ≥1 curs. Cache per mtimes de cursos+especs.
+    """
+    def _mt(path):
+        return os.path.getmtime(path) if os.path.exists(path) else None
+
+    key = (_mt(SOC_CURSOS_PATH), _mt(SOC_ESPECS_PATH))
+    if _soc_espec_index_cache["key"] == key and _soc_espec_index_cache["data"] is not None:
+        return _soc_espec_index_cache["data"]
+
+    cursos_by_espec: dict = {}
+    for c in _get_soc_cursos():
+        codi = (c.get('especialitat') or {}).get('codi')
+        if codi:
+            cursos_by_espec.setdefault(codi, []).append(c)
+
+    llista = []
+    for e in _get_soc_especs():
+        codi = e.get('codi')
+        cursos = cursos_by_espec.get(codi)
+        if not codi or not cursos:
+            continue
+        llista.append({
+            'codi': codi,
+            'titol': e.get('titol', {'ca': '', 'es': ''}),
+            'familia': e.get('familia', {}),
+            'area': e.get('area', {}),
+            'nivell': e.get('nivell', 0),
+            'hores': e.get('hores', 0.0),
+            'esCertProf': bool(e.get('esCertProf')),
+            'rd': e.get('rd'),
+            'programaUrl': e.get('programaUrl', ''),
+            'nCursos': len(cursos),
+            'comarques': sorted({c.get('comarca', '') for c in cursos if c.get('comarca')}),
+            'municipis': sorted({c.get('municipi', '') for c in cursos if c.get('municipi')}),
+            'estats': sorted({c.get('estat', '') for c in cursos if c.get('estat')}),
+            'modalitats': sorted({c.get('modalitat', '') for c in cursos if c.get('modalitat')}),
+        })
+    llista.sort(key=lambda x: (x['titol'].get('ca') or x['codi']).lower())
+    data = {'list': llista, 'cursos_by_espec': cursos_by_espec}
+    _soc_espec_index_cache.update(key=key, data=data)
+    return data
+
+
+def _soc_curs_public(c: dict) -> dict:
+    return {
+        'idCurs': c.get('idCurs', ''),
+        'titol': c.get('titol', {'ca': '', 'es': ''}),
+        'centre': c.get('centre', {}),
+        'dataInici': c.get('dataInici'),
+        'dataFi': c.get('dataFi'),
+        'estat': c.get('estat', ''),
+        'modalitat': c.get('modalitat', ''),
+        'fitxaUrl': _soc_fitxa_url(c),
+    }
+
+
+@app.route('/api/fpo/especialitats')
+def api_fpo_especialitats():
+    """Pla 059: especialitats FPO amb ≥1 curs actiu a Catalunya."""
+    resp = {'especialitats': _soc_espec_index()['list']}
+    w = _soc_warning()
+    if w:
+        resp['warning'] = w
+    return jsonify(resp)
+
+
+@app.route('/api/fpo/especialitat/<path:codi>')
+def api_fpo_especialitat(codi):
+    """Pla 059: detall d'una especialitat FPO (mòduls + cursos actius)."""
+    idx = _soc_espec_index()
+    cursos = idx['cursos_by_espec'].get(codi)
+    if not cursos:
+        return jsonify({}), 404
+    espec = next((e for e in _get_soc_especs() if e.get('codi') == codi), {})
+
+    def _first_nonempty(field):
+        for c in cursos:
+            v = c.get(field) or {}
+            if v.get('ca') or v.get('es'):
+                return v
+        return {'ca': '', 'es': ''}
+
+    return jsonify({
+        'codi': codi,
+        'descripcio': espec.get('titol', {'ca': '', 'es': ''}),
+        'queAprendras': _first_nonempty('queAprendras'),
+        'requisits': _first_nonempty('requisits'),
+        'sortides': _first_nonempty('sortides'),
+        'moduls': espec.get('moduls', []),
+        'programaUrl': espec.get('programaUrl', ''),
+        'cursos': [_soc_curs_public(c) for c in cursos],
+    })
+
+
+@app.route('/api/fpo/by-cert')
+def api_fpo_by_cert():
+    """Pla 059: cursos FPO l'especialitat dels quals és un certificat de
+    professionalitat concret (codi = codigo d'un Grado C de pla antic)."""
+    codigo = request.args.get('codigo') or ''
+    cursos = _soc_espec_index()['cursos_by_espec'].get(codigo)
+    if not cursos:
+        return jsonify({})
+    return jsonify({
+        'especialitat': codigo,
+        'nCursos': len(cursos),
+        'cursos': [_soc_curs_public(c) for c in cursos],
+    })
 
 
 _bc_loe_inverse_cache: dict = {"mtime": None, "index": None}
