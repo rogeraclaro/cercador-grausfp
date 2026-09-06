@@ -187,6 +187,7 @@ def _set_auth_cors(response):
 
 def _needs_auth_cors(path):
     return (path.startswith("/api/auth/") or path.startswith("/api/favorites")
+            or path.startswith("/api/fpo/favorites")
             or path.startswith("/api/alerts") or path.startswith("/api/centres-watch"))
 
 
@@ -795,6 +796,81 @@ def admin_refresh_ocupaciones():
             _ocup_build_lock.release()
 
     threading.Thread(target=_run, daemon=True).start()
+    return jsonify({"status": "started"}), 200
+
+
+# ---------------------------------------------------------------------------
+# Refresc del snapshot FPO (SOC) — admin manual  (Pla 061)
+# ---------------------------------------------------------------------------
+
+_fpo_refresh_state: dict = {
+    "status": "idle",          # idle | running | done | error
+    "started_at": None, "finished_at": None,
+    "cursos": None, "especs": None, "centres": None,
+    "last_error": None,
+}
+_fpo_refresh_lock = threading.Lock()
+
+
+@app.route("/api/admin/fpo-status")
+def fpo_refresh_status():
+    """Estat del darrer refresc del snapshot FPO + data de l'últim fitxer."""
+    st = dict(_fpo_refresh_state)
+    st["last_snapshot"] = (
+        os.path.getmtime(SOC_CURSOS_PATH) if os.path.exists(SOC_CURSOS_PATH) else None
+    )
+    return jsonify(st), 200
+
+
+def _run_fpo_refresh(data_dir):
+    """Regenera els soc_*.json. Actualitza _fpo_refresh_state. Allibera el lock."""
+    try:
+        from scrapers.soc_scraper import build_soc_data, write_soc_data
+        soc = build_soc_data()
+        write_soc_data(soc, data_dir)
+        for cache in (_soc_cursos_cache, _soc_especs_cache, _soc_centres_cache):
+            cache.update(mtime=None, index=None)
+        _soc_espec_index_cache.update(key=None, data=None)
+        n = {k: len(soc.get(k, [])) for k in ("cursos", "especs", "centres")}
+        _fpo_refresh_state.update(
+            status="done", finished_at=datetime.now(timezone.utc).isoformat(),
+            last_error=None, **n,
+        )
+        logger.info("refresh-fpo: completat (%(cursos)d cursos / %(especs)d especs / "
+                    "%(centres)d centres)", n)
+    except Exception as exc:
+        logger.error("refresh-fpo: error: %r", exc)
+        try:
+            from scrapers.pipeline import _notify_admin_soc_failure
+            _notify_admin_soc_failure(data_dir, exc)
+        except Exception as notify_exc:
+            logger.warning("refresh-fpo: no s'ha pogut avisar l'admin: %s", notify_exc)
+        _fpo_refresh_state.update(
+            status="error", finished_at=datetime.now(timezone.utc).isoformat(),
+            last_error=str(exc),
+        )
+    finally:
+        _fpo_refresh_lock.release()
+
+
+@app.route("/api/admin/refresh-fpo", methods=["POST"])
+def admin_refresh_fpo():
+    """Regenera els soc_*.json en background (només build_soc_data +
+    write_soc_data, no el pipeline sencer). Requereix ADMIN_TOKEN o sessió admin.
+    El client consulta l'estat a GET /api/admin/fpo-status."""
+    if not _check_admin(request):
+        return jsonify({"error": "Unauthorized"}), 401
+
+    if not _fpo_refresh_lock.acquire(blocking=False):
+        return jsonify({"error": "Refresc FPO ja en curs"}), 409
+
+    data_dir = os.path.dirname(SOC_CURSOS_PATH)
+    _fpo_refresh_state.update(
+        status="running",
+        started_at=datetime.now(timezone.utc).isoformat(),
+        finished_at=None, last_error=None,
+    )
+    threading.Thread(target=_run_fpo_refresh, args=(data_dir,), daemon=True).start()
     return jsonify({"status": "started"}), 200
 
 
@@ -2159,6 +2235,204 @@ def favorites_remove_centre(oferta_id, centre_id):
         conn.execute(
             "DELETE FROM list_item_centres WHERE list_item_id = ? AND centre_id = ?",
             (item["id"], centre_id),
+        )
+        conn.commit()
+        return "", 204
+    finally:
+        conn.close()
+
+
+# ---------------------------------------------------------------------------
+# Favorits FPO — /api/fpo/favorites  (Pla 061)
+# ---------------------------------------------------------------------------
+
+
+def _fpo_espec_by_codi(codi):
+    """Especialitat FPO del snapshot per codi, o {} si no hi és."""
+    for e in _get_soc_especs():
+        if e.get("codi") == codi:
+            return e
+    return {}
+
+
+def _fpo_curs_by_id(curs_id):
+    """Curs FPO del snapshot per idCurs, o None si ja no hi és (finalitzat)."""
+    for c in _get_soc_cursos():
+        if c.get("idCurs") == curs_id:
+            return c
+    return None
+
+
+def _fpo_fav_course_public(row):
+    """Enriqueix una fila de fpo_favorite_courses amb dades del snapshot."""
+    curs = _fpo_curs_by_id(row["curs_id"])
+    out = {
+        "curs_id": row["curs_id"],
+        "centre_id": row["centre_id"],
+        "created_at": row["created_at"],
+        "finalitzat": curs is None,
+    }
+    if curs is not None:
+        out.update({
+            "titol": curs.get("titol", {"ca": "", "es": ""}),
+            "centre": curs.get("centre", {}),
+            "dataInici": curs.get("dataInici"),
+            "dataFi": curs.get("dataFi"),
+            "estat": curs.get("estat", ""),
+            "modalitat": curs.get("modalitat", ""),
+            "fitxaUrl": _soc_fitxa_url(curs),
+        })
+    return out
+
+
+@app.route("/api/fpo/favorites", methods=["GET"])
+def fpo_favorites_get():
+    """Especialitats FPO desades per l'usuari, enriquides amb el snapshot."""
+    import db as _db
+    user_id = _get_session_user(request)
+    if not user_id:
+        return jsonify({"error": "No autenticat"}), 401
+    conn = _db.get_db()
+    try:
+        favs = _db.query_all(
+            conn,
+            "SELECT especialitat_codi, created_at FROM fpo_favorites "
+            "WHERE user_id = ? ORDER BY created_at DESC",
+            (user_id,),
+        )
+        result = []
+        for fav in favs:
+            codi = fav["especialitat_codi"]
+            espec = _fpo_espec_by_codi(codi)
+            courses = _db.query_all(
+                conn,
+                "SELECT curs_id, centre_id, created_at FROM fpo_favorite_courses "
+                "WHERE user_id = ? AND especialitat_codi = ? ORDER BY created_at",
+                (user_id, codi),
+            )
+            result.append({
+                "especialitat_codi": codi,
+                "created_at": fav["created_at"],
+                "titol": espec.get("titol", {"ca": "", "es": ""}),
+                "familia": espec.get("familia", {}),
+                "area": espec.get("area", {}),
+                "nivell": espec.get("nivell", 0),
+                "hores": espec.get("hores", 0.0),
+                "esCertProf": bool(espec.get("esCertProf")),
+                "programaUrl": espec.get("programaUrl", ""),
+                "cursos": [_fpo_fav_course_public(c) for c in courses],
+            })
+        return jsonify(result), 200
+    finally:
+        conn.close()
+
+
+@app.route("/api/fpo/favorites", methods=["POST"])
+def fpo_favorites_add():
+    """Desa una especialitat FPO. Body: {especialitat_codi}. Idempotent."""
+    import db as _db
+    user_id = _get_session_user(request)
+    if not user_id:
+        return jsonify({"error": "No autenticat"}), 401
+    data = request.get_json(silent=True) or {}
+    codi = (data.get("especialitat_codi") or "").strip()
+    if not codi:
+        return jsonify({"error": "especialitat_codi és obligatori"}), 400
+    conn = _db.get_db()
+    try:
+        existing = _db.query_one(
+            conn,
+            "SELECT 1 FROM fpo_favorites WHERE user_id = ? AND especialitat_codi = ?",
+            (user_id, codi),
+        )
+        if existing:
+            return jsonify({"status": "already_exists"}), 200
+        conn.execute(
+            "INSERT INTO fpo_favorites (user_id, especialitat_codi) VALUES (?, ?)",
+            (user_id, codi),
+        )
+        conn.commit()
+        return jsonify({"status": "added"}), 201
+    finally:
+        conn.close()
+
+
+@app.route("/api/fpo/favorites/<codi>", methods=["DELETE"])
+def fpo_favorites_remove(codi):
+    """Treu una especialitat FPO desada i tots els seus cursos marcats."""
+    import db as _db
+    user_id = _get_session_user(request)
+    if not user_id:
+        return jsonify({"error": "No autenticat"}), 401
+    conn = _db.get_db()
+    try:
+        conn.execute(
+            "DELETE FROM fpo_favorite_courses WHERE user_id = ? AND especialitat_codi = ?",
+            (user_id, codi),
+        )
+        conn.execute(
+            "DELETE FROM fpo_favorites WHERE user_id = ? AND especialitat_codi = ?",
+            (user_id, codi),
+        )
+        conn.commit()
+        return "", 204
+    finally:
+        conn.close()
+
+
+@app.route("/api/fpo/favorites/<codi>/courses", methods=["POST"])
+def fpo_favorites_add_course(codi):
+    """Marca un curs concret dins d'un favorit. Body: {curs_id, centre_id}."""
+    import db as _db
+    user_id = _get_session_user(request)
+    if not user_id:
+        return jsonify({"error": "No autenticat"}), 401
+    data = request.get_json(silent=True) or {}
+    curs_id = (data.get("curs_id") or "").strip()
+    centre_id = data.get("centre_id") or None
+    if not curs_id:
+        return jsonify({"error": "curs_id és obligatori"}), 400
+    conn = _db.get_db()
+    try:
+        fav = _db.query_one(
+            conn,
+            "SELECT 1 FROM fpo_favorites WHERE user_id = ? AND especialitat_codi = ?",
+            (user_id, codi),
+        )
+        if not fav:
+            return jsonify({"error": "Especialitat no desada"}), 404
+        existing = _db.query_one(
+            conn,
+            "SELECT 1 FROM fpo_favorite_courses "
+            "WHERE user_id = ? AND especialitat_codi = ? AND curs_id = ?",
+            (user_id, codi, curs_id),
+        )
+        if existing:
+            return jsonify({"status": "already_exists"}), 200
+        conn.execute(
+            "INSERT INTO fpo_favorite_courses (user_id, especialitat_codi, curs_id, centre_id) "
+            "VALUES (?, ?, ?, ?)",
+            (user_id, codi, curs_id, centre_id),
+        )
+        conn.commit()
+        return jsonify({"status": "added"}), 201
+    finally:
+        conn.close()
+
+
+@app.route("/api/fpo/favorites/<codi>/courses/<curs_id>", methods=["DELETE"])
+def fpo_favorites_remove_course(codi, curs_id):
+    """Desmarca un curs d'un favorit (l'especialitat es manté)."""
+    import db as _db
+    user_id = _get_session_user(request)
+    if not user_id:
+        return jsonify({"error": "No autenticat"}), 401
+    conn = _db.get_db()
+    try:
+        conn.execute(
+            "DELETE FROM fpo_favorite_courses "
+            "WHERE user_id = ? AND especialitat_codi = ? AND curs_id = ?",
+            (user_id, codi, curs_id),
         )
         conn.commit()
         return "", 204

@@ -1420,6 +1420,9 @@
         fpoExpanded: {},         // { codi: bool }
         fpoByCert: {},           // { codigo: {nCursos,…} } cache de /api/fpo/by-cert (integració C LOE)
         _fpoOpenOnLoad: null,    // codi d'especialitat a obrir en carregar (param ?esp=)
+        fpoFavSet: new Set(),    // Pla 061 — codis d'especialitat FPO desats per l'usuari
+        fpoFavCourses: {},       // Pla 061 — { codi: Set(curs_id) } cursos marcats
+        fpoFavBusy: false,
         fpoFilters: {
           text: '', familia: '', area: '', especialitat: '', comarca: '', municipi: '',
           nivell: '', estat: '', modalitat: '', certprof: false,
@@ -1489,6 +1492,7 @@
             if (this.loggedIn) {
               this.loadFavorites();
               this.loadWatches();
+              this.loadFpoFavorites();
             }
             if (!res.ok) { this.state = 'error'; return; }
             const data = await res.json();
@@ -2042,6 +2046,62 @@
 
         fpoHorariEntries(horari) {
           return Object.entries(horari || {}).filter(([, v]) => v && String(v).trim());
+        },
+
+        // ── Pla 061 — favorits FPO (només amb sessió) ──
+        async loadFpoFavorites() {
+          try {
+            const r = await fetch(API_BASE + '/api/fpo/favorites', { credentials: 'include' });
+            if (!r.ok) return;
+            const favs = await r.json();
+            this.fpoFavSet = new Set(favs.map(e => e.especialitat_codi));
+            const byCodi = {};
+            favs.forEach(e => { byCodi[e.especialitat_codi] = new Set((e.cursos || []).map(c => c.curs_id)); });
+            this.fpoFavCourses = byCodi;
+          } catch (e) { /* silenci */ }
+        },
+
+        async toggleFpoFav(codi) {
+          if (!this.loggedIn || this.fpoFavBusy) return;
+          this.fpoFavBusy = true;
+          const has = this.fpoFavSet.has(codi);
+          try {
+            const r = await fetch(API_BASE + '/api/fpo/favorites' + (has ? '/' + encodeURIComponent(codi) : ''), {
+              method: has ? 'DELETE' : 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              credentials: 'include',
+              body: has ? undefined : JSON.stringify({ especialitat_codi: codi }),
+            });
+            if (!r.ok) throw new Error('HTTP ' + r.status);
+            const next = new Set(this.fpoFavSet);
+            if (has) { next.delete(codi); delete this.fpoFavCourses[codi]; }
+            else { next.add(codi); this.fpoFavCourses = { ...this.fpoFavCourses, [codi]: new Set() }; }
+            this.fpoFavSet = next;
+          } catch (e) { /* silenci */ }
+          finally { this.fpoFavBusy = false; }
+        },
+
+        fpoFavHasCourse(codi, cursId) {
+          const s = this.fpoFavCourses[codi];
+          return !!(s && s.has(cursId));
+        },
+
+        async toggleFpoFavCourse(codi, cursId, centreId) {
+          if (!this.loggedIn || !this.fpoFavSet.has(codi)) return;
+          const has = this.fpoFavHasCourse(codi, cursId);
+          try {
+            const r = await fetch(API_BASE + '/api/fpo/favorites/' + encodeURIComponent(codi) + '/courses' +
+              (has ? '/' + encodeURIComponent(cursId) : ''), {
+              method: has ? 'DELETE' : 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              credentials: 'include',
+              body: has ? undefined : JSON.stringify({ curs_id: cursId, centre_id: centreId || null }),
+            });
+            if (!r.ok) throw new Error('HTTP ' + r.status);
+            const s = new Set(this.fpoFavCourses[codi] || []);
+            if (has) s.delete(cursId); else s.add(cursId);
+            this.fpoFavCourses = { ...this.fpoFavCourses, [codi]: s };
+          } catch (e) { /* silenci */ }
         },
 
         setRepr(r) {
@@ -2884,6 +2944,10 @@
                         x-show="fpoDetall[esp.codi] && fpoDetall[esp.codi].programaUrl"
                         :href="fpoDetall[esp.codi] && fpoDetall[esp.codi].programaUrl"
                         x-text="t('fpo.detall.programa')"></a>
+                      <button x-show="loggedIn" type="button" class="btn-doc"
+                        :class="{ 'btn-fav--active': fpoFavSet.has(esp.codi) }"
+                        @click="toggleFpoFav(esp.codi)" :disabled="fpoFavBusy"
+                        x-text="fpoFavSet.has(esp.codi) ? '★ ' + t('fpo.fav.saved') : '☆ ' + t('fpo.fav.save')"></button>
                     </div>
 
                     <template x-if="fpoDetall[esp.codi]">
@@ -2955,6 +3019,12 @@
                                   <a class="btn-doc" :href="curs.fitxaUrl" target="_blank" rel="noopener"
                                     x-text="t('fpo.detall.fitxa_soc')" style="margin-left:8px;"></a>
                                 </div>
+                                <label class="fpo-curs-meta" style="margin-top:4px;display:block;cursor:pointer;"
+                                  x-show="loggedIn && fpoFavSet.has(esp.codi)">
+                                  <input type="checkbox" :checked="fpoFavHasCourse(esp.codi, curs.idCurs)"
+                                    @change="toggleFpoFavCourse(esp.codi, curs.idCurs, (curs.centre||{}).idCentre)">
+                                  <span x-text="t('fpo.fav.track_course')"></span>
+                                </label>
                               </div>
                             </template>
                           </div>

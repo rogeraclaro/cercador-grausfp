@@ -281,6 +281,17 @@
       <div id="centres-status"></div>
     </section>
 
+    <!-- ── Secció: Cursos FPO (SOC Catalunya) ── -->
+    <section class="section" id="section-fpo">
+      <h2>Cursos FPO (SOC)</h2>
+      <p style="color: var(--warm); font-size: 13px; margin-bottom: 12px;">
+        Regenera els fitxers <code>soc_*.json</code> (cursos, especialitats i centres de
+        formació per a l'ocupació de Catalunya) consultant l'API del SOC. Triga uns segons.
+      </p>
+      <button id="fpo-btn">Actualitzar cursos FPO</button>
+      <div id="fpo-status"></div>
+    </section>
+
     <!-- ── Secció 2: Refresh periòdic ── -->
 
     <section class="section" id="section-scheduler">
@@ -613,6 +624,69 @@
     // Recupera l'estat en carregar la pàgina (p.ex. si es va tancar la
     // pestanya amb un scraping en curs i es torna més tard).
     pollCentresOnce();
+
+    // ── Cursos FPO (SOC) ─────────────────────────────────────
+    const fpoBtn = document.getElementById('fpo-btn');
+    const fpoStatusEl = document.getElementById('fpo-status');
+    let fpoPollTimer = null;
+
+    function setFpoStatus(html, kind = 'info') {
+      fpoStatusEl.innerHTML = `<div class="status-msg ${kind}">${html}</div>`;
+    }
+
+    function stopFpoPoll() {
+      if (fpoPollTimer !== null) { clearInterval(fpoPollTimer); fpoPollTimer = null; }
+    }
+
+    async function pollFpoOnce() {
+      try {
+        const res = await fetch(API_BASE + '/api/admin/fpo-status');
+        const s = await res.json();
+        const snap = s.last_snapshot
+          ? new Date(s.last_snapshot * 1000).toLocaleString('ca-ES')
+          : '(sense dades)';
+        const counts = (s.cursos != null)
+          ? `${s.cursos.toLocaleString('ca-ES')} cursos · ${s.especs.toLocaleString('ca-ES')} especialitats · ${s.centres.toLocaleString('ca-ES')} centres`
+          : '';
+        let line = `<strong>Últim snapshot:</strong> ${snap}`;
+        if (counts) line += `<br>${counts}`;
+        if (s.status === 'running') {
+          fpoBtn.disabled = true;
+          setFpoStatus('<span class="spinner"></span> Actualitzant cursos FPO…', 'info');
+          if (fpoPollTimer === null) fpoPollTimer = setInterval(pollFpoOnce, 2000);
+        } else if (s.status === 'error') {
+          stopFpoPoll();
+          fpoBtn.disabled = false;
+          setFpoStatus(line + `<br><strong>Error:</strong> ${escapeHtml(s.last_error || '(sense detalls)')}`, 'error');
+        } else {
+          stopFpoPoll();
+          fpoBtn.disabled = false;
+          setFpoStatus(line, s.status === 'done' ? 'success' : 'info');
+        }
+      } catch (e) {
+        setFpoStatus('Error de connexió en consultar estat', 'error');
+      }
+    }
+
+    fpoBtn.addEventListener('click', async () => {
+      fpoBtn.disabled = true;
+      setFpoStatus('<span class="spinner"></span> Iniciant actualització…', 'info');
+      try {
+        const res = await fetch(API_BASE + '/api/admin/refresh-fpo', {
+          method: 'POST', credentials: 'include',
+        });
+        if (res.status === 401) { setFpoStatus('Token incorrecte.', 'error'); fpoBtn.disabled = false; return; }
+        if (res.status === 409) { setFpoStatus('Ja hi ha una actualització en curs.', 'error'); return; }
+        if (!res.ok) { setFpoStatus('Error inesperat (HTTP ' + res.status + ')', 'error'); fpoBtn.disabled = false; return; }
+        pollFpoOnce();
+        fpoPollTimer = setInterval(pollFpoOnce, 2000);
+      } catch (e) {
+        setFpoStatus('Error de connexió.', 'error');
+        fpoBtn.disabled = false;
+      }
+    });
+
+    pollFpoOnce();
 
     // ── Gestió d'usuaris ──────────────────────────────────────
     const usersLoadBtn = document.getElementById('users-load-btn');
