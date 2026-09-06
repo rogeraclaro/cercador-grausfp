@@ -55,3 +55,50 @@ def test_ignora_lomloe():
     ]
 
     assert _run(records, {'UC0969_1': ['ADGG0408']}, {'ADGG0408': ['x']}) == {}
+
+
+# ---------------------------------------------------------------------------
+# Pla 057 — LOMLOE: B FAM_B_NNNN → C via bc_lomloe; clau del C = str(id)
+# ---------------------------------------------------------------------------
+
+def _run_lomloe(records, bc_lomloe, oferta_centres):
+    ab_index = itinerary.build_ab_index(records)
+    return build_inherited(records, ab_index, {}, oferta_centres, bc_lomloe=bc_lomloe)
+
+
+def test_b_lomloe_hereta_dels_c_lomloe_per_id():
+    records = [_rec(50, 'HOT_B_0171', 'B', plan_antiguo=False),
+               _rec(60, 'HOT_C_005_5B', 'C', plan_antiguo=False)]
+    bc_lomloe = {'HOT_C_005_5B': ['HOT_B_0171']}
+
+    assert _run_lomloe(records, bc_lomloe, {'60': ['m2', 'm1']}) == {'50': ['m1', 'm2']}
+
+
+def test_a_lomloe_hereta_via_b_lomloe():
+    records = [_rec(51, 'HOT_A_0171_01', 'A', plan_antiguo=False),
+               _rec(50, 'HOT_B_0171', 'B', plan_antiguo=False),
+               _rec(60, 'HOT_C_005_5B', 'C', plan_antiguo=False)]
+    bc_lomloe = {'HOT_C_005_5B': ['HOT_B_0171']}
+
+    result = _run_lomloe(records, bc_lomloe, {'60': ['m1']})
+
+    assert result['51'] == ['m1']
+    assert result['50'] == ['m1']
+
+
+def test_b_lomloe_unio_de_diversos_c():
+    records = [_rec(50, 'HOT_B_0179', 'B', plan_antiguo=False),
+               _rec(60, 'HOT_C_005_5B', 'C', plan_antiguo=False),
+               _rec(61, 'HOT_C_006_5B', 'C', plan_antiguo=False)]
+    bc_lomloe = {'HOT_C_005_5B': ['HOT_B_0179'], 'HOT_C_006_5B': ['HOT_B_0179']}
+
+    assert _run_lomloe(records, bc_lomloe, {'60': ['x'], '61': ['y', 'x']}) == {'50': ['x', 'y']}
+
+
+def test_sense_bc_lomloe_no_trenca_i_loe_segueix():
+    records = [_rec(10, 'MF0969_1', 'B'), _rec(50, 'HOT_B_0171', 'B', plan_antiguo=False)]
+    ab_index = itinerary.build_ab_index(records)
+
+    result = build_inherited(records, ab_index, {'UC0969_1': ['ADGG0408']}, {'ADGG0408': ['x']})
+
+    assert result == {'10': ['x']}

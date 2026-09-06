@@ -197,6 +197,23 @@ def run(on_progress=None) -> dict:
 
     _write_atomic(all_records, DATA_PATH)
 
+    # --- Pla 057: relació B→C LOMLOE via fitxes todofp (no fatal) ---
+    # Es fa just després d'escriure ofertes.json perquè els ficha_id acaben de
+    # refrescar-se (canvien a cada refresc) i perquè triga ~10–16 min: les
+    # ofertes ja són fresques encara que això falli o s'aturi.
+    _report('Relació B→C LOMLOE (fitxes todofp)')
+    try:
+        from scrapers.bc_lomloe_scraper import build_bc_lomloe, write_bc_lomloe
+        bc_lomloe = build_bc_lomloe(
+            all_records,
+            on_progress=lambda phase, i, n: _report(f'{phase} {i}/{n}'),
+        )
+        bc_lomloe_path = os.path.join(os.path.dirname(DATA_PATH), 'bc_lomloe.json')
+        write_bc_lomloe(bc_lomloe, bc_lomloe_path)
+        logger.info("pipeline: bc_lomloe.json escrit (%d certificats C)", len(bc_lomloe))
+    except Exception as exc:
+        logger.warning("pipeline: build_bc_lomloe ha fallat (no fatal): %s", exc)
+
     families = sorted({r['familia'] for r in all_records if r['familia'] != 'Desconeguda'})
     denominacions = sorted({r['denominacion'] for r in all_records if r.get('denominacion')})
     denominacions_by_grado = {

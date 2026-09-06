@@ -36,6 +36,7 @@ def build_ab_index(records: list[dict]) -> dict:
     a_by_uf_num: dict = {}
     b_by_uc: dict = {}
     c_loe_by_code: dict = {}   # NOU: {codigo_c: record_C} per a C LOE (plan_antiguo=True)
+    c_lomloe_by_code: dict = {}  # Pla 057: {codigo_c: record_C} per a C LOMLOE (plan_antiguo=False)
 
     for r in records:
         grado = r.get('grado')
@@ -55,8 +56,11 @@ def build_ab_index(records: list[dict]) -> dict:
                 uc_key = f"UC{m_loe_full.group(1)}_{m_loe_full.group(2)}"
                 b_by_uc[uc_key] = r  # ex: 'UC0969_1' → registre B MF0969_1
 
-        if grado == 'C' and r.get('plan_antiguo') and codigo:
-            c_loe_by_code[codigo] = r
+        if grado == 'C' and codigo:
+            if r.get('plan_antiguo'):
+                c_loe_by_code[codigo] = r
+            else:
+                c_lomloe_by_code[codigo] = r
 
     for r in records:
         grado = r.get('grado')
@@ -80,6 +84,7 @@ def build_ab_index(records: list[dict]) -> dict:
         'a_by_uf_num':    a_by_uf_num,
         'b_by_uc':        b_by_uc,        # 'UC0969_1' → registre B MF0969_1
         'c_loe_by_code':  c_loe_by_code,  # NOU: {codigo_c: record_C} per a C LOE
+        'c_lomloe_by_code': c_lomloe_by_code,  # Pla 057: {codigo_c: record_C} per a C LOMLOE
     }
 
 

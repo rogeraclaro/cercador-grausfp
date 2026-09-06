@@ -70,6 +70,10 @@ def isolate_data_path(tmp_path, monkeypatch):
     """Redirigeix DATA_PATH a tmp_path perquè cap test escrigui a data/ofertes.json real."""
     import scrapers.pipeline as pl
     monkeypatch.setattr(pl, 'DATA_PATH', str(tmp_path / 'ofertes.json'))
+    # Pla 057: el bloc bc_lomloe faria xarxa (bootstrap todofp) — desactivat
+    # per defecte; els tests que el volen el mockegen explícitament.
+    import scrapers.bc_lomloe_scraper as bcs
+    monkeypatch.setattr(bcs, 'build_bc_lomloe', lambda records, **kw: {})
 
 
 def _run_with_mocks(buscador_data, d_basico=None, d_medio=None, d_superior=None, e=None):
@@ -223,3 +227,32 @@ def test_atomic_write_output_valid_json():
 
     assert isinstance(records, list)
     assert len(records) == result['total']
+
+
+# ---------------------------------------------------------------------------
+# Pla 057 — bc_lomloe.json (B→C LOMLOE) es genera dins run(), no fatal
+# ---------------------------------------------------------------------------
+
+PATCH_BUILD_BC_LOMLOE = 'scrapers.bc_lomloe_scraper.build_bc_lomloe'
+
+
+def _rec_c_lomloe():
+    r = _rec()
+    r.update(codigo='HOT_C_005_5B', grado='C', plan_antiguo=False, ficha_id=999)
+    return r
+
+
+def test_run_escriu_bc_lomloe_json(tmp_path):
+    with mock.patch(PATCH_BUILD_BC_LOMLOE, return_value={'HOT_C_005_5B': ['HOT_B_0171']}) as m:
+        _run_with_mocks(buscador_data={'A': [], 'B': [], 'C': [_rec_c_lomloe()]})
+    assert m.called
+    out = tmp_path / 'bc_lomloe.json'
+    assert json.loads(out.read_text(encoding='utf-8')) == {'HOT_C_005_5B': ['HOT_B_0171']}
+
+
+def test_run_no_falla_si_bc_lomloe_peta(tmp_path):
+    with mock.patch(PATCH_BUILD_BC_LOMLOE, side_effect=RuntimeError('todofp caigut')):
+        result = _run_with_mocks(buscador_data={'A': [], 'B': [], 'C': [_rec_c_lomloe()]})
+    assert result['errors'] == []
+    assert (tmp_path / 'ofertes.json').exists()
+    assert not (tmp_path / 'bc_lomloe.json').exists()

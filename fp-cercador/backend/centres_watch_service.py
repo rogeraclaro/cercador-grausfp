@@ -25,33 +25,50 @@ _OFERTA_CENTRES_PATH = os.path.join(_DATA_DIR, "oferta_centres.json")
 _CENTRES_PATH = os.path.join(_DATA_DIR, "centres.json")
 _OFERTES_PATH = os.path.join(_DATA_DIR, "ofertes.json")
 _BC_LOE_PATH = os.path.join(_DATA_DIR, "bc_loe.json")
+_BC_LOMLOE_PATH = os.path.join(_DATA_DIR, "bc_lomloe.json")
 
 
-def _inherited_ab_loe(oferta_centres: dict) -> dict:
-    """Centres heretats per a A/B LOE (Pla 056). Fail-soft: {} si falta cap fitxer."""
-    if not (os.path.exists(_OFERTES_PATH) and os.path.exists(_BC_LOE_PATH)):
+def _load_json_or_empty(path: str, label: str) -> dict:
+    if not os.path.exists(path):
+        return {}
+    try:
+        with open(path, encoding="utf-8") as f:
+            return json.load(f)
+    except (OSError, json.JSONDecodeError) as exc:
+        logger.warning("centres_watch: %s il·legible (%s) — s'ignora", label, exc)
+        return {}
+
+
+def _inherited_ab(oferta_centres: dict) -> dict:
+    """
+    Centres heretats per a A/B, LOE (bc_loe.json, Pla 056) i LOMLOE
+    (bc_lomloe.json, Pla 057). Fail-soft: cada fitxer que falti simplement no
+    aporta herència; sense ofertes.json no hi ha res a derivar.
+    """
+    if not os.path.exists(_OFERTES_PATH):
         return {}
     try:
         with open(_OFERTES_PATH, encoding="utf-8") as f:
             records = json.load(f)
-        with open(_BC_LOE_PATH, encoding="utf-8") as f:
-            bc_loe = json.load(f)
     except (OSError, json.JSONDecodeError) as exc:
-        logger.warning("centres_watch: sense herència A/B LOE: %s", exc)
+        logger.warning("centres_watch: sense herència A/B: %s", exc)
         return {}
+    bc_loe = _load_json_or_empty(_BC_LOE_PATH, "bc_loe.json")
+    bc_lomloe = _load_json_or_empty(_BC_LOMLOE_PATH, "bc_lomloe.json")
     inverse: dict = {}
     for codigo_c, uc_codes in bc_loe.items():
         for uc in uc_codes:
             inverse.setdefault(uc, []).append(codigo_c)
     return centres_inherit.build_inherited(
         records, itinerary.build_ab_index(records), inverse, oferta_centres,
+        bc_lomloe=bc_lomloe,
     )
 
 
 def _load_centres_data() -> tuple[dict, dict]:
     """
     Llegeix oferta_centres.json i centres.json des de disc, i hi afegeix els
-    centres heretats A/B LOE (mateixa derivació que app.py, perquè el snapshot
+    centres heretats A/B LOE i LOMLOE (mateixa derivació que app.py, perquè el snapshot
     inicial d'un seguiment i el job de notificacions vegin el mateix conjunt).
     Retorna (oferta_centres, centres_index).
     """
@@ -60,7 +77,7 @@ def _load_centres_data() -> tuple[dict, dict]:
     with open(_CENTRES_PATH, encoding="utf-8") as f:
         centres_list = json.load(f)
     centres_index = {c["id"]: c for c in centres_list}
-    oferta_centres = {**oferta_centres, **_inherited_ab_loe(oferta_centres)}
+    oferta_centres = {**oferta_centres, **_inherited_ab(oferta_centres)}
     return oferta_centres, centres_index
 
 

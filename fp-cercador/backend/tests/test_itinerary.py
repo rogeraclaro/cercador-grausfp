@@ -117,3 +117,14 @@ def test_build_ab_index_c_loe_by_code():
     assert 'ADGG0408' in idx['c_loe_by_code']
     # C LOMLOE (plan_antiguo=False) NO ha d'estar a l'índex
     assert 'FAKELOMLOE' not in idx['c_loe_by_code']
+
+
+def test_build_ab_index_inclou_c_lomloe_by_code():
+    """Pla 057: l'índex exposa els C LOMLOE per codi (per serialitzar-los a /api/itinerari)."""
+    records = [
+        {'grado': 'C', 'codigo': 'HOT_C_005_5B', 'plan_antiguo': False},
+        {'grado': 'C', 'codigo': 'ADGG0408', 'plan_antiguo': True},
+    ]
+    idx = itinerary.build_ab_index(records)
+    assert list(idx['c_lomloe_by_code']) == ['HOT_C_005_5B']
+    assert list(idx['c_loe_by_code']) == ['ADGG0408']

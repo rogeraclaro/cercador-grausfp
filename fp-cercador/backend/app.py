@@ -80,6 +80,7 @@ DATA_PATH = os.path.normpath(
 _DATA_DIR = os.path.join(os.path.dirname(__file__), "data")
 CICLOS_PATH = os.path.join(_DATA_DIR, "ciclos_fp.json")
 BC_LOE_PATH = os.path.join(_DATA_DIR, "bc_loe.json")
+BC_LOMLOE_PATH = os.path.join(_DATA_DIR, "bc_lomloe.json")  # Pla 057: {codigo_c: [codigo_b]}
 OCUPACIONES_PATH = os.path.join(_DATA_DIR, "ocupaciones.json")
 _CENTRES_PATH = os.path.join(_DATA_DIR, "centres.json")
 _OFERTA_CENTRES_PATH = os.path.join(_DATA_DIR, "oferta_centres.json")
@@ -138,7 +139,8 @@ def _get_effective_oferta_centres() -> dict:
     def _mtime(path):
         return os.path.getmtime(path) if os.path.exists(path) else None
 
-    key = (_mtime(DATA_PATH), _mtime(BC_LOE_PATH), _mtime(_OFERTA_CENTRES_PATH))
+    key = (_mtime(DATA_PATH), _mtime(BC_LOE_PATH), _mtime(BC_LOMLOE_PATH),
+           _mtime(_OFERTA_CENTRES_PATH))
     if _effective_oc_cache["key"] == key and _effective_oc_cache["data"] is not None:
         return _effective_oc_cache["data"]
 
@@ -149,6 +151,7 @@ def _get_effective_oferta_centres() -> dict:
                 records = json.load(f)
             inherited = centres_inherit.build_inherited(
                 records, _get_itinerary_index(), _get_bc_loe_inverse(), _oferta_centres,
+                bc_lomloe=_get_bc_lomloe(),
             )
         except (OSError, json.JSONDecodeError) as exc:
             logger.warning("_get_effective_oferta_centres: sense herència A/B: %s", exc)
@@ -1032,6 +1035,41 @@ def _get_itinerary_index() -> dict:
         return {}
 
 
+_bc_lomloe_cache: dict = {"mtime": None, "index": None}
+
+
+def _get_bc_lomloe() -> dict:
+    """
+    Pla 057: {codigo_c: [codigo_b, ...]} de bc_lomloe.json (C LOMLOE → mòduls B).
+    Cache invalidada per mtime. {} si el fitxer no existeix o és corrupte.
+    """
+    if not os.path.exists(BC_LOMLOE_PATH):
+        return {}
+    mtime = os.path.getmtime(BC_LOMLOE_PATH)
+    if _bc_lomloe_cache["mtime"] == mtime and _bc_lomloe_cache["index"] is not None:
+        return _bc_lomloe_cache["index"]
+    try:
+        with open(BC_LOMLOE_PATH, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+        if not isinstance(data, dict):
+            logger.warning("_get_bc_lomloe: bc_lomloe.json no és un objecte — s'ignora")
+            return {}
+        _bc_lomloe_cache.update(mtime=mtime, index=data)
+        return data
+    except (OSError, json.JSONDecodeError) as exc:
+        logger.warning("_get_bc_lomloe: error llegint bc_lomloe.json: %s", exc)
+        return {}
+
+
+def _get_bc_lomloe_inverse() -> dict:
+    """{codigo_b: [codigo_c, ...]} derivat de _get_bc_lomloe()."""
+    inverse: dict = {}
+    for codigo_c, b_codes in _get_bc_lomloe().items():
+        for codigo_b in b_codes:
+            inverse.setdefault(codigo_b, []).append(codigo_c)
+    return inverse
+
+
 _bc_loe_inverse_cache: dict = {"mtime": None, "index": None}
 
 
@@ -1230,8 +1268,15 @@ def api_itinerari():
         }
 
     if grado == 'C':
+        # Pla 057: C LOMLOE → mòduls B (bc_lomloe.json). Buit per a C LOE.
+        _idx_c = _get_itinerary_index()
+        _b_by_code = _idx_c.get('b_by_code', {}) if _idx_c else {}
+        parent_b_lomloe = [_serialize(_b_by_code[b]) for b in _get_bc_lomloe().get(codigo, [])
+                           if b in _b_by_code]
+
         if not os.path.exists(CICLOS_PATH):
             return jsonify({'ciclos_d': [], 'parent_b_loe': [],
+                            'parent_b_lomloe': parent_b_lomloe,
                             'warning': 'ciclos_fp.json no disponible — cal fer un refresh'}), 200
         try:
             with open(CICLOS_PATH, 'r', encoding='utf-8') as f:
@@ -1258,7 +1303,8 @@ def api_itinerari():
             except (OSError, json.JSONDecodeError) as exc:
                 logger.warning("api_itinerari C: error llegint bc_loe.json: %s", exc)
 
-        return jsonify({'ciclos_d': ciclos, 'parent_b_loe': parent_b_loe})
+        return jsonify({'ciclos_d': ciclos, 'parent_b_loe': parent_b_loe,
+                        'parent_b_lomloe': parent_b_lomloe})
 
     idx = _get_itinerary_index()
     if not idx:
@@ -1274,21 +1320,28 @@ def api_itinerari():
     children = itinerary.get_children_a(mock_rec, idx)
     response: dict = {'children_a': [_serialize(c) for c in children]}
 
-    # B→C LOE: certificats C que contenen aquest mòdul B (només per a B LOE: MF####_N)
+    # B→C: certificats C que contenen aquest mòdul B.
+    #   LOE    (MF####_N):   via UC####_N → bc_loe.json
+    #   LOMLOE (FAM_B_NNNN): via bc_lomloe.json (Pla 057)
+    # 'children_c' és el camp canònic; 'children_c_loe' es manté com a àlies
+    # per a frontends cachejats.
+    children_c: list = []
     _m_b_loe = re.match(r'^MF(\d{4})_(\d+)$', codigo)
     if _m_b_loe:
         uc_key = f"UC{_m_b_loe.group(1)}_{_m_b_loe.group(2)}"
-        inverse = _get_bc_loe_inverse()
-        c_codigos = inverse.get(uc_key, [])
         c_loe_by_code = idx.get('c_loe_by_code', {})
-        children_c_loe = []
-        for cc in c_codigos:
+        for cc in _get_bc_loe_inverse().get(uc_key, []):
             c_rec = c_loe_by_code.get(cc)
             if c_rec:
-                children_c_loe.append(_serialize(c_rec))
-        response['children_c_loe'] = children_c_loe
-    else:
-        response['children_c_loe'] = []
+                children_c.append(_serialize(c_rec))
+    elif re.match(r'^[A-Z]{3}_B_\d{4}$', codigo):
+        c_lomloe_by_code = idx.get('c_lomloe_by_code', {})
+        for cc in _get_bc_lomloe_inverse().get(codigo, []):
+            c_rec = c_lomloe_by_code.get(cc)
+            if c_rec:
+                children_c.append(_serialize(c_rec))
+    response['children_c'] = children_c
+    response['children_c_loe'] = children_c
 
     return jsonify(response)
 

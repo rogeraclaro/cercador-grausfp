@@ -1808,7 +1808,7 @@
           try {
             const res = await fetch(API_BASE + '/api/itinerari?grado=B&codigo=' + encodeURIComponent(row.codigo));
             const data = await res.json();
-            this.childrenCLoeData = { ...this.childrenCLoeData, [row.id]: data.children_c_loe || [] };
+            this.childrenCLoeData = { ...this.childrenCLoeData, [row.id]: data.children_c || data.children_c_loe || [] };
           } catch (e) {
             this.childrenCLoeData = { ...this.childrenCLoeData, [row.id]: 'error' };
           }
@@ -2166,7 +2166,7 @@
                         x-text="'→ ' + ((parentBOf(row)||{}).codigo || '')"></span>
                     </span>
                   </template>
-                  <template x-if="row.grado === 'B' && row.codigo && /^MF\d{4}_\d+$/.test(row.codigo)">
+                  <template x-if="row.grado === 'B' && row.codigo && (/^MF\d{4}_\d+$/.test(row.codigo) || /^[A-Z]{3}_B_\d{4}$/.test(row.codigo))">
                     <span class="badge-itinerari-b" style="cursor:pointer" role="button" tabindex="0"
                       @click.stop="fetchChildrenCLoe(row)" @keydown.enter.stop="fetchChildrenCLoe(row)"
                       @keydown.space.prevent.stop="fetchChildrenCLoe(row)"
