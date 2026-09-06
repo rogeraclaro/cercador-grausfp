@@ -181,6 +181,76 @@
       color: var(--white);
     }
 
+    /* ── Mode FPO (SOC Catalunya) ── */
+    .fpo-note {
+      background: var(--warm2);
+      border-left: 3px solid var(--dark);
+      padding: 10px 14px;
+      margin: 0 0 16px;
+      font-size: 13px;
+      color: var(--warm);
+      line-height: 1.5;
+      text-align: left;
+    }
+
+    .fpo-banner {
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      color: #991b1b;
+      padding: 10px 14px;
+      margin: 0 0 16px;
+      border-radius: 6px;
+      font-size: 13px;
+      text-align: left;
+    }
+
+    .fpo-curs {
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: var(--white);
+      padding: 10px 12px;
+      margin-bottom: 8px;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .fpo-curs .fpo-curs-nom {
+      font-weight: 600;
+      color: var(--dark);
+    }
+
+    .fpo-curs .fpo-curs-meta {
+      color: var(--warm);
+      margin-top: 2px;
+    }
+
+    .fpo-estat {
+      display: inline-block;
+      padding: 1px 8px;
+      border-radius: 10px;
+      font-size: 11px;
+      font-weight: 600;
+      border: 1px solid transparent;
+    }
+
+    .fpo-estat--inscripcio {
+      background: #dcfce7;
+      color: #166534;
+      border-color: #bbf7d0;
+    }
+
+    .fpo-estat--informacio {
+      background: var(--warm2);
+      color: var(--warm);
+      border-color: var(--border);
+    }
+
+    .fpo-estat--gestio {
+      background: #f1f1f1;
+      color: #555;
+      border-color: #e0e0e0;
+    }
+
     /* ── Representació toggle (targetes/taula) ── */
     .repr-toggle {
       display: flex;
@@ -1342,6 +1412,19 @@
         childrenCLoeData: {},   // {row.id: [{codigo, denominacion}] | 'loading' | 'error'}
         childrenCLoeVisible: {}, // {row.id: bool}
 
+        // Pla 060 — Mode FPO (cursos del SOC Catalunya)
+        fpoEspecs: [],           // de /api/fpo/especialitats
+        fpoLoaded: false,
+        fpoWarning: null,
+        fpoDetall: {},           // { codi: {…} } cache de /api/fpo/especialitat/<codi>
+        fpoExpanded: {},         // { codi: bool }
+        fpoByCert: {},           // { codigo: {nCursos,…} } cache de /api/fpo/by-cert (integració C LOE)
+        _fpoOpenOnLoad: null,    // codi d'especialitat a obrir en carregar (param ?esp=)
+        fpoFilters: {
+          text: '', familia: '', area: '', especialitat: '', comarca: '', municipi: '',
+          nivell: '', estat: '', modalitat: '', certprof: false,
+        },
+
         // F4 — Seguiment de centres
         watchSaving: false,
         watchSaveError: '',
@@ -1397,6 +1480,12 @@
             this.loggedIn = authRes.ok;
             const _params = new URLSearchParams(location.search);
             if (_params.get('mode') === 'ocupacio') this.searchMode = 'ocupacio';
+            if (_params.get('mode') === 'fpo') {
+              this.searchMode = 'fpo';
+              const espParam = _params.get('esp');
+              if (espParam) { this.fpoFilters.especialitat = espParam; this._fpoOpenOnLoad = espParam; }
+              this.fetchFpoEspecs();
+            }
             if (this.loggedIn) {
               this.loadFavorites();
               this.loadWatches();
@@ -1821,6 +1910,138 @@
         setSearchMode(m) {
           this.searchMode = m;
           if (m === 'ocupacio' && this.ocupQuery.trim()) this.runOcupSearch();
+          if (m === 'fpo' && !this.fpoLoaded) this.fetchFpoEspecs();
+        },
+
+        // ── Pla 060 — Mode FPO ──
+        fpoLang() { return getLang() === 'es' ? 'es' : 'ca'; },
+
+        async fetchFpoEspecs() {
+          try {
+            const r = await fetch(API_BASE + '/api/fpo/especialitats');
+            const data = await r.json();
+            this.fpoEspecs = data.especialitats || [];
+            this.fpoWarning = data.warning || null;
+          } catch (e) {
+            this.fpoEspecs = [];
+            this.fpoWarning = t('fpo.banner.unavailable');
+          } finally {
+            this.fpoLoaded = true;
+            if (this._fpoOpenOnLoad) {
+              const codi = this._fpoOpenOnLoad;
+              this._fpoOpenOnLoad = null;
+              if (this.fpoEspecs.some(e => e.codi === codi)) this.toggleFpoDetall(codi);
+            }
+          }
+        },
+
+        async toggleFpoDetall(codi) {
+          this.fpoExpanded = { ...this.fpoExpanded, [codi]: !this.fpoExpanded[codi] };
+          if (this.fpoExpanded[codi] && !this.fpoDetall[codi]) {
+            try {
+              const r = await fetch(API_BASE + '/api/fpo/especialitat/' + encodeURIComponent(codi));
+              if (r.ok) this.fpoDetall = { ...this.fpoDetall, [codi]: await r.json() };
+            } catch (e) { /* silenci — el panell mostra només el que hi ha */ }
+          }
+        },
+
+        fetchFpoByCert(codigo) {
+          if (!codigo || this.fpoByCert[codigo] !== undefined) return;
+          fetch(API_BASE + '/api/fpo/by-cert?codigo=' + encodeURIComponent(codigo))
+            .then(r => r.json())
+            .then(d => { this.fpoByCert = { ...this.fpoByCert, [codigo]: d }; })
+            .catch(() => { this.fpoByCert = { ...this.fpoByCert, [codigo]: {} }; });
+        },
+
+        _fpoNorm(s) {
+          return (s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+        },
+
+        get fpoFamilies() {
+          const seen = {};
+          for (const e of this.fpoEspecs) {
+            const f = e.familia || {};
+            if (f.codi && !seen[f.codi]) seen[f.codi] = f;
+          }
+          const lang = this.fpoLang();
+          return Object.values(seen).sort((a, b) =>
+            ((a.desc || {})[lang] || a.codi).localeCompare((b.desc || {})[lang] || b.codi, 'ca'));
+        },
+
+        get fpoAreas() {
+          const fam = this.fpoFilters.familia;
+          const seen = {};
+          for (const e of this.fpoEspecs) {
+            if (fam && (e.familia || {}).codi !== fam) continue;
+            const a = e.area || {};
+            if (a.codi && !seen[a.codi]) seen[a.codi] = a;
+          }
+          const lang = this.fpoLang();
+          return Object.values(seen).sort((a, b) =>
+            ((a.desc || {})[lang] || a.codi).localeCompare((b.desc || {})[lang] || b.codi, 'ca'));
+        },
+
+        get fpoEspecialitatOpcions() {
+          const { familia, area } = this.fpoFilters;
+          const lang = this.fpoLang();
+          return this.fpoEspecs
+            .filter(e => (!familia || (e.familia || {}).codi === familia)
+              && (!area || (e.area || {}).codi === area))
+            .map(e => ({ codi: e.codi, titol: (e.titol || {})[lang] || e.codi }))
+            .sort((a, b) => a.titol.localeCompare(b.titol, 'ca'));
+        },
+
+        get fpoComarques() {
+          const s = new Set();
+          for (const e of this.fpoEspecs) for (const c of (e.comarques || [])) s.add(c);
+          return [...s].sort((a, b) => a.localeCompare(b, 'ca'));
+        },
+
+        get fpoMunicipis() {
+          const com = this.fpoFilters.comarca;
+          const s = new Set();
+          for (const e of this.fpoEspecs) {
+            if (com && !(e.comarques || []).includes(com)) continue;
+            for (const m of (e.municipis || [])) s.add(m);
+          }
+          return [...s].sort((a, b) => a.localeCompare(b, 'ca'));
+        },
+
+        get fpoModalitats() {
+          const s = new Set();
+          for (const e of this.fpoEspecs) for (const m of (e.modalitats || [])) s.add(m);
+          return [...s].sort((a, b) => a.localeCompare(b, 'ca'));
+        },
+
+        get filteredFpoEspecs() {
+          const f = this.fpoFilters;
+          const q = this._fpoNorm(f.text).trim();
+          const niv = f.nivell ? parseInt(f.nivell) : null;
+          return this.fpoEspecs.filter(e => {
+            if (q && !(this._fpoNorm((e.titol || {}).ca) + ' ' + this._fpoNorm((e.titol || {}).es)
+              + ' ' + this._fpoNorm(e.codi)).includes(q)) return false;
+            if (f.familia && (e.familia || {}).codi !== f.familia) return false;
+            if (f.area && (e.area || {}).codi !== f.area) return false;
+            if (f.especialitat && e.codi !== f.especialitat) return false;
+            if (f.comarca && !(e.comarques || []).includes(f.comarca)) return false;
+            if (f.municipi && !(e.municipis || []).includes(f.municipi)) return false;
+            if (niv !== null && e.nivell !== niv) return false;
+            if (f.estat && !(e.estats || []).includes(f.estat)) return false;
+            if (f.modalitat && !(e.modalitats || []).includes(f.modalitat)) return false;
+            if (f.certprof && !e.esCertProf) return false;
+            return true;
+          });
+        },
+
+        fpoResetFilters() {
+          this.fpoFilters = {
+            text: '', familia: '', area: '', especialitat: '', comarca: '', municipi: '',
+            nivell: '', estat: '', modalitat: '', certprof: false,
+          };
+        },
+
+        fpoHorariEntries(horari) {
+          return Object.entries(horari || {}).filter(([, v]) => v && String(v).trim());
         },
 
         setRepr(r) {
@@ -1942,7 +2163,11 @@
           x-text="t('index.mode.nom')"></button>
         <button :class="{ active: searchMode === 'ocupacio' }" @click="setSearchMode('ocupacio')"
           x-text="t('index.mode.ocupacio')"></button>
+        <button :class="{ active: searchMode === 'fpo' }" @click="setSearchMode('fpo')"
+          x-text="t('index.mode.fpo')"></button>
       </div>
+      <p class="fpo-note" x-show="searchMode === 'fpo'" x-text="t('fpo.note')"></p>
+      <div class="fpo-banner" x-show="searchMode === 'fpo' && fpoWarning" x-text="fpoWarning"></div>
       <template x-if="searchMode === 'nom'">
         <div class="search-wrap">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2.5"
@@ -2040,6 +2265,88 @@
       </button>
     </div>
 
+    <!-- Pla 060 — Barra de filtres del mode FPO -->
+    <div class="filter-bar" x-show="searchMode === 'fpo'">
+      <input type="search" x-model="fpoFilters.text" :placeholder="t('fpo.filter.text')" autocomplete="off"
+        style="padding:5px 12px;border-radius:4px;border:1px solid var(--border);font-size:13px;font-family:inherit;">
+
+      <label class="sr-only" for="fpo-familia" x-text="t('fpo.filter.familia')"></label>
+      <select id="fpo-familia" x-model="fpoFilters.familia"
+        @change="fpoFilters.area=''; fpoFilters.especialitat=''">
+        <option value="" x-text="t('fpo.filter.familia') + ' — ' + t('fpo.filter.all')"></option>
+        <template x-for="f in fpoFamilies" :key="f.codi">
+          <option :value="f.codi" x-text="(f.desc || {})[fpoLang()] || f.codi"></option>
+        </template>
+      </select>
+
+      <label class="sr-only" for="fpo-area" x-text="t('fpo.filter.area')"></label>
+      <select id="fpo-area" x-model="fpoFilters.area" :disabled="!fpoFilters.familia"
+        @change="fpoFilters.especialitat=''">
+        <option value="" x-text="t('fpo.filter.area') + ' — ' + t('fpo.filter.all')"></option>
+        <template x-for="a in fpoAreas" :key="a.codi">
+          <option :value="a.codi" x-text="(a.desc || {})[fpoLang()] || a.codi"></option>
+        </template>
+      </select>
+
+      <label class="sr-only" for="fpo-especialitat" x-text="t('fpo.filter.especialitat')"></label>
+      <select id="fpo-especialitat" x-model="fpoFilters.especialitat" :disabled="!fpoFilters.area">
+        <option value="" x-text="t('fpo.filter.especialitat') + ' — ' + t('fpo.filter.all')"></option>
+        <template x-for="e in fpoEspecialitatOpcions" :key="e.codi">
+          <option :value="e.codi" x-text="e.titol"></option>
+        </template>
+      </select>
+
+      <label class="sr-only" for="fpo-comarca" x-text="t('fpo.filter.comarca')"></label>
+      <select id="fpo-comarca" x-model="fpoFilters.comarca" @change="fpoFilters.municipi=''">
+        <option value="" x-text="t('fpo.filter.comarca') + ' — ' + t('fpo.filter.all')"></option>
+        <template x-for="c in fpoComarques" :key="c">
+          <option :value="c" x-text="c"></option>
+        </template>
+      </select>
+
+      <label class="sr-only" for="fpo-municipi" x-text="t('fpo.filter.municipi')"></label>
+      <select id="fpo-municipi" x-model="fpoFilters.municipi" :disabled="!fpoFilters.comarca">
+        <option value="" x-text="t('fpo.filter.municipi') + ' — ' + t('fpo.filter.all')"></option>
+        <template x-for="m in fpoMunicipis" :key="m">
+          <option :value="m" x-text="m"></option>
+        </template>
+      </select>
+
+      <label class="sr-only" for="fpo-nivell" x-text="t('fpo.filter.nivell')"></label>
+      <select id="fpo-nivell" x-model="fpoFilters.nivell">
+        <option value="" x-text="t('fpo.filter.nivell') + ' — ' + t('fpo.filter.all')"></option>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+      </select>
+
+      <label class="sr-only" for="fpo-estat" x-text="t('fpo.filter.estat')"></label>
+      <select id="fpo-estat" x-model="fpoFilters.estat">
+        <option value="" x-text="t('fpo.filter.estat') + ' — ' + t('fpo.filter.all')"></option>
+        <option value="inscripcio" x-text="t('fpo.estat.inscripcio')"></option>
+        <option value="informacio" x-text="t('fpo.estat.informacio')"></option>
+        <option value="gestio" x-text="t('fpo.estat.gestio')"></option>
+      </select>
+
+      <label class="sr-only" for="fpo-modalitat" x-text="t('fpo.filter.modalitat')"></label>
+      <select id="fpo-modalitat" x-model="fpoFilters.modalitat">
+        <option value="" x-text="t('fpo.filter.modalitat') + ' — ' + t('fpo.filter.all')"></option>
+        <template x-for="mo in fpoModalitats" :key="mo">
+          <option :value="mo" x-text="tc(mo)"></option>
+        </template>
+      </select>
+
+      <label class="checkbox-label">
+        <input type="checkbox" x-model="fpoFilters.certprof">
+        <span x-text="t('fpo.filter.certprof')"></span>
+      </label>
+
+      <button class="clear-btn"
+        x-show="fpoFilters.text || fpoFilters.familia || fpoFilters.comarca || fpoFilters.nivell || fpoFilters.estat || fpoFilters.modalitat || fpoFilters.certprof || fpoFilters.especialitat"
+        @click="fpoResetFilters()" x-text="t('index.btn.clearFilters')">
+      </button>
+    </div>
+
     <!-- Loading -->
     <div x-show="state === 'loading'" class="loading-state" role="status"
       x-transition:enter.opacity.duration.150ms x-transition:leave.opacity.duration.100ms>
@@ -2128,7 +2435,8 @@
                 :class="{ 'row-link': (row.grado === 'C') || (['A','B','C'].includes(row.grado) && row.ficha_id) || (['D','E'].includes(row.grado) && row.ficha_url), 'row-fav': favorites.has(row.id) }"
                 @click="
                   row.grado === 'C'
-                    ? (expandedRows = { ...expandedRows, [row.id]: !expandedRows[row.id] })
+                    ? (expandedRows = { ...expandedRows, [row.id]: !expandedRows[row.id] },
+                       row.plan_antiguo && fetchFpoByCert(row.codigo))
                     : ['A','B','C'].includes(row.grado) && row.ficha_id
                       ? (loggedIn ? window.open(API_BASE + '/api/ficha-redirect?grado=' + row.grado + '&codigo=' + encodeURIComponent(row.codigo), '_blank') : showCentresModal())
                       : ['D','E'].includes(row.grado) && row.ficha_url
@@ -2237,6 +2545,15 @@
                             </li>
                           </template>
                         </ul>
+                      </div>
+                    </template>
+                    <!-- Pla 060: cursos FPO (SOC Catalunya) per a aquest certificat -->
+                    <template x-if="fpoByCert[row.codigo] && fpoByCert[row.codigo].nCursos > 0">
+                      <div class="detall-ciclos-d">
+                        <span x-text="t('index.itinerari.fpo_disponible', {n: fpoByCert[row.codigo].nCursos})"></span>
+                        <a href="#"
+                          @click.prevent="location.href = 'index.html?mode=fpo&esp=' + encodeURIComponent(row.codigo)"
+                          x-text="t('index.itinerari.fpo_veure')" style="margin-left:6px;"></a>
                       </div>
                     </template>
                   </div>
@@ -2523,6 +2840,138 @@
         </template>
       </div>
     </template>
+
+    <!-- Pla 060 — Contingut del mode FPO -->
+    <div x-show="state === 'ready' && searchMode === 'fpo'" class="content">
+      <p class="results-count"
+        x-text="filteredFpoEspecs.length === 1 ? t('index.results.one') : t('index.results.many', {n: filteredFpoEspecs.length})">
+      </p>
+
+      <div class="table-wrap">
+        <table class="results-table">
+          <caption class="sr-only" x-text="t('index.mode.fpo')"></caption>
+          <thead>
+            <tr>
+              <th scope="col" x-text="t('fpo.col.nom')"></th>
+              <th scope="col" x-text="t('fpo.col.codi')"></th>
+              <th scope="col" x-text="t('fpo.col.familia')"></th>
+              <th scope="col" x-text="t('fpo.col.area')"></th>
+              <th scope="col" x-text="t('fpo.col.nivell')"></th>
+              <th scope="col" x-text="t('fpo.col.hores')"></th>
+              <th scope="col" x-text="t('fpo.col.ncursos')"></th>
+            </tr>
+          </thead>
+          <template x-for="esp in filteredFpoEspecs" :key="esp.codi">
+            <tbody>
+              <tr class="row-link" @click="toggleFpoDetall(esp.codi)">
+                <td class="col-nom">
+                  <span x-text="(esp.titol || {})[fpoLang()] || esp.codi"></span>
+                  <span x-show="esp.esCertProf" class="badge-old" x-text="t('fpo.badge.certprof')"></span>
+                </td>
+                <td class="col-codi" x-text="esp.codi"></td>
+                <td class="col-fam" x-text="(esp.familia || {}).desc ? (esp.familia.desc[fpoLang()] || '') : ''"></td>
+                <td x-text="(esp.area || {}).desc ? (esp.area.desc[fpoLang()] || '') : ''"></td>
+                <td class="col-niv" x-text="esp.nivell || '—'"></td>
+                <td x-text="esp.hores ? Math.round(esp.hores) : '—'"></td>
+                <td x-text="esp.nCursos"></td>
+              </tr>
+              <tr x-show="fpoExpanded[esp.codi]">
+                <td colspan="7" class="detall-certificat">
+                  <div class="detall-inner">
+                    <!-- Pla 061: ⭐ desa especialitat + checkbox per curs -->
+                    <div class="detall-btns">
+                      <a class="btn-doc" target="_blank" rel="noopener"
+                        x-show="fpoDetall[esp.codi] && fpoDetall[esp.codi].programaUrl"
+                        :href="fpoDetall[esp.codi] && fpoDetall[esp.codi].programaUrl"
+                        x-text="t('fpo.detall.programa')"></a>
+                    </div>
+
+                    <template x-if="fpoDetall[esp.codi]">
+                      <div style="display:flex;flex-direction:column;gap:8px;">
+                        <template x-if="(fpoDetall[esp.codi].queAprendras || {})[fpoLang()]">
+                          <p style="font-size:13px;margin:0;">
+                            <strong x-text="t('fpo.detall.descripcio') + ': '"></strong>
+                            <span x-text="fpoDetall[esp.codi].queAprendras[fpoLang()]"></span>
+                          </p>
+                        </template>
+                        <template x-if="(fpoDetall[esp.codi].requisits || {})[fpoLang()]">
+                          <p style="font-size:13px;margin:0;">
+                            <strong x-text="t('fpo.detall.requisits') + ': '"></strong>
+                            <span x-text="fpoDetall[esp.codi].requisits[fpoLang()]"></span>
+                          </p>
+                        </template>
+                        <template x-if="(fpoDetall[esp.codi].sortides || {})[fpoLang()]">
+                          <p style="font-size:13px;margin:0;">
+                            <strong x-text="t('fpo.detall.sortides') + ': '"></strong>
+                            <span x-text="fpoDetall[esp.codi].sortides[fpoLang()]"></span>
+                          </p>
+                        </template>
+
+                        <template x-if="(fpoDetall[esp.codi].moduls || []).length > 0">
+                          <div class="detall-ciclos-d">
+                            <span x-text="t('fpo.detall.moduls') + ':'"></span>
+                            <ul class="ciclos-d-list">
+                              <template x-for="mod in fpoDetall[esp.codi].moduls" :key="mod.codi">
+                                <li x-text="((mod.desc || {})[fpoLang()] || mod.codi) + (mod.durada ? ' (' + Math.round(mod.durada) + ' h)' : '')"></li>
+                              </template>
+                            </ul>
+                          </div>
+                        </template>
+
+                        <template x-if="(fpoDetall[esp.codi].cursos || []).length > 0">
+                          <div>
+                            <span style="font-size:13px;font-weight:600;" x-text="t('fpo.detall.cursos') + ':'"></span>
+                            <template x-for="curs in fpoDetall[esp.codi].cursos" :key="curs.idCurs">
+                              <div class="fpo-curs">
+                                <div class="fpo-curs-nom" x-text="(curs.centre || {}).nom || ''"></div>
+                                <div class="fpo-curs-meta"
+                                  x-text="[(curs.centre||{}).carrer, ((curs.centre||{}).cp || '') + ' ' + ((curs.centre||{}).municipi || ''), (curs.centre||{}).comarca ? '(' + curs.centre.comarca + ')' : ''].filter(Boolean).join(', ')"></div>
+                                <div class="fpo-curs-meta">
+                                  <span x-show="(curs.centre||{}).telefon" x-text="(curs.centre||{}).telefon"></span>
+                                  <template x-if="(curs.centre||{}).email">
+                                    <a :href="'mailto:' + curs.centre.email" x-text="curs.centre.email"
+                                      style="margin-left:8px;"></a>
+                                  </template>
+                                  <template x-if="(curs.centre||{}).web">
+                                    <a :href="/^https?:\/\//.test(curs.centre.web) ? curs.centre.web : 'https://' + curs.centre.web"
+                                      target="_blank" rel="noopener" x-text="curs.centre.web" style="margin-left:8px;"></a>
+                                  </template>
+                                </div>
+                                <template x-if="fpoHorariEntries((curs.centre||{}).horari).length > 0">
+                                  <div class="fpo-curs-meta">
+                                    <strong x-text="t('fpo.detall.horari') + ': '"></strong>
+                                    <span
+                                      x-text="fpoHorariEntries(curs.centre.horari).map(([d, v]) => tc(d) + ' ' + v).join(' · ')"></span>
+                                  </div>
+                                </template>
+                                <div class="fpo-curs-meta" x-show="curs.dataInici || curs.dataFi">
+                                  <strong x-text="t('fpo.detall.dates') + ': '"></strong>
+                                  <span x-text="(curs.dataInici || '?') + ' – ' + (curs.dataFi || '?')"></span>
+                                </div>
+                                <div class="fpo-curs-meta" style="margin-top:4px;">
+                                  <span class="fpo-estat" :class="'fpo-estat--' + curs.estat"
+                                    x-text="t('fpo.estat.' + curs.estat)"></span>
+                                  <span x-show="curs.modalitat" x-text="tc(curs.modalitat)" style="margin-left:8px;"></span>
+                                  <a class="btn-doc" :href="curs.fitxaUrl" target="_blank" rel="noopener"
+                                    x-text="t('fpo.detall.fitxa_soc')" style="margin-left:8px;"></a>
+                                </div>
+                              </div>
+                            </template>
+                          </div>
+                        </template>
+                      </div>
+                    </template>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </template>
+        </table>
+      </div>
+
+      <p class="results-count" x-show="fpoLoaded && filteredFpoEspecs.length === 0"
+        x-text="t('fpo.empty')"></p>
+    </div>
 
     <!-- Modal confirmació alerta desada -->
     <div x-show="alertModalVisible" @click="alertModalVisible = false"
