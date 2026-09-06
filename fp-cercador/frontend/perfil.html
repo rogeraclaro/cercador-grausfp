@@ -933,7 +933,9 @@
               '<div class="fpo-card-toggle" data-codi="' + esc(e.especialitat_codi) + '" role="button" tabindex="0" ' +
               'style="cursor:pointer;">' +
               '<div style="font-weight:600;">' + heartBtn +
-              ' <span class="fpo-card-caret" style="display:inline-block;width:12px;color:var(--warm);">▸</span> ' + esc(titol) +
+              ' <span class="fpo-card-caret" style="display:inline-block;width:12px;color:var(--warm);">▸</span> ' +
+              '<a class="fav-denom-link fpo-card-titlelink" href="index.html?mode=fpo&esp=' + encodeURIComponent(e.especialitat_codi) +
+              '" target="_blank" rel="noopener" title="' + t('index.itinerari.fpo_veure') + '">' + esc(titol) + '</a>' +
               ' <span class="badge-old" style="font-weight:400;">' + esc(e.especialitat_codi) + '</span></div>' +
               '<div style="font-size:12px;color:var(--warm);margin-top:2px;">' + esc(meta) +
               (nCursos ? ' · <span title="' + t('perfil.fpo.cursos_marcats').replace(':', '') + '">⭐ ' + nCursos + '</span>' : '') + '</div>' +
@@ -944,6 +946,9 @@
             '<div class="favs-summary"><span class="favs-count">' + favs.length + '</span>' +
             '<span class="favs-label">' + t('perfil.nav.fpo') + '</span></div>' + cards;
 
+          section.querySelectorAll('.fpo-card-titlelink').forEach(function (a) {
+            a.addEventListener('click', function (ev) { ev.stopPropagation(); });
+          });
           section.querySelectorAll('.btn-fpo-remove').forEach(function (btn) {
             btn.addEventListener('click', async function (ev) {
               ev.stopPropagation();
