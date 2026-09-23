@@ -1,0 +1,453 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-09-23T22:08:47.967940+00:00",
+  "title": "Design System: GrausFP",
+  "extensions": {
+    "colorMeta": {
+      "ink": {
+        "role": "primary",
+        "displayName": "Register Ink",
+        "canonical": "#1c1410",
+        "tonalRamp": [
+          "oklch(15% 0.015 47.9)",
+          "oklch(26% 0.015 47.9)",
+          "oklch(37% 0.015 47.9)",
+          "oklch(48% 0.015 47.9)",
+          "oklch(59% 0.015 47.9)",
+          "oklch(70% 0.015 47.9)",
+          "oklch(82% 0.015 47.9)",
+          "oklch(95% 0.015 47.9)"
+        ]
+      },
+      "umber": {
+        "role": "neutral",
+        "displayName": "Umber",
+        "canonical": "#755f51",
+        "tonalRamp": [
+          "oklch(15% 0.036 54.2)",
+          "oklch(26% 0.036 54.2)",
+          "oklch(37% 0.036 54.2)",
+          "oklch(48% 0.036 54.2)",
+          "oklch(59% 0.036 54.2)",
+          "oklch(70% 0.036 54.2)",
+          "oklch(82% 0.036 54.2)",
+          "oklch(95% 0.036 54.2)"
+        ]
+      },
+      "parchment": {
+        "role": "neutral",
+        "displayName": "Parchment",
+        "canonical": "#f5ece2",
+        "tonalRamp": [
+          "oklch(15% 0.017 70.5)",
+          "oklch(26% 0.017 70.5)",
+          "oklch(37% 0.017 70.5)",
+          "oklch(48% 0.017 70.5)",
+          "oklch(59% 0.017 70.5)",
+          "oklch(70% 0.017 70.5)",
+          "oklch(82% 0.017 70.5)",
+          "oklch(95% 0.017 70.5)"
+        ]
+      },
+      "seam": {
+        "role": "neutral",
+        "displayName": "Seam",
+        "canonical": "#e8ddd4",
+        "tonalRamp": [
+          "oklch(15% 0.017 61.9)",
+          "oklch(26% 0.017 61.9)",
+          "oklch(37% 0.017 61.9)",
+          "oklch(48% 0.017 61.9)",
+          "oklch(59% 0.017 61.9)",
+          "oklch(70% 0.017 61.9)",
+          "oklch(82% 0.017 61.9)",
+          "oklch(95% 0.017 61.9)"
+        ]
+      },
+      "paper": {
+        "role": "neutral",
+        "displayName": "Paper",
+        "canonical": "#fdf8f2",
+        "tonalRamp": [
+          "oklch(15% 0.010 72.7)",
+          "oklch(26% 0.010 72.7)",
+          "oklch(37% 0.010 72.7)",
+          "oklch(48% 0.010 72.7)",
+          "oklch(59% 0.010 72.7)",
+          "oklch(70% 0.010 72.7)",
+          "oklch(82% 0.010 72.7)",
+          "oklch(95% 0.010 72.7)"
+        ]
+      },
+      "white": {
+        "role": "neutral",
+        "displayName": "White",
+        "canonical": "#ffffff",
+        "tonalRamp": [
+          "oklch(15% 0.000 89.9)",
+          "oklch(26% 0.000 89.9)",
+          "oklch(37% 0.000 89.9)",
+          "oklch(48% 0.000 89.9)",
+          "oklch(59% 0.000 89.9)",
+          "oklch(70% 0.000 89.9)",
+          "oklch(82% 0.000 89.9)",
+          "oklch(95% 0.000 89.9)"
+        ]
+      },
+      "faded-ink": {
+        "role": "neutral",
+        "displayName": "Faded Ink",
+        "canonical": "#8a7060",
+        "tonalRamp": [
+          "oklch(15% 0.041 53.3)",
+          "oklch(26% 0.041 53.3)",
+          "oklch(37% 0.041 53.3)",
+          "oklch(48% 0.041 53.3)",
+          "oklch(59% 0.041 53.3)",
+          "oklch(70% 0.041 53.3)",
+          "oklch(82% 0.041 53.3)",
+          "oklch(95% 0.041 53.3)"
+        ]
+      },
+      "success-tint": {
+        "role": "semantic",
+        "displayName": "Success Tint",
+        "canonical": "#dcfce7",
+        "tonalRamp": [
+          "oklch(15% 0.043 156.7)",
+          "oklch(26% 0.043 156.7)",
+          "oklch(37% 0.043 156.7)",
+          "oklch(48% 0.043 156.7)",
+          "oklch(59% 0.043 156.7)",
+          "oklch(70% 0.043 156.7)",
+          "oklch(82% 0.043 156.7)",
+          "oklch(95% 0.043 156.7)"
+        ]
+      },
+      "success-ink": {
+        "role": "semantic",
+        "displayName": "Success Ink",
+        "canonical": "#166534",
+        "tonalRamp": [
+          "oklch(15% 0.108 151.3)",
+          "oklch(26% 0.108 151.3)",
+          "oklch(37% 0.108 151.3)",
+          "oklch(48% 0.108 151.3)",
+          "oklch(59% 0.108 151.3)",
+          "oklch(70% 0.108 151.3)",
+          "oklch(82% 0.108 151.3)",
+          "oklch(95% 0.108 151.3)"
+        ]
+      },
+      "success-edge": {
+        "role": "semantic",
+        "displayName": "Success Edge",
+        "canonical": "#bbf7d0",
+        "tonalRamp": [
+          "oklch(15% 0.081 156.0)",
+          "oklch(26% 0.081 156.0)",
+          "oklch(37% 0.081 156.0)",
+          "oklch(48% 0.081 156.0)",
+          "oklch(59% 0.081 156.0)",
+          "oklch(70% 0.081 156.0)",
+          "oklch(82% 0.081 156.0)",
+          "oklch(95% 0.081 156.0)"
+        ]
+      },
+      "amber-tint": {
+        "role": "semantic",
+        "displayName": "Amber Tint",
+        "canonical": "#fef3c7",
+        "tonalRamp": [
+          "oklch(15% 0.058 95.6)",
+          "oklch(26% 0.058 95.6)",
+          "oklch(37% 0.058 95.6)",
+          "oklch(48% 0.058 95.6)",
+          "oklch(59% 0.058 95.6)",
+          "oklch(70% 0.058 95.6)",
+          "oklch(82% 0.058 95.6)",
+          "oklch(95% 0.058 95.6)"
+        ]
+      },
+      "amber-ink": {
+        "role": "semantic",
+        "displayName": "Amber Ink",
+        "canonical": "#92400e",
+        "tonalRamp": [
+          "oklch(15% 0.120 46.2)",
+          "oklch(26% 0.120 46.2)",
+          "oklch(37% 0.120 46.2)",
+          "oklch(48% 0.120 46.2)",
+          "oklch(59% 0.120 46.2)",
+          "oklch(70% 0.120 46.2)",
+          "oklch(82% 0.120 46.2)",
+          "oklch(95% 0.120 46.2)"
+        ]
+      },
+      "alert-tint": {
+        "role": "semantic",
+        "displayName": "Alert Tint",
+        "canonical": "#fef2f2",
+        "tonalRamp": [
+          "oklch(15% 0.013 17.4)",
+          "oklch(26% 0.013 17.4)",
+          "oklch(37% 0.013 17.4)",
+          "oklch(48% 0.013 17.4)",
+          "oklch(59% 0.013 17.4)",
+          "oklch(70% 0.013 17.4)",
+          "oklch(82% 0.013 17.4)",
+          "oklch(95% 0.013 17.4)"
+        ]
+      },
+      "alert-edge": {
+        "role": "semantic",
+        "displayName": "Alert Edge",
+        "canonical": "#fecaca",
+        "tonalRamp": [
+          "oklch(15% 0.059 18.3)",
+          "oklch(26% 0.059 18.3)",
+          "oklch(37% 0.059 18.3)",
+          "oklch(48% 0.059 18.3)",
+          "oklch(59% 0.059 18.3)",
+          "oklch(70% 0.059 18.3)",
+          "oklch(82% 0.059 18.3)",
+          "oklch(95% 0.059 18.3)"
+        ]
+      },
+      "alert-ink": {
+        "role": "semantic",
+        "displayName": "Alert Ink",
+        "canonical": "#991b1b",
+        "tonalRamp": [
+          "oklch(15% 0.120 26.9)",
+          "oklch(26% 0.120 26.9)",
+          "oklch(37% 0.120 26.9)",
+          "oklch(48% 0.120 26.9)",
+          "oklch(59% 0.120 26.9)",
+          "oklch(70% 0.120 26.9)",
+          "oklch(82% 0.120 26.9)",
+          "oklch(95% 0.120 26.9)"
+        ]
+      },
+      "heart-red": {
+        "role": "semantic",
+        "displayName": "Heart Red",
+        "canonical": "#c62828",
+        "tonalRamp": [
+          "oklch(15% 0.120 26.7)",
+          "oklch(26% 0.120 26.7)",
+          "oklch(37% 0.120 26.7)",
+          "oklch(48% 0.120 26.7)",
+          "oklch(59% 0.120 26.7)",
+          "oklch(70% 0.120 26.7)",
+          "oklch(82% 0.120 26.7)",
+          "oklch(95% 0.120 26.7)"
+        ]
+      },
+      "pathway-tint": {
+        "role": "semantic",
+        "displayName": "Pathway Tint",
+        "canonical": "#e8f4e8",
+        "tonalRamp": [
+          "oklch(15% 0.020 145.4)",
+          "oklch(26% 0.020 145.4)",
+          "oklch(37% 0.020 145.4)",
+          "oklch(48% 0.020 145.4)",
+          "oklch(59% 0.020 145.4)",
+          "oklch(70% 0.020 145.4)",
+          "oklch(82% 0.020 145.4)",
+          "oklch(95% 0.020 145.4)"
+        ]
+      },
+      "pathway-ink": {
+        "role": "semantic",
+        "displayName": "Pathway Ink",
+        "canonical": "#2a6e2a",
+        "tonalRamp": [
+          "oklch(15% 0.120 143.4)",
+          "oklch(26% 0.120 143.4)",
+          "oklch(37% 0.120 143.4)",
+          "oklch(48% 0.120 143.4)",
+          "oklch(59% 0.120 143.4)",
+          "oklch(70% 0.120 143.4)",
+          "oklch(82% 0.120 143.4)",
+          "oklch(95% 0.120 143.4)"
+        ]
+      },
+      "ink-soft": {
+        "role": "neutral",
+        "displayName": "Soft Ink",
+        "canonical": "#3a2c24",
+        "tonalRamp": [
+          "oklch(15% 0.025 51.2)",
+          "oklch(26% 0.025 51.2)",
+          "oklch(37% 0.025 51.2)",
+          "oklch(48% 0.025 51.2)",
+          "oklch(59% 0.025 51.2)",
+          "oklch(70% 0.025 51.2)",
+          "oklch(82% 0.025 51.2)",
+          "oklch(95% 0.025 51.2)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "Page headline in the hero; 30px on mobile."
+      },
+      "title": {
+        "displayName": "Wordmark",
+        "purpose": "GrausFP logo in the ink masthead."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Default text, tabs, mode buttons, programme names."
+      },
+      "body-small": {
+        "displayName": "Body Small",
+        "purpose": "Filters, secondary columns, counts, secondary buttons."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Uppercase table headers and status badges."
+      },
+      "mono": {
+        "displayName": "Mono",
+        "purpose": "Official programme codes."
+      }
+    },
+    "shadows": [
+      {
+        "name": "modal-lift",
+        "value": "0 8px 32px rgba(0, 0, 0, 0.18)",
+        "purpose": "Floating modal dialogs only."
+      }
+    ],
+    "motion": [
+      {
+        "name": "state-fast",
+        "value": "0.15s ease",
+        "purpose": "Background, colour and border transitions on hover/active."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "mobile",
+        "value": "768px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Search Field",
+      "kind": "input",
+      "refersTo": "search-input",
+      "description": "The front door: ink-bordered search with leading icon.",
+      "html": "<div class=\"ds-search\"><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"#8a7060\" stroke-width=\"2\"><circle cx=\"11\" cy=\"11\" r=\"7\"/><path d=\"m20 20-3.5-3.5\"/></svg><input type=\"search\" class=\"ds-search-input\" placeholder=\"Cerca un cicle, família o codi…\"></div>",
+      "css": ".ds-search{position:relative;max-width:640px}.ds-search svg{position:absolute;left:16px;top:50%;transform:translateY(-50%);pointer-events:none}.ds-search-input{width:100%;padding:14px 18px 14px 50px;border:2px solid var(--dark,#1c1410);border-radius:6px;font:16px 'DM Sans',sans-serif;background:var(--white,#fff);color:var(--dark,#1c1410)}.ds-search-input::placeholder{color:#8a7060}.ds-search-input:focus-visible{outline:2px solid var(--warm,#755f51);outline-offset:2px}"
+    },
+    {
+      "name": "Mode Toggle",
+      "kind": "custom",
+      "refersTo": "mode-toggle",
+      "description": "Outlined ink buttons; active mode inverts to ink.",
+      "html": "<div class=\"ds-mode\"><button class=\"ds-mode-btn ds-mode-btn--active\">Per nom</button><button class=\"ds-mode-btn\">Per ocupació</button><button class=\"ds-mode-btn\">Cursos FPO</button></div>",
+      "css": ".ds-mode{display:flex;gap:8px}.ds-mode-btn{padding:8px 20px;border:2px solid var(--dark,#1c1410);border-radius:6px;font:500 14px 'DM Sans',sans-serif;background:transparent;color:var(--dark,#1c1410);cursor:pointer;transition:background .15s,color .15s}.ds-mode-btn:hover{background:rgba(0,0,0,.05)}.ds-mode-btn--active,.ds-mode-btn--active:hover{background:var(--dark,#1c1410);color:#fff}.ds-mode-btn:focus-visible{outline:2px solid var(--warm,#755f51);outline-offset:2px}"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Quiet white action: documents, follow centre.",
+      "html": "<button class=\"ds-btn-secondary\">Fitxa oficial</button>",
+      "css": ".ds-btn-secondary{background:var(--white,#fff);color:var(--dark,#1c1410);border:1px solid var(--border,#e8ddd4);border-radius:4px;padding:5px 12px;font:12px/1.4 'DM Sans',sans-serif;cursor:pointer;transition:background .15s}.ds-btn-secondary:hover{background:var(--border,#e8ddd4)}.ds-btn-secondary:focus-visible{outline:2px solid var(--warm,#755f51);outline-offset:2px}"
+    },
+    {
+      "name": "Masthead",
+      "kind": "nav",
+      "refersTo": "topbar-button",
+      "description": "Ink band with serif wordmark, language chips and auth buttons.",
+      "html": "<nav class=\"ds-top\"><a class=\"ds-logo\" href=\"#\">GrausFP</a><span class=\"ds-sp\"></span><button class=\"ds-lang ds-lang--on\">CA</button><button class=\"ds-lang\">ES</button><a class=\"ds-auth\" href=\"#\">Entra</a><a class=\"ds-auth ds-auth--primary\" href=\"#\">Registra't</a></nav>",
+      "css": ".ds-top{display:flex;align-items:center;gap:8px;height:52px;padding:0 24px;background:var(--dark,#1c1410)}.ds-logo{font:20px 'DM Serif Display',serif;letter-spacing:-.3px;color:#fff;text-decoration:none}.ds-sp{flex:1}.ds-lang{font:700 11px 'DM Sans',sans-serif;letter-spacing:.04em;padding:3px 8px;border-radius:3px;background:transparent;border:1px solid rgba(255,255,255,.3);color:rgba(255,255,255,.6);cursor:pointer}.ds-lang:hover{background:rgba(255,255,255,.12);color:#fff}.ds-lang--on{background:rgba(255,255,255,.18);color:#fff;border-color:rgba(255,255,255,.6)}.ds-auth{font:13px 'DM Sans',sans-serif;padding:5px 14px;border-radius:4px;border:1px solid rgba(255,255,255,.35);color:#fff;text-decoration:none;transition:background .15s}.ds-auth:hover{background:rgba(255,255,255,.12)}.ds-auth--primary{background:#fff;color:var(--dark,#1c1410);border-color:#fff}.ds-auth--primary:hover{background:var(--warm2,#f5ece2)}.ds-auth:focus-visible,.ds-lang:focus-visible{outline:2px solid #fff;outline-offset:2px}"
+    },
+    {
+      "name": "Grade Tabs",
+      "kind": "nav",
+      "refersTo": null,
+      "description": "Text tabs in umber; active tab gets ink underline.",
+      "html": "<div class=\"ds-tabs\"><button class=\"ds-tab ds-tab--on\">Tots</button><button class=\"ds-tab\">Grau A</button><button class=\"ds-tab\">Grau B</button><button class=\"ds-tab\">Grau C</button></div>",
+      "css": ".ds-tabs{display:flex;background:#fff;border-bottom:1px solid var(--border,#e8ddd4)}.ds-tab{padding:13px 18px;border:none;border-bottom:2.5px solid transparent;font:14px 'DM Sans',sans-serif;background:transparent;color:var(--warm,#755f51);cursor:pointer;transition:color .15s,border-color .15s}.ds-tab:hover{color:var(--dark,#1c1410)}.ds-tab--on{border-bottom-color:var(--dark,#1c1410);color:var(--dark,#1c1410);font-weight:600}.ds-tab:focus-visible{outline:2px solid var(--warm,#755f51);outline-offset:-2px}"
+    },
+    {
+      "name": "Filter Select",
+      "kind": "input",
+      "refersTo": "select",
+      "description": "White select on the parchment filter bar.",
+      "html": "<div class=\"ds-filters\"><span class=\"ds-flabel\">Filtra:</span><select class=\"ds-select\"><option>Totes les famílies</option></select><select class=\"ds-select\"><option>Tots els nivells</option></select></div>",
+      "css": ".ds-filters{display:flex;gap:10px;align-items:center;padding:10px 16px;background:var(--warm2,#f5ece2);border-bottom:1px solid var(--border,#e8ddd4)}.ds-flabel{font:13px 'DM Sans',sans-serif;color:var(--warm,#755f51)}.ds-select{padding:5px 12px;border-radius:4px;border:1px solid var(--border,#e8ddd4);font:13px 'DM Sans',sans-serif;color:var(--dark,#1c1410);background:#fff;cursor:pointer}.ds-select:focus-visible{outline:2px solid var(--warm,#755f51);outline-offset:2px}"
+    },
+    {
+      "name": "Results Table",
+      "kind": "custom",
+      "refersTo": "table-header",
+      "description": "The signature register: parchment header over a heavy ink rule.",
+      "html": "<table class=\"ds-table\"><thead><tr><th>Nom</th><th>Grau</th><th>Codi</th></tr></thead><tbody><tr><td class=\"ds-nom\">Desenvolupament d'Aplicacions Web <span class=\"ds-badge-nou\">Nou</span></td><td class=\"ds-c\">C</td><td class=\"ds-codi\">IFC303</td></tr><tr><td class=\"ds-nom\">Cures Auxiliars d'Infermeria <span class=\"ds-badge-old\">Pla antic</span></td><td class=\"ds-c\">B</td><td class=\"ds-codi\">SAN21</td></tr></tbody></table>",
+      "css": ".ds-table{width:100%;border-collapse:collapse;background:#fff;border:1px solid var(--border,#e8ddd4);font:14px 'DM Sans',sans-serif;color:var(--dark,#1c1410)}.ds-table thead tr{background:var(--warm2,#f5ece2);border-bottom:2px solid var(--dark,#1c1410)}.ds-table th{text-align:left;padding:11px 16px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.07em}.ds-table td{padding:13px 16px;border-bottom:1px solid var(--border,#e8ddd4)}.ds-table tbody tr:hover td{background:var(--warm2,#f5ece2)}.ds-nom{font-weight:500}.ds-c{text-align:center}.ds-codi{font:12px 'Geist Mono',monospace;color:var(--warm,#755f51)}.ds-badge-nou{display:inline-block;margin-left:6px;padding:1px 6px;border-radius:3px;background:#dcfce7;color:#166534;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.03em}.ds-badge-old{display:inline-block;margin-left:8px;padding:2px 6px;border-radius:3px;background:#fef3c7;color:#92400e;font-size:11px;font-weight:600}"
+    },
+    {
+      "name": "Centres Badge",
+      "kind": "chip",
+      "refersTo": "badge-centres",
+      "description": "Ink outline pill that opens the centres panel; inverts to solid ink on hover.",
+      "html": "<button class=\"ds-badge-centres\">12 centres</button>",
+      "css": ".ds-badge-centres{cursor:pointer;background:var(--white,#fff);color:var(--dark,#1c1410);border:1px solid var(--dark,#1c1410);border-radius:12px;padding:2px 8px;font:500 12px 'DM Sans',sans-serif;transition:background .15s,color .15s}.ds-badge-centres:hover{background:var(--dark,#1c1410);color:#fff}.ds-badge-centres:focus-visible{outline:2px solid var(--warm,#755f51);outline-offset:2px}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Official Register",
+    "overview": "GrausFP looks like a public catalogue printed on warm paper: cream stock, near-black ink, a serif masthead and plain, dense tables. The whole visual system exists to make official data feel trustworthy and easy to consult. There is no decoration competing with the records. Hierarchy comes from ink weight, rules and type contrast, not from colour or depth.\n\nThe surface is compact and meant for scanning. Body text is 14px, secondary text 13px, and results sit in a full-width table with uppercase column headers over a heavy ink rule. The dark top bar works as a masthead. Beneath it, a serif headline and one large, ink-bordered search field make the only real invitation on the page. Everything after that is register: tabs, filters, rows.\n\nColour is used sparingly and always to say something. The warm neutrals carry the page. Small tinted tags mark the status of a record (new plan, old plan, pathway), and red is reserved for favourites and errors.",
+    "keyCharacteristics": [
+      "Warm paper background with near-black warm ink; no pure greys in the core palette.",
+      "A serif (DM Serif Display) only for the masthead and page headline; DM Sans for everything else; Geist Mono for official codes.",
+      "Heavy 2px ink rules and borders give structure; shadows are almost absent.",
+      "Small, tight radii (2–6px); the only pill shape is the centres badge.",
+      "Dense, scannable tables with uppercase micro-labels."
+    ],
+    "rules": [
+      {
+        "name": "The Ink Carries Authority Rule",
+        "body": "Emphasis comes from Register Ink: weight, a heavier rule, or an inverted ink block. Never introduce a bright brand hue to make something \"primary\".",
+        "section": "colors"
+      },
+      {
+        "name": "The Tint Means Status Rule",
+        "body": "Every tinted tag (green, amber, pathway green) states a fact about a record. A tint without a meaning is not allowed.",
+        "section": "colors"
+      },
+      {
+        "name": "The One Serif Rule",
+        "body": "The serif appears only in the wordmark and page headlines. Tables, controls and badges are always set in DM Sans.",
+        "section": "typography"
+      },
+      {
+        "name": "The Rules Not Shadows Rule",
+        "body": "Separation between regions comes from a 1px Seam border or a 2px Ink rule. Shadows are reserved for surfaces that float above the page.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do use the `:root` custom properties for every colour: core (`--dark`, `--warm`, `--warm2`, `--border`, `--bg`, `--white`, `--faded`, `--ink-soft`) and semantic (`--ok-*`, `--amber-*`, `--alert-*`, `--path-*`, `--heart`, `--scrim`).",
+      "Do build hierarchy with Register Ink: weight 500–600, a 2px Ink rule, or an inverted Ink block.",
+      "Do keep 13–14px DM Sans as the working size and reserve the serif for the wordmark and headline.",
+      "Do use the shared focus treatment: `outline: 2px solid var(--warm); outline-offset: 2px`.",
+      "Do keep the 48px / 16px gutter consistent across every band."
+    ],
+    "donts": [
+      "Don't introduce a link or accent hue (the old `#1a73e8` blue was removed on purpose); new accents come from the warm neutrals or an existing semantic tint.",
+      "Don't introduce cool greys (`#666`, `#888`, `#ccc`); use Umber, Seam or Faded Ink instead.",
+      "Don't add shadows to cards, rows or bars; shadows belong only to floating modals.",
+      "Don't use tinted badges decoratively; every tint must mark a real record status.",
+      "Don't round corners beyond 6px except for the existing centres pill."
+    ]
+  }
+}
