@@ -4,10 +4,10 @@ milestone: v1.0
 current_phase_name: 06
 status: executing
 stopped_at: context exhaustion at 90% (2026-04-23)
-last_updated: "2026-09-23T22:31:15.663Z"
+last_updated: "2026-09-23T23:14:13.797Z"
 last_activity: 2026-09-24
 last_activity_desc: Phase --phase execution started
-state_head: b02419f1e187d233923cda9567a651d1586901ea
+state_head: c81afab7d7d3520402536c83a34d8e24062c67f7
 progress:
   total_phases: 6
   completed_phases: 5
@@ -31,7 +31,7 @@ See: .planning/PROJECT.md (updated 2026-04-16)
 Phase: --phase (06) — EXECUTING
 Plan: 1 of --name
 Status: Executing Phase --phase
-Last activity: 2026-09-24 - Completed quick task 260924-09g: Harden index.html
+Last activity: 2026-09-24 - Completed quick task 260924-0s3: Adapt index.html per a mòbil
 
 Progress: [█████████░] 94% (Fases 01, 02, 03, 04, 05 completades; 06 pendent)
 
@@ -99,6 +99,7 @@ None yet.
 | 260923-x1s | Corregeix la definició dels graus A–E (LO 3/2022) a Per què GrausFP i Fonts | 2026-09-23 | 584ba22 | — | [260923-x1s-fix-grade-a-e-descriptions-lo-3-2022-on-](./quick/260923-x1s-fix-grade-a-e-descriptions-lo-3-2022-on-/) |
 | 260923-x98 | Colorize index.html: paleta càlida amb tokens, contrast AA, fora el blau | 2026-09-23 | 9e45914 | — | [260923-x98-colorize-index-html-warm-palette-tokens-](./quick/260923-x98-colorize-index-html-warm-palette-tokens-/) |
 | 260924-09g | Harden index.html: teclat, favorits tàctils, main, paginació, plurals, reintent d'error | 2026-09-23 | b02419f | — | [260924-09g-harden-index-html-keyboard-rows-fav-a11y](./quick/260924-09g-harden-index-html-keyboard-rows-fav-a11y/) |
+| 260924-0s3 | Adapt index.html mòbil: taula en targetes, barra superior, modes apilats, àrees tàctils 44px | 2026-09-23 | c81afab | — | [260924-0s3-adapt-index-html-for-mobile-table-to-car](./quick/260924-0s3-adapt-index-html-for-mobile-table-to-car/) |
 
 ### Blockers/Concerns
 
