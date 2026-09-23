@@ -306,7 +306,7 @@
       background: var(--white);
     }
 
-    .ocup-card h3 {
+    .ocup-card h2 {
       font-size: 15px;
       font-weight: 600;
       color: var(--dark);
@@ -600,6 +600,15 @@
       cursor: pointer;
     }
 
+    .results-table tbody tr.row-link:focus-visible {
+      outline: 2px solid var(--warm);
+      outline-offset: -2px;
+    }
+
+    .results-table tbody tr.row-link:focus-visible td {
+      background: var(--warm2);
+    }
+
     .results-table tbody tr:last-child td {
       border-bottom: none;
     }
@@ -707,6 +716,10 @@
       font-size: 14px;
     }
 
+    .error-state .save-alert-btn {
+      margin-top: 10px;
+    }
+
     /* ── Pagination ── */
     .pagination {
       display: flex;
@@ -757,6 +770,10 @@
       cursor: default;
       pointer-events: none;
       opacity: 0.45;
+    }
+
+    .pagination-item {
+      display: contents;
     }
 
     .pagination-ellipsis {
@@ -959,6 +976,18 @@
     .btn-fav:hover,
     .btn-fav--active {
       color: var(--heart);
+    }
+
+    .btn-fav:focus-visible {
+      opacity: 1;
+      outline: 2px solid var(--warm);
+      outline-offset: 2px;
+    }
+
+    @media (hover: none) {
+      .btn-fav {
+        opacity: 1;
+      }
     }
 
     .results-table tbody tr.row-fav td {
@@ -1510,11 +1539,12 @@
         },
 
         async init() {
+          // La petició del catàleg s'inicia en paral·lel amb l'autenticació, com abans amb Promise.all.
+          const catalogRequest = fetch(API_BASE + '/api/ofertes');
+          // Evita un unhandled-rejection mentre /api/auth/me encara està pendent; el rebuig es gestiona dins loadCatalog.
+          catalogRequest.catch(() => {});
           try {
-            const [res, authRes] = await Promise.all([
-              fetch(API_BASE + '/api/ofertes'),
-              fetch(API_BASE + '/api/auth/me', { credentials: 'include' }).catch(() => ({ ok: false }))
-            ]);
+            const authRes = await fetch(API_BASE + '/api/auth/me', { credentials: 'include' }).catch(() => ({ ok: false }));
             this.loggedIn = authRes.ok;
             const _params = new URLSearchParams(location.search);
             if (_params.get('mode') === 'ocupacio') this.searchMode = 'ocupacio';
@@ -1529,6 +1559,16 @@
               this.loadWatches();
               this.loadFpoFavorites();
             }
+            await this.loadCatalog(catalogRequest);
+          } catch (e) {
+            this.state = 'error';
+          }
+        },
+
+        async loadCatalog(pendingRequest) {
+          this.state = 'loading';
+          try {
+            const res = await (pendingRequest || fetch(API_BASE + '/api/ofertes'));
             if (!res.ok) { this.state = 'error'; return; }
             const data = await res.json();
             const FAMILIA_ALIASES = {
@@ -1565,13 +1605,12 @@
               .then(r => r.json())
               .then(d => { this.centresNous = d; })
               .catch(() => { });
-            const ofertaParam = _params.get('oferta');
+            const ofertaParam = new URLSearchParams(location.search).get('oferta');
             if (ofertaParam) this.openOfertaFromLink(parseInt(ofertaParam));
           } catch (e) {
             this.state = 'error';
           }
         },
-
         openOfertaFromLink(ofertaId) {
           const row = this.allRecords.find(r => r.id === ofertaId);
           if (!row) return;
@@ -1992,6 +2031,22 @@
             .catch(() => { this.fpoByCert = { ...this.fpoByCert, [codigo]: {} }; });
         },
 
+        rowIsActionable(row) {
+          return !!(row.grado === 'C' || (['A','B','C'].includes(row.grado) && row.ficha_id) || (['D','E'].includes(row.grado) && row.ficha_url));
+        },
+
+        activateRow(row) {
+          if (row.grado === 'C') {
+            this.expandedRows = { ...this.expandedRows, [row.id]: !this.expandedRows[row.id] };
+            if (row.plan_antiguo) this.fetchFpoByCert(row.codigo);
+            return;
+          } else if (['A','B','C'].includes(row.grado) && row.ficha_id) {
+            this.loggedIn ? window.open(API_BASE + '/api/ficha-redirect?grado=' + row.grado + '&codigo=' + encodeURIComponent(row.codigo), '_blank') : this.showCentresModal();
+          } else if (['D','E'].includes(row.grado) && row.ficha_url) {
+            this.loggedIn ? window.open(row.ficha_url, '_blank') : this.showCentresModal();
+          }
+        },
+
         _fpoNorm(s) {
           return (s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
         },
@@ -2248,6 +2303,8 @@
       </div>
     </div>
 
+    <main id="main">
+
     <!-- Hero / Search -->
     <div class="hero">
       <h1><span data-i18n="index.hero.h1.line1">Formació</span><br><em data-i18n="index.hero.h1.line2">Professional</em>
@@ -2351,7 +2408,7 @@
         :disabled="alertSaving" @click="saveAlert()" x-text="t('index.btn.saveAlert')">
       </button>
       <button class="save-alert-btn" x-show="state === 'ready' && filteredCount > 0" @click="exportCSV()"
-        :title="t('index.btn.exportTitle', {n: filteredCount})" x-text="t('index.btn.exportCsv')">
+        :title="t(filteredCount === 1 ? 'index.btn.exportTitle_one' : 'index.btn.exportTitle', {n: filteredCount})" x-text="t('index.btn.exportCsv')">
       </button>
       <button class="clear-btn"
         x-show="search || filterGrado || filterFamilia || filterNivel || filterOld !== 'all' || filterFavs"
@@ -2450,8 +2507,11 @@
     </div>
 
     <!-- Error -->
-    <div x-show="state === 'error'" class="error-state" role="alert" x-text="t('index.error')"
-      x-transition:enter.opacity.duration.150ms x-transition:leave.opacity.duration.100ms></div>
+    <div x-show="state === 'error'" class="error-state" role="alert"
+      x-transition:enter.opacity.duration.150ms x-transition:leave.opacity.duration.100ms>
+      <p x-text="t('index.error')"></p>
+      <button type="button" class="save-alert-btn" @click="loadCatalog()" x-text="t('index.error.retry')"></button>
+    </div>
 
     <!-- Commutador repr. quan mode ocupació+taula+loggedIn (sobre la taula) -->
     <template x-if="state === 'ready' && searchMode === 'ocupacio' && reprOcup === 'taula' && loggedIn">
@@ -2527,21 +2587,18 @@
             <tbody>
               <tr
                 :data-row-id="row.id"
-                :class="{ 'row-link': (row.grado === 'C') || (['A','B','C'].includes(row.grado) && row.ficha_id) || (['D','E'].includes(row.grado) && row.ficha_url), 'row-fav': favorites.has(row.id) }"
-                @click="
-                  row.grado === 'C'
-                    ? (expandedRows = { ...expandedRows, [row.id]: !expandedRows[row.id] },
-                       row.plan_antiguo && fetchFpoByCert(row.codigo))
-                    : ['A','B','C'].includes(row.grado) && row.ficha_id
-                      ? (loggedIn ? window.open(API_BASE + '/api/ficha-redirect?grado=' + row.grado + '&codigo=' + encodeURIComponent(row.codigo), '_blank') : showCentresModal())
-                      : ['D','E'].includes(row.grado) && row.ficha_url
-                        ? (loggedIn ? window.open(row.ficha_url, '_blank') : showCentresModal())
-                        : null
-                ">
+                :class="{ 'row-link': rowIsActionable(row), 'row-fav': favorites.has(row.id) }"
+                :tabindex="rowIsActionable(row) ? 0 : null"
+                :aria-expanded="row.grado === 'C' ? String(!!expandedRows[row.id]) : null"
+                @click="activateRow(row)"
+                @keydown.enter.self="activateRow(row)"
+                @keydown.space.self.prevent="activateRow(row)">
                 <td class="col-nom">
                   <button class="btn-fav" @click.stop="toggleFavorite(row)"
                     :class="{ 'btn-fav--active': favorites.has(row.id) }"
-                    :title="favorites.has(row.id) ? t('index.fav.remove') : t('index.fav.add')">
+                    :title="favorites.has(row.id) ? t('index.fav.remove') : t('index.fav.add')"
+                    :aria-label="t('index.filter.favs')"
+                    :aria-pressed="String(favorites.has(row.id))">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16">
                       <path :fill="favorites.has(row.id) ? 'currentColor' : 'none'" stroke="currentColor"
                         stroke-width="2" stroke-linejoin="round"
@@ -2561,7 +2618,7 @@
                   <template x-if="centres_count(row) > 0">
                     <span class="badge-centres" role="button" tabindex="0" @click.stop="toggleCentres(row)"
                       @keydown.enter.stop="toggleCentres(row)" @keydown.space.prevent.stop="toggleCentres(row)"
-                      x-text="t('index.centres.count', {n: centres_count(row)})">
+                      x-text="t(centres_count(row) === 1 ? 'index.centres.count_one' : 'index.centres.count', {n: centres_count(row)})">
                     </span>
                   </template>
                   <template x-if="parentBOf(row)">
@@ -2645,7 +2702,7 @@
                     <!-- Pla 060: cursos FPO (SOC Catalunya) per a aquest certificat -->
                     <template x-if="fpoByCert[row.codigo] && fpoByCert[row.codigo].nCursos > 0">
                       <div class="detall-ciclos-d">
-                        <span x-text="t('index.itinerari.fpo_disponible', {n: fpoByCert[row.codigo].nCursos})"></span>
+                        <span x-text="t(fpoByCert[row.codigo].nCursos === 1 ? 'index.itinerari.fpo_disponible_one' : 'index.itinerari.fpo_disponible', {n: fpoByCert[row.codigo].nCursos})"></span>
                         <a href="#"
                           @click.prevent="location.href = 'index.html?mode=fpo&esp=' + encodeURIComponent(row.codigo)"
                           x-text="t('index.itinerari.fpo_veure')" style="margin-left:6px;"></a>
@@ -2852,7 +2909,7 @@
                         </template>
                         <template x-if="loggedIn && centresFiltrats(row).length > 50">
                           <p class="centres-more"
-                            x-text="t('index.centres.more', {n: centresFiltrats(row).length - 50})">
+                            x-text="t((centresFiltrats(row).length - 50) === 1 ? 'index.centres.more_one' : 'index.centres.more', {n: centresFiltrats(row).length - 50})">
                           </p>
                         </template>
                         <template x-if="centresFiltrats(row).length === 0 && !centresLoading[row.id]">
@@ -2878,15 +2935,17 @@
           <button @click="goToPage(currentPage - 1)" :class="{ disabled: currentPage === 1 }"
             :aria-disabled="currentPage === 1" x-text="t('pagination.prev')"></button>
 
-          <template x-for="item in buildPagination()" :key="JSON.stringify(item)">
-            <template x-if="item.type === 'page'">
-              <button @click="goToPage(item.n)" :aria-current="item.n === currentPage ? 'page' : false"
-                :aria-label="t('pagination.page', {n: item.n})" :class="{ active: item.n === currentPage }"
-                x-text="item.n"></button>
-            </template>
-            <template x-if="item.type === 'ellipsis'">
-              <span class="pagination-ellipsis">…</span>
-            </template>
+          <template x-for="(item, idx) in buildPagination()" :key="item.type === 'page' ? 'p' + item.n : 'e' + idx">
+            <span class="pagination-item">
+              <template x-if="item.type === 'page'">
+                <button @click="goToPage(item.n)" :aria-current="item.n === currentPage ? 'page' : false"
+                  :aria-label="t('pagination.page', {n: item.n})" :class="{ active: item.n === currentPage }"
+                  x-text="item.n"></button>
+              </template>
+              <template x-if="item.type === 'ellipsis'">
+                <span class="pagination-ellipsis">…</span>
+              </template>
+            </span>
           </template>
 
           <button @click="goToPage(currentPage + 1)" :class="{ disabled: currentPage === totalPages }"
@@ -2910,7 +2969,7 @@
         </template>
         <template x-for="g in ocupVisibleResults()" :key="(g.codigo||'') + '-' + (g.id||'') + '-' + g.grado">
           <div class="ocup-card">
-            <h3 x-text="g.denominacion + ' · ' + g.grado"></h3>
+            <h2 x-text="g.denominacion + ' · ' + g.grado"></h2>
             <div class="ocup-tags">
               <template x-for="m in g.ocupaciones" :key="m">
                 <span class="ocup-tag" x-text="m"></span>
@@ -2958,11 +3017,17 @@
           </thead>
           <template x-for="esp in filteredFpoEspecs" :key="esp.codi">
             <tbody>
-              <tr class="row-link" @click="toggleFpoDetall(esp.codi)">
+              <tr class="row-link" tabindex="0"
+                :aria-expanded="String(!!fpoExpanded[esp.codi])"
+                @click="toggleFpoDetall(esp.codi)"
+                @keydown.enter.self="toggleFpoDetall(esp.codi)"
+                @keydown.space.self.prevent="toggleFpoDetall(esp.codi)">
                 <td class="col-nom">
                   <button class="btn-fav" @click.stop="loggedIn ? toggleFpoFav(esp.codi) : showCentresModal()"
                     :class="{ 'btn-fav--active': fpoFavSet.has(esp.codi) }"
-                    :title="fpoFavSet.has(esp.codi) ? t('index.fav.remove') : t('index.fav.add')">
+                    :title="fpoFavSet.has(esp.codi) ? t('index.fav.remove') : t('index.fav.add')"
+                    :aria-label="t('index.filter.favs')"
+                    :aria-pressed="String(fpoFavSet.has(esp.codi))">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16">
                       <path :fill="fpoFavSet.has(esp.codi) ? 'currentColor' : 'none'" stroke="currentColor"
                         stroke-width="2" stroke-linejoin="round"
@@ -3086,6 +3151,8 @@
       <p class="results-count" x-show="fpoLoaded && filteredFpoEspecs.length === 0"
         x-text="t('fpo.empty')"></p>
     </div>
+
+    </main>
 
     <!-- Modal confirmació alerta desada -->
     <div x-show="alertModalVisible" @click="alertModalVisible = false"

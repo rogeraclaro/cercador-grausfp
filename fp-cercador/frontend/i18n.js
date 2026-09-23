@@ -83,7 +83,8 @@
 
       /* ── index.html — states ── */
       'index.loading': 'Carregant dades del catàleg FP...',
-      'index.error': "⚠️ Les dades del catàleg no estan disponibles. Contacteu l'administrador del sistema.",
+      'index.error': "No s'han pogut carregar les dades del catàleg. Torna-ho a provar d'aquí a uns moments.",
+      'index.error.retry': 'Torna-ho a provar',
       'index.results.zero': 'Cap resultat coincideix amb els filtres aplicats',
       'index.results.one': '1 resultat trobat',
       'index.results.many': '{n} resultats trobats',
@@ -100,6 +101,7 @@
       'index.fav.remove': 'Treu dels favorits',
       'index.badge.old': 'Pla antic',
       'index.centres.count': '{n} centres',
+      'index.centres.count_one': '1 centre',
       'index.centres.inherited': 'Centres acreditats per al certificat de professionalitat que inclou aquest mòdul o unitat formativa.',
 
       /* ── index.html — centres panel ── */
@@ -113,6 +115,7 @@
       'index.centres.nou': 'Nou',
       'index.centres.upsell': "Registra't per a veure'ls tots",
       'index.centres.more': '... i {n} centres més',
+      'index.centres.more_one': '... i 1 centre més',
       'index.centres.empty': 'Cap centre trobat per a aquesta comunitat.',
 
       /* ── index.html — CSV export ── */
@@ -124,6 +127,7 @@
       'csv.header.old': 'Pla antic',
       'csv.header.centres': 'Centres seleccionats',
       'index.btn.exportTitle': 'Exporta {n} registres a CSV',
+      'index.btn.exportTitle_one': 'Exporta 1 registre a CSV',
 
       /* ── index.html — paginació ── */
       'pagination.aria': 'Paginació de resultats',
@@ -176,6 +180,7 @@
       'index.mode.ocupacio': 'Cerca per ocupació',
       'index.mode.fpo': 'Cursos FPO (Catalunya)',
       'index.itinerari.fpo_disponible': 'També s\'ofereix com a formació per a l\'ocupació a Catalunya — {n} cursos actius',
+      'index.itinerari.fpo_disponible_one': 'També s\'ofereix com a formació per a l\'ocupació a Catalunya — 1 curs actiu',
       'index.itinerari.fpo_veure': 'Veure\'ls al cercador FPO',
 
       /* ── Mode FPO (SOC Catalunya) ── */
@@ -606,7 +611,8 @@
 
       /* ── index.html — states ── */
       'index.loading': 'Cargando datos del catálogo FP...',
-      'index.error': '⚠️ Los datos del catálogo no están disponibles. Contacte al administrador del sistema.',
+      'index.error': 'No se han podido cargar los datos del catálogo. Vuelve a intentarlo en unos momentos.',
+      'index.error.retry': 'Volver a intentarlo',
       'index.results.zero': 'Ningún resultado coincide con los filtros aplicados',
       'index.results.one': '1 resultado encontrado',
       'index.results.many': '{n} resultados encontrados',
@@ -623,6 +629,7 @@
       'index.fav.remove': 'Quitar de favoritos',
       'index.badge.old': 'Plan antiguo',
       'index.centres.count': '{n} centros',
+      'index.centres.count_one': '1 centro',
       'index.centres.inherited': 'Centros acreditados para el certificado de profesionalidad que incluye este módulo o unidad formativa.',
 
       /* ── index.html — centres panel ── */
@@ -636,6 +643,7 @@
       'index.centres.nou': 'Nuevo',
       'index.centres.upsell': 'Regístrate para verlos todos',
       'index.centres.more': '... y {n} centros más',
+      'index.centres.more_one': '... y 1 centro más',
       'index.centres.empty': 'No se encontraron centros para esta comunidad.',
 
       /* ── index.html — CSV export ── */
@@ -647,6 +655,7 @@
       'csv.header.old': 'Plan antiguo',
       'csv.header.centres': 'Centros seleccionados',
       'index.btn.exportTitle': 'Exportar {n} registros a CSV',
+      'index.btn.exportTitle_one': 'Exportar 1 registro a CSV',
 
       /* ── index.html — paginació ── */
       'pagination.aria': 'Paginación de resultados',
@@ -699,6 +708,7 @@
       'index.mode.ocupacio': 'Buscar por ocupación',
       'index.mode.fpo': 'Cursos FPO (Cataluña)',
       'index.itinerari.fpo_disponible': 'También se ofrece como formación para el empleo en Cataluña — {n} cursos activos',
+      'index.itinerari.fpo_disponible_one': 'También se ofrece como formación para el empleo en Cataluña — 1 curso activo',
       'index.itinerari.fpo_veure': 'Verlos en el buscador FPO',
 
       /* ── Modo FPO (SOC Cataluña) ── */
