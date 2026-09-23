@@ -18,11 +18,11 @@ Fins ara.
 
 | Grau | Nom | Exemple |
 |------|-----|---------|
-| **A** | Cicles Formatius de Grau Bàsic | Aux. Administratiu Bàsic |
-| **B** | Cicles Formatius de Grau Mitjà | Cures Auxiliars d'Infermeria |
-| **C** | Cicles Formatius de Grau Superior | Desenvolupament d'Aplicacions Web |
-| **D** | Cursos d'Especialització | Ciberseguretat en Entorns de les TIC |
-| **E** | Microcredencials | (nova modalitat, en desplegament) |
+| **A** | Acreditació parcial de competència | Preparación de los equipos |
+| **B** | Certificat de competència | Técnicas administrativas básicas |
+| **C** | Certificat professional | Seguridad informática |
+| **D** | Cicles formatius de grau bàsic, mitjà i superior | Técnico Superior en Desarrollo de Aplicaciones Web |
+| **E** | Cursos d'especialització | Curso de Especialización en Ciberseguridad en Entornos de las Tecnologías de la Información |
 
 Tot el sistema. Tot a la vegada.
 
@@ -34,7 +34,7 @@ Tot el sistema. Tot a la vegada.
 
 **Cerca en temps real** — escriu "infermeria", "informàtica", "cuina" o qualsevol paraula i els resultats apareixen a l'instant. Sense fer clic a "Cercar". Sense esperar. Pots filtrar per família professional, nivell i comunitat autònoma.
 
-**Itineraris formatius** — veus d'un cop d'ull el camí sencer: de Grau Bàsic a Grau Mitjà a Grau Superior a Especialització. Saps d'on pots venir i on pots arribar. Cap altra eina et mostra això.
+**Itineraris formatius** — veus d'un cop d'ull el camí sencer: de l'acreditació parcial al certificat de competència, al certificat professional i al cicle formatiu. Saps d'on pots venir i on pots arribar. Cap altra eina et mostra això.
 
 **Cerca per ocupació** — no saps com es diu el cicle que t'interessa, però saps que vols treballar de dissenyador gràfic, d'electricista o de tècnic de so? Cerca per la sortida professional i el cercador et troba els cicles que hi porten.
 
@@ -108,8 +108,8 @@ Sí. Totes les dades provenen de les fonts oficials del Ministeri d'Educació (t
 **Cobreix totes les comunitats autònomes?**
 Sí, l'oferta recollida abasta tot el territori estatal. Les competències educatives estan transferides, però el catàleg de títols és nacional.
 
-**Els Grados E (microcredencials) ja hi són?**
-Sí, tot i que la nova modalitat encara s'està desplegant per part del Ministeri. El cercador els recull a mesura que es publiquen.
+**Els cursos d'especialització (Grau E) també hi són?**
+Sí. El cercador inclou 36 cursos d'especialització, amb accés des de grau mitjà o des de grau superior segons el curs.
 
 **Es pot usar en mòbil?**
 Sí, la interfície és responsiva i funciona correctament en telèfons i tauletes.
