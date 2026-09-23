@@ -1,17 +1,20 @@
 ---
-gsd_state_version: 1.0
+gsd_state_version: "1.0"
 milestone: v1.0
-milestone_name: milestone
+current_phase_name: 06
 status: executing
 stopped_at: context exhaustion at 90% (2026-04-23)
-last_updated: "2026-04-26T08:02:56.385Z"
-last_activity: 2026-04-26 -- Phase --phase execution started
+last_updated: "2026-09-23T21:54:43.748Z"
+last_activity: 2026-04-26
+last_activity_desc: Phase --phase execution started
+state_head: 584ba220469301cc74cdbcd770bc11a12c2daaac
 progress:
   total_phases: 6
   completed_phases: 5
   total_plans: 16
   completed_plans: 15
   percent: 94
+milestone_name: milestone
 ---
 
 # Project State
@@ -28,9 +31,9 @@ See: .planning/PROJECT.md (updated 2026-04-16)
 Phase: --phase (06) — EXECUTING
 Plan: 1 of --name
 Status: Executing Phase --phase
-Last activity: 2026-04-26 -- Phase --phase execution started
+Last activity: 2026-09-23 - Completed quick task 260923-x1s: Corregeix la definició dels graus A–E (LO 3/2022)
 
-Progress: [█████████░] 83% (Fases 01, 02, 03, 04, 05 completades; 06 pendent)
+Progress: [█████████░] 94% (Fases 01, 02, 03, 04, 05 completades; 06 pendent)
 
 ## Performance Metrics
 
@@ -89,10 +92,11 @@ None yet.
 
 ### Quick Tasks Completed
 
-| # | Descripció | Data | Commit | Directori |
-|---|------------|------|--------|-----------|
-| 260419-wm | Preparar deploy VPS Contabo + CloudPanel (gunicorn, systemd, nginx, API_BASE dinàmica) | 2026-04-19 | 43267db | [260419-wm-deploy-vps-contabo-cloudpanel](.planning/quick/260419-wm-deploy-vps-contabo-cloudpanel/) |
-| 260419-b3 | Ordenació tri-estat per click a capçaleres Denominació i Codi de la taula de resultats | 2026-04-19 | 1206227 | [260419-b3-ordenacio-columnes-taula](.planning/quick/260419-b3-ordenacio-columnes-taula/) |
+| # | Description | Date | Commit | Status | Directory |
+| --- | ------------- | ------ | -------- | -------- | ----------- |
+| 260419-wm | Descripció: Preparar deploy VPS Contabo + CloudPanel (gunicorn, systemd, nginx, API_BASE dinàmica) · Data: 2026-04-19 · Directori: [260419-wm-deploy-vps-contabo-cloudpanel](.planning/quick/260419-wm-deploy-vps-contabo-cloudpanel/) | — | 43267db | — | — |
+| 260419-b3 | Descripció: Ordenació tri-estat per click a capçaleres Denominació i Codi de la taula de resultats · Data: 2026-04-19 · Directori: [260419-b3-ordenacio-columnes-taula](.planning/quick/260419-b3-ordenacio-columnes-taula/) | — | 1206227 | — | — |
+| 260923-x1s | Corregeix la definició dels graus A–E (LO 3/2022) a Per què GrausFP i Fonts | 2026-09-23 | 584ba22 | — | [260923-x1s-fix-grade-a-e-descriptions-lo-3-2022-on-](./quick/260923-x1s-fix-grade-a-e-descriptions-lo-3-2022-on-/) |
 
 ### Blockers/Concerns
 
