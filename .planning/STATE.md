@@ -4,10 +4,10 @@ milestone: v1.0
 current_phase_name: 06
 status: executing
 stopped_at: context exhaustion at 90% (2026-04-23)
-last_updated: "2026-09-24T07:27:30.540Z"
+last_updated: "2026-09-24T07:31:38.614Z"
 last_activity: 2026-09-24
 last_activity_desc: Phase --phase execution started
-state_head: 6db9f1cccd066ee6e61702fc89396687b02b16ab
+state_head: 89ed384e9b7f19d9cef2d8b2dc254e89c3fbf246
 progress:
   total_phases: 6
   completed_phases: 5
@@ -31,7 +31,7 @@ See: .planning/PROJECT.md (updated 2026-04-16)
 Phase: --phase (06) — EXECUTING
 Plan: 1 of --name
 Status: Executing Phase --phase
-Last activity: 2026-09-24 - Completed quick task 260924-1rf: Typeset index.html
+Last activity: 2026-09-24 - Completed quick task 260924-d86: Clarify empty states
 
 Progress: [█████████░] 94% (Fases 01, 02, 03, 04, 05 completades; 06 pendent)
 
@@ -101,6 +101,7 @@ None yet.
 | 260924-09g | Harden index.html: teclat, favorits tàctils, main, paginació, plurals, reintent d'error | 2026-09-23 | b02419f | — | [260924-09g-harden-index-html-keyboard-rows-fav-a11y](./quick/260924-09g-harden-index-html-keyboard-rows-fav-a11y/) |
 | 260924-0s3 | Adapt index.html mòbil: taula en targetes, barra superior, modes apilats, àrees tàctils 44px | 2026-09-23 | c81afab | — | [260924-0s3-adapt-index-html-for-mobile-table-to-car](./quick/260924-0s3-adapt-index-html-for-mobile-table-to-car/) |
 | 260924-1rf | Typeset index.html: escala tipogràfica per rols, fora 7,6px, zoom iOS, fonts | 2026-09-24 | 6db9f1c | — | [260924-1rf-typeset-index-html-role-type-scale-token](./quick/260924-1rf-typeset-index-html-role-type-scale-token/) |
+| 260924-d86 | Clarify: missatges de cap resultat (taula, ocupació, FPO) | 2026-09-24 | 89ed384 | — | [260924-d86-clarify-empty-state-copy-in-index-html](./quick/260924-d86-clarify-empty-state-copy-in-index-html/) |
 
 ### Blockers/Concerns
 
