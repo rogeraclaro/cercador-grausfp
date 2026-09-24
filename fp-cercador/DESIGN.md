@@ -262,5 +262,7 @@ Small inline tags beside programme names: "NOU" (success tint, 10px bold upperca
 - **Don't** introduce a link or accent hue (the old `#1a73e8` blue was removed on purpose); new accents come from the warm neutrals or an existing semantic tint.
 - **Don't** introduce cool greys (`#666`, `#888`, `#ccc`); use Umber, Seam or Faded Ink instead.
 - **Don't** add shadows to cards, rows or bars; shadows belong only to floating modals.
+- **Don't** use emoji as icons. Icons are inline SVG, 2px round stroke, `currentColor` (heart, bell, phone share one vocabulary).
+- **Don't** rely on a middle dot to separate wrapped meta items; use flex `gap`, so a separator never lands at the start of a line.
 - **Don't** use tinted badges decoratively; every tint must mark a real record status.
 - **Don't** round corners beyond 6px except for the existing centres pill.
