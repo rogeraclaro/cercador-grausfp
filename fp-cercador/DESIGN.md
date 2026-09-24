@@ -252,7 +252,7 @@ Small inline tags beside programme names: "NOU" (success tint, 10px bold upperca
 ## Do's and Don'ts
 
 ### Do:
-- **Do** use the `:root` custom properties for every colour: core (`--dark`, `--warm`, `--warm2`, `--border`, `--bg`, `--white`, `--faded`, `--ink-soft`) and semantic (`--ok-*`, `--amber-*`, `--alert-*`, `--path-*`, `--heart`, `--scrim`).
+- **Do** define tokens once, in `frontend/site.css` (linked by every page before its own `<style>`), and use them for every colour: core (`--dark`, `--warm`, `--warm2`, `--border`, `--bg`, `--white`, `--faded`, `--ink-soft`) and semantic (`--ok-*`, `--amber-*`, `--alert-*`, `--path-*`, `--heart`, `--scrim`).
 - **Do** build hierarchy with Register Ink: weight 500–600, a 2px Ink rule, or an inverted Ink block.
 - **Do** keep 13–14px DM Sans as the working size and reserve the serif for the wordmark and headline.
 - **Do** use the shared focus treatment: `outline: 2px solid var(--warm); outline-offset: 2px`.
