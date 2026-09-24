@@ -61,3 +61,32 @@ def test_expand_token_dict_esport():
 def test_expand_token_dict_transport():
     from app import _expand_token
     assert _expand_token('transport') == ['transport', 'transporte']
+
+
+# --- GET /api/ca-es-terms: la taula principal reutilitza l'expansió CA→ES --------
+
+
+def _client():
+    from app import app
+    return app.test_client()
+
+
+def test_ca_es_terms_endpoint_shape():
+    resp = _client().get('/api/ca-es-terms')
+    assert resp.status_code == 200
+    data = resp.get_json()
+    assert isinstance(data['terms'], dict) and data['terms']
+    assert isinstance(data['suffixes'], list) and data['suffixes']
+
+
+def test_ca_es_terms_endpoint_matches_backend_tables():
+    """Una sola font de veritat: l'endpoint exposa exactament les taules de app.py."""
+    from app import _CA_ES_TERMS, _CA_ES_SUFFIXES
+    data = _client().get('/api/ca-es-terms').get_json()
+    assert data['terms'] == _CA_ES_TERMS
+    assert [tuple(p) for p in data['suffixes']] == list(_CA_ES_SUFFIXES)
+
+
+def test_ca_es_terms_endpoint_is_cacheable():
+    resp = _client().get('/api/ca-es-terms')
+    assert 'max-age' in resp.headers.get('Cache-Control', '')

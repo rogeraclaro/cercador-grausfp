@@ -1500,6 +1500,21 @@ def _expand_token(t: str) -> list[str]:
     return [t]
 
 
+@app.route('/api/ca-es-terms')
+def api_ca_es_terms():
+    """Taules d'expansió CA→ES (mateixa font que la cerca d'ocupació).
+
+    El frontend les fa servir perquè la cerca de la taula principal accepti
+    termes en català. Contingut estàtic: es pot cachejar al navegador.
+    """
+    resp = jsonify({
+        'terms': _CA_ES_TERMS,
+        'suffixes': [list(p) for p in _CA_ES_SUFFIXES],
+    })
+    resp.headers['Cache-Control'] = 'public, max-age=3600'
+    return resp
+
+
 _ocupaciones_cache: dict = {"mtime": None, "entries": None}
 
 

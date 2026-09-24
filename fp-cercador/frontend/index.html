@@ -1562,6 +1562,7 @@
         // F8 — Mode toggle (nom / ocupació)
         searchMode: 'nom',          // 'nom' | 'ocupacio'
         ocupQuery: '',
+        caEs: null,           // taules d'expansió CA→ES (/api/ca-es-terms); null = cerca només literal
         ocupResults: [],            // resultados de /api/ocupaciones
         ocupLoading: false,
         ocupTimer: null,
@@ -1637,9 +1638,38 @@
           }
         },
 
+        async loadCaEs() {
+          try {
+            const res = await fetch(API_BASE + '/api/ca-es-terms');
+            if (res.ok) this.caEs = await res.json();
+          } catch (e) { /* sense expansió: la cerca continua funcionant en literal */ }
+        },
+
+        // Grups de variants per token si la cerca conté termes en català (mateixes regles que _expand_token
+        // del backend). Retorna null si cap token s'expandeix: llavors la cerca és la literal de sempre.
+        expandSearch(q) {
+          const ce = this.caEs;
+          if (!ce || !q) return null;
+          let expanded = false;
+          const groups = q.split(/\s+/).map(tok => {
+            let es = null;
+            if (Object.prototype.hasOwnProperty.call(ce.terms, tok)) {
+              es = ce.terms[tok];
+            } else {
+              for (const [ca, esSfx] of ce.suffixes) {
+                if (tok.endsWith(ca) && tok.length > ca.length + 2) { es = tok.slice(0, -ca.length) + esSfx; break; }
+              }
+            }
+            if (es && es !== tok) { expanded = true; return [tok, es]; }
+            return [tok];
+          });
+          return expanded ? groups : null;
+        },
+
         async init() {
           // La petició del catàleg s'inicia en paral·lel amb l'autenticació, com abans amb Promise.all.
           const catalogRequest = fetch(API_BASE + '/api/ofertes');
+          this.loadCaEs();
           // Evita un unhandled-rejection mentre /api/auth/me encara està pendent; el rebuig es gestiona dins loadCatalog.
           catalogRequest.catch(() => {});
           try {
@@ -1730,6 +1760,7 @@
           }
           const q = this.search.normalize('NFD')
             .replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+          const groups = this.expandSearch(q);
           const result = this.allRecords.filter(r => {
             if (this.filterOld === 'hide' && r.plan_antiguo) return false;
             if (this.filterOld === 'only' && !r.plan_antiguo) return false;
@@ -1737,7 +1768,12 @@
             if (this.filterFamilia && r.familia !== this.filterFamilia) return false;
             if (this.filterNivel && r.nivel !== parseInt(this.filterNivel)) return false;
             if (this.filterFavs && !this.favorites.has(r.id)) return false;
-            if (q && !r._normDen.includes(q) && !r._normCod.includes(q)) return false;
+            if (q) {
+              const hitDen = groups
+                ? groups.every(g => g.some(v => r._normDen.includes(v)))
+                : r._normDen.includes(q);
+              if (!hitDen && !r._normCod.includes(q)) return false;
+            }
             return true;
           });
           if (this.sortDir !== 0) {
