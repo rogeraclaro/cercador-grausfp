@@ -85,7 +85,7 @@
       'index.loading': 'Carregant dades del catàleg FP...',
       'index.error': "No s'han pogut carregar les dades del catàleg. Torna-ho a provar d'aquí a uns moments.",
       'index.error.retry': 'Torna-ho a provar',
-      'index.results.zero': 'Cap resultat coincideix amb els filtres aplicats',
+      'index.results.zero': 'Cap resultat trobat',
       'index.results.one': '1 resultat trobat',
       'index.results.many': '{n} resultats trobats',
 
@@ -96,7 +96,8 @@
       'index.col.grau': 'Grau',
       'index.col.niv': 'Nivell',
       'index.table.caption': 'Resultats del cercador de Graus FP',
-      'index.table.empty': 'Cap resultat coincideix amb els filtres aplicats.',
+      'index.table.empty': 'Cap resultat amb aquests filtres. Treu-ne algun per veure\'n més.',
+      'index.table.empty.search': 'Cap resultat per a «{q}». Els noms del catàleg són en castellà: prova\'l en castellà o treu algun filtre.',
       'index.fav.add': 'Afegeix als favorits',
       'index.fav.remove': 'Treu dels favorits',
       'index.badge.old': 'Pla antic',
@@ -219,7 +220,7 @@
       'fpo.detall.horari': 'Horari',
       'fpo.detall.dates': 'Dates',
       'fpo.detall.modalitat': 'Modalitat',
-      'fpo.empty': 'No hi ha especialitats que coincideixin.',
+      'fpo.empty': 'Cap especialitat coincideix amb aquests filtres. Treu-ne algun per veure\'n més.',
       'fpo.fav.save': 'Desa aquesta especialitat',
       'fpo.fav.saved': 'Especialitat desada',
       'fpo.fav.track_course': 'Segueix aquest curs',
@@ -390,7 +391,7 @@
       'ocupacions.hero.sub': 'Escriu què vols fer i descobreix quins graus FP hi porten.',
       'ocupacions.placeholder': 'soldador, programador, cuidador…',
       'ocupacions.meta': '{n} graus amb ocupacions que coincideixen',
-      'ocupacions.empty': 'Cap resultat. Prova un altre terme (en castellà).',
+      'ocupacions.empty': 'Cap ocupació coincideix amb «{q}». El catàleg d\'ocupacions és en castellà: prova\'l en castellà o amb un terme més general.',
       'page.title.ocupacions': 'Cerca per ocupació — Cercador Graus FP',
 
       /* ── alertes.html ── */
@@ -613,7 +614,7 @@
       'index.loading': 'Cargando datos del catálogo FP...',
       'index.error': 'No se han podido cargar los datos del catálogo. Vuelve a intentarlo en unos momentos.',
       'index.error.retry': 'Volver a intentarlo',
-      'index.results.zero': 'Ningún resultado coincide con los filtros aplicados',
+      'index.results.zero': 'Ningún resultado encontrado',
       'index.results.one': '1 resultado encontrado',
       'index.results.many': '{n} resultados encontrados',
 
@@ -624,7 +625,8 @@
       'index.col.grau': 'Grado',
       'index.col.niv': 'Nivel',
       'index.table.caption': 'Resultados del buscador de Grados FP',
-      'index.table.empty': 'Ningún resultado coincide con los filtros aplicados.',
+      'index.table.empty': 'Ningún resultado con estos filtros. Quita alguno para ver más.',
+      'index.table.empty.search': 'Ningún resultado para «{q}». Prueba otro término o quita algún filtro.',
       'index.fav.add': 'Añadir a favoritos',
       'index.fav.remove': 'Quitar de favoritos',
       'index.badge.old': 'Plan antiguo',
@@ -747,7 +749,7 @@
       'fpo.detall.horari': 'Horario',
       'fpo.detall.dates': 'Fechas',
       'fpo.detall.modalitat': 'Modalidad',
-      'fpo.empty': 'No hay especialidades que coincidan.',
+      'fpo.empty': 'Ninguna especialidad coincide con estos filtros. Quita alguno para ver más.',
       'fpo.fav.save': 'Guardar esta especialidad',
       'fpo.fav.saved': 'Especialidad guardada',
       'fpo.fav.track_course': 'Seguir este curso',
@@ -918,7 +920,7 @@
       'ocupacions.hero.sub': 'Escribe qué quieres hacer y descubre qué grados FP te llevan.',
       'ocupacions.placeholder': 'soldador, programador, cuidador…',
       'ocupacions.meta': '{n} grados con ocupaciones que coinciden',
-      'ocupacions.empty': 'Sin resultados. Prueba otro término.',
+      'ocupacions.empty': 'Ninguna ocupación coincide con «{q}». Prueba con otro término o con uno más general.',
       'page.title.ocupacions': 'Búsqueda por ocupación — Buscador Grados FP',
 
       /* ── alertes.html ── */

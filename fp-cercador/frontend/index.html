@@ -2822,7 +2822,7 @@
           <tbody>
             <template x-if="filteredCount === 0">
               <tr class="empty-row">
-                <td colspan="5" x-text="t('index.table.empty')"></td>
+                <td colspan="5" x-text="search.trim() ? t('index.table.empty.search', {q: search.trim()}) : t('index.table.empty')"></td>
               </tr>
             </template>
           </tbody>
@@ -3234,7 +3234,7 @@
           </div>
         </template>
         <template x-if="ocupQuery.trim() && !ocupLoading && ocupResults.length === 0">
-          <div class="empty" x-text="t('ocupacions.empty')"></div>
+          <div class="empty" x-text="t('ocupacions.empty', {q: ocupQuery.trim()})"></div>
         </template>
       </div>
     </template>
