@@ -32,9 +32,22 @@ typography:
     fontSize: "20px"
     fontWeight: 400
     letterSpacing: "-0.3px"
+  display-sm:
+    fontFamily: "'DM Serif Display', serif"
+    fontSize: "30px"
+    fontWeight: 400
+    lineHeight: 1.05
+  lead:
+    fontFamily: "'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif"
+    fontSize: "15px"
+    fontWeight: 400
   body:
     fontFamily: "'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif"
     fontSize: "14px"
+    fontWeight: 400
+  input:
+    fontFamily: "'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif"
+    fontSize: "16px"
     fontWeight: 400
   body-small:
     fontFamily: "'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif"
@@ -182,11 +195,15 @@ Links are Register Ink with an Umber underline (2px offset) that darkens to Ink 
 - **Display** (400, 48px, line-height 1.05; 30px under 768px): the page headline in the hero. One per page.
 - **Title** (400, 20px, -0.3px tracking): the GrausFP wordmark in the top bar.
 - **Body** (400–500, 14px): default text, tabs, mode buttons; programme names in the table at weight 500. The search field uses 16px so iOS does not zoom.
+- **Lead** (400, 15px; 14px under 768px): the hero subtitle and occupation card titles.
+- **Input** (400, 16px): search and, on touch devices, every select and text field, so iOS Safari never zooms on focus.
 - **Body Small** (400, 13px): filters, family column, counts, secondary buttons. It is the most common size in the product.
-- **Label** (600, 11px, 0.07em, uppercase): table column headers and small status badges.
+- **Label** (600, 11px, 0.07em, uppercase): table column headers and small status badges. Also the "partial accreditation of" note beside programme names, in Umber at full opacity.
 - **Mono** (400, 12px): official programme codes, in Umber.
 
 ### Named Rules
+**The Role Scale Rule.** Every font size is a `--fs-*` token (`display`, `display-sm`, `title`, `lead`, `body`, `small`, `label`, `mono`, `input`). No `em` or `rem` sizes that compound inside other sized elements, and no visible text under 11px.
+
 **The One Serif Rule.** The serif appears only in the wordmark and page headlines. Tables, controls and badges are always set in DM Sans.
 
 ## Layout

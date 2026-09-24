@@ -314,6 +314,18 @@
       "mono": {
         "displayName": "Mono",
         "purpose": "Official programme codes."
+      },
+      "display-sm": {
+        "displayName": "Display Small",
+        "purpose": "Page headline under 768px."
+      },
+      "lead": {
+        "displayName": "Lead",
+        "purpose": "Hero subtitle and occupation card titles."
+      },
+      "input": {
+        "displayName": "Input",
+        "purpose": "Form controls; 16px on touch so iOS never zooms."
       }
     },
     "shadows": [
@@ -423,6 +435,11 @@
         "name": "The Tint Means Status Rule",
         "body": "Every tinted tag (green, amber, pathway green) states a fact about a record. A tint without a meaning is not allowed.",
         "section": "colors"
+      },
+      {
+        "name": "The Role Scale Rule",
+        "body": "Every font size is a --fs-* token. No compounding em/rem sizes, and no visible text under 11px.",
+        "section": "typography"
       },
       {
         "name": "The One Serif Rule",
