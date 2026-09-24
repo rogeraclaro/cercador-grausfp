@@ -15,6 +15,7 @@
     href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Serif+Display:ital@0;1&family=Geist+Mono:wght@400&display=swap"
     rel="stylesheet">
 
+  <link rel="stylesheet" href="site.css?v=1">
   <style>
     *,
     *::before,
@@ -22,41 +23,6 @@
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-    }
-
-    :root {
-      --dark: #1c1410;
-      --warm: #755f51;
-      --warm2: #f5ece2;
-      --border: #e8ddd4;
-      --bg: #fdf8f2;
-      --white: #ffffff;
-      --faded: #8a7060;
-      --ink-soft: #3a2c24;
-      --heart: #c62828;
-      /* semantic tints */
-      --ok-bg: #dcfce7;
-      --ok-ink: #166534;
-      --ok-edge: #bbf7d0;
-      --amber-bg: #fef3c7;
-      --amber-ink: #92400e;
-      --alert-bg: #fef2f2;
-      --alert-edge: #fecaca;
-      --alert-ink: #991b1b;
-      --path-bg: #e8f4e8;
-      --path-ink: #2a6e2a;
-      /* overlay */
-      --scrim: rgba(28, 20, 16, 0.45);
-      /* role type scale */
-      --fs-display: 48px;
-      --fs-display-sm: 30px;
-      --fs-title: 20px;
-      --fs-lead: 15px;
-      --fs-body: 14px;
-      --fs-small: 13px;
-      --fs-label: 11px;
-      --fs-mono: 12px;
-      --fs-input: 16px;
     }
 
     body {
@@ -67,24 +33,6 @@
     }
 
     /* ── Top bar ── */
-    .topbar {
-      background: var(--dark);
-      padding: 0 48px;
-    }
-
-    .topbar-inner {
-      display: flex;
-      align-items: center;
-      height: 52px;
-    }
-
-    .topbar-logo {
-      font-family: 'DM Serif Display', serif;
-      color: var(--white);
-      font-size: var(--fs-title);
-      letter-spacing: -0.3px;
-      text-decoration: none;
-    }
 
     /* ── Hero ── */
     .hero {
@@ -814,10 +762,6 @@
         overflow-x: hidden;
       }
 
-      .topbar {
-        padding: 0 16px;
-      }
-
       .hero {
         padding: 24px 16px 20px;
       }
@@ -1337,81 +1281,8 @@
     }
 
     /* Auth widget al topbar */
-    #auth-widget {
-      margin-left: auto;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .auth-greeting {
-      color: rgba(255, 255, 255, 0.75);
-      font-size: var(--fs-small);
-    }
-
-    .auth-btn {
-      font-size: var(--fs-small);
-      padding: 5px 14px;
-      border-radius: 4px;
-      border: 1px solid rgba(255, 255, 255, 0.35);
-      color: var(--white);
-      background: transparent;
-      cursor: pointer;
-      text-decoration: none;
-      font-family: inherit;
-      transition: background 0.15s;
-    }
-
-    .auth-btn:hover {
-      background: rgba(255, 255, 255, 0.12);
-    }
-
-    .auth-btn--primary {
-      background: var(--white);
-      color: var(--dark);
-      border-color: var(--white);
-    }
-
-    .auth-btn--primary:hover {
-      background: var(--warm2);
-    }
-
-    .auth-btn--logout {
-      border-color: rgba(255, 255, 255, 0.25);
-    }
 
     /* ── Lang selector ── */
-    .lang-selector {
-      display: flex;
-      align-items: center;
-      gap: 2px;
-      margin-left: 16px;
-    }
-
-    .lang-btn {
-      font-size: var(--fs-label);
-      font-weight: 700;
-      font-family: inherit;
-      padding: 3px 8px;
-      border-radius: 3px;
-      cursor: pointer;
-      background: transparent;
-      border: 1px solid rgba(255, 255, 255, 0.3);
-      color: rgba(255, 255, 255, 0.6);
-      letter-spacing: 0.04em;
-      transition: background 0.15s, color 0.15s;
-    }
-
-    .lang-btn:hover {
-      background: rgba(255, 255, 255, 0.12);
-      color: var(--white);
-    }
-
-    .lang-btn--active {
-      background: rgba(255, 255, 255, 0.18);
-      color: var(--white);
-      border-color: rgba(255, 255, 255, 0.6);
-    }
 
     /* Mobile ≤768: cards, top bar, mode toggle */
     @media (max-width: 768px) {
@@ -1537,36 +1408,6 @@
       }
 
       /* Top bar */
-      .topbar-inner {
-        flex-wrap: wrap;
-        height: auto;
-        min-height: 52px;
-        padding-block: 4px;
-        row-gap: 6px;
-        column-gap: 8px;
-        justify-content: flex-end;
-      }
-
-      .topbar-logo {
-        margin-right: auto;
-      }
-
-      .auth-greeting {
-        display: none;
-      }
-
-      #auth-widget {
-        gap: 6px;
-      }
-
-      .auth-btn {
-        white-space: nowrap;
-        padding: 5px 10px;
-      }
-
-      .lang-selector {
-        margin-left: 8px;
-      }
 
       /* Mode toggle */
       .mode-toggle {
