@@ -4,10 +4,10 @@ milestone: v1.0
 current_phase_name: 06
 status: executing
 stopped_at: context exhaustion at 90% (2026-04-23)
-last_updated: "2026-09-24T17:27:43.996Z"
+last_updated: "2026-09-24T18:01:05.931Z"
 last_activity: 2026-09-24
 last_activity_desc: Phase --phase execution started
-state_head: 96837fee509624befe25a6b54e6020e2c60a1b10
+state_head: 5a8faac684ee6fb140ad79646c3850f2673cace4
 progress:
   total_phases: 6
   completed_phases: 5
@@ -31,7 +31,7 @@ See: .planning/PROJECT.md (updated 2026-04-16)
 Phase: --phase (06) — EXECUTING
 Plan: 1 of --name
 Status: Executing Phase --phase
-Last activity: 2026-09-24 - Completed quick task 260924-s2p: subpage-specific fixes
+Last activity: 2026-09-24 - Completed quick task 260924-s3i: index uses site.css
 
 Progress: [█████████░] 94% (Fases 01, 02, 03, 04, 05 completades; 06 pendent)
 
@@ -105,6 +105,7 @@ None yet.
 | 260924-p1s | Polish index.html: targetes, filtres FPO mòbil, 44px, icones SVG | 2026-09-24 | b27a8c3 | — | [260924-p1s-polish-index-html](./quick/260924-p1s-polish-index-html/) |
 | 260924-s1c | site.css compartit: tokens i barra superior a 13 pàgines | 2026-09-24 | 11169cd | — | [260924-s1c-shared-site-css](./quick/260924-s1c-shared-site-css/) |
 | 260924-s2p | Subpàgines: tabs perfil, gràfic Observatori, main, badge privacitat, colors missatge | 2026-09-24 | 96837fe | — | [260924-s2p-subpages-specific-fixes](./quick/260924-s2p-subpages-specific-fixes/) |
+| 260924-s3i | index.html usa site.css (renderitzat idèntic) | 2026-09-24 | 5a8faac | — | [260924-s3i-index-uses-site-css](./quick/260924-s3i-index-uses-site-css/) |
 
 ### Blockers/Concerns
 
