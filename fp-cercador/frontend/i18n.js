@@ -77,7 +77,7 @@
       'index.filter.onlyOld': 'Només pla antic',
       'index.filter.favs': 'Favorits',
       'index.btn.alerts': 'Veure alertes',
-      'index.btn.saveAlert': '🔔 Desa com a alerta',
+      'index.btn.saveAlert': 'Desa com a alerta',
       'index.btn.exportCsv': '↓ Exporta CSV',
       'index.btn.clearFilters': 'Esborrar filtres ×',
 
@@ -606,7 +606,7 @@
       'index.filter.onlyOld': 'Solo plan antiguo',
       'index.filter.favs': 'Favoritos',
       'index.btn.alerts': 'Ver alertas',
-      'index.btn.saveAlert': '🔔 Guardar como alerta',
+      'index.btn.saveAlert': 'Guardar como alerta',
       'index.btn.exportCsv': '↓ Exportar CSV',
       'index.btn.clearFilters': 'Borrar filtros ×',
 
