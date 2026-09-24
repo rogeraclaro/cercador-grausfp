@@ -52,15 +52,15 @@
     }
 
     .msg--error {
-      background: #fde8e8;
-      border-color: #e8a0a0;
-      color: #7a1515;
+      background: var(--alert-bg);
+      border-color: var(--alert-edge);
+      color: var(--alert-ink);
     }
 
     .msg--ok {
-      background: #e8f5e8;
-      border-color: #8ec98e;
-      color: #1a521a;
+      background: var(--ok-bg);
+      border-color: var(--ok-edge);
+      color: var(--ok-ink);
     }
 
     form {
@@ -228,6 +228,7 @@
     </div>
   </div>
 
+  <main id="main">
   <div class="auth-page">
     <h1 data-i18n="register.h1">Crea un compte</h1>
     <p id="msg" class="msg" role="status" hidden></p>
@@ -281,6 +282,7 @@
     </form>
     <p class="auth-links" data-i18n="register.link.login">Ja tens compte? <a href="login.html">Inicia sessió</a></p>
   </div>
+  </main>
 
   <script>
     const API_BASE = window.location.hostname === 'localhost' ? 'http://localhost:5001' : '';

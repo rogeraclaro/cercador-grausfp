@@ -450,6 +450,26 @@
         font-size: 13px;
       }
     }
+
+    @media (max-width: 768px) {
+      .section-nav {
+        padding: 0 16px;
+        overflow-x: auto;
+      }
+
+      .section-nav-link {
+        white-space: nowrap;
+        padding: 12px 14px;
+      }
+    }
+
+    @media (pointer: coarse) {
+      .section-nav-link {
+        display: inline-flex;
+        align-items: center;
+        min-height: 44px;
+      }
+    }
   </style>
   <script src="i18n.js"></script>
   <script src="auth.js"></script>
