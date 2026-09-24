@@ -11,6 +11,7 @@
     href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=DM+Serif+Display:ital@0;1&family=Geist+Mono:wght@400;500&display=swap"
     rel="stylesheet">
 
+  <link rel="stylesheet" href="site.css?v=1">
   <style>
     *,
     *::before,
@@ -18,15 +19,6 @@
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-    }
-
-    :root {
-      --dark: #1c1410;
-      --warm: #8a7060;
-      --warm2: #f5ece2;
-      --border: #e8ddd4;
-      --bg: #fdf8f2;
-      --white: #ffffff;
     }
 
     body {
@@ -37,63 +29,6 @@
     }
 
     /* ── Topbar ── */
-    .topbar {
-      background: var(--dark);
-      padding: 0 48px;
-    }
-
-    .topbar-inner {
-      display: flex;
-      align-items: center;
-      height: 52px;
-    }
-
-    .topbar-logo {
-      font-family: 'DM Serif Display', serif;
-      color: var(--white);
-      font-size: 20px;
-      letter-spacing: -0.3px;
-      text-decoration: none;
-    }
-
-    #auth-widget {
-      margin-left: auto;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .auth-greeting {
-      color: rgba(255, 255, 255, 0.75);
-      font-size: 13px;
-    }
-
-    .auth-btn {
-      font-size: 13px;
-      padding: 5px 14px;
-      border-radius: 4px;
-      border: 1px solid rgba(255, 255, 255, 0.35);
-      color: var(--white);
-      background: transparent;
-      cursor: pointer;
-      text-decoration: none;
-      font-family: inherit;
-      transition: background 0.15s;
-    }
-
-    .auth-btn:hover {
-      background: rgba(255, 255, 255, 0.12);
-    }
-
-    .auth-btn--primary {
-      background: var(--white);
-      color: var(--dark);
-      border-color: var(--white);
-    }
-
-    .auth-btn--primary:hover {
-      background: var(--warm2);
-    }
 
     /* ── Hero ── */
     .hero {
@@ -485,37 +420,6 @@
     }
 
     /* ── Lang selector ── */
-    .lang-selector {
-      display: flex;
-      align-items: center;
-      gap: 2px;
-      margin-left: 16px;
-    }
-
-    .lang-btn {
-      font-size: 11px;
-      font-weight: 700;
-      font-family: inherit;
-      padding: 3px 8px;
-      border-radius: 3px;
-      cursor: pointer;
-      background: transparent;
-      border: 1px solid rgba(255, 255, 255, 0.3);
-      color: rgba(255, 255, 255, 0.6);
-      letter-spacing: 0.04em;
-      transition: background 0.15s, color 0.15s;
-    }
-
-    .lang-btn:hover {
-      background: rgba(255, 255, 255, 0.12);
-      color: var(--white);
-    }
-
-    .lang-btn--active {
-      background: rgba(255, 255, 255, 0.18);
-      color: var(--white);
-      border-color: rgba(255, 255, 255, 0.6);
-    }
 
     @media (max-width: 768px) {
       .topbar {
