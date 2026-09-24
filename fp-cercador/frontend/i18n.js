@@ -391,7 +391,7 @@
       'ocupacions.hero.sub': 'Escriu què vols fer i descobreix quins graus FP hi porten.',
       'ocupacions.placeholder': 'soldador, programador, cuidador…',
       'ocupacions.meta': '{n} graus amb ocupacions que coincideixen',
-      'ocupacions.empty': 'Cap ocupació coincideix amb «{q}». El catàleg d\'ocupacions és en castellà: prova\'l en castellà o amb un terme més general.',
+      'ocupacions.empty': 'Cap ocupació coincideix amb «{q}». Prova un terme més general o una altra paraula.',
       'page.title.ocupacions': 'Cerca per ocupació — Cercador Graus FP',
 
       /* ── alertes.html ── */
