@@ -12,7 +12,7 @@
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link
-    href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=DM+Serif+Display:ital@0;1&family=Geist+Mono:wght@400;500&display=swap"
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Serif+Display:ital@0;1&family=Geist+Mono:wght@400&display=swap"
     rel="stylesheet">
 
   <style>
@@ -47,11 +47,21 @@
       --path-ink: #2a6e2a;
       /* overlay */
       --scrim: rgba(28, 20, 16, 0.45);
+      /* role type scale */
+      --fs-display: 48px;
+      --fs-display-sm: 30px;
+      --fs-title: 20px;
+      --fs-lead: 15px;
+      --fs-body: 14px;
+      --fs-small: 13px;
+      --fs-label: 11px;
+      --fs-mono: 12px;
+      --fs-input: 16px;
     }
 
     body {
       font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-      font-size: 14px;
+      font-size: var(--fs-body);
       color: var(--dark);
       background: var(--bg);
     }
@@ -71,7 +81,7 @@
     .topbar-logo {
       font-family: 'DM Serif Display', serif;
       color: var(--white);
-      font-size: 20px;
+      font-size: var(--fs-title);
       letter-spacing: -0.3px;
       text-decoration: none;
     }
@@ -84,7 +94,7 @@
 
     .hero h1 {
       font-family: 'DM Serif Display', serif;
-      font-size: 48px;
+      font-size: var(--fs-display);
       font-weight: 400;
       line-height: 1.05;
       color: var(--dark);
@@ -92,7 +102,7 @@
     }
 
     .hero-sub {
-      font-size: 15px;
+      font-size: var(--fs-lead);
       color: var(--warm);
       margin-bottom: 28px;
     }
@@ -116,7 +126,7 @@
       padding: 14px 18px 14px 50px;
       border: 2px solid var(--dark);
       border-radius: 6px;
-      font-size: 16px;
+      font-size: var(--fs-input);
       font-family: inherit;
       background: var(--white);
       color: var(--dark);
@@ -150,7 +160,7 @@
       border: none;
       border-bottom: 2.5px solid transparent;
       cursor: pointer;
-      font-size: 14px;
+      font-size: var(--fs-body);
       font-family: inherit;
       font-weight: 400;
       background: transparent;
@@ -181,7 +191,7 @@
       border: 2px solid var(--dark);
       border-radius: 6px;
       cursor: pointer;
-      font-size: 14px;
+      font-size: var(--fs-body);
       font-family: inherit;
       font-weight: 500;
       background: transparent;
@@ -204,7 +214,7 @@
       border-left: 3px solid var(--dark);
       padding: 10px 14px;
       margin: 0 0 16px;
-      font-size: 13px;
+      font-size: var(--fs-small);
       color: var(--warm);
       line-height: 1.5;
       text-align: left;
@@ -217,7 +227,7 @@
       padding: 10px 14px;
       margin: 0 0 16px;
       border-radius: 6px;
-      font-size: 13px;
+      font-size: var(--fs-small);
       text-align: left;
     }
 
@@ -227,7 +237,7 @@
       background: var(--white);
       padding: 10px 12px;
       margin-bottom: 8px;
-      font-size: 13px;
+      font-size: var(--fs-small);
       line-height: 1.5;
     }
 
@@ -245,7 +255,7 @@
       display: inline-block;
       padding: 1px 8px;
       border-radius: 10px;
-      font-size: 11px;
+      font-size: var(--fs-label);
       font-weight: 600;
       border: 1px solid transparent;
     }
@@ -280,7 +290,7 @@
       border: 1.5px solid var(--border);
       border-radius: 4px;
       cursor: pointer;
-      font-size: 13px;
+      font-size: var(--fs-small);
       font-family: inherit;
       background: transparent;
       color: var(--warm);
@@ -307,7 +317,7 @@
     }
 
     .ocup-card h2 {
-      font-size: 15px;
+      font-size: var(--fs-lead);
       font-weight: 600;
       color: var(--dark);
       margin-bottom: 8px;
@@ -325,7 +335,7 @@
       padding: 3px 10px;
       background: var(--warm2);
       border-radius: 12px;
-      font-size: 12px;
+      font-size: var(--fs-small);
       color: var(--warm);
     }
 
@@ -340,7 +350,7 @@
       border: 1.5px solid var(--dark);
       border-radius: 4px;
       cursor: pointer;
-      font-size: 13px;
+      font-size: var(--fs-small);
       font-family: inherit;
       background: transparent;
       color: var(--dark);
@@ -354,7 +364,7 @@
     }
 
     .ocup-link {
-      font-size: 13px;
+      font-size: var(--fs-small);
       color: var(--warm);
       text-decoration: none;
     }
@@ -371,7 +381,7 @@
       border-radius: 8px;
       text-align: center;
       color: var(--warm);
-      font-size: 14px;
+      font-size: var(--fs-body);
       cursor: pointer;
       transition: border-color 0.15s;
     }
@@ -393,7 +403,7 @@
     }
 
     .filter-bar-label {
-      font-size: 13px;
+      font-size: var(--fs-small);
       color: var(--warm);
       margin-right: 4px;
     }
@@ -402,7 +412,7 @@
       padding: 5px 12px;
       border-radius: 4px;
       border: 1px solid var(--border);
-      font-size: 13px;
+      font-size: var(--fs-small);
       font-family: inherit;
       color: var(--dark);
       background: var(--white);
@@ -418,7 +428,7 @@
       display: flex;
       align-items: center;
       gap: 6px;
-      font-size: 13px;
+      font-size: var(--fs-small);
       color: var(--dark);
       cursor: pointer;
       user-select: none;
@@ -443,7 +453,7 @@
       padding: 5px 12px;
       border-radius: 4px;
       border: 1px solid var(--border);
-      font-size: 13px;
+      font-size: var(--fs-small);
       font-family: inherit;
       color: var(--warm);
       background: var(--white);
@@ -457,7 +467,7 @@
     }
 
     .save-alert-btn {
-      font-size: 13px;
+      font-size: var(--fs-small);
       font-family: inherit;
       font-weight: 500;
       padding: 5px 12px;
@@ -487,7 +497,7 @@
     }
 
     .results-count {
-      font-size: 13px;
+      font-size: var(--fs-small);
       color: var(--warm);
       font-style: italic;
       margin-bottom: 16px;
@@ -497,7 +507,7 @@
     .results-table {
       width: 100%;
       border-collapse: collapse;
-      font-size: 0.9em;
+      font-size: var(--fs-small);
       background: var(--white);
       border: 1px solid var(--border);
       border-radius: 2px;
@@ -514,7 +524,7 @@
       padding: 11px 16px;
       font-weight: 600;
       color: var(--dark);
-      font-size: 11px;
+      font-size: var(--fs-label);
       text-transform: uppercase;
       letter-spacing: 0.07em;
       background: transparent;
@@ -560,16 +570,17 @@
 
     .results-table td.col-nom {
       font-weight: 500;
+      font-size: var(--fs-body);
     }
 
     .results-table td.col-codi {
       font-family: 'Geist Mono', monospace;
-      font-size: 12px;
+      font-size: var(--fs-mono);
       color: var(--warm);
     }
 
     .results-table td.col-fam {
-      font-size: 13px;
+      font-size: var(--fs-small);
       color: var(--warm);
     }
 
@@ -584,7 +595,7 @@
     }
 
     .results-table td.col-fam {
-      font-size: 13px;
+      font-size: var(--fs-small);
       color: var(--warm);
       white-space: nowrap;
       overflow: hidden;
@@ -638,7 +649,7 @@
     .sort-indicator {
       display: inline-block;
       margin-left: 5px;
-      font-size: 10px;
+      font-size: var(--fs-label);
       opacity: 0.25;
     }
 
@@ -651,7 +662,7 @@
       display: inline-block;
       background: var(--amber-bg);
       color: var(--amber-ink);
-      font-size: 11px;
+      font-size: var(--fs-label);
       font-weight: 600;
       padding: 2px 6px;
       border-radius: 3px;
@@ -664,7 +675,7 @@
       display: inline-block;
       background: var(--ok-bg);
       color: var(--ok-ink);
-      font-size: 10px;
+      font-size: var(--fs-label);
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.03em;
@@ -713,7 +724,7 @@
       color: var(--alert-ink);
       border-radius: 4px;
       margin: 24px 48px;
-      font-size: 14px;
+      font-size: var(--fs-body);
     }
 
     .error-state .save-alert-btn {
@@ -730,7 +741,7 @@
     }
 
     .pagination-info {
-      font-size: 13px;
+      font-size: var(--fs-small);
       color: var(--warm);
     }
 
@@ -748,7 +759,7 @@
       border-radius: 4px;
       background: var(--white);
       cursor: pointer;
-      font-size: 13px;
+      font-size: var(--fs-small);
       font-family: inherit;
       color: var(--dark);
       transition: background 0.12s;
@@ -779,7 +790,7 @@
     .pagination-ellipsis {
       padding: 0 4px;
       color: var(--warm);
-      font-size: 13px;
+      font-size: var(--fs-small);
     }
 
     .sr-only {
@@ -812,11 +823,11 @@
       }
 
       .hero h1 {
-        font-size: 30px;
+        font-size: var(--fs-display-sm);
       }
 
       .hero-sub {
-        font-size: 14px;
+        font-size: var(--fs-body);
         margin-bottom: 20px;
       }
 
@@ -830,7 +841,7 @@
 
       .grau-tabs button {
         padding: 10px 12px;
-        font-size: 13px;
+        font-size: var(--fs-small);
       }
 
       .filter-bar {
@@ -881,7 +892,7 @@
     }
 
     .detall-inner .detall-hores {
-      font-size: 13px;
+      font-size: var(--fs-small);
       color: var(--warm);
       margin-right: 4px;
     }
@@ -893,7 +904,7 @@
       border-radius: 4px;
       background: var(--white);
       color: var(--dark);
-      font-size: 12px;
+      font-size: var(--fs-small);
       font-family: inherit;
       cursor: pointer;
       text-decoration: none;
@@ -906,7 +917,7 @@
     }
 
     .watch-btn {
-      font-size: 12px;
+      font-size: var(--fs-small);
       font-weight: 600;
       font-family: inherit;
       padding: 5px 12px;
@@ -1000,7 +1011,7 @@
       border: 1px solid var(--dark);
       border-radius: 12px;
       padding: 2px 8px;
-      font-size: 0.75rem;
+      font-size: var(--fs-mono);
       font-weight: 500;
       margin-left: 6px;
       white-space: nowrap;
@@ -1019,8 +1030,9 @@
 
     /* ── F5: Itineraris formatius ──────────────────────── */
     .textpetit {
-      font-size: 0.6em;
-      opacity: 0.6;
+      font-size: var(--fs-label);
+      color: var(--warm);
+      opacity: 1;
       margin-left: 5px;
     }
 
@@ -1033,14 +1045,14 @@
       color: var(--path-ink);
       cursor: default;
       vertical-align: middle;
-      font-size: 11px;
+      font-size: var(--fs-label);
       font-weight: 600;
     }
 
     .ciclos-d-list {
       margin: 4px 0 0 16px;
       padding: 0;
-      font-size: 0.9em;
+      font-size: var(--fs-small);
     }
 
     .ciclos-d-list a {
@@ -1056,7 +1068,7 @@
 
     .detall-ciclos-d {
       margin-top: 8px;
-      font-size: 0.9em;
+      font-size: var(--fs-small);
     }
 
     .centres-panel td {
@@ -1077,7 +1089,7 @@
       gap: 12px;
       margin-bottom: 10px;
       font-weight: 600;
-      font-size: 0.9rem;
+      font-size: var(--fs-body);
       flex-wrap: nowrap;
     }
 
@@ -1086,14 +1098,14 @@
     }
 
     .centres-header select {
-      font-size: 0.85rem;
+      font-size: var(--fs-small);
       padding: 2px 6px;
       border-radius: 4px;
       border: 1px solid var(--border);
     }
 
     .centres-search-input {
-      font-size: 0.85rem;
+      font-size: var(--fs-small);
       padding: 2px 6px;
       border-radius: 4px;
       border: 1px solid var(--border);
@@ -1101,7 +1113,7 @@
       padding: 3px 10px !important;
       border: 1px solid var(--border) !important;
       border-radius: 4px !important;
-      font-size: 0.85rem !important;
+      font-size: var(--fs-small) !important;
     }
 
     .centres-search-input:focus {
@@ -1115,12 +1127,12 @@
       background: none;
       border: none;
       cursor: pointer;
-      font-size: 1rem;
+      font-size: var(--fs-body);
       color: var(--warm);
     }
 
     button.watch-btn {
-      font-size: 12px;
+      font-size: var(--fs-small);
       border: 1px solid var(--border);
       font-weight: 400;
     }
@@ -1163,7 +1175,7 @@
 
     .centre-nom {
       font-weight: 500;
-      font-size: 0.88rem;
+      font-size: var(--fs-body);
       text-transform: capitalize;
     }
 
@@ -1180,21 +1192,21 @@
     }
 
     .centre-meta {
-      font-size: 0.78rem;
+      font-size: var(--fs-small);
       color: var(--warm);
       margin-top: 2px;
     }
 
     .centres-more {
       color: var(--warm);
-      font-size: 0.82rem;
+      font-size: var(--fs-small);
       margin-top: 8px;
     }
 
     .centres-buit {
       color: var(--warm);
       font-style: italic;
-      font-size: 0.85rem;
+      font-size: var(--fs-small);
     }
 
     /* Gating centres — modal + separator + upsell */
@@ -1237,7 +1249,7 @@
     }
 
     .centres-modal-msg {
-      font-size: 16px;
+      font-size: var(--fs-body);
       font-weight: 500;
       color: var(--dark);
       margin-bottom: 20px;
@@ -1255,7 +1267,7 @@
       display: inline-block;
       padding: 9px 24px;
       border-radius: 6px;
-      font-size: 14px;
+      font-size: var(--fs-body);
       font-weight: 600;
       cursor: pointer;
       text-decoration: none;
@@ -1277,7 +1289,7 @@
     .centres-modal-btn--secondary {
       background: none;
       color: var(--warm);
-      font-size: 13px;
+      font-size: var(--fs-small);
       font-weight: 400;
     }
 
@@ -1288,7 +1300,7 @@
     .centres-modal-login-link {
       display: block;
       margin-top: 12px;
-      font-size: 13px;
+      font-size: var(--fs-small);
       color: var(--warm);
       text-align: center;
       text-decoration: none;
@@ -1305,7 +1317,7 @@
     }
 
     .centres-upsell {
-      font-size: 0.85rem;
+      font-size: var(--fs-small);
       color: var(--warm);
       padding: 6px 0 2px;
       font-style: italic;
@@ -1334,11 +1346,11 @@
 
     .auth-greeting {
       color: rgba(255, 255, 255, 0.75);
-      font-size: 13px;
+      font-size: var(--fs-small);
     }
 
     .auth-btn {
-      font-size: 13px;
+      font-size: var(--fs-small);
       padding: 5px 14px;
       border-radius: 4px;
       border: 1px solid rgba(255, 255, 255, 0.35);
@@ -1377,7 +1389,7 @@
     }
 
     .lang-btn {
-      font-size: 11px;
+      font-size: var(--fs-label);
       font-weight: 700;
       font-family: inherit;
       padding: 3px 8px;
@@ -1459,19 +1471,19 @@
       }
 
       .results-table tbody tr:has(> td.col-nom) > td:not(.col-nom) {
-        font-size: 13px;
+        font-size: var(--fs-small);
         color: var(--warm);
         margin-left: 4px;
       }
 
       .results-table tbody tr:has(> td.col-nom) > td.col-codi {
-        font-size: 12px;
+        font-size: var(--fs-mono);
       }
 
       .results-table tbody tr:has(> td.col-nom) > td:not(.col-nom)::before {
         content: '· ';
         font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-        font-size: 13px;
+        font-size: var(--fs-small);
       }
 
       .results-table tbody tr:has(> td.col-nom) > td[data-label]::before {
@@ -1503,7 +1515,7 @@
         border: 1px solid var(--dark);
         border-radius: 3px;
         padding: 1px 6px;
-        font-size: 11px;
+        font-size: var(--fs-label);
         font-weight: 600;
         line-height: 1.4;
         color: var(--dark);
@@ -1577,6 +1589,16 @@
     }
 
     /* Touch: 44px targets */
+    /* Tabular figures for numeric columns */
+    .results-table td.col-niv,
+    .results-table td.col-hores,
+    .results-table td.col-ncursos,
+    .results-count,
+    .pagination button,
+    .pagination-info {
+      font-variant-numeric: tabular-nums;
+    }
+
     @media (pointer: coarse) {
       .lang-btn,
       .auth-btn,
@@ -1626,6 +1648,15 @@
         top: 50%;
         height: 44px;
         transform: translateY(-50%);
+      }
+
+      /* iOS Safari zooms any focused control under 16px */
+      select,
+      input[type="search"],
+      input[type="text"],
+      input[type="email"],
+      .centres-search-input {
+        font-size: var(--fs-input) !important;
       }
     }
   </style>
@@ -2632,7 +2663,7 @@
     <!-- Pla 060 — Barra de filtres del mode FPO -->
     <div class="filter-bar" x-show="searchMode === 'fpo'">
       <input type="search" x-model="fpoFilters.text" :placeholder="t('fpo.filter.text')" autocomplete="off"
-        style="padding:5px 12px;border-radius:4px;border:1px solid var(--border);font-size:13px;font-family:inherit;">
+        style="padding:5px 12px;border-radius:4px;border:1px solid var(--border);font-size:var(--fs-small);font-family:inherit;">
 
       <label class="sr-only" for="fpo-familia" x-text="t('fpo.filter.familia')"></label>
       <select id="fpo-familia" x-model="fpoFilters.familia"
@@ -3277,19 +3308,19 @@
                     <template x-if="fpoDetall[esp.codi]">
                       <div style="display:flex;flex-direction:column;gap:8px;">
                         <template x-if="(fpoDetall[esp.codi].queAprendras || {})[fpoLang()]">
-                          <p style="font-size:13px;margin:0;">
+                          <p style="font-size:var(--fs-small);margin:0;">
                             <strong x-text="t('fpo.detall.descripcio') + ': '"></strong>
                             <span x-text="fpoDetall[esp.codi].queAprendras[fpoLang()]"></span>
                           </p>
                         </template>
                         <template x-if="(fpoDetall[esp.codi].requisits || {})[fpoLang()]">
-                          <p style="font-size:13px;margin:0;">
+                          <p style="font-size:var(--fs-small);margin:0;">
                             <strong x-text="t('fpo.detall.requisits') + ': '"></strong>
                             <span x-text="fpoDetall[esp.codi].requisits[fpoLang()]"></span>
                           </p>
                         </template>
                         <template x-if="(fpoDetall[esp.codi].sortides || {})[fpoLang()]">
-                          <p style="font-size:13px;margin:0;">
+                          <p style="font-size:var(--fs-small);margin:0;">
                             <strong x-text="t('fpo.detall.sortides') + ': '"></strong>
                             <span x-text="fpoDetall[esp.codi].sortides[fpoLang()]"></span>
                           </p>
@@ -3308,7 +3339,7 @@
 
                         <template x-if="(fpoDetall[esp.codi].cursos || []).length > 0">
                           <div>
-                            <span style="font-size:13px;font-weight:600;" x-text="t('fpo.detall.cursos') + ':'"></span>
+                            <span style="font-size:var(--fs-small);font-weight:600;" x-text="t('fpo.detall.cursos') + ':'"></span>
                             <template x-for="curs in fpoDetall[esp.codi].cursos" :key="curs.idCurs">
                               <div class="fpo-curs">
                                 <div class="fpo-curs-nom" x-text="(curs.centre || {}).nom || ''"></div>
@@ -3383,7 +3414,7 @@
           <div>
             <p class="centres-modal-msg" style="color:var(--ok-ink);" data-i18n="modal.alert.ok">✓ Alerta desada correctament
             </p>
-            <p style="font-size:13px;color:var(--warm);margin-top:8px;text-align:center;" data-i18n="modal.alert.sub">
+            <p style="font-size:var(--fs-small);color:var(--warm);margin-top:8px;text-align:center;" data-i18n="modal.alert.sub">
               Rebràs un email quan hi hagi nous ensenyaments que encaixin amb els teus filtres.</p>
             <div class="centres-modal-actions" style="margin-top:16px;">
               <a href="alertes.html" class="centres-modal-btn centres-modal-btn--primary"
@@ -3417,7 +3448,7 @@
           data-i18n-aria="modal.close.aria" aria-label="Tanca"><span aria-hidden="true">✕</span></button>
         <p class="centres-modal-msg" data-i18n="modal.gate.msg">Registra't o entra amb el teu usuari per a accedir a
           tota la informació</p>
-        <p style="font-size:13px;color:var(--warm);text-align:center;margin-top:6px;" data-i18n="modal.gate.free">El
+        <p style="font-size:var(--fs-small);color:var(--warm);text-align:center;margin-top:6px;" data-i18n="modal.gate.free">El
           registre és gratuït</p>
         <div class="centres-modal-actions">
           <a href="register.html" class="centres-modal-btn centres-modal-btn--primary"
@@ -3431,15 +3462,15 @@
   </div><!-- /x-data -->
 
   <footer style="border-top:1px solid var(--border); padding:20px 48px; text-align:right;">
-    <a href="per-que-grausfp.html" style="font-size:13px; color:var(--warm); text-decoration:none;"
+    <a href="per-que-grausfp.html" style="font-size:var(--fs-small); color:var(--warm); text-decoration:none;"
       data-i18n="index.footer.perque">Per què GrausFP?</a>
-    <a href="fonts.html" style="font-size:13px; color:var(--warm); text-decoration:none; margin-left:30px;"
+    <a href="fonts.html" style="font-size:var(--fs-small); color:var(--warm); text-decoration:none; margin-left:30px;"
       data-i18n="index.footer.fonts">Fonts de dades</a>
-    <a href="historial.html" style="font-size:13px; color:var(--warm); text-decoration:none; margin-left:30px;"
+    <a href="historial.html" style="font-size:var(--fs-small); color:var(--warm); text-decoration:none; margin-left:30px;"
       data-i18n="index.footer.historial">Historial d'actualitzacions</a>
-    <a href="observatori.html" style="font-size:13px; color:var(--warm); text-decoration:none; margin-left:30px;"
+    <a href="observatori.html" style="font-size:var(--fs-small); color:var(--warm); text-decoration:none; margin-left:30px;"
       data-i18n="index.footer.obs">Observatori</a>
-    <!-- <a href="index.html?mode=ocupacio" style="font-size:13px; color:var(--warm); text-decoration:none; margin-left:30px;"
+    <!-- <a href="index.html?mode=ocupacio" style="font-size:var(--fs-small); color:var(--warm); text-decoration:none; margin-left:30px;"
       data-i18n="index.footer.ocupacions">Cerca per ocupació</a> -->
   </footer>
 </body>
