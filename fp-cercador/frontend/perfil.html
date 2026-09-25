@@ -800,9 +800,11 @@
         var hor = fpoHorariText(centre.horari);
         if (hor) rows.push('<span style="font-size:11px;"><strong>' + t('fpo.detall.horari') + ':</strong> ' + hor + '</span>');
         if (c.dataInici || c.dataFi) rows.push('<span style="font-size:11px;"><strong>' + t('fpo.detall.dates') + ':</strong> ' + esc((c.dataInici || '?') + ' – ' + (c.dataFi || '?')) + '</span>');
-        var badgeLine = fpoEstatBadge(c.estat);
+        else if (c.font && c.font !== 'soc') rows.push('<span style="font-size:11px;">' + t('fpo.detall.dates_tbd') + '</span>');
+        if (c.horariText) rows.push('<span style="font-size:11px;"><strong>' + t('fpo.detall.horari') + ':</strong> ' + esc(c.horariText) + '</span>');
+        var badgeLine = c.estat ? fpoEstatBadge(c.estat) : '';
         if (c.modalitat) badgeLine += ' <span style="font-size:11px;color:var(--warm);">' + esc(c.modalitat) + '</span>';
-        if (c.fitxaUrl) badgeLine += ' <a href="' + esc(c.fitxaUrl) + '" target="_blank" rel="noopener" style="font-size:11px;">' + t('fpo.detall.fitxa_soc') + '</a>';
+        if (c.fitxaUrl) badgeLine += ' <a href="' + esc(c.fitxaUrl) + '" target="_blank" rel="noopener" style="font-size:11px;">' + t(c.font && c.font !== 'soc' ? 'fpo.detall.fitxa_ext' : 'fpo.detall.fitxa_soc') + '</a>';
         rows.push(badgeLine);
 
         return '<div style="border:1px solid var(--border);border-radius:6px;padding:8px 10px;margin-top:6px;font-size:13px;line-height:1.5;">' +
@@ -826,7 +828,7 @@
             var titol = (e.titol || {})[fpoLang] || e.especialitat_codi;
             var fam = (e.familia || {}).desc ? (e.familia.desc[fpoLang] || '') : '';
             var area = (e.area || {}).desc ? (e.area.desc[fpoLang] || '') : '';
-            var meta = [fam, area, e.nivell ? t('fpo.col.nivell') + ' ' + e.nivell : '',
+            var meta = [(e.font && e.font !== 'soc') ? t('fpo.font.' + e.font) : '', fam, area, e.nivell ? t('fpo.col.nivell') + ' ' + e.nivell : '',
                         e.hores ? Math.round(e.hores) + ' h' : ''].filter(Boolean).join(' · ');
             var nCursos = (e.cursos || []).length;
 
