@@ -42,7 +42,7 @@ import re
 import sys
 import threading
 import time
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 
 import requests
 from bs4 import BeautifulSoup
@@ -51,6 +51,7 @@ from flask import Flask, jsonify, redirect, request
 from flask_cors import CORS
 
 import cd_lomloe
+import fpo_ext
 import feed
 import history
 import itinerary
@@ -86,6 +87,7 @@ D_MODULOS_PATH = os.path.join(_DATA_DIR, "d_modulos.json")  # Pla 058: {str(id_d
 SOC_CURSOS_PATH = os.path.join(_DATA_DIR, "soc_cursos.json")    # Pla 059: cursos FPO (SOC)
 SOC_ESPECS_PATH = os.path.join(_DATA_DIR, "soc_especs.json")    # Pla 059: especialitats formatives (SOC)
 SOC_CENTRES_PATH = os.path.join(_DATA_DIR, "soc_centres.json")  # Pla 059: centres de formació (SOC)
+EXT_CURSOS_PATH = os.path.join(_DATA_DIR, "ext_cursos.json")   # Pla 062: cursos FPO de PIMEC i Foment
 _SOC_STALE_DAYS = 7  # llindar per avisar de dades FPO velles
 OCUPACIONES_PATH = os.path.join(_DATA_DIR, "ocupaciones.json")
 _CENTRES_PATH = os.path.join(_DATA_DIR, "centres.json")
@@ -1235,6 +1237,8 @@ _soc_cursos_cache: dict = {"mtime": None, "index": None}
 _soc_especs_cache: dict = {"mtime": None, "index": None}
 _soc_centres_cache: dict = {"mtime": None, "index": None}
 _soc_espec_index_cache: dict = {"key": None, "data": None}
+_ext_cursos_cache: dict = {"mtime": None, "index": None}
+_ext_index_cache: dict = {"key": None, "data": None}
 
 _SOC_CERCADOR_URL = ("https://serveiocupacio.gencat.cat/ca/persones/vull-formar-me/"
                      "cercadors-formacio-especialitats/cercador-integrat/resultats.html")
@@ -1270,6 +1274,47 @@ def _get_soc_especs() -> list:
 
 def _get_soc_centres() -> list:
     return _read_soc_list(SOC_CENTRES_PATH, _soc_centres_cache)
+
+
+def _get_ext_cursos() -> list:
+    return _read_soc_list(EXT_CURSOS_PATH, _ext_cursos_cache)
+
+
+def _fpo_today() -> str:
+    """Data d'avui (ISO). Funció a part perquè els tests la puguin fixar (Pla 063)."""
+    return date.today().isoformat()
+
+
+def _fpo_families() -> dict:
+    """{codi_familia: {'ca':.., 'es':..}} a partir dels soc_especs.json."""
+    out: dict = {}
+    for e in _get_soc_especs():
+        f = e.get('familia') or {}
+        if f.get('codi') and f['codi'] not in out:
+            out[f['codi']] = f.get('desc') or {'ca': f['codi'], 'es': f['codi']}
+    return out
+
+
+def _ext_index() -> dict:
+    """Índex dels cursos externs (fpo_ext.build_index). Cache per mtimes + dia (l'estat
+    'finalitzat' depèn de la data)."""
+    def _mt(path):
+        return os.path.getmtime(path) if os.path.exists(path) else None
+
+    key = (_mt(EXT_CURSOS_PATH), _mt(SOC_ESPECS_PATH), _fpo_today())
+    if _ext_index_cache["key"] == key and _ext_index_cache["data"] is not None:
+        return _ext_index_cache["data"]
+    data = fpo_ext.build_index(_get_ext_cursos(), _fpo_families(), _fpo_today())
+    _ext_index_cache.update(key=key, data=data)
+    return data
+
+
+def _fpo_llista() -> list:
+    """Especialitats SOC (font='soc') + externes, ordenades per títol."""
+    soc = [{**e, 'font': 'soc', 'tipus': ['Subvencionat']} for e in _soc_espec_index()['list']]
+    llista = soc + _ext_index()['list']
+    llista.sort(key=lambda x: ((x['titol'].get('ca') or x['codi']).lower(), x['codi']))
+    return llista
 
 
 def _soc_warning() -> str | None:
@@ -1354,7 +1399,7 @@ def _soc_curs_public(c: dict) -> dict:
 @app.route('/api/fpo/especialitats')
 def api_fpo_especialitats():
     """Pla 059: especialitats FPO amb ≥1 curs actiu a Catalunya."""
-    resp = {'especialitats': _soc_espec_index()['list']}
+    resp = {'especialitats': _fpo_llista()}
     w = _soc_warning()
     if w:
         resp['warning'] = w
@@ -1364,6 +1409,19 @@ def api_fpo_especialitats():
 @app.route('/api/fpo/especialitat/<path:codi>')
 def api_fpo_especialitat(codi):
     """Pla 059: detall d'una especialitat FPO (mòduls + cursos actius)."""
+    if fpo_ext.is_ext_codi(codi):
+        cursos = _ext_index()['cursos_by_codi'].get(codi)
+        if not cursos:
+            return jsonify({}), 404
+        avui = _fpo_today()
+        buit = {'ca': '', 'es': ''}
+        return jsonify({
+            'codi': codi,
+            'descripcio': cursos[0].get('titol', buit),
+            'queAprendras': buit, 'requisits': buit, 'sortides': buit,
+            'moduls': [], 'programaUrl': '',
+            'cursos': [fpo_ext.curs_public(c, avui) for c in cursos],
+        })
     idx = _soc_espec_index()
     cursos = idx['cursos_by_espec'].get(codi)
     if not cursos:

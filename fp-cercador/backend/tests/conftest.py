@@ -1,5 +1,6 @@
 """Fixtures compartides per als tests del projecte."""
 import os
+import sys
 
 import pytest
 
@@ -110,3 +111,14 @@ def minimal_html_unknown_family():
       </tbody>
     </table></body></html>
     """
+
+
+@pytest.fixture(autouse=True)
+def _isola_ext_cursos(tmp_path, monkeypatch):
+    """Cap test llegeix el data/ext_cursos.json real (Pla 063). Només si `app` ja és importat."""
+    app_module = sys.modules.get("app")
+    if app_module is None:
+        return
+    monkeypatch.setattr(app_module, "EXT_CURSOS_PATH", str(tmp_path / "no_ext_cursos.json"), raising=False)
+    monkeypatch.setattr(app_module, "_ext_cursos_cache", {"mtime": None, "index": None}, raising=False)
+    monkeypatch.setattr(app_module, "_ext_index_cache", {"key": None, "data": None}, raising=False)
