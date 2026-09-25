@@ -226,6 +226,25 @@
       border-color: var(--border);
     }
 
+    .fpo-estat--finalitzat {
+      background: var(--warm2);
+      color: var(--warm);
+      border-color: var(--border);
+    }
+
+    .fpo-badge {
+      display: inline-block;
+      padding: 1px 8px;
+      margin-left: 6px;
+      border-radius: 10px;
+      font-size: var(--fs-label);
+      font-weight: 600;
+      border: 1px solid var(--border);
+      background: var(--warm2);
+      color: var(--warm);
+      vertical-align: middle;
+    }
+
     /* ── Representació toggle (targetes/taula) ── */
     .repr-toggle {
       display: flex;
@@ -1589,7 +1608,7 @@
         fpoFavBusy: false,
         fpoFilters: {
           text: '', familia: '', area: '', especialitat: '', comarca: '', municipi: '',
-          nivell: '', estat: '', modalitat: '', certprof: false,
+          nivell: '', estat: '', modalitat: '', certprof: false, font: '', tipus: '',
         },
 
         // F4 — Seguiment de centres
@@ -2129,6 +2148,11 @@
         // ── Pla 060 — Mode FPO ──
         fpoLang() { return getLang() === 'es' ? 'es' : 'ca'; },
 
+        fpoTipusKey(ti) {
+          return { 'Subvencionat': 'subvencionat', 'Bonificable': 'bonificable',
+                   'Diàleg Social (Subvencionat)': 'dialeg', 'Altres': 'altres' }[ti] || 'altres';
+        },
+
         async fetchFpoEspecs() {
           try {
             const r = await fetch(API_BASE + '/api/fpo/especialitats');
@@ -2242,6 +2266,17 @@
           return [...s].sort((a, b) => a.localeCompare(b, 'ca'));
         },
 
+        get fpoFontsOpcions() {
+          const presents = new Set(this.fpoEspecs.map(e => e.font || 'soc'));
+          return ['soc', 'pimec', 'foment'].filter(f => presents.has(f));
+        },
+
+        get fpoTipusOpcions() {
+          const s = new Set();
+          for (const e of this.fpoEspecs) for (const ti of (e.tipus || [])) s.add(ti);
+          return [...s].sort((a, b) => a.localeCompare(b, 'ca'));
+        },
+
         get filteredFpoEspecs() {
           const f = this.fpoFilters;
           const q = this._fpoNorm(f.text).trim();
@@ -2258,6 +2293,8 @@
             if (f.estat && !(e.estats || []).includes(f.estat)) return false;
             if (f.modalitat && !(e.modalitats || []).includes(f.modalitat)) return false;
             if (f.certprof && !e.esCertProf) return false;
+            if (f.font && (e.font || 'soc') !== f.font) return false;
+            if (f.tipus && !(e.tipus || []).includes(f.tipus)) return false;
             return true;
           });
         },
@@ -2265,7 +2302,7 @@
         fpoResetFilters() {
           this.fpoFilters = {
             text: '', familia: '', area: '', especialitat: '', comarca: '', municipi: '',
-            nivell: '', estat: '', modalitat: '', certprof: false,
+            nivell: '', estat: '', modalitat: '', certprof: false, font: '', tipus: '',
           };
         },
 
@@ -2623,13 +2660,29 @@
         </template>
       </select>
 
+      <label class="sr-only" for="fpo-font" x-text="t('fpo.filter.font')"></label>
+      <select id="fpo-font" x-model="fpoFilters.font">
+        <option value="" x-text="t('fpo.filter.font') + ' — ' + t('fpo.filter.all')"></option>
+        <template x-for="fo in fpoFontsOpcions" :key="fo">
+          <option :value="fo" x-text="t('fpo.font.' + fo)"></option>
+        </template>
+      </select>
+
+      <label class="sr-only" for="fpo-tipus" x-text="t('fpo.filter.tipus')"></label>
+      <select id="fpo-tipus" x-model="fpoFilters.tipus">
+        <option value="" x-text="t('fpo.filter.tipus') + ' — ' + t('fpo.filter.all')"></option>
+        <template x-for="ti in fpoTipusOpcions" :key="ti">
+          <option :value="ti" x-text="t('fpo.tipus.' + fpoTipusKey(ti))"></option>
+        </template>
+      </select>
+
       <label class="checkbox-label">
         <input type="checkbox" x-model="fpoFilters.certprof">
         <span x-text="t('fpo.filter.certprof')"></span>
       </label>
 
       <button class="clear-btn"
-        x-show="fpoFilters.text || fpoFilters.familia || fpoFilters.comarca || fpoFilters.nivell || fpoFilters.estat || fpoFilters.modalitat || fpoFilters.certprof || fpoFilters.especialitat"
+        x-show="fpoFilters.text || fpoFilters.familia || fpoFilters.comarca || fpoFilters.nivell || fpoFilters.estat || fpoFilters.modalitat || fpoFilters.certprof || fpoFilters.especialitat || fpoFilters.font || fpoFilters.tipus"
         @click="fpoResetFilters()" x-text="t('index.btn.clearFilters')">
       </button>
     </div>
