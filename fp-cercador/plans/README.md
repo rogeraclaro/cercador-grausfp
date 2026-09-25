@@ -80,6 +80,7 @@ amb quins prerequisits i quins passos manuals calen al servidor.
 | 064 | FPO extern: insígnies de font/tipus, filtres Font i Tipus, i18n CA/ES, perfil, `fonts.html`, `historial.html`; desplegament | P3 | M | 062, 063 | DONE (sense suite de tests; verificat amb Playwright sobre dades reals 2026-09-25: Font/Tipus, files i edicions externes, perfil, fonts i historial en CA/ES, 0 errors de consola; Fase 7 no executada, no desplegat) |
 | 065 | SOC pla B: si Algolia falla, refrescar `soc_cursos.json` des del fitxer oficial de dades obertes (`ofertaCursos.json`), amb estat conservador i snapshot anterior com a base; avís a l'admin i etiqueta a l'historial | P3 | S–M | 062, 064 | TODO |
 | 066 | FPO extern: Cecot (`/courses/list`, 25 cursos) i CCOO/Fundació Paco Puerto (API REST WordPress, 70 cursos FPO) a `ext_cursos.json`; família explícita (`familiaCodi`); insígnies, i18n i `fonts.html` | P3 | M | 062, 063, 064 | TODO |
+| 067 | FPO: paginar el llistat del mode «Cursos FPO» com fa la part de graus A–E (`pageSize`, `buildPagination`, controls i textos reutilitzats). Ara pinta totes les files de cop (~630; ~730 amb Cecot i CCOO). Cal revisar l'expandit de files, el `?esp=` i el reset de pàgina en filtrar | P3 | S | 064 | TODO (anotat a petició de l'usuari 2026-09-26) |
 
 Valors de Status: `TODO` | `IN PROGRESS` | `DONE` | `BLOCKED (motiu en una línia)` | `REJECTED (motiu en una línia)`
 
