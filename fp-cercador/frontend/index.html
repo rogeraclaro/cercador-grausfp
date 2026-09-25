@@ -1556,6 +1556,7 @@
         filterOld: 'all',
 
         currentPage: 1,
+        fpoPage: 1,              // Pla 067 — pàgina del mode FPO (independent de la de graus)
         pageSize: 50,
         sortCol: '',
         sortDir: 0,
@@ -1686,6 +1687,8 @@
         },
 
         async init() {
+          // Pla 067: qualsevol canvi de filtre del mode FPO torna a la pàgina 1.
+          this.$watch('fpoFilters', () => { this.fpoPage = 1; });
           // La petició del catàleg s'inicia en paral·lel amb l'autenticació, com abans amb Promise.all.
           const catalogRequest = fetch(API_BASE + '/api/ofertes');
           this.loadCaEs();
@@ -1858,8 +1861,8 @@
           return Math.min(this.currentPage * this.pageSize, this.filteredCount);
         },
 
-        buildPagination() {
-          const c = this.currentPage, m = this.totalPages, delta = 2;
+        buildPagination(c = this.currentPage, m = this.totalPages) {
+          const delta = 2;
           if (m <= 1) return [];
           const left = c - delta, right = c + delta + 1;
           const range = [], result = [];
@@ -1885,6 +1888,34 @@
         },
 
         resetPage() { this.currentPage = 1; },
+
+        // ── Pla 067 — paginació del mode FPO ──
+        get fpoTotalPages() {
+          return Math.ceil(this.filteredFpoEspecs.length / this.pageSize);
+        },
+
+        get fpoCurrentPage() {
+          return Math.min(this.fpoPage, Math.max(this.fpoTotalPages, 1));
+        },
+
+        get pagedFpoEspecs() {
+          const start = (this.fpoCurrentPage - 1) * this.pageSize;
+          return this.filteredFpoEspecs.slice(start, start + this.pageSize);
+        },
+
+        get fpoPaginationStart() {
+          return (this.fpoCurrentPage - 1) * this.pageSize + 1;
+        },
+
+        get fpoPaginationEnd() {
+          return Math.min(this.fpoCurrentPage * this.pageSize, this.filteredFpoEspecs.length);
+        },
+
+        goToFpoPage(n) {
+          if (n < 1 || n > this.fpoTotalPages) return;
+          this.fpoPage = n;
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        },
 
         sortBy(col) {
           if (this.sortCol !== col) {
@@ -3204,7 +3235,7 @@
               <th scope="col" x-text="t('fpo.col.ncursos')"></th>
             </tr>
           </thead>
-          <template x-for="esp in filteredFpoEspecs" :key="esp.codi">
+          <template x-for="esp in pagedFpoEspecs" :key="esp.codi">
             <tbody>
               <tr class="row-link" tabindex="0"
                 :aria-expanded="String(!!fpoExpanded[esp.codi])"
@@ -3355,6 +3386,34 @@
           </template>
         </table>
       </div>
+
+      <nav class="pagination" data-i18n-aria="pagination.aria" aria-label="Paginació de resultats"
+        x-show="fpoTotalPages > 1">
+        <span class="pagination-info"
+          x-text="t('pagination.showing', {start: fpoPaginationStart, end: fpoPaginationEnd, total: filteredFpoEspecs.length})">
+        </span>
+        <div class="pagination-controls">
+          <button @click="goToFpoPage(fpoCurrentPage - 1)" :class="{ disabled: fpoCurrentPage === 1 }"
+            :aria-disabled="fpoCurrentPage === 1" x-text="t('pagination.prev')"></button>
+
+          <template x-for="(item, idx) in buildPagination(fpoCurrentPage, fpoTotalPages)"
+            :key="item.type === 'page' ? 'p' + item.n : 'e' + idx">
+            <span class="pagination-item">
+              <template x-if="item.type === 'page'">
+                <button @click="goToFpoPage(item.n)" :aria-current="item.n === fpoCurrentPage ? 'page' : false"
+                  :aria-label="t('pagination.page', {n: item.n})" :class="{ active: item.n === fpoCurrentPage }"
+                  x-text="item.n"></button>
+              </template>
+              <template x-if="item.type === 'ellipsis'">
+                <span class="pagination-ellipsis">…</span>
+              </template>
+            </span>
+          </template>
+
+          <button @click="goToFpoPage(fpoCurrentPage + 1)" :class="{ disabled: fpoCurrentPage === fpoTotalPages }"
+            :aria-disabled="fpoCurrentPage === fpoTotalPages" x-text="t('pagination.next')"></button>
+        </div>
+      </nav>
 
       <p class="results-count" x-show="fpoLoaded && filteredFpoEspecs.length === 0"
         x-text="t('fpo.empty')"></p>
