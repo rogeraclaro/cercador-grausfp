@@ -4,10 +4,10 @@ milestone: v1.0
 current_phase_name: 06
 status: executing
 stopped_at: context exhaustion at 90% (2026-04-23)
-last_updated: "2026-09-24T18:01:05.931Z"
+last_updated: "2026-09-25T20:54:33.172Z"
 last_activity: 2026-09-24
 last_activity_desc: Phase --phase execution started
-state_head: 5a8faac684ee6fb140ad79646c3850f2673cace4
+state_head: 92afc111798e90e3a18d91b011505c776efeb05f
 progress:
   total_phases: 6
   completed_phases: 5
@@ -106,6 +106,7 @@ None yet.
 | 260924-s1c | site.css compartit: tokens i barra superior a 13 pàgines | 2026-09-24 | 11169cd | — | [260924-s1c-shared-site-css](./quick/260924-s1c-shared-site-css/) |
 | 260924-s2p | Subpàgines: tabs perfil, gràfic Observatori, main, badge privacitat, colors missatge | 2026-09-24 | 96837fe | — | [260924-s2p-subpages-specific-fixes](./quick/260924-s2p-subpages-specific-fixes/) |
 | 260924-s3i | index.html usa site.css (renderitzat idèntic) | 2026-09-24 | 5a8faac | — | [260924-s3i-index-uses-site-css](./quick/260924-s3i-index-uses-site-css/) |
+| 13 | fix(i18n): graus i ensenyaments al català de per-que-grausfp | 2026-09-25 | 92afc11 | — | — |
 
 ### Blockers/Concerns
 
