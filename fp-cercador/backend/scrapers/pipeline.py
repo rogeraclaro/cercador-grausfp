@@ -88,12 +88,13 @@ def _read_json_or(path: str, default):
         return default
 
 
-def _soc_diff_entry(prev_cursos: list, curr_cursos: list, *, ok: bool, error: str | None = None) -> dict:
+def _soc_diff_entry(prev_cursos: list, curr_cursos: list, *, ok: bool,
+                    error: str | None = None, font: str = 'soc') -> dict:
     prev_ids = {c.get('idCurs') for c in (prev_cursos or []) if isinstance(c, dict)}
     curr_ids = {c.get('idCurs') for c in (curr_cursos or []) if isinstance(c, dict)}
     return {
         'ts': time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime()),
-        'font': 'soc',
+        'font': font,
         'ok': ok,
         'error': error,
         'n_cursos': len(curr_cursos or []),
@@ -115,9 +116,10 @@ def _soc_history_append(data_dir: str, entry: dict) -> None:
         logger.warning("pipeline: no s'ha pogut escriure soc_refresh_history.json: %s", exc)
 
 
-def _notify_admin_soc_failure(data_dir: str, exc: Exception) -> None:
-    """Avisa l'admin per email que el snapshot FPO ha fallat (rate-limit 24 h)."""
-    stamp_path = os.path.join(data_dir, 'last_soc_alert.json')
+def _notify_admin_soc_failure(data_dir: str, exc: Exception, *, source: str = 'SOC',
+                              stamp_name: str = 'last_soc_alert.json') -> None:
+    """Avisa l'admin per email que el snapshot FPO ha fallat (rate-limit 24 h per font)."""
+    stamp_path = os.path.join(data_dir, stamp_name)
     last = _read_json_or(stamp_path, {}) or {}
     if time.time() - float(last.get('ts', 0)) < _SOC_ALERT_INTERVAL:
         return
@@ -126,8 +128,8 @@ def _notify_admin_soc_failure(data_dir: str, exc: Exception) -> None:
         to = os.environ.get('ADMIN_ALERT_EMAIL') or os.environ.get('EMAIL_FROM', 'noreply@masellas.info')
         email_service.send_email(
             to,
-            'Snapshot FPO (SOC) ha fallat',
-            f"El snapshot de cursos FPO del SOC ha fallat.\n\n{exc!r}\n\n"
+            f'Snapshot FPO ({source}) ha fallat',
+            f"El snapshot de cursos FPO ({source}) ha fallat.\n\n{exc!r}\n\n"
             f"Hora (UTC): {time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime())}",
         )
     except Exception as send_exc:  # no bloquejar el pipeline si l'email falla
@@ -136,6 +138,39 @@ def _notify_admin_soc_failure(data_dir: str, exc: Exception) -> None:
         _write_atomic({'ts': time.time()}, stamp_path)
     except OSError:
         pass
+
+
+def refresh_ext_cursos(data_dir: str) -> dict:
+    """PIMEC + Foment -> ext_cursos.json (Pla 062).
+
+    Cada font és independent i no fatal: si falla o cau a menys de la meitat, es
+    conserva el snapshot anterior d'aquesta font, s'anota l'error a l'historial i
+    s'avisa l'admin. Retorna {font: n_cursos del snapshot resultant}.
+    """
+    from scrapers import ext_cursos, foment_scraper, pimec_scraper
+
+    prev = _read_json_or(os.path.join(data_dir, ext_cursos.EXT_FILE), [])
+    if not isinstance(prev, list):
+        prev = []
+    cursos = list(prev)
+    fonts = (('pimec', pimec_scraper.build_pimec_cursos),
+             ('foment', foment_scraper.build_foment_cursos))
+    for font, build in fonts:
+        prev_font = [c for c in prev if c.get('font') == font]
+        try:
+            fresh = build()
+            if not ext_cursos.is_plausible(prev_font, fresh):
+                raise ValueError(f'{font}: {len(fresh)} cursos (abans {len(prev_font)}); '
+                                 'es conserva el snapshot anterior')
+            cursos = [c for c in cursos if c.get('font') != font] + fresh
+            _soc_history_append(data_dir, _soc_diff_entry(prev_font, fresh, ok=True, font=font))
+        except Exception as exc:
+            logger.warning("pipeline: refresc de %s ha fallat (no fatal): %s", font, exc)
+            _soc_history_append(data_dir, _soc_diff_entry([], [], ok=False, error=repr(exc), font=font))
+            _notify_admin_soc_failure(data_dir, exc, source=font.upper(),
+                                      stamp_name=f'last_{font}_alert.json')
+    ext_cursos.write_ext(cursos, data_dir)
+    return {f: sum(1 for c in cursos if c.get('font') == f) for f, _ in fonts}
 
 
 # ---------------------------------------------------------------------------
@@ -308,6 +343,13 @@ def run(on_progress=None) -> dict:
         _soc_dir = os.path.dirname(DATA_PATH)
         _soc_history_append(_soc_dir, _soc_diff_entry([], [], ok=False, error=repr(exc)))
         _notify_admin_soc_failure(_soc_dir, exc)
+
+    # --- Pla 062: cursos FPO de PIMEC i Foment (no fatal; cada font és independent) ---
+    _report('Cursos FPO (PIMEC i Foment)')
+    try:
+        refresh_ext_cursos(os.path.dirname(DATA_PATH))
+    except Exception as exc:
+        logger.warning("pipeline: refresh_ext_cursos ha fallat (no fatal): %s", exc)
 
     families = sorted({r['familia'] for r in all_records if r['familia'] != 'Desconeguda'})
     denominacions = sorted({r['denominacion'] for r in all_records if r.get('denominacion')})
