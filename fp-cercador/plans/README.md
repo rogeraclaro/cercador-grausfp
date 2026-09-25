@@ -79,6 +79,7 @@ amb quins prerequisits i quins passos manuals calen al servidor.
 | 063 | FPO extern: especialitats sintètiques (`fpo_ext.py`), família per àrea/codi de certificat (fallback FCO), estat `finalitzat` derivat en llegir, `/api/fpo/*`, favorits sense migració, hook a `refresh-fpo` | P3 | M | 062 | TODO |
 | 064 | FPO extern: insígnies de font/tipus, filtres Font i Tipus, i18n CA/ES, perfil, `fonts.html`, `historial.html`; desplegament | P3 | M | 062, 063 | TODO |
 | 065 | SOC pla B: si Algolia falla, refrescar `soc_cursos.json` des del fitxer oficial de dades obertes (`ofertaCursos.json`), amb estat conservador i snapshot anterior com a base; avís a l'admin i etiqueta a l'historial | P3 | S–M | 062, 064 | TODO |
+| 066 | FPO extern: Cecot (`/courses/list`, 25 cursos) i CCOO/Fundació Paco Puerto (API REST WordPress, 70 cursos FPO) a `ext_cursos.json`; família explícita (`familiaCodi`); insígnies, i18n i `fonts.html` | P3 | M | 062, 063, 064 | TODO |
 
 Valors de Status: `TODO` | `IN PROGRESS` | `DONE` | `BLOCKED (motiu en una línia)` | `REJECTED (motiu en una línia)`
 

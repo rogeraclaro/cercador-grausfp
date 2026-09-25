@@ -45,12 +45,12 @@ Fer les edicions amb l'eina d'edició (cada `old_string` és únic al fitxer).
 CA — `old`:
 `'fpo.note': 'Formació professional per a l\'ocupació. Oferta i gestió de la Generalitat de Catalunya (SOC) — un sistema diferent de la FP reglada. Cobreix només Catalunya.',`
 `new`:
-`'fpo.note': 'Formació professional per a l\'ocupació a Catalunya: l\'oferta del Servei d\'Ocupació (SOC) i els cursos de PIMEC Formació i Foment Formació. Cada curs indica la font i el tipus (subvencionat, bonificable…). És un sistema diferent de la FP reglada i cobreix només Catalunya.',`
+`'fpo.note': 'Formació professional per a l\'ocupació a Catalunya: l\'oferta pública del Servei d\'Ocupació (SOC) i els cursos d\'altres entitats formadores (patronals, sindicats…). Cada curs indica la font i el tipus (subvencionat, bonificable…). És un sistema diferent de la FP reglada i cobreix només Catalunya.',`
 
 ES — `old`:
 `'fpo.note': 'Formación profesional para el empleo. Oferta y gestión de la Generalitat de Catalunya (SOC) — un sistema distinto de la FP reglada. Cubre solo Cataluña.',`
 `new`:
-`'fpo.note': 'Formación profesional para el empleo en Cataluña: la oferta del Servicio de Empleo (SOC) y los cursos de PIMEC Formació y Foment Formació. Cada curso indica la fuente y el tipo (subvencionado, bonificable…). Es un sistema distinto de la FP reglada y cubre solo Cataluña.',`
+`'fpo.note': 'Formación profesional para el empleo en Cataluña: la oferta pública del Servicio de Empleo (SOC) y los cursos de otras entidades formadoras (patronales, sindicatos…). Cada curso indica la fuente y el tipo (subvencionado, bonificable…). Es un sistema distinto de la FP reglada y cubre solo Cataluña.',`
 
 **b)** Afegir les claus noves. CA: just **després** de `'fpo.estat.gestio': 'En gestió',`:
 
@@ -482,7 +482,7 @@ Esperat: `{'pimec': ~417, 'foment': ~150}`. Obrir `http://localhost:8080/index.h
 
 **Llista de comprovacions:**
 
-1. La nota superior menciona SOC, PIMEC i Foment (CA i, en canviar a ES, castellà).
+1. La nota superior parla del SOC i d'«altres entitats formadores» (CA i, en canviar a ES, castellà), sense llistar-les.
 2. El desplegable **Font** mostra SOC/PIMEC/Foment; **Tipus** mostra Subvencionat,
    Bonificable, Diàleg Social (subvencionat), Altres (i els del SOC no tenen insígnia de tipus).
 3. Filtrar `Font = PIMEC` → només files amb insígnia PIMEC; el recompte coincideix amb
