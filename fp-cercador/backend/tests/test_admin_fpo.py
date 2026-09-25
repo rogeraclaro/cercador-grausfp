@@ -36,6 +36,12 @@ def soc_paths(tmp_path, monkeypatch):
     return tmp_path
 
 
+@pytest.fixture(autouse=True)
+def ext_mock():
+    with patch("scrapers.pipeline.refresh_ext_cursos", return_value={"pimec": 0, "foment": 0}) as m:
+        yield m
+
+
 @pytest.fixture
 def client():
     with flask_app.test_client() as c:
@@ -82,3 +88,18 @@ def test_refresh_fpo_error_reporta(client):
         notify.assert_called_once()
 
     assert "Algolia 500" in (st["last_error"] or "")
+
+
+def test_refresh_fpo_tambe_refresca_pimec_i_foment(client, ext_mock, soc_paths):
+    with patch("scrapers.soc_scraper.build_soc_data", return_value=_FAKE_SOC):
+        assert client.post("/api/admin/refresh-fpo", headers=_AUTH).status_code == 200
+        _wait_status(client, "done")
+    ext_mock.assert_called_once_with(str(soc_paths))
+
+
+def test_refresh_fpo_no_falla_si_pimec_i_foment_peten(client, ext_mock):
+    ext_mock.side_effect = RuntimeError("PIMEC caigut")
+    with patch("scrapers.soc_scraper.build_soc_data", return_value=_FAKE_SOC):
+        client.post("/api/admin/refresh-fpo", headers=_AUTH)
+        st = _wait_status(client, "done")
+    assert st["last_error"] is None

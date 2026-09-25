@@ -833,6 +833,13 @@ def _run_fpo_refresh(data_dir):
         for cache in (_soc_cursos_cache, _soc_especs_cache, _soc_centres_cache):
             cache.update(mtime=None, index=None)
         _soc_espec_index_cache.update(key=None, data=None)
+        try:
+            from scrapers.pipeline import refresh_ext_cursos
+            refresh_ext_cursos(data_dir)
+        except Exception as ext_exc:  # una font extra no ha de tombar el refresc del SOC
+            logger.warning("refresh-fpo: PIMEC/Foment ha fallat: %s", ext_exc)
+        _ext_cursos_cache.update(mtime=None, index=None)
+        _ext_index_cache.update(key=None, data=None)
         n = {k: len(soc.get(k, [])) for k in ("cursos", "especs", "centres")}
         _fpo_refresh_state.update(
             status="done", finished_at=datetime.now(timezone.utc).isoformat(),
@@ -857,8 +864,8 @@ def _run_fpo_refresh(data_dir):
 
 @app.route("/api/admin/refresh-fpo", methods=["POST"])
 def admin_refresh_fpo():
-    """Regenera els soc_*.json en background (només build_soc_data +
-    write_soc_data, no el pipeline sencer). Requereix ADMIN_TOKEN o sessió admin.
+    """Regenera els soc_*.json i ext_cursos.json (PIMEC/Foment) en background
+    (no el pipeline sencer). Requereix ADMIN_TOKEN o sessió admin.
     El client consulta l'estat a GET /api/admin/fpo-status."""
     if not _check_admin(request):
         return jsonify({"error": "Unauthorized"}), 401
