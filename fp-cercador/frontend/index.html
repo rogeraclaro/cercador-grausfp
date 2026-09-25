@@ -3225,8 +3225,13 @@
                   </button>
                   <span x-text="(esp.titol || {})[fpoLang()] || esp.codi"></span>
                   <span x-show="esp.esCertProf" class="badge-old" x-text="t('fpo.badge.certprof')"></span>
+                  <span class="fpo-badge" x-text="t('fpo.font.' + (esp.font || 'soc'))"></span>
+                  <template x-for="ti in ((esp.font || 'soc') !== 'soc' ? (esp.tipus || []) : [])" :key="ti">
+                    <span class="fpo-badge" x-text="t('fpo.tipus.' + fpoTipusKey(ti))"></span>
+                  </template>
                 </td>
-                <td class="col-codi" x-text="esp.codi"></td>
+                <td class="col-codi" :class="{ 'cell-empty': (esp.font || 'soc') !== 'soc' }"
+                  x-text="(esp.font || 'soc') === 'soc' ? esp.codi : '—'"></td>
                 <td class="col-fam" x-text="(esp.familia || {}).desc ? (esp.familia.desc[fpoLang()] || '') : ''"></td>
                 <td class="col-area" x-text="(esp.area || {}).desc ? (esp.area.desc[fpoLang()] || '') : ''"></td>
                 <td class="col-niv" :class="{ 'cell-empty': !esp.nivell }" :data-label="t('fpo.col.nivell')"
@@ -3289,7 +3294,7 @@
                               <div class="fpo-curs">
                                 <div class="fpo-curs-nom" x-text="(curs.centre || {}).nom || ''"></div>
                                 <div class="fpo-curs-meta"
-                                  x-text="[(curs.centre||{}).carrer, ((curs.centre||{}).cp || '') + ' ' + ((curs.centre||{}).municipi || ''), (curs.centre||{}).comarca ? '(' + curs.centre.comarca + ')' : ''].filter(Boolean).join(', ')"></div>
+                                  x-text="[(curs.centre||{}).carrer, ((curs.centre||{}).cp || '') + ' ' + ((curs.centre||{}).municipi || ''), (curs.centre||{}).comarca ? '(' + curs.centre.comarca + ')' : ''].map(s => (s || '').trim()).filter(Boolean).join(', ')"></div>
                                 <div class="fpo-curs-meta">
                                   <span x-show="(curs.centre||{}).telefon" x-text="(curs.centre||{}).telefon"></span>
                                   <template x-if="(curs.centre||{}).email">
@@ -3308,16 +3313,28 @@
                                       x-text="fpoHorariEntries(curs.centre.horari).map(([d, v]) => tc(d) + ' ' + v).join(' · ')"></span>
                                   </div>
                                 </template>
+                                <div class="fpo-curs-meta" x-show="curs.horariText">
+                                  <strong x-text="t('fpo.detall.horari') + ': '"></strong>
+                                  <span x-text="curs.horariText"></span>
+                                </div>
                                 <div class="fpo-curs-meta" x-show="curs.dataInici || curs.dataFi">
                                   <strong x-text="t('fpo.detall.dates') + ': '"></strong>
                                   <span x-text="(curs.dataInici || '?') + ' – ' + (curs.dataFi || '?')"></span>
                                 </div>
+                                <div class="fpo-curs-meta"
+                                  x-show="!curs.dataInici && !curs.dataFi && curs.font && curs.font !== 'soc'"
+                                  x-text="t('fpo.detall.dates_tbd')"></div>
                                 <div class="fpo-curs-meta" style="margin-top:4px;">
-                                  <span class="fpo-estat" :class="'fpo-estat--' + curs.estat"
+                                  <span class="fpo-estat" x-show="curs.estat" :class="'fpo-estat--' + curs.estat"
                                     x-text="t('fpo.estat.' + curs.estat)"></span>
+                                  <span class="fpo-badge" x-show="curs.font && curs.font !== 'soc'"
+                                    x-text="t('fpo.font.' + curs.font) + ' · ' + t('fpo.tipus.' + fpoTipusKey(curs.tipus))"></span>
                                   <span x-show="curs.modalitat" x-text="tc(curs.modalitat)" style="margin-left:8px;"></span>
+                                  <span x-show="curs.hores && curs.font && curs.font !== 'soc'"
+                                    x-text="Math.round(curs.hores) + ' h'" style="margin-left:8px;"></span>
                                   <a class="btn-doc" :href="curs.fitxaUrl" target="_blank" rel="noopener"
-                                    x-text="t('fpo.detall.fitxa_soc')" style="margin-left:8px;"></a>
+                                    x-text="t(curs.font && curs.font !== 'soc' ? 'fpo.detall.fitxa_ext' : 'fpo.detall.fitxa_soc')"
+                                    style="margin-left:8px;"></a>
                                 </div>
                                 <label class="fpo-curs-meta" style="margin-top:4px;display:block;cursor:pointer;"
                                   x-show="loggedIn && fpoFavSet.has(esp.codi)">
