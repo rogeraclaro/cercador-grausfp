@@ -415,6 +415,7 @@
     }
 
     const HIST_LIMIT = 20;
+    const FONT_LABEL = { soc: 'SOC', pimec: 'PIMEC', foment: 'Foment' };
 
     function renderPagination(page, limit, total, onLoadFn) {
       const totalPages = Math.max(1, Math.ceil(total / limit));
@@ -606,6 +607,7 @@
           <tr>
             <td class="col-num">${(resp.page - 1) * resp.limit + i + 1}</td>
             <td>${formatDate(e.ts)}</td>
+            <td>${FONT_LABEL[e.font] || 'SOC'}</td>
             <td>${e.ok ? 'OK' : ('Error' + (e.error ? ': ' + e.error : ''))}</td>
             <td>${(e.n_cursos ?? 0).toLocaleString('ca-ES')}</td>
             <td>${(e.n_afegits ?? 0).toLocaleString('ca-ES')}</td>
@@ -613,13 +615,14 @@
           </tr>`).join('');
 
         section.innerHTML = `
-          <h2 style="margin-bottom:12px;">Historial de cursos FPO (SOC)</h2>
+          <h2 style="margin-bottom:12px;">Historial de cursos FPO</h2>
           <div class="table-wrap">
             <table class="results-table">
               <thead>
                 <tr>
                   <th class="col-num" scope="col">#</th>
                   <th scope="col">Data</th>
+                  <th scope="col">Font</th>
                   <th scope="col">Resultat</th>
                   <th scope="col">Cursos</th>
                   <th scope="col">Nous</th>
