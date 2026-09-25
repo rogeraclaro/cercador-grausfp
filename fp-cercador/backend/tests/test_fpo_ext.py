@@ -98,3 +98,13 @@ def test_curs_public():
     assert p['font'] == 'foment' and p['tipus'] == 'Subvencionat' and p['hores'] == 30.0
     assert p['horariText'] == 'Lunes a Viernes' and p['fitxaUrl'] == 'https://x/9'
     assert set(p) >= {'titol', 'centre', 'dataInici', 'dataFi', 'modalitat'}
+
+
+def test_fonts_noves_i_familia_explicita():
+    assert fx.is_ext_codi('CECOT:x') and fx.is_ext_codi('CCOO:1')
+    c = _c('ccoo', 1, 'Excel', familiaCodi='IFC')
+    assert fx.familia_codi(c, FAMS) == 'IFC'
+    assert fx.familia_codi(_c('ccoo', 2, 'Excel', familiaCodi='ZZZ'), FAMS) == 'FCO'
+    assert fx.familia_codi(_c('cecot', 3, 'Anglès'), FAMS) == 'FCO'
+    idx = fx.build_index([_c('cecot', 'a', 'Anglès B1'), _c('ccoo', 'b', 'Anglès B1')], FAMS, TODAY)
+    assert [e['codi'] for e in idx['list']] == ['CCOO:angles-b1', 'CECOT:angles-b1']

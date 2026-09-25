@@ -141,20 +141,22 @@ def _notify_admin_soc_failure(data_dir: str, exc: Exception, *, source: str = 'S
 
 
 def refresh_ext_cursos(data_dir: str) -> dict:
-    """PIMEC + Foment -> ext_cursos.json (Pla 062).
+    """PIMEC, Foment, Cecot i CCOO -> ext_cursos.json (Plans 062, 066).
 
     Cada font és independent i no fatal: si falla o cau a menys de la meitat, es
     conserva el snapshot anterior d'aquesta font, s'anota l'error a l'historial i
     s'avisa l'admin. Retorna {font: n_cursos del snapshot resultant}.
     """
-    from scrapers import ext_cursos, foment_scraper, pimec_scraper
+    from scrapers import ccoo_scraper, cecot_scraper, ext_cursos, foment_scraper, pimec_scraper
 
     prev = _read_json_or(os.path.join(data_dir, ext_cursos.EXT_FILE), [])
     if not isinstance(prev, list):
         prev = []
     cursos = list(prev)
     fonts = (('pimec', pimec_scraper.build_pimec_cursos),
-             ('foment', foment_scraper.build_foment_cursos))
+             ('foment', foment_scraper.build_foment_cursos),
+             ('cecot', cecot_scraper.build_cecot_cursos),
+             ('ccoo', ccoo_scraper.build_ccoo_cursos))
     for font, build in fonts:
         prev_font = [c for c in prev if c.get('font') == font]
         try:

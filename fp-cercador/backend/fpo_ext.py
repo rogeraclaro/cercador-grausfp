@@ -7,7 +7,7 @@ del SOC i la data d'avui (ISO). Vegeu `scrapers/ext_cursos.py` per al format de 
 import re
 import unicodedata
 
-FONTS = ('pimec', 'foment')
+FONTS = ('pimec', 'foment', 'cecot', 'ccoo')
 CODI_PREFIXOS = tuple(f'{f.upper()}:' for f in FONTS)
 FALLBACK_FAMILIA = 'FCO'   # "Formació complementària": família real del SOC
 
@@ -56,10 +56,12 @@ def estat(curs: dict, today_iso: str) -> str:
 
 
 def familia_codi(curs: dict, families: dict) -> str:
-    if curs.get('font') == 'pimec':
-        codi = PIMEC_AREA_FAMILIA.get((curs.get('area') or '').strip().lower(), FALLBACK_FAMILIA)
-    else:
-        codi = (curs.get('certCodi') or '')[:3]
+    codi = curs.get('familiaCodi') or ''
+    if not codi:
+        if curs.get('font') == 'pimec':
+            codi = PIMEC_AREA_FAMILIA.get((curs.get('area') or '').strip().lower(), FALLBACK_FAMILIA)
+        else:
+            codi = (curs.get('certCodi') or '')[:3]
     return codi if codi in families else FALLBACK_FAMILIA
 
 
