@@ -68,6 +68,25 @@ def fpo_fav_env(tmp_path, monkeypatch):
     monkeypatch.setattr(app_module, "_soc_especs_cache", {"mtime": None, "index": None})
     monkeypatch.setattr(app_module, "_soc_centres_cache", {"mtime": None, "index": None})
     monkeypatch.setattr(app_module, "_soc_espec_index_cache", {"key": None, "data": None})
+    ext = [
+        {"idCurs": "PIMEC:p1", "font": "pimec", "tipus": "Subvencionat",
+         "titol": {"ca": "Programació neurolingüística", "es": "Programació neurolingüística"},
+         "area": "Informàtica", "certCodi": "", "hores": 30.0, "modalitat": "PRESENCIAL",
+         "estat": "", "dataInici": "2026-10-05", "dataFi": "2026-11-01",
+         "municipi": "BARCELONA", "comarca": "", "centre": {"nom": "PIMEC Formació", "idCentre": ""},
+         "fitxaUrl": "https://pimecformacio.org/x/p1"},
+        {"idCurs": "PIMEC:p2", "font": "pimec", "tipus": "Subvencionat",
+         "titol": {"ca": "Programació neurolingüística", "es": "Programació neurolingüística"},
+         "area": "Informàtica", "certCodi": "", "hores": 30.0, "modalitat": "PRESENCIAL",
+         "estat": "", "dataInici": "2026-06-01", "dataFi": "2026-07-01",
+         "municipi": "BARCELONA", "comarca": "", "centre": {"nom": "PIMEC Formació", "idCentre": ""},
+         "fitxaUrl": "https://pimecformacio.org/x/p2"},
+    ]
+    (tmp_path / "ext_cursos.json").write_text(json.dumps(ext), encoding="utf-8")
+    monkeypatch.setattr(app_module, "EXT_CURSOS_PATH", str(tmp_path / "ext_cursos.json"))
+    monkeypatch.setattr(app_module, "_ext_cursos_cache", {"mtime": None, "index": None})
+    monkeypatch.setattr(app_module, "_ext_index_cache", {"key": None, "data": None})
+    monkeypatch.setattr(app_module, "_fpo_today", lambda: "2026-09-25")
     yield tmp_path
 
 
@@ -175,3 +194,38 @@ def test_delete_curs(auth_client):
 
     e = auth_client.get("/api/fpo/favorites").get_json()[0]
     assert [c["curs_id"] for c in e["cursos"]] == ["C2"]
+
+
+def test_desa_especialitat_externa_i_marca_cursos(auth_client):
+    codi = "PIMEC:programacio-neurolinguistica"
+    assert _json(auth_client, "post", "/api/fpo/favorites", {"especialitat_codi": codi}).status_code == 201
+    for curs_id in ("PIMEC:p1", "PIMEC:p2", "PIMEC:desaparegut"):
+        r = _json(auth_client, "post", f"/api/fpo/favorites/{codi}/courses", {"curs_id": curs_id})
+        assert r.status_code == 201
+
+    e = auth_client.get("/api/fpo/favorites").get_json()[0]
+    assert e["titol"]["ca"] == "Programació neurolingüística"
+    assert e["font"] == "pimec"
+    assert e["hores"] == 30.0
+    per_id = {c["curs_id"]: c for c in e["cursos"]}
+    p1 = per_id["PIMEC:p1"]
+    assert p1["finalitzat"] is False and p1["estat"] == ""
+    assert p1["font"] == "pimec" and p1["fitxaUrl"] == "https://pimecformacio.org/x/p1"
+    assert p1["centre"]["nom"] == "PIMEC Formació" and p1["dataInici"] == "2026-10-05"
+    assert per_id["PIMEC:p2"]["finalitzat"] is True         # dataFi passada
+    assert per_id["PIMEC:desaparegut"]["finalitzat"] is True  # ja no és al snapshot
+
+
+def test_treu_especialitat_externa(auth_client):
+    codi = "PIMEC:programacio-neurolinguistica"
+    _json(auth_client, "post", "/api/fpo/favorites", {"especialitat_codi": codi})
+    assert auth_client.delete(f"/api/fpo/favorites/{codi}").status_code == 204
+    assert auth_client.get("/api/fpo/favorites").get_json() == []
+
+
+def test_favorit_soc_no_canvia(auth_client):
+    _json(auth_client, "post", "/api/fpo/favorites", {"especialitat_codi": "IFCD0112"})
+    _json(auth_client, "post", "/api/fpo/favorites/IFCD0112/courses", {"curs_id": "C1"})
+    e = auth_client.get("/api/fpo/favorites").get_json()[0]
+    assert e["font"] == "soc" and e["cursos"][0]["font"] == "soc"
+    assert e["cursos"][0]["fitxaUrl"].startswith("https://serveiocupacio.gencat.cat")

@@ -2321,7 +2321,9 @@ def favorites_remove_centre(oferta_id, centre_id):
 
 
 def _fpo_espec_by_codi(codi):
-    """Especialitat FPO del snapshot per codi, o {} si no hi és."""
+    """Especialitat FPO per codi (SOC o externa), o {} si no hi és."""
+    if fpo_ext.is_ext_codi(codi):
+        return next((e for e in _ext_index()["list"] if e["codi"] == codi), {})
     for e in _get_soc_especs():
         if e.get("codi") == codi:
             return e
@@ -2329,7 +2331,9 @@ def _fpo_espec_by_codi(codi):
 
 
 def _fpo_curs_by_id(curs_id):
-    """Curs FPO del snapshot per idCurs, o None si ja no hi és (finalitzat)."""
+    """Curs FPO per idCurs (SOC o extern), o None si ja no hi és."""
+    if fpo_ext.is_ext_codi(curs_id):
+        return next((c for c in _get_ext_cursos() if c.get("idCurs") == curs_id), None)
     for c in _get_soc_cursos():
         if c.get("idCurs") == curs_id:
             return c
@@ -2337,13 +2341,18 @@ def _fpo_curs_by_id(curs_id):
 
 
 def _fpo_fav_course_public(row):
-    """Enriqueix una fila de fpo_favorite_courses amb dades del snapshot."""
+    """Enriqueix una fila de fpo_favorite_courses amb dades del snapshot (SOC o extern)."""
     curs = _fpo_curs_by_id(row["curs_id"])
+    ext = curs is not None and curs.get("font") in fpo_ext.FONTS
+    estat = ""
+    if curs is not None:
+        estat = fpo_ext.estat(curs, _fpo_today()) if ext else curs.get("estat", "")
     out = {
         "curs_id": row["curs_id"],
         "centre_id": row["centre_id"],
         "created_at": row["created_at"],
-        "finalitzat": curs is None,
+        # Els estats del SOC mai són 'finalitzat': aquest valor només surt dels externs.
+        "finalitzat": curs is None or estat == "finalitzat",
     }
     if curs is not None:
         out.update({
@@ -2351,9 +2360,12 @@ def _fpo_fav_course_public(row):
             "centre": curs.get("centre", {}),
             "dataInici": curs.get("dataInici"),
             "dataFi": curs.get("dataFi"),
-            "estat": curs.get("estat", ""),
+            "estat": estat,
             "modalitat": curs.get("modalitat", ""),
-            "fitxaUrl": _soc_fitxa_url(curs),
+            "fitxaUrl": curs.get("fitxaUrl", "") if ext else _soc_fitxa_url(curs),
+            "font": curs.get("font", "soc"),
+            "tipus": curs.get("tipus", ""),
+            "horariText": curs.get("horariText", ""),
         })
     return out
 
@@ -2385,6 +2397,7 @@ def fpo_favorites_get():
             )
             result.append({
                 "especialitat_codi": codi,
+                "font": espec.get("font", "soc"),
                 "created_at": fav["created_at"],
                 "titol": espec.get("titol", {"ca": "", "es": ""}),
                 "familia": espec.get("familia", {}),
