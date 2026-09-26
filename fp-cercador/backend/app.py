@@ -1247,8 +1247,8 @@ _soc_espec_index_cache: dict = {"key": None, "data": None}
 _ext_cursos_cache: dict = {"mtime": None, "index": None}
 _ext_index_cache: dict = {"key": None, "data": None}
 
-_SOC_CERCADOR_URL = ("https://serveiocupacio.gencat.cat/ca/persones/vull-formar-me/"
-                     "cercadors-formacio-especialitats/cercador-integrat/resultats.html")
+_SOC_FITXA_CURS_URL = ("https://serveiocupacio.gencat.cat/ca/persones/vull-formar-me/"
+                       "cercadors-formacio-especialitats/cercador-integrat/fitxa-curs.html")
 
 
 def _read_soc_list(path: str, cache: dict) -> list:
@@ -1334,14 +1334,12 @@ def _soc_warning() -> str | None:
 
 
 def _soc_fitxa_url(curs: dict) -> str:
-    """Enllaç al cercador del SOC pre-filtrat per l'especialitat del curs.
+    """Enllaç a la fitxa del curs concret (centre inclòs) al cercador del SOC.
 
-    El SOC no exposa un patró estable de deep-link a la fitxa individual del
-    curs; enllacem al llistat filtrat, que hi porta amb un clic.
+    És el mateix GET que fa el formulari `formFitxaCursos` del cercador del SOC.
     """
     from urllib.parse import quote
-    codi = (curs.get('especialitat') or {}).get('codi') or ''
-    return f"{_SOC_CERCADOR_URL}?nomCurso={quote(codi)}&comarca=&municipi=&tabCercador=1"
+    return f"{_SOC_FITXA_CURS_URL}?codi_curso_seleccionado={quote(curs.get('idCurs') or '', safe='/')}"
 
 
 def _soc_espec_index() -> dict:

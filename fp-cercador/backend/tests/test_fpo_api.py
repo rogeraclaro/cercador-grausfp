@@ -117,7 +117,10 @@ def test_especialitat_detall(client):
     assert len(d['cursos']) == 2
     c = d['cursos'][0]
     assert set(c) >= {'idCurs', 'centre', 'dataInici', 'dataFi', 'estat', 'modalitat', 'fitxaUrl'}
-    assert c['fitxaUrl'].startswith('https://serveiocupacio.gencat.cat') and 'IFCD0112' in c['fitxaUrl']
+    # Fitxa del curs concret (centre triat), no el llistat de l'especialitat
+    assert c['fitxaUrl'] == ('https://serveiocupacio.gencat.cat/ca/persones/vull-formar-me/'
+                             'cercadors-formacio-especialitats/cercador-integrat/fitxa-curs.html'
+                             f"?codi_curso_seleccionado={c['idCurs']}")
 
 
 def test_especialitat_detall_404(client):
