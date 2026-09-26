@@ -100,6 +100,38 @@ def test_curs_public():
     assert set(p) >= {'titol', 'centre', 'dataInici', 'dataFi', 'modalitat'}
 
 
+def test_nom_net_treu_codis_de_certificat_i_modul():
+    casos = {
+        'ADGD0208 Gestión integrada de recursos humanos': 'Gestión integrada de recursos humanos',
+        'ADGG0208: MF0973 Grabación de datos': 'Grabación de datos',
+        'ADGG0208: MF0976 – Operaciones administrativas comerciales': 'Operaciones administrativas comerciales',
+        'ADGG0208: Ofimática': 'Ofimática',
+        'Actividades de gestión administrativa (ADGD0308)': 'Actividades de gestión administrativa',
+        'ADGD0208 - Gestió integrada de recursos humans': 'Gestió integrada de recursos humans',
+        'ADGD0308_MF0233_Ofimàtica': 'Ofimàtica',
+        'B_SSCE0110_MF1442_Programació didàctica': 'Programació didàctica',
+        'PFE_SSCE0110_Període de formació en empresa': 'Període de formació en empresa',
+        'SSCE0110  Habilitació per a la docència': 'Habilitació per a la docència',
+        # Codis que formen part del nom (certificacions comercials, normes): es queden
+        'Administración de Microsoft – MS-102': 'Administración de Microsoft – MS-102',
+        'Marketing en Meta – M100-101': 'Marketing en Meta – M100-101',
+        'Carretons fins 10.000kg segons norma UNE58451': 'Carretons fins 10.000kg segons norma UNE58451',
+        'Mindfulness': 'Mindfulness',
+    }
+    for brut, net in casos.items():
+        assert fx.nom_net(brut) == net, brut
+    assert fx.nom_net('') == '' and fx.nom_net(None) == ''
+    assert fx.nom_net('ADGG0208') == 'ADGG0208'   # mai deixa el títol buit
+
+
+def test_titol_net_a_la_fila_i_al_curs_sense_canviar_el_codi():
+    c = _c('foment', '1', 'ADGG0208: Ofimática', certCodi='ADGG0208')
+    e = fx.build_index([c], FAMS, TODAY)['list'][0]
+    assert e['titol'] == {'ca': 'Ofimática', 'es': 'Ofimática'}
+    assert e['codi'] == 'FOMENT:adgg0208-ofimatica'   # estable: els favorits en depenen
+    assert fx.curs_public(c, TODAY)['titol'] == {'ca': 'Ofimática', 'es': 'Ofimática'}
+
+
 def test_fonts_noves_i_familia_explicita():
     assert fx.is_ext_codi('CECOT:x') and fx.is_ext_codi('CCOO:1')
     c = _c('ccoo', 1, 'Excel', familiaCodi='IFC')

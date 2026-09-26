@@ -81,6 +81,12 @@ def fpo_fav_env(tmp_path, monkeypatch):
          "estat": "", "dataInici": "2026-06-01", "dataFi": "2026-07-01",
          "municipi": "BARCELONA", "comarca": "", "centre": {"nom": "PIMEC Formació", "idCentre": ""},
          "fitxaUrl": "https://pimecformacio.org/x/p2"},
+        {"idCurs": "PIMEC:p3", "font": "pimec", "tipus": "Subvencionat",
+         "titol": {"ca": "ADGD0308_MF0233_Ofimàtica", "es": "ADGD0308_MF0233_Ofimàtica"},
+         "area": "Informàtica", "certCodi": "", "hores": 30.0, "modalitat": "PRESENCIAL",
+         "estat": "", "dataInici": "2026-10-05", "dataFi": "2026-11-01",
+         "municipi": "BARCELONA", "comarca": "", "centre": {"nom": "PIMEC Formació", "idCentre": ""},
+         "fitxaUrl": "https://pimecformacio.org/x/p3"},
     ]
     (tmp_path / "ext_cursos.json").write_text(json.dumps(ext), encoding="utf-8")
     monkeypatch.setattr(app_module, "EXT_CURSOS_PATH", str(tmp_path / "ext_cursos.json"))
@@ -214,6 +220,16 @@ def test_desa_especialitat_externa_i_marca_cursos(auth_client):
     assert p1["centre"]["nom"] == "PIMEC Formació" and p1["dataInici"] == "2026-10-05"
     assert per_id["PIMEC:p2"]["finalitzat"] is True         # dataFi passada
     assert per_id["PIMEC:desaparegut"]["finalitzat"] is True  # ja no és al snapshot
+
+
+def test_favorit_extern_mostra_el_nom_sense_codis(auth_client):
+    codi = "PIMEC:adgd0308-mf0233-ofimatica"   # el codi continua sortint del títol brut
+    assert _json(auth_client, "post", "/api/fpo/favorites", {"especialitat_codi": codi}).status_code == 201
+    assert _json(auth_client, "post", f"/api/fpo/favorites/{codi}/courses",
+                 {"curs_id": "PIMEC:p3"}).status_code == 201
+    e = auth_client.get("/api/fpo/favorites").get_json()[0]
+    assert e["titol"]["ca"] == "Ofimàtica"
+    assert e["cursos"][0]["titol"]["ca"] == "Ofimàtica"
 
 
 def test_treu_especialitat_externa(auth_client):

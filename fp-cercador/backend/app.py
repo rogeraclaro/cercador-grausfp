@@ -1422,7 +1422,7 @@ def api_fpo_especialitat(codi):
         buit = {'ca': '', 'es': ''}
         return jsonify({
             'codi': codi,
-            'descripcio': cursos[0].get('titol', buit),
+            'descripcio': fpo_ext.titol_net(cursos[0].get('titol')),
             'queAprendras': buit, 'requisits': buit, 'sortides': buit,
             'moduls': [], 'programaUrl': '',
             'cursos': [fpo_ext.curs_public(c, avui) for c in cursos],
@@ -2361,7 +2361,7 @@ def _fpo_fav_course_public(row):
     }
     if curs is not None:
         out.update({
-            "titol": curs.get("titol", {"ca": "", "es": ""}),
+            "titol": fpo_ext.titol_net(curs.get("titol")) if ext else curs.get("titol", {"ca": "", "es": ""}),
             "centre": curs.get("centre", {}),
             "dataInici": curs.get("dataInici"),
             "dataFi": curs.get("dataFi"),

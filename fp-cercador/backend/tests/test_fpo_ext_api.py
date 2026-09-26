@@ -119,6 +119,13 @@ def test_detall_extern_edicions_ordenades(client):
     assert c['font'] == 'pimec' and c['fitxaUrl'].startswith('https://pimecformacio.org')
 
 
+def test_titol_net_sense_codis_a_la_llista_i_al_detall(client):
+    assert _rows(client)['FOMENT:adgg0208-ofimatica']['titol']['ca'] == 'Ofimática'
+    d = client.get('/api/fpo/especialitat/FOMENT:adgg0208-ofimatica').get_json()
+    assert d['descripcio'] == {'ca': 'Ofimática', 'es': 'Ofimática'}
+    assert d['cursos'][0]['titol']['ca'] == 'Ofimática'
+
+
 def test_detall_extern_desconegut_404(client):
     r = client.get('/api/fpo/especialitat/PIMEC:no-existeix')
     assert r.status_code == 404 and r.get_json() == {}

@@ -45,7 +45,27 @@ def _slug(text) -> str:
     return s[:80].strip('-') or 'curs'
 
 
+# Codis de certificat (ADGG0208) i de mòdul (MF0976, MF0233_2, UF0319) que les fonts
+# enganxen al nom: "ADGG0208: MF0976 – Nom", "B_SSCE0110_MF1442_Nom", "Nom (ADGD0308)".
+_CODI = r'(?:[A-Z]{4}\d{4}|MF\d{4}(?:_\d)?|UF\d{4})'
+_CODI_INICI_RE = re.compile(rf'^(?:[A-Z]{{1,3}}_)?{_CODI}(?:[\s:_\-–—]+{_CODI})*[\s:_\-–—]+')
+_CODI_FINAL_RE = re.compile(rf'\s*\({_CODI}\)$')
+
+
+def nom_net(text) -> str:
+    """Nom del curs sense els codis de certificat/mòdul. Si no queda res, el text original."""
+    brut = (text or '').strip()
+    net = _CODI_FINAL_RE.sub('', _CODI_INICI_RE.sub('', brut)).strip()
+    return net or brut
+
+
+def titol_net(titol) -> dict:
+    titol = titol or {}
+    return {'ca': nom_net(titol.get('ca')), 'es': nom_net(titol.get('es'))}
+
+
 def codi_especialitat(curs: dict) -> str:
+    # Del títol brut, no del net: el codi és la clau dels favorits desats.
     return f"{curs['font'].upper()}:{_slug((curs.get('titol') or {}).get('ca'))}"
 
 
@@ -78,7 +98,7 @@ def _rank(curs: dict, today_iso: str) -> int:
 def curs_public(curs: dict, today_iso: str) -> dict:
     return {
         'idCurs': curs.get('idCurs', ''),
-        'titol': curs.get('titol', {'ca': '', 'es': ''}),
+        'titol': titol_net(curs.get('titol')),
         'centre': curs.get('centre', {}),
         'dataInici': curs.get('dataInici'),
         'dataFi': curs.get('dataFi'),
@@ -111,7 +131,7 @@ def build_index(cursos: list, families: dict, today_iso: str) -> dict:
         area = next((c['area'] for c in eds if c.get('area')), '')
         llista.append({
             'codi': codi,
-            'titol': eds[0].get('titol', {'ca': '', 'es': ''}),
+            'titol': titol_net(eds[0].get('titol')),
             'familia': _familia(fam, families),
             'area': {'codi': '', 'desc': {'ca': area, 'es': area}},
             'nivell': 0,
