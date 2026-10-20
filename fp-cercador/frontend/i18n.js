@@ -606,6 +606,7 @@
       'priv.h1': 'Política de privacitat',
       'priv.badge': 'Text provisional — es completarà abans del llançament públic',
       'priv.footer.back': '← Tornar al cercador',
+      'priv.feedback': '<strong>Comentaris</strong>: si ens envies un comentari des de la pestanya Feedback, en desem el text, el teu email i la pàgina on eres, només per respondre\'t i millorar el servei.',
     },
 
     es: {
@@ -1214,6 +1215,7 @@
       'priv.h1': 'Política de privacidad',
       'priv.badge': 'Texto provisional — se completará antes del lanzamiento público',
       'priv.footer.back': '← Volver al buscador',
+      'priv.feedback': '<strong>Comentarios</strong>: si nos envías un comentario desde la pestaña Feedback, guardamos el texto, tu email y la página en la que estabas, solo para responderte y mejorar el servicio.',
     }
   };
 
