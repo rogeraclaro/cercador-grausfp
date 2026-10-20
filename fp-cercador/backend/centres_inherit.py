@@ -6,7 +6,7 @@ certificat C i, per definició, pot impartir els seus mòduls (B) i unitats
 formatives (A). Aquí es deriva, en memòria i sense I/O:
 
   LOE (pla antic)
-    A  UF####      → B MF####_N            (itinerary.get_parent_b)
+    A  UF####      → [B MF####_N]          (itinerary.get_parents_b; unió dels pares)
     B  MF####_N    → UC####_N → [codigo C] (bc_loe_inverse)
     C  codigo      → [centre_id]           (oferta_centres[codigo])
 
@@ -83,8 +83,9 @@ def build_inherited(records: list[dict], ab_index: dict, bc_loe_inverse: dict,
         if grado == 'B' and (_PAT_B_LOE.match(codigo) or _PAT_B_LOMLOE.match(codigo)):
             ids = _for_b(codigo)
         elif grado == 'A' and (_PAT_A_LOE.match(codigo) or _PAT_A_LOMLOE.match(codigo)):
-            parent_b = itinerary.get_parent_b(r, ab_index)
-            ids = _for_b(parent_b['codigo']) if parent_b else []
+            # Un A LOE pot tenir diversos B pares (Ampliació 068): unió dels seus centres
+            ids = sorted({cid for b in itinerary.get_parents_b(r, ab_index)
+                          for cid in _for_b(b['codigo'])})
         else:
             continue
         if ids:

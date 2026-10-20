@@ -15,6 +15,14 @@ refresc d'ofertes i cada fitxa es verifica pel "Código:". Són ~3.000 fitxes:
 4 fils amb una sessió cadascun (todofp triga ~2,5 s per fitxa, així que la
 càrrega queda per sota de ~2 req/s) i reintent amb backoff (5/15/45 s). Una
 fitxa inabastable es salta amb WARNING.
+
+Ampliació 068 — pares reals dels Graus A LOE. La fitxa d'un A LOE (UFnnnn)
+llista els B que el contenen, cadascun amb "Código: MFnnnn_n"; el número del
+pare no coincideix amb el de l'UF (UF0038 → MF0706_1) i n'hi pot haver més
+d'un. Genera backend/data/a_loe_pares.json: {codigo_uf: [codigo_mf, ...]}.
+Aquesta fitxa NO porta el codi de l'A (el títol és un bloc comentat), així que
+no es pot verificar pel "Código:": només s'exigeix que hi surti algun MF. Per
+això cal executar-ho sempre amb ficha_id acabats de refrescar.
 """
 import html as _html
 import json
@@ -37,6 +45,8 @@ _LI_RE = re.compile(r'<li[^>]*>(.*?)</li>', re.S)
 _ITEM_RE = re.compile(r'^\(\s*([A-Z0-9_]+)\s*\)\s*(.+)$', re.S)
 _ECP_RE = re.compile(r'^ECP\d+_\d+$')
 _RA_RE = re.compile(r'^[A-Z]{3}_RA_\d+_\d+$')
+_PARE_LOE_RE = re.compile(r'^MF\d{4}_\d+$')
+_A_LOE_RE = re.compile(r'^UF\d{4}$')
 _TAG_RE = re.compile(r'<(script|style).*?</\1>|<[^>]+>', re.S)
 
 _local = threading.local()
@@ -67,6 +77,12 @@ def parse_b_ficha(html: str) -> dict:
     return parsed
 
 
+def parse_a_loe_pares(html: str) -> list[str]:
+    """Codis MFnnnn_n dels B pares que llista la fitxa d'un A LOE, en ordre i sense duplicats."""
+    codes = _CODIGO_RE.findall(_to_text(html))
+    return list(dict.fromkeys(c for c in codes if _PARE_LOE_RE.match(c)))
+
+
 def _thread_session():
     """Una sessió (amb cookies del bootstrap) per fil del pool."""
     if getattr(_local, 'session', None) is None:
@@ -74,22 +90,22 @@ def _thread_session():
     return _local.session
 
 
-def _fetch_ficha_html(session, ficha_id: int, timeout: int = 30) -> str:
+def _fetch_ficha_html(session, ficha_id: int, timeout: int = 30, grado: str = 'B') -> str:
     resp = session.get(f'{buscador_scraper.BASE_URL}/ficha',
-                       params={'grado': 'B', 'id': ficha_id}, timeout=timeout)
+                       params={'grado': grado, 'id': ficha_id}, timeout=timeout)
     resp.raise_for_status()
     return resp.text
 
 
-def _fetch_with_retry(session, ficha_id: int) -> str:
+def _fetch_with_retry(session, ficha_id: int, grado: str = 'B') -> str:
     for attempt, wait in enumerate((*BACKOFF, None)):
         try:
-            return _fetch_ficha_html(session, ficha_id)
+            return _fetch_ficha_html(session, ficha_id, grado=grado)
         except Exception as exc:
             if wait is None:
                 raise
-            logger.warning('fitxa B %s intent %d fallit (%s), reintent en %ds',
-                           ficha_id, attempt + 1, exc, wait)
+            logger.warning('fitxa %s %s intent %d fallit (%s), reintent en %ds',
+                           grado, ficha_id, attempt + 1, exc, wait)
             time.sleep(wait)
     raise RuntimeError('unreachable')
 
@@ -135,6 +151,47 @@ def build_b_contingut(records: list[dict], on_progress=None, max_workers: int = 
     return result
 
 
+def _scrape_a_loe(rec: dict) -> list[str] | None:
+    codigo = rec['codigo']
+    try:
+        html = _fetch_with_retry(_thread_session(), rec['ficha_id'], 'A')
+    except Exception as exc:
+        logger.warning('fitxa A %s (id %s) inabastable, saltada: %s',
+                       codigo, rec['ficha_id'], exc)
+        return None
+    pares = parse_a_loe_pares(html)
+    if not pares:
+        logger.warning('fitxa A %s (id %s) sense cap MF pare — saltada (id obsolet?)',
+                       codigo, rec['ficha_id'])
+        return None
+    return pares
+
+
+def build_a_loe_pares(records: list[dict], on_progress=None, max_workers: int = 4) -> dict[str, list[str]]:
+    """
+    Retorna {codigo_uf: [codigo_mf, ...]} per als A LOE (UFnnnn) amb ficha_id.
+    Sense cap A LOE → {} sense fer xarxa.
+    """
+    a_recs = [r for r in records
+              if r.get('grado') == 'A' and _A_LOE_RE.match(r.get('codigo') or '') and r.get('ficha_id')]
+    if not a_recs:
+        return {}
+
+    result: dict[str, list[str]] = {}
+    total = len(a_recs)
+    with ThreadPoolExecutor(max_workers=max_workers) as pool:
+        futures = {pool.submit(_scrape_a_loe, r): r['codigo'] for r in a_recs}
+        for done, fut in enumerate(as_completed(futures), start=1):
+            pares = fut.result()
+            if pares is not None:
+                result[futures[fut]] = pares
+            if on_progress and (done % 25 == 0 or done == total):
+                on_progress('Pares fitxes A LOE', done, total)
+
+    logger.info('a_loe_pares: %d/%d fitxes A LOE resoltes', len(result), total)
+    return result
+
+
 def write_b_contingut(index: dict, output_path: str) -> None:
     dir_path = os.path.dirname(output_path)
     os.makedirs(dir_path, exist_ok=True)
@@ -143,3 +200,7 @@ def write_b_contingut(index: dict, output_path: str) -> None:
         json.dump(index, tmp, ensure_ascii=False, indent=1)
         tmp_path = tmp.name
     os.replace(tmp_path, output_path)
+
+
+def write_a_loe_pares(index: dict, output_path: str) -> None:
+    write_b_contingut(index, output_path)  # mateixa escriptura atòmica

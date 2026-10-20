@@ -11,8 +11,8 @@ def _rec(id_, codigo, grado, plan_antiguo=True):
     return {'id': id_, 'codigo': codigo, 'grado': grado, 'plan_antiguo': plan_antiguo}
 
 
-def _run(records, bc_loe_inverse, oferta_centres):
-    ab_index = itinerary.build_ab_index(records)
+def _run(records, bc_loe_inverse, oferta_centres, a_loe_pares=None):
+    ab_index = itinerary.build_ab_index(records, a_loe_pares)
     return build_inherited(records, ab_index, bc_loe_inverse, oferta_centres)
 
 
@@ -25,14 +25,35 @@ def test_b_loe_hereta_unio_de_c_pares():
 
 
 def test_a_loe_hereta_via_b():
-    records = [_rec(20, 'UF0038', 'A'), _rec(21, 'MF0038_3', 'B')]
-    inverse = {'UC0038_3': ['HOTA0108']}
+    # Ampliació 068: el pare ve de a_loe_pares (fitxa de l'A), no del número.
+    records = [_rec(20, 'UF0038', 'A'), _rec(21, 'MF0706_1', 'B')]
+    inverse = {'UC0706_1': ['HOTA0108']}
     oferta_centres = {'HOTA0108': ['c1', 'c2']}
 
-    result = _run(records, inverse, oferta_centres)
+    result = _run(records, inverse, oferta_centres, {'UF0038': ['MF0706_1']})
 
     assert result['20'] == ['c1', 'c2']
     assert result['21'] == ['c1', 'c2']
+
+
+def test_a_loe_hereta_unio_de_tots_els_pares():
+    records = [_rec(22, 'UF0723', 'A'), _rec(23, 'MF0326_2', 'B'), _rec(24, 'MF0333_2', 'B')]
+    inverse = {'UC0326_2': ['QUIT0109'], 'UC0333_2': ['QUIT0209']}
+    oferta_centres = {'QUIT0109': ['c2', 'c1'], 'QUIT0209': ['c3', 'c1']}
+
+    result = _run(records, inverse, oferta_centres, {'UF0723': ['MF0326_2', 'MF0333_2']})
+
+    assert result['22'] == ['c1', 'c2', 'c3']
+
+
+def test_a_loe_sense_mapa_no_hereta_pel_numero():
+    records = [_rec(25, 'UF0038', 'A'), _rec(26, 'MF0038_3', 'B')]
+    inverse = {'UC0038_3': ['HOTA0108']}
+
+    result = _run(records, inverse, {'HOTA0108': ['c1']})
+
+    assert '25' not in result
+    assert result['26'] == ['c1']
 
 
 def test_sense_c_pare_no_apareix():

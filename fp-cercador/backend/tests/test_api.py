@@ -4,10 +4,15 @@ test_api.py — Tests d'integració de les rutes Flask (API-01 a API-09).
 Tests sense xarxa real: pipeline.run i os.path.exists estan mockejats.
 Fase RED: tots fallen fins que app.py implementa les rutes (Pla 02).
 """
+import builtins
 import os
 import unittest.mock as mock
 
 import pytest
+
+# open real capturat abans de cap patch: els _fake_open el fan servir per als
+# fitxers que no simulen (cridar builtins.open dins el patch recursaria).
+_REAL_OPEN = builtins.open
 
 # ---------------------------------------------------------------------------
 # Patch paths (convencions: constants al top del mòdul, com a test_pipeline.py)
@@ -242,13 +247,12 @@ def test_itinerari_grado_b_loe_retorna_children_c_loe(client, monkeypatch):
     monkeypatch.setattr(flask_app_module, "_bc_loe_inverse_cache", {"mtime": None, "index": None})
 
     def _fake_open(path, *args, **kwargs):
-        import builtins
         path_str = str(path)
         if 'bc_loe' in path_str:
             return mock.mock_open(read_data=_FAKE_BC_LOE_B)()
         if 'ofertes' in path_str:
             return mock.mock_open(read_data=_FAKE_OFERTES_ITINERARI_B_LOE)()
-        return builtins.open(path, *args, **kwargs)
+        return _REAL_OPEN(path, *args, **kwargs)
 
     with mock.patch(PATCH_OS_PATH_EXISTS, return_value=True), \
          mock.patch("app.os.path.getmtime", return_value=42.0), \
@@ -291,7 +295,6 @@ def test_itinerari_grado_c_retorna_parent_b_loe(client, monkeypatch):
     monkeypatch.setattr(flask_app_module, "_itinerary_index_cache", {"mtime": None, "index": None})
 
     def _fake_open(path, *args, **kwargs):
-        import builtins
         path_str = str(path)
         if 'd_modulos' in path_str:  # Pla 058: sense mòduls D en aquest test
             return mock.mock_open(read_data='{}')()
@@ -303,7 +306,7 @@ def test_itinerari_grado_c_retorna_parent_b_loe(client, monkeypatch):
             return mock.mock_open(read_data=_FAKE_CICLOS)()
         if 'ofertes' in path_str:
             return mock.mock_open(read_data=_FAKE_OFERTES_ITINERARI_C)()
-        return builtins.open(path, *args, **kwargs)
+        return _REAL_OPEN(path, *args, **kwargs)
 
     with mock.patch(PATCH_OS_PATH_EXISTS, return_value=True), \
          mock.patch("app.os.path.getmtime", return_value=99.0), \

@@ -186,7 +186,7 @@ def test_fetch_reintenta_amb_backoff(monkeypatch):
     calls = []
     sleeps = []
 
-    def flaky(session, fid, timeout=30):
+    def flaky(session, fid, timeout=30, grado='B'):
         calls.append(fid)
         if len(calls) < 3:
             raise RuntimeError('boom')
@@ -207,3 +207,110 @@ def test_write_b_contingut_atomic_i_rellegible(tmp_path):
 
     assert json.loads(path.read_text(encoding='utf-8')) == index
     assert [p.name for p in path.parent.iterdir()] == ['b_contingut.json']
+
+
+# ---------------------------------------------------------------------------
+# Ampliació 068 — pares reals dels Graus A LOE (fitxa de l'A)
+# La fitxa d'un A LOE NO porta el codi de l'A: els "Código:" són els dels B pares.
+# HTML retallat de les fitxes reals UF0038 (1 pare) i UF0723 (2 pares).
+# ---------------------------------------------------------------------------
+
+def _a_card(codigo_b, nom):
+    return f"""
+  <div class="col-md-10 mb-4 p-4 shadow rounded cuadro-estilo">
+    <h2 class="fs-2 fs-md-3"><b class="card-text text-muted">{nom} (Plan Antiguo)</b></h2>
+    <h5>
+      <b class="card-text text-muted ml-1">Código: </b>
+      <span class="card-text text-muted ml-1">
+          <b>{codigo_b}</b>
+      </span>
+    </h5>
+    <h5><span class="recuadro-boton-b">Grado B - Certificado de competencia</span></h5>
+    <a href="/buscadorgradosfp/ficha?grado=B&amp;id=1578&amp;navegar=0" class="btn btn-dark">Ver ficha</a>
+  </div>"""
+
+
+_A_HEAD = """
+<html><head><title>Buscador FP</title></head><body>
+<!--<h1 class="card-title">Grado A: Microacreditaciones</h1>
+    <h1><span class="card-text text-muted" th:text="${A.denominacion}"></span></h1>-->
+<p id="mensaje1" class=" texto-explicacion ">Grados B que incluyen el grado A que estás cursando:</p>
+"""
+
+FICHA_A_UN_PARE_HTML = (_A_HEAD + _a_card('MF0706_1', 'Servicio de habitaciones') + '</body></html>')
+FICHA_A_DOS_PARES_HTML = (_A_HEAD
+                          + _a_card('MF0326_2', 'Preparación de máquinas e instalaciones')
+                          + _a_card('MF0333_2', 'Construcción y acondicionamientos de modelos')
+                          + '</body></html>')
+FICHA_A_LOMLOE_HTML = (_A_HEAD + _a_card('QUI_B_3001', 'Un B nou') + '</body></html>')
+
+A_RECORDS = [
+    _rec(10, 'UF0038', 'A', ficha_id=7802, plan_antiguo=True),
+    _rec(11, 'UF0723', 'A', ficha_id=8191, plan_antiguo=True),
+    _rec(12, 'UF9999', 'A', plan_antiguo=True),             # sense ficha_id → no entra
+    _rec(13, 'ADG_A_3001_01', 'A', ficha_id=11),           # LOMLOE → no entra
+    _rec(14, 'MF0706_1', 'B', ficha_id=15, plan_antiguo=True),
+]
+A_HTML_BY_ID = {7802: FICHA_A_UN_PARE_HTML, 8191: FICHA_A_DOS_PARES_HTML}
+
+
+def test_parse_a_loe_pares_un_pare():
+    assert bcs.parse_a_loe_pares(FICHA_A_UN_PARE_HTML) == ['MF0706_1']
+
+
+def test_parse_a_loe_pares_dos_pares():
+    assert bcs.parse_a_loe_pares(FICHA_A_DOS_PARES_HTML) == ['MF0326_2', 'MF0333_2']
+
+
+def test_parse_a_loe_pares_ignora_codis_que_no_son_mf():
+    assert bcs.parse_a_loe_pares(FICHA_A_LOMLOE_HTML) == []
+
+
+def test_build_a_loe_pares_nomes_uf_amb_ficha_id(monkeypatch, no_network):
+    fetched = []
+
+    def fake_fetch(session, ficha_id, grado='B'):
+        fetched.append((ficha_id, grado))
+        return A_HTML_BY_ID[ficha_id]
+
+    monkeypatch.setattr(bcs, '_fetch_with_retry', fake_fetch)
+
+    result = bcs.build_a_loe_pares(A_RECORDS, max_workers=2)
+
+    assert sorted(fetched) == [(7802, 'A'), (8191, 'A')]
+    assert result == {'UF0038': ['MF0706_1'], 'UF0723': ['MF0326_2', 'MF0333_2']}
+
+
+def test_build_a_loe_pares_salta_fitxa_sense_mf(monkeypatch, no_network, caplog):
+    # Sense "Código:" propi no es pot verificar l'A: una fitxa sense cap MF
+    # (id obsolet que apunta a un A LOMLOE, pàgina d'error…) se salta.
+    monkeypatch.setattr(bcs, '_fetch_with_retry',
+                        lambda session, fid, grado='B': FICHA_A_LOMLOE_HTML if fid == 7802
+                        else A_HTML_BY_ID[fid])
+
+    with caplog.at_level(logging.WARNING):
+        result = bcs.build_a_loe_pares(A_RECORDS)
+
+    assert set(result) == {'UF0723'}
+    assert 'UF0038' in caplog.text
+
+
+def test_build_a_loe_pares_salta_inabastable(monkeypatch, no_network, caplog):
+    def fake_fetch(session, ficha_id, grado='B'):
+        if ficha_id == 8191:
+            raise RuntimeError('timeout')
+        return A_HTML_BY_ID[ficha_id]
+
+    monkeypatch.setattr(bcs, '_fetch_with_retry', fake_fetch)
+
+    with caplog.at_level(logging.WARNING):
+        result = bcs.build_a_loe_pares(A_RECORDS)
+
+    assert result == {'UF0038': ['MF0706_1']}
+    assert 'UF0723' in caplog.text
+
+
+def test_write_a_loe_pares_rellegible(tmp_path):
+    path = tmp_path / 'a_loe_pares.json'
+    bcs.write_a_loe_pares({'UF0038': ['MF0706_1']}, str(path))
+    assert json.loads(path.read_text(encoding='utf-8')) == {'UF0038': ['MF0706_1']}

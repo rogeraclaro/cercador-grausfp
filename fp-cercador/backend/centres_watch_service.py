@@ -26,6 +26,7 @@ _CENTRES_PATH = os.path.join(_DATA_DIR, "centres.json")
 _OFERTES_PATH = os.path.join(_DATA_DIR, "ofertes.json")
 _BC_LOE_PATH = os.path.join(_DATA_DIR, "bc_loe.json")
 _BC_LOMLOE_PATH = os.path.join(_DATA_DIR, "bc_lomloe.json")
+_A_LOE_PARES_PATH = os.path.join(_DATA_DIR, "a_loe_pares.json")  # Pla 068
 
 
 def _load_json_or_empty(path: str, label: str) -> dict:
@@ -55,12 +56,13 @@ def _inherited_ab(oferta_centres: dict) -> dict:
         return {}
     bc_loe = _load_json_or_empty(_BC_LOE_PATH, "bc_loe.json")
     bc_lomloe = _load_json_or_empty(_BC_LOMLOE_PATH, "bc_lomloe.json")
+    a_loe_pares = _load_json_or_empty(_A_LOE_PARES_PATH, "a_loe_pares.json")
     inverse: dict = {}
     for codigo_c, uc_codes in bc_loe.items():
         for uc in uc_codes:
             inverse.setdefault(uc, []).append(codigo_c)
     return centres_inherit.build_inherited(
-        records, itinerary.build_ab_index(records), inverse, oferta_centres,
+        records, itinerary.build_ab_index(records, a_loe_pares), inverse, oferta_centres,
         bc_lomloe=bc_lomloe,
     )
 

@@ -343,6 +343,20 @@ def run(on_progress=None) -> dict:
     except Exception as exc:
         logger.warning("pipeline: build_b_contingut ha fallat (no fatal): %s", exc)
 
+    # --- Ampliació 068: pares reals dels A LOE via les seves fitxes (no fatal) ---
+    # La fitxa de l'A no porta el seu codi: només és fiable amb ficha_id acabats de refrescar.
+    _report('Pares dels Graus A LOE (fitxes todofp)')
+    try:
+        from scrapers.b_contingut_scraper import build_a_loe_pares, write_a_loe_pares
+        a_loe_pares = build_a_loe_pares(
+            all_records,
+            on_progress=lambda phase, i, n: _report(f'{phase} {i}/{n}'),
+        )
+        write_a_loe_pares(a_loe_pares, os.path.join(os.path.dirname(DATA_PATH), 'a_loe_pares.json'))
+        logger.info("pipeline: a_loe_pares.json escrit (%d A LOE)", len(a_loe_pares))
+    except Exception as exc:
+        logger.warning("pipeline: build_a_loe_pares ha fallat (no fatal): %s", exc)
+
     # --- Pla 059: cursos FPO del SOC (Catalunya) via Algolia (no fatal) ---
     _report('Cursos FPO (SOC Catalunya)')
     try:

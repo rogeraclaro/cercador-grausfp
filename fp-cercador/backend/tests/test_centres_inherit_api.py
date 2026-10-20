@@ -35,6 +35,8 @@ BC_LOE = {'ADGG0408': ['UC0969_1']}
 BC_LOMLOE = {'HOT_C_005_5B': ['HOT_B_0171']}
 # Pla 058: el mòdul del D 700 coincideix amb la denominació del B id 50 ('B nou').
 D_MODULOS = {'700': {'modulos': [{'num': None, 'name': 'B nou'}], 'ensenanzaFP': None}}
+# Ampliació 068: pare real de l'A LOE (fitxa de l'A); aquí coincideix amb el número.
+A_LOE_PARES = {'UF0969': ['MF0969_1']}
 CICLOS_FP = {'ADGG0408': [{'denominacion': 'X', 'familia': 'F', 'ficha_url': None}]}
 
 
@@ -48,7 +50,9 @@ def data_dir(tmp_path, monkeypatch):
         'bc_lomloe': tmp_path / 'bc_lomloe.json',
         'd_modulos': tmp_path / 'd_modulos.json',
         'ciclos': tmp_path / 'ciclos_fp.json',
+        'a_loe_pares': tmp_path / 'a_loe_pares.json',
     }
+    paths['a_loe_pares'].write_text(json.dumps(A_LOE_PARES), encoding='utf-8')
     paths['ofertes'].write_text(json.dumps(OFERTES), encoding='utf-8')
     paths['centres'].write_text(json.dumps(CENTRES), encoding='utf-8')
     paths['oferta_centres'].write_text(json.dumps(OFERTA_CENTRES), encoding='utf-8')
@@ -67,6 +71,8 @@ def data_dir(tmp_path, monkeypatch):
     monkeypatch.setattr(app_module, 'BC_LOE_PATH', str(paths['bc_loe']))
     monkeypatch.setattr(app_module, 'BC_LOMLOE_PATH', str(paths['bc_lomloe']))
     monkeypatch.setattr(app_module, '_bc_lomloe_cache', {'mtime': None, 'index': None})
+    monkeypatch.setattr(app_module, 'A_LOE_PARES_PATH', str(paths['a_loe_pares']))
+    monkeypatch.setattr(app_module, '_a_loe_pares_cache', {'mtime': None, 'index': None})
     monkeypatch.setattr(app_module, '_centres_index', None)
     monkeypatch.setattr(app_module, '_oferta_centres', None)
     monkeypatch.setattr(app_module, '_itinerary_index_cache', {'mtime': None, 'index': None})
@@ -78,6 +84,7 @@ def data_dir(tmp_path, monkeypatch):
     monkeypatch.setattr(centres_watch_service, '_OFERTES_PATH', str(paths['ofertes']))
     monkeypatch.setattr(centres_watch_service, '_BC_LOE_PATH', str(paths['bc_loe']))
     monkeypatch.setattr(centres_watch_service, '_BC_LOMLOE_PATH', str(paths['bc_lomloe']))
+    monkeypatch.setattr(centres_watch_service, '_A_LOE_PARES_PATH', str(paths['a_loe_pares']))
     return paths
 
 
@@ -117,6 +124,7 @@ def test_watch_service_load_inclou_heretats(data_dir):
     oferta_centres, centres_index = centres_watch_service._load_centres_data()
     assert oferta_centres['ADGG0408'] == ['M1', 'M2']
     assert oferta_centres['2'] == ['M1', 'M2']
+    assert oferta_centres['3'] == ['M1', 'M2']   # A LOE via a_loe_pares
     assert '4' not in oferta_centres
     assert set(centres_index) == {'M1', 'M2', 'M3'}
 

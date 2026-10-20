@@ -115,6 +115,49 @@ i el camp `contingut` a la branca A de `/api/itinerari`.
    (canvi de backend) + generar `b_contingut.json` al VPS amb el python del venv.
 5. Marcar la fila 068 a `plans/README.md`.
 
+## Ampliació (2026-10-20) — pare real dels Graus A LOE
+
+### Fet verificat (no re-investigar)
+L'heurística actual UF↔MF pel número (`itinerary.b_by_uf_num` / `a_by_uf_num`,
+`index.html` `_bByUfNum` / `parentBOf`) és **errònia**: en 25/25 UF de mostra el pare real
+(fitxa oficial de l'A) té un altre número (`UF0038` → `MF0706_1`, no `MF0038_3`). Alguns UF
+tenen **diversos** pares (`UF0723` → `MF0326_2`, `MF0333_2`). Afecta, des de F5 i en
+producció: el badge "→ MF…" de les files A, els fills A dels B LOE (`/api/itinerari?grado=B`),
+la herència de centres A→B (`centres_inherit.py`) i el panell nou d'aquest pla.
+L'única font fiable és la fitxa de cada A LOE (`ficha?grado=A&id=…`), que llista els codis
+`MFnnnn_n` dels B que el contenen.
+
+### Decisions
+- El scraper llegeix també les fitxes dels **A LOE** (`UFnnnn` amb `ficha_id`), comprova
+  "Código:" i extreu tots els `MFnnnn_n` de la secció de B pares. Sortida
+  `backend/data/a_loe_pares.json`: `{ "UF0038": ["MF0706_1"], "UF0723": ["MF0326_2","MF0333_2"] }`.
+  Mateix bloc no fatal del pipeline (un sol `_report`, dues sortides) o bloc germà; tolerància
+  igual (saltar inabastables amb WARNING).
+- `itinerary.py`: **s'elimina l'heurística pel número**. L'índex rep el mapa `a_loe_pares`
+  i construeix `b_parents_by_a` (UF → [registres B]) i `a_by_b_loe` (MF → [registres A]).
+  `get_parent_b` retorna el primer pare; nova `get_parents_b` retorna la llista. Sense mapa
+  (fitxer absent) → cap pare per als A LOE (millor res que un pare fals).
+- `/api/itinerari?grado=A`: `parent_b` = primer pare (compatibilitat) + nou `parents_b`
+  (llista). `contingut.ecp` = ECP de tots els pares, sense duplicats; `contingut.ra` igual que ara.
+  `?grado=B` d'un MF retorna els fills reals.
+- `centres_inherit.py`: un A LOE hereta la **unió** dels centres de tots els seus pares.
+- Frontend: nou endpoint `GET /api/a-loe-pares` (el JSON tal qual, cache per mtime) carregat un
+  cop a l'inici; `parentBOf` el fa servir per als UF (primer pare; si n'hi ha més, el badge
+  mostra "+N" i el title els llista). Fora `_bByUfNum`. El panell A llista tots els B pares.
+
+### Fase 6 — Tests primer, implementació, regeneració
+- Tests (fallen primer): parse de la fitxa A LOE (un pare, dos pares, codi no coincident);
+  `itinerary` amb el mapa (pare correcte, diversos pares, sense mapa → None, fills d'un MF);
+  `/api/itinerari` A LOE (`parents_b`, `ecp` unió) i B LOE (fills reals);
+  `centres_inherit` (unió de pares); `/api/a-loe-pares`. Ajustar els tests existents que
+  codificaven l'heurística (`test_itinerary.py`, etc.) i explicar-ho al commit.
+- Commits: `fix(068): pare real dels Graus A LOE des de la fitxa oficial` (backend) i
+  `fix(068): badge i panell dels Graus A LOE amb els pares reals` (frontend).
+- Regenerar `a_loe_pares.json` en local (amb `ficha_id` vius, com a la primera generació).
+- Desplegament: al VPS cal generar `b_contingut.json` i `a_loe_pares.json` **amb `ficha_id`
+  vius** (el `ofertes.json` del VPS pot tenir ids antics si no s'ha fet un refresc recent):
+  executar el refresc complet o el mateix script amb ids vius.
+
 ## Fora d'abast
 
 - Hores i continguts detallats dels A (són al Reial Decret de cada formació).

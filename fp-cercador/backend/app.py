@@ -85,6 +85,7 @@ BC_LOE_PATH = os.path.join(_DATA_DIR, "bc_loe.json")
 BC_LOMLOE_PATH = os.path.join(_DATA_DIR, "bc_lomloe.json")  # Pla 057: {codigo_c: [codigo_b]}
 D_MODULOS_PATH = os.path.join(_DATA_DIR, "d_modulos.json")  # Pla 058: {str(id_d): {modulos, ensenanzaFP}}
 B_CONTINGUT_PATH = os.path.join(_DATA_DIR, "b_contingut.json")  # Pla 068: {codigo_b: {ecp, ra}}
+A_LOE_PARES_PATH = os.path.join(_DATA_DIR, "a_loe_pares.json")  # Pla 068: {codigo_uf: [codigo_mf]}
 SOC_CURSOS_PATH = os.path.join(_DATA_DIR, "soc_cursos.json")    # Pla 059: cursos FPO (SOC)
 SOC_ESPECS_PATH = os.path.join(_DATA_DIR, "soc_especs.json")    # Pla 059: especialitats formatives (SOC)
 SOC_CENTRES_PATH = os.path.join(_DATA_DIR, "soc_centres.json")  # Pla 059: centres de formació (SOC)
@@ -150,7 +151,7 @@ def _get_effective_oferta_centres() -> dict:
         return os.path.getmtime(path) if os.path.exists(path) else None
 
     key = (_mtime(DATA_PATH), _mtime(BC_LOE_PATH), _mtime(BC_LOMLOE_PATH),
-           _mtime(_OFERTA_CENTRES_PATH))
+           _mtime(_OFERTA_CENTRES_PATH), _mtime(A_LOE_PARES_PATH))
     if _effective_oc_cache["key"] == key and _effective_oc_cache["data"] is not None:
         return _effective_oc_cache["data"]
 
@@ -1128,19 +1129,44 @@ def ficha_redirect():
 # ---------------------------------------------------------------------------
 
 _itinerary_index_cache: dict = {"mtime": None, "index": None}
+_a_loe_pares_cache: dict = {"mtime": None, "index": None}
+
+
+def _get_a_loe_pares() -> dict:
+    """
+    Ampliació 068: {codigo_uf: [codigo_mf, ...]} de a_loe_pares.json (pares
+    reals dels A LOE segons la seva fitxa). Cache per mtime. {} si no existeix.
+    """
+    if not os.path.exists(A_LOE_PARES_PATH):
+        return {}
+    mtime = os.path.getmtime(A_LOE_PARES_PATH)
+    if _a_loe_pares_cache["mtime"] == mtime and _a_loe_pares_cache["index"] is not None:
+        return _a_loe_pares_cache["index"]
+    try:
+        with open(A_LOE_PARES_PATH, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+        if not isinstance(data, dict):
+            logger.warning("_get_a_loe_pares: a_loe_pares.json no és un objecte — s'ignora")
+            return {}
+        _a_loe_pares_cache.update(mtime=mtime, index=data)
+        return data
+    except (OSError, json.JSONDecodeError) as exc:
+        logger.warning("_get_a_loe_pares: error llegint a_loe_pares.json: %s", exc)
+        return {}
 
 
 def _get_itinerary_index() -> dict:
-    """Retorna l'índex A→B, reconstruint-lo si ofertes.json ha canviat."""
+    """Retorna l'índex A→B, reconstruint-lo si ofertes.json o a_loe_pares.json han canviat."""
     if not os.path.exists(DATA_PATH):
         return {}
-    mtime = os.path.getmtime(DATA_PATH)
+    pares_mtime = os.path.getmtime(A_LOE_PARES_PATH) if os.path.exists(A_LOE_PARES_PATH) else None
+    mtime = (os.path.getmtime(DATA_PATH), pares_mtime)
     if _itinerary_index_cache["mtime"] == mtime and _itinerary_index_cache["index"]:
         return _itinerary_index_cache["index"]
     try:
         with open(DATA_PATH, 'r', encoding='utf-8') as f:
             records = json.load(f)
-        idx = itinerary.build_ab_index(records)
+        idx = itinerary.build_ab_index(records, _get_a_loe_pares())
         _itinerary_index_cache.update(mtime=mtime, index=idx)
         return idx
     except (OSError, json.JSONDecodeError) as exc:
@@ -1676,6 +1702,13 @@ def api_ocupaciones():
     return jsonify({'query': q, 'n': len(resultados), 'resultados': resultados})
 
 
+@app.route('/api/a-loe-pares')
+def api_a_loe_pares():
+    """Ampliació 068: {codigo_uf: [codigo_mf, ...]} tal qual (badge i panell dels A LOE).
+    {} si el fitxer encara no s'ha generat."""
+    return jsonify(_get_a_loe_pares())
+
+
 @app.route('/api/itinerari')
 def api_itinerari():
     """F5: Retorna l'itinerari local per a un registre A, B o C LOE.
@@ -1772,14 +1805,23 @@ def api_itinerari():
 
     if grado == 'A':
         mock_rec = {'grado': 'A', 'codigo': codigo}
-        parent = itinerary.get_parent_b(mock_rec, idx)
+        # Ampliació 068: un A LOE pot tenir diversos B pares; 'parent_b' (el
+        # primer) es manté per compatibilitat.
+        parents = itinerary.get_parents_b(mock_rec, idx)
         # Pla 068: "en què consisteix" l'A = el seu RA (mateix sufix, _A_ → _RA_)
-        # dins la fitxa del B pare, més l'ECP del B. Els B LOE no tenen RA.
-        b_cont = _get_b_contingut().get(parent['codigo'], {}) if parent else {}
+        # dins la fitxa del B pare, més l'ECP de tots els pares sense duplicats.
+        # Els B LOE no tenen RA.
+        b_contingut = _get_b_contingut()
         ra_codigo = codigo.replace('_A_', '_RA_', 1)
-        ra = next((x for x in b_cont.get('ra', []) if x.get('codigo') == ra_codigo), None)
-        return jsonify({'parent_b': _serialize(parent) if parent else None,
-                        'contingut': {'ra': ra, 'ecp': b_cont.get('ecp', [])}})
+        ra = None
+        ecp: list = []
+        for p in parents:
+            b_cont = b_contingut.get(p['codigo'], {})
+            ra = ra or next((x for x in b_cont.get('ra', []) if x.get('codigo') == ra_codigo), None)
+            ecp += [x for x in b_cont.get('ecp', []) if x not in ecp]
+        return jsonify({'parent_b': _serialize(parents[0]) if parents else None,
+                        'parents_b': [_serialize(p) for p in parents],
+                        'contingut': {'ra': ra, 'ecp': ecp}})
 
     # grado == 'B'
     mock_rec = {'grado': 'B', 'codigo': codigo}

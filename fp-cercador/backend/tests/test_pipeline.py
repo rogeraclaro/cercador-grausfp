@@ -80,6 +80,7 @@ def isolate_data_path(tmp_path, monkeypatch):
     # Pla 068: el bloc b_contingut faria xarxa (fitxes B) — desactivat per defecte.
     import scrapers.b_contingut_scraper as bcont
     monkeypatch.setattr(bcont, 'build_b_contingut', lambda records, **kw: {})
+    monkeypatch.setattr(bcont, 'build_a_loe_pares', lambda records, **kw: {})
     # Pla 059: el bloc soc faria xarxa (Algolia) — desactivat per defecte.
     import scrapers.soc_scraper as soc
     monkeypatch.setattr(soc, 'build_soc_data', lambda **kw: {'cursos': [], 'especs': [], 'centres': []})
