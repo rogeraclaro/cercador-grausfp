@@ -212,6 +212,28 @@
       min-width: 120px;
     }
 
+    .feedback-table td {
+      vertical-align: top;
+    }
+
+    .feedback-msg {
+      min-width: 220px;
+      max-width: 420px;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
+
+    .feedback-table a {
+      color: var(--dark);
+    }
+
+    .feedback-table select,
+    .feedback-table input[type="text"] {
+      min-width: 130px;
+      padding: 6px 8px;
+      font-size: 13px;
+    }
+
     .next-run {
       margin-top: 12px;
       font-size: 13px;
@@ -315,6 +337,16 @@
       </p>
       <button id="users-load-btn">Carregar usuaris</button>
       <div id="users-container" style="margin-top: 16px;"></div>
+    </section>
+
+    <!-- ── Secció 5: Comentaris dels usuaris (Pla 069) ── -->
+    <section class="section" id="section-feedback">
+      <h2>Comentaris</h2>
+      <p style="color: var(--warm); font-size: 13px; margin-bottom: 12px;">
+        El que envien els usuaris des de la pestanya Feedback, els més nous primer.
+      </p>
+      <button id="feedback-load-btn">Carregar comentaris</button>
+      <div id="feedback-container" style="margin-top: 16px;"></div>
     </section>
   </main>
 
@@ -748,6 +780,91 @@
         if (row) row.remove();
       } catch (e) {
         alert('Error de connexió.');
+      }
+    }
+
+    // ── Comentaris (Pla 069) ──────────────────────────────────
+    const FEEDBACK_KINDS = { error: 'Error', idea: 'Idea', data: 'Dades incorrectes', other: 'Altre' };
+    const FEEDBACK_STATUSES = { new: 'Nou', in_progress: 'En curs', done: 'Fet', discarded: 'Descartat' };
+    const feedbackLoadBtn = document.getElementById('feedback-load-btn');
+    const feedbackContainer = document.getElementById('feedback-container');
+
+    function renderFeedback(items) {
+      if (!items.length) {
+        feedbackContainer.innerHTML = '<p style="color:var(--warm);font-size:13px;">Encara no hi ha cap comentari.</p>';
+        return;
+      }
+      const rows = items.map(f => {
+        const page = (f.context.path || '') + (f.context.query || '');
+        const options = Object.entries(FEEDBACK_STATUSES).map(([key, label]) =>
+          `<option value="${key}"${f.status === key ? ' selected' : ''}>${label}</option>`).join('');
+        return `
+        <tr>
+          <td style="font-family:'Geist Mono',monospace;font-size:12px;white-space:nowrap;">${escapeHtml(f.created_at)}</td>
+          <td>${escapeHtml(FEEDBACK_KINDS[f.kind] || f.kind)}</td>
+          <td class="feedback-msg">${escapeHtml(f.message)}</td>
+          <td><a href="mailto:${encodeURIComponent(f.email)}">${escapeHtml(f.email)}</a>${f.user_id ? '' : ' <span style="color:var(--warm);font-size:12px;">(anònim)</span>'}</td>
+          <td style="font-family:'Geist Mono',monospace;font-size:12px;">${escapeHtml(page)}${f.context.lang ? ' · ' + escapeHtml(f.context.lang) : ''}</td>
+          <td>
+            <label for="fb-status-${f.id}" style="position:absolute;left:-10000px;">Estat</label>
+            <select id="fb-status-${f.id}">${options}</select>
+          </td>
+          <td>
+            <label for="fb-note-${f.id}" style="position:absolute;left:-10000px;">Nota interna</label>
+            <input type="text" id="fb-note-${f.id}" maxlength="1000" value="${escapeHtml(f.admin_note || '')}">
+          </td>
+          <td style="white-space:nowrap;">
+            <button onclick="saveFeedback(${f.id})" id="fb-save-${f.id}"
+              style="margin-top:0;padding:6px 12px;font-size:12px;">Desa</button>
+          </td>
+        </tr>`;
+      }).join('');
+      feedbackContainer.innerHTML = `
+        <div class="table-wrap">
+          <table class="by-grado-table feedback-table">
+            <thead><tr>
+              <th>Data</th><th>Tipus</th><th>Missatge</th><th>Email</th><th>Pàgina</th><th>Estat</th><th>Nota</th><th></th>
+            </tr></thead>
+            <tbody>${rows}</tbody>
+          </table>
+        </div>`;
+    }
+
+    feedbackLoadBtn.addEventListener('click', async () => {
+      feedbackLoadBtn.disabled = true;
+      feedbackContainer.innerHTML = '<span class="spinner"></span> Carregant…';
+      try {
+        const res = await fetch(API_BASE + '/api/admin/feedback', { credentials: 'include' });
+        if (res.status === 401) { feedbackContainer.innerHTML = '<div class="status-msg error">No autoritzat.</div>'; return; }
+        if (!res.ok) { feedbackContainer.innerHTML = '<div class="status-msg error">Error HTTP ' + res.status + '</div>'; return; }
+        renderFeedback(await res.json());
+      } catch (e) {
+        feedbackContainer.innerHTML = '<div class="status-msg error">Error de connexió.</div>';
+      } finally {
+        feedbackLoadBtn.disabled = false;
+      }
+    });
+
+    async function saveFeedback(id) {
+      const btn = document.getElementById('fb-save-' + id);
+      btn.disabled = true;
+      try {
+        const res = await fetch(API_BASE + '/api/admin/feedback/' + id, {
+          method: 'PATCH',
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            status: document.getElementById('fb-status-' + id).value,
+            admin_note: document.getElementById('fb-note-' + id).value,
+          }),
+        });
+        if (!res.ok) { alert('Error: HTTP ' + res.status); return; }
+        btn.textContent = 'Desat ✓';
+        setTimeout(() => { btn.textContent = 'Desa'; }, 1500);
+      } catch (e) {
+        alert('Error de connexió.');
+      } finally {
+        btn.disabled = false;
       }
     }
   </script>
