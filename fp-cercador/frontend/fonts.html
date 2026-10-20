@@ -146,6 +146,30 @@
       border-radius: 3px;
     }
 
+    .table-scroll {
+      overflow-x: auto;
+      margin: 12px 0 24px;
+    }
+
+    .table-scroll .src-table {
+      margin: 0;
+    }
+
+    .method-tag {
+      display: block;
+      width: max-content;
+      margin-bottom: 4px;
+      font-family: 'Geist Mono', ui-monospace, monospace;
+      font-size: 10.5px;
+      font-weight: 500;
+      color: var(--dark);
+      background: var(--warm2);
+      border: 1px solid var(--border);
+      padding: 1px 6px;
+      border-radius: 3px;
+      white-space: nowrap;
+    }
+
     footer {
       border-top: 1px solid var(--border);
       padding: 20px 48px;
@@ -175,6 +199,7 @@
       .src-table { font-size: 12px; }
       .src-table th, .src-table td { padding: 8px 9px; }
       .src-table td:first-child { white-space: normal; }
+      .table-scroll .src-table { min-width: 620px; }
     }
 
   </style>
@@ -208,12 +233,14 @@
     <h2 data-i18n="fonts.s1.h2">Ministeri d'Educació, Formació Professional i Esports</h2>
     <p class="src-host">todofp.es</p>
     <p data-i18n="fonts.s1.p">El portal oficial de la FP a Espanya. En són l'origen el catàleg de títols i certificats, les fitxes tècniques i els documents normatius.</p>
+    <div class="table-scroll">
     <table class="src-table">
       <thead>
         <tr>
           <th data-i18n="fonts.tbl.font">Font</th>
           <th data-i18n="fonts.tbl.detall">Què se n'obté</th>
           <th data-i18n="fonts.tbl.us">On es fa servir</th>
+          <th data-i18n="fonts.tbl.com">Com s'obté</th>
         </tr>
       </thead>
       <tbody>
@@ -221,49 +248,65 @@
           <td data-i18n="fonts.r1.font">Cercador de Graus FP</td>
           <td data-i18n="fonts.r1.detall">Catàleg complet dels Graus A, B i C (pla actual i pla anterior): codi, denominació, família professional, nivell i enllaç a la fitxa oficial.</td>
           <td data-i18n="fonts.r1.us">Base del llistat principal del cercador.</td>
+          <td data-i18n="fonts.r1.com"><span class="method-tag">API JSON</span> Es consulta l'API JSON interna del cercador (<code>buscadorGeneralA</code>, <code>B</code> i <code>C</code>): una petició GET inicial obté les cookies de sessió i després 9 consultes (3 graus × 3 nivells) retornen tots els registres.</td>
         </tr>
         <tr>
           <td data-i18n="fonts.r2.font">Pàgines «Qué estudiar»</td>
           <td data-i18n="fonts.r2.detall">Cicles formatius (Grau D) — bàsic, mitjà i superior — i cursos d'especialització (Grau E), amb denominació, família i nivell.</td>
           <td data-i18n="fonts.r2.us">Graus D i E del llistat principal.</td>
+          <td data-i18n="fonts.r2.com"><span class="method-tag">Scraping HTML</span> Es descarrega l'HTML de cada pàgina i se'n llegeixen les taules amb BeautifulSoup; la família es dedueix de l'atribut <code>headers</code> de cada cel·la.</td>
         </tr>
         <tr>
           <td data-i18n="fonts.r3.font">Buscador de Certificados de Profesionalidad</td>
           <td data-i18n="fonts.r3.detall">Dades complementàries dels certificats de pla anterior: durada en hores i cicles formatius equivalents.</td>
           <td data-i18n="fonts.r3.us">Fitxa de detall dels Graus C de pla anterior i itinerari cap a Grau D.</td>
+          <td data-i18n="fonts.r3.com"><span class="method-tag">Formulari POST</span> S'envia el formulari de cerca per POST (<code>/busquedaCP</code>) i se n'analitza l'HTML de resposta; els cicles equivalents surten d'una segona petició POST (<code>/ciclosFP</code>) per a cada certificat.</td>
         </tr>
         <tr>
           <td data-i18n="fonts.r4.font">Documents oficials (repositori DAM)</td>
           <td data-i18n="fonts.r4.detall">Annexos publicats al BOE / reials decrets (PDF) i suplements Europass en castellà i anglès. Els annexos també es processen per extreure les unitats de competència de cada certificat.</td>
           <td data-i18n="fonts.r4.us">Botons de documents a la fitxa de detall i relació entre mòduls (Grau B) i certificats (Grau C) de pla anterior.</td>
+          <td data-i18n="fonts.r4.com"><span class="method-tag">PDF</span> Els enllaços als PDF es construeixen a partir del codi de cada certificat. Per a la relació entre mòduls i certificats, un script d'execució puntual descarrega els 584 annexos i n'extreu els codis d'unitat de competència amb pdfplumber.</td>
         </tr>
         <tr>
           <td data-i18n="fonts.r5.font">Fitxes dels certificats de Grau C (pla actual)</td>
           <td data-i18n="fonts.r5.detall">Llista de mòduls professionals de cada certificat de pla actual.</td>
           <td data-i18n="fonts.r5.us">Relació entre mòduls (Grau B) i certificats (Grau C) de pla actual, i itinerari cap a Grau D.</td>
+          <td data-i18n="fonts.r5.com"><span class="method-tag">Scraping HTML</span> Es visita la fitxa web de cada certificat i se'n llegeix la secció «Módulos Profesionales», a 1 petició per segon com a màxim, amb reintents (espera de 5, 15 i 45 s) i comprovació del «Código:» de la pàgina.</td>
         </tr>
         <tr>
           <td data-i18n="fonts.r6.font">Fitxes dels cicles de Grau D</td>
           <td data-i18n="fonts.r6.detall">Secció «Plan de formación» de cada cicle: mòduls que el componen i codi d'ensenyament.</td>
           <td data-i18n="fonts.r6.us">Càlcul de quins Cursos d'Especialització continuen cada certificat de pla actual.</td>
+          <td data-i18n="fonts.r6.com"><span class="method-tag">Scraping HTML</span> Es visita la fitxa web de cada cicle i se'n llegeix la llista de la secció «Plan de formación», a 1 petició per segon com a màxim i amb reintents.</td>
         </tr>
         <tr>
           <td data-i18n="fonts.r7.font">Seccions «Salidas profesionales»</td>
           <td data-i18n="fonts.r7.detall">Ocupacions i llocs de treball associats a cada ensenyament (dels PDF dels certificats i de les fitxes dels Graus D i E).</td>
           <td data-i18n="fonts.r7.us">Cerca per ocupació.</td>
+          <td data-i18n="fonts.r7.com"><span class="method-tag">PDF + HTML</span> Certificats de pla anterior: es demana per POST el PDF de llocs de treball i se'n llegeix el text amb pdfplumber. Graus D i E: es llegeix la secció de la fitxa HTML. L'índex es regenera un cop al mes.</td>
+        </tr>
+        <tr>
+          <td data-i18n="fonts.r17.font">Fitxes dels Graus B i dels Graus A (pla anterior)</td>
+          <td data-i18n="fonts.r17.detall">Resultats d'aprenentatge i estàndards de competència de cada Grau B i, per a cada Grau A de pla anterior, el Grau B o els Graus B que el contenen.</td>
+          <td data-i18n="fonts.r17.us">Panell «En què consisteix» dels Graus A i relació de cada Grau A amb el seu Grau B.</td>
+          <td data-i18n="fonts.r17.com"><span class="method-tag">Scraping HTML</span> Es visita la fitxa web de cada Grau B (unes 3.000) i de cada Grau A de pla anterior, i se'n llegeixen les llistes d'elements amb codi. Quatre fils en paral·lel (menys de ~2 peticions per segon), amb reintents i comprovació del «Código:» de la pàgina.</td>
         </tr>
       </tbody>
     </table>
+    </div>
 
     <h2 data-i18n="fonts.s2.h2">Registre Estatal d'Entitats de Formació de la FP</h2>
     <p class="src-host">registrosfp.educacion.gob.es</p>
     <p data-i18n="fonts.s2.p">El registre públic dels centres autoritzats per impartir Formació Professional a tot l'Estat.</p>
+    <div class="table-scroll">
     <table class="src-table">
       <thead>
         <tr>
           <th data-i18n="fonts.tbl.font">Font</th>
           <th data-i18n="fonts.tbl.detall">Què se n'obté</th>
           <th data-i18n="fonts.tbl.us">On es fa servir</th>
+          <th data-i18n="fonts.tbl.com">Com s'obté</th>
         </tr>
       </thead>
       <tbody>
@@ -271,24 +314,29 @@
           <td data-i18n="fonts.r8.font">Consulta pública d'oferta</td>
           <td data-i18n="fonts.r8.detall">Centres que imparteixen cada ensenyament (Graus A–E), amb població, província i comunitat autònoma.</td>
           <td data-i18n="fonts.r8.us">Panell de centres de cada resultat i seguiment de novetats.</td>
+          <td data-i18n="fonts.r8.com"><span class="method-tag">API JSON</span> Una petició GET inicial obté la cookie de sessió i després es consulta un endpoint JSON (<code>datosTablaPublico</code>) per a cada ensenyament: unes 1.200 consultes a 1 per segon (~20 min).</td>
         </tr>
         <tr>
           <td data-i18n="fonts.r9.font">Fitxa de centre</td>
           <td data-i18n="fonts.r9.detall">Adreça web de cada centre, quan consta al registre.</td>
           <td data-i18n="fonts.r9.us">Enllaç al web del centre dins el panell de centres.</td>
+          <td data-i18n="fonts.r9.com"><span class="method-tag">Scraping HTML</span> Primer es dedueix del domini del correu del centre; si no n'hi ha, es llegeix l'HTML de la fitxa del centre (<code>centrorcd</code>), amb esperes si el servidor limita les peticions (HTTP 429).</td>
         </tr>
       </tbody>
     </table>
+    </div>
 
     <h2 data-i18n="fonts.s6.h2">Servei Públic d'Ocupació de Catalunya (SOC)</h2>
     <p class="src-host" data-i18n="fonts.s6.host">serveiocupacio.gencat.cat</p>
     <p data-i18n="fonts.s6.p">Font d'àmbit autonòmic: cobreix únicament l'oferta de formació professional per a l'ocupació (FPO) gestionada per la Generalitat de Catalunya. És un sistema diferent de la FP reglada estatal i no inclou cap altra comunitat autònoma.</p>
+    <div class="table-scroll">
     <table class="src-table">
       <thead>
         <tr>
           <th data-i18n="fonts.tbl.font">Font</th>
           <th data-i18n="fonts.tbl.detall">Què se n'obté</th>
           <th data-i18n="fonts.tbl.us">On es fa servir</th>
+          <th data-i18n="fonts.tbl.com">Com s'obté</th>
         </tr>
       </thead>
       <tbody>
@@ -296,29 +344,35 @@
           <td data-i18n="fonts.r10.font">Cursos FPO</td>
           <td data-i18n="fonts.r10.detall">Cursos de formació per a l'ocupació programats a Catalunya: centre, dates, horari, modalitat, estat d'inscripció i enllaç a la fitxa del SOC.</td>
           <td data-i18n="fonts.r10.us">Mode «Cursos FPO (Catalunya)» del cercador i panell de detall de cada especialitat.</td>
+          <td data-i18n="fonts.r10.com"><span class="method-tag">API Algolia</span> El cercador del SOC funciona amb Algolia, un servei de cerca extern. Es recorre l'índex de cursos sencer amb la clau pública de només lectura que fa servir la mateixa web, en pàgines de 1.000 resultats en JSON.</td>
         </tr>
         <tr>
           <td data-i18n="fonts.r11.font">Especialitats formatives</td>
           <td data-i18n="fonts.r11.detall">Catàleg d'especialitats formatives del SOC: denominació, família i àrea professional, nivell, durada en hores, mòduls formatius i, si escau, certificat de professionalitat associat.</td>
           <td data-i18n="fonts.r11.us">Unitat de resultat del mode FPO i taxonomia de famílies i àrees d'aquest mode.</td>
+          <td data-i18n="fonts.r11.com"><span class="method-tag">API Algolia</span> Mateix mètode, sobre l'índex d'especialitats d'Algolia.</td>
         </tr>
         <tr>
           <td data-i18n="fonts.r12.font">Centres de formació a Catalunya</td>
           <td data-i18n="fonts.r12.detall">Entitats i centres que imparteixen formació per a l'ocupació a Catalunya: adreça, telèfon, correu i web.</td>
           <td data-i18n="fonts.r12.us">Dades de contacte del centre a cada curs del panell de detall del mode FPO.</td>
+          <td data-i18n="fonts.r12.com"><span class="method-tag">API Algolia</span> Mateix mètode, sobre l'índex de centres d'Algolia.</td>
         </tr>
       </tbody>
     </table>
+    </div>
 
     <h2 data-i18n="fonts.s7.h2">PIMEC Formació</h2>
     <p class="src-host" data-i18n="fonts.s7.host">pimecformacio.org</p>
     <p data-i18n="fonts.s7.p">Font d'àmbit català: cursos de formació de PIMEC (subvencionats, bonificables i altres). Es llegeixen del cercador de cursos públic de la seva web. Cada curs mostra el tipus tal com el publica PIMEC.</p>
+    <div class="table-scroll">
     <table class="src-table">
       <thead>
         <tr>
           <th data-i18n="fonts.tbl.font">Font</th>
           <th data-i18n="fonts.tbl.detall">Què se n'obté</th>
           <th data-i18n="fonts.tbl.us">On es fa servir</th>
+          <th data-i18n="fonts.tbl.com">Com s'obté</th>
         </tr>
       </thead>
       <tbody>
@@ -326,19 +380,23 @@
           <td data-i18n="fonts.r13.font">Cursos de PIMEC Formació</td>
           <td data-i18n="fonts.r13.detall">Títol, tipus (subvencionat, bonificable, diàleg social o altres), dates, hores, població, modalitat, àrea i enllaç a la fitxa de PIMEC.</td>
           <td data-i18n="fonts.r13.us">Mode «Cursos FPO (Catalunya)» del cercador, marcats amb la font PIMEC.</td>
+          <td data-i18n="fonts.r13.com"><span class="method-tag">Endpoint AJAX</span> Es crida l'endpoint AJAX del cercador de cursos (Drupal), que retorna JSON amb les targetes en HTML. Es pagina fins a trobar una pàgina buida i es fa una passada per àrea, perquè les targetes no l'indiquen.</td>
         </tr>
       </tbody>
     </table>
+    </div>
 
     <h2 data-i18n="fonts.s8.h2">Foment Formació</h2>
     <p class="src-host" data-i18n="fonts.s8.host">fomentformacio.com</p>
     <p data-i18n="fonts.s8.p">Font d'àmbit català: cursos de Foment Formació. Es llegeixen del catàleg públic de la seva web. Foment no publica un tipus per curs, de manera que es mostren com a «Altres».</p>
+    <div class="table-scroll">
     <table class="src-table">
       <thead>
         <tr>
           <th data-i18n="fonts.tbl.font">Font</th>
           <th data-i18n="fonts.tbl.detall">Què se n'obté</th>
           <th data-i18n="fonts.tbl.us">On es fa servir</th>
+          <th data-i18n="fonts.tbl.com">Com s'obté</th>
         </tr>
       </thead>
       <tbody>
@@ -346,19 +404,23 @@
           <td data-i18n="fonts.r14.font">Cursos de Foment Formació</td>
           <td data-i18n="fonts.r14.detall">Títol, edicions (centre, dates, horari, hores i modalitat) i enllaç a la fitxa de Foment.</td>
           <td data-i18n="fonts.r14.us">Mode «Cursos FPO (Catalunya)» del cercador, marcats amb la font Foment.</td>
+          <td data-i18n="fonts.r14.com"><span class="method-tag">Sitemap + HTML</span> Es llegeix el sitemap XML dels cursos (WordPress) i després l'HTML de cada fitxa, on cada edició es compta com un curs.</td>
         </tr>
       </tbody>
     </table>
+    </div>
 
     <h2 data-i18n="fonts.s9.h2">Cecot Formació</h2>
     <p class="src-host" data-i18n="fonts.s9.host">formacio.cecot.org</p>
     <p data-i18n="fonts.s9.p">Patronal amb seu a Terrassa i entitat formadora acreditada. Es llegeix el seu cercador públic de cursos. Els cursos gratuïts es marquen com a «Subvencionat» i els de pagament com a «Altres».</p>
+    <div class="table-scroll">
     <table class="src-table">
       <thead>
         <tr>
           <th data-i18n="fonts.tbl.font">Font</th>
           <th data-i18n="fonts.tbl.detall">Què se n'obté</th>
           <th data-i18n="fonts.tbl.us">On es fa servir</th>
+          <th data-i18n="fonts.tbl.com">Com s'obté</th>
         </tr>
       </thead>
       <tbody>
@@ -366,19 +428,23 @@
           <td data-i18n="fonts.r15.font">Cursos de Cecot</td>
           <td data-i18n="fonts.r15.detall">Títol, dates, hores, modalitat, horari, adreça i enllaç a la fitxa de Cecot.</td>
           <td data-i18n="fonts.r15.us">Mode «Cursos FPO (Catalunya)» del cercador, marcats amb la font Cecot.</td>
+          <td data-i18n="fonts.r15.com"><span class="method-tag">API JSON + HTML</span> Un endpoint JSON públic retorna la llista de cursos; la data de fi, l'horari i l'adreça es llegeixen de l'HTML de la fitxa de cada curs.</td>
         </tr>
       </tbody>
     </table>
+    </div>
 
     <h2 data-i18n="fonts.s10.h2">Fundació Paco Puerto (CCOO)</h2>
     <p class="src-host" data-i18n="fonts.s10.host">fundaciopacopuerto.cat</p>
     <p data-i18n="fonts.s10.p">Entitat formadora de CCOO de Catalunya. Es llegeix el seu catàleg públic de cursos, sense les oposicions ni la formació sindical.</p>
+    <div class="table-scroll">
     <table class="src-table">
       <thead>
         <tr>
           <th data-i18n="fonts.tbl.font">Font</th>
           <th data-i18n="fonts.tbl.detall">Què se n'obté</th>
           <th data-i18n="fonts.tbl.us">On es fa servir</th>
+          <th data-i18n="fonts.tbl.com">Com s'obté</th>
         </tr>
       </thead>
       <tbody>
@@ -386,9 +452,11 @@
           <td data-i18n="fonts.r16.font">Cursos de la Fundació Paco Puerto</td>
           <td data-i18n="fonts.r16.detall">Títol, família, dates, hores, modalitat, horari, localitat i enllaç a la fitxa.</td>
           <td data-i18n="fonts.r16.us">Mode «Cursos FPO (Catalunya)» del cercador, marcats amb la font CCOO.</td>
+          <td data-i18n="fonts.r16.com"><span class="method-tag">API WordPress + HTML</span> La llista surt de l'API REST de WordPress (WooCommerce, <code>/wp-json/wp/v2/product</code>); les dates, hores, modalitat i horari es llegeixen de l'HTML de cada fitxa.</td>
         </tr>
       </tbody>
     </table>
+    </div>
 
     <h2 data-i18n="fonts.s3.h2">Catàleg de famílies professionals</h2>
     <p data-i18n="fonts.s3.p">Les 24 famílies professionals (i les variants històriques del pla anterior) es normalitzen amb una taula de correspondència interna, derivada del catàleg de la Llei Orgànica 3/2022. Serveix per unificar sota un mateix nom les famílies que apareixen amb formats diferents segons la font.</p>
@@ -397,7 +465,7 @@
     <p data-i18n="fonts.s4.p">El compte d'usuari (registre, favorits, alertes i seguiments de centres) es desa en una base de dades pròpia i no es comparteix amb cap tercer. L'<a href="historial.html">Historial d'actualitzacions</a> i l'<a href="observatori.html">Observatori</a> es generen a partir dels registres de les actualitzacions periòdiques del mateix cercador.</p>
 
     <h2 data-i18n="fonts.s5.h2">Amb quina freqüència s'actualitza</h2>
-    <p data-i18n="fonts.s5.p">El cercador torna a llegir les fonts de manera periòdica i automàtica. Cada actualització queda registrada, amb el detall dels canvis, a l'<a href="historial.html">Historial d'actualitzacions</a>.</p>
+    <p data-i18n="fonts.s5.p">El cercador torna a llegir les fonts automàticament un cop per setmana: el catàleg de graus, les fitxes del Ministeri i els cursos FPO (SOC, PIMEC, Foment, Cecot i CCOO). L'índex d'ocupacions es regenera un cop al mes, i els centres del Registre Estatal s'actualitzen a demanda des del panell d'administració. Cada actualització queda registrada, amb el detall dels canvis, a l'<a href="historial.html">Historial d'actualitzacions</a>.</p>
 
   </main>
 
