@@ -1595,6 +1595,7 @@
         parentBLomloeData: {},  // parent B LOMLOE per codigo C (Pla 058)
         childrenCLoeData: {},   // {row.id: [{codigo, denominacion}] | 'loading' | 'error'}
         childrenCLoeVisible: {}, // {row.id: bool}
+        contingutAData: {},     // Pla 068: {codigo_a: {parent_b, contingut} | 'loading' | 'error'}
 
         // Pla 060 — Mode FPO (cursos del SOC Catalunya)
         fpoEspecs: [],           // de /api/fpo/especialitats
@@ -2151,6 +2152,23 @@
           }
         },
 
+        // Pla 068: "en què consisteix" un Grau A (RA + ECP del B pare). Lazy, cache per codi.
+        async fetchContingutA(codigo) {
+          if (this.contingutAData[codigo] && this.contingutAData[codigo] !== 'error') return;
+          this.contingutAData = { ...this.contingutAData, [codigo]: 'loading' };
+          try {
+            const res = await fetch(API_BASE + '/api/itinerari?grado=A&codigo=' + encodeURIComponent(codigo));
+            if (!res.ok) throw new Error('HTTP ' + res.status);
+            const data = await res.json();
+            this.contingutAData = { ...this.contingutAData, [codigo]: {
+              parent_b: data.parent_b || null,
+              contingut: data.contingut || { ra: null, ecp: [] },
+            } };
+          } catch (e) {
+            this.contingutAData = { ...this.contingutAData, [codigo]: 'error' };
+          }
+        },
+
         async fetchChildrenCLoe(row) {
           // Toggle: si ja és visible i carregat, amaga'l
           if (this.childrenCLoeVisible[row.id] && this.childrenCLoeData[row.id] !== undefined) {
@@ -2222,11 +2240,15 @@
         },
 
         rowIsActionable(row) {
-          return !!(row.grado === 'C' || (['A','B','C'].includes(row.grado) && row.ficha_id) || (['D','E'].includes(row.grado) && row.ficha_url));
+          return !!(row.grado === 'A' || row.grado === 'C' || (['A','B','C'].includes(row.grado) && row.ficha_id) || (['D','E'].includes(row.grado) && row.ficha_url));
         },
 
         activateRow(row) {
-          if (row.grado === 'C') {
+          if (row.grado === 'A') {
+            this.expandedRows = { ...this.expandedRows, [row.id]: !this.expandedRows[row.id] };
+            if (this.expandedRows[row.id]) this.fetchContingutA(row.codigo);
+            return;
+          } else if (row.grado === 'C') {
             this.expandedRows = { ...this.expandedRows, [row.id]: !this.expandedRows[row.id] };
             if (row.plan_antiguo) this.fetchFpoByCert(row.codigo);
             return;
@@ -2809,7 +2831,7 @@
                 :data-row-id="row.id"
                 :class="{ 'row-link': rowIsActionable(row), 'row-fav': favorites.has(row.id) }"
                 :tabindex="rowIsActionable(row) ? 0 : null"
-                :aria-expanded="row.grado === 'C' ? String(!!expandedRows[row.id]) : null"
+                :aria-expanded="['A','C'].includes(row.grado) ? String(!!expandedRows[row.id]) : null"
                 @click="activateRow(row)"
                 @keydown.enter.self="activateRow(row)"
                 @keydown.space.self.prevent="activateRow(row)">
@@ -2988,6 +3010,58 @@
                         </ul>
                       </div>
                     </template>
+                  </div>
+                </td>
+              </tr>
+              <!-- Pla 068: panell "En què consisteix" d'un Grau A -->
+              <tr x-show="expandedRows[row.id] && row.grado === 'A'">
+                <td colspan="5" class="detall-certificat">
+                  <div class="detall-inner">
+                    <template x-if="contingutAData[row.codigo] === 'loading'">
+                      <span x-text="t('index.a.carregant')"></span>
+                    </template>
+                    <template x-if="contingutAData[row.codigo] === 'error'">
+                      <span x-text="t('index.a.error')"></span>
+                    </template>
+                    <template x-if="contingutAData[row.codigo] && typeof contingutAData[row.codigo] === 'object'">
+                      <div>
+                        <template x-if="contingutAData[row.codigo].contingut.ra">
+                          <div class="detall-ciclos-d">
+                            <strong x-text="t('index.a.consisteix')"></strong>
+                            <p style="margin:4px 0 0;" x-text="contingutAData[row.codigo].contingut.ra.text"></p>
+                          </div>
+                        </template>
+                        <template x-if="contingutAData[row.codigo].contingut.ecp.length > 0">
+                          <div class="detall-ciclos-d">
+                            <span x-text="t('index.a.competencia_b')"></span>
+                            <ul class="ciclos-d-list">
+                              <template x-for="ecp in contingutAData[row.codigo].contingut.ecp" :key="ecp.codigo">
+                                <li x-text="ecp.text + ' (' + ecp.codigo + ')'"></li>
+                              </template>
+                            </ul>
+                          </div>
+                        </template>
+                        <template x-if="!contingutAData[row.codigo].contingut.ra && contingutAData[row.codigo].contingut.ecp.length === 0">
+                          <p class="detall-ciclos-d" style="margin-bottom:0;" x-text="t('index.a.sense_descripcio')"></p>
+                        </template>
+                        <template x-if="contingutAData[row.codigo].parent_b">
+                          <div class="detall-ciclos-d">
+                            <span x-text="t('index.a.grau_b')"></span>
+                            <ul class="ciclos-d-list">
+                              <li><a href="#"
+                                  @click.prevent="loggedIn ? window.open(API_BASE + '/api/ficha-redirect?grado=B&codigo=' + encodeURIComponent(contingutAData[row.codigo].parent_b.codigo), '_blank') : showCentresModal()"
+                                  x-text="contingutAData[row.codigo].parent_b.codigo + ' — ' + contingutAData[row.codigo].parent_b.denominacion"></a>
+                              </li>
+                            </ul>
+                          </div>
+                        </template>
+                      </div>
+                    </template>
+                    <div class="detall-btns">
+                      <a class="btn-doc" href="#"
+                        @click.prevent="loggedIn ? window.open(API_BASE + '/api/ficha-redirect?grado=A&codigo=' + encodeURIComponent(row.codigo), '_blank') : showCentresModal()"
+                        x-text="t('index.detall.ficha_todofp')"></a>
+                    </div>
                   </div>
                 </td>
               </tr>

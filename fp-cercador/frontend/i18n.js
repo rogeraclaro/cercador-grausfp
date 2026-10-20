@@ -176,6 +176,14 @@
       'index.itinerari.children_c_loe_err': 'Error carregant certificats C.',
       'index.itinerari.children_c_loe_loading': 'Carregant...',
 
+      /* ── Pla 068: panell "En què consisteix" dels Graus A ── */
+      'index.a.consisteix': 'En què consisteix',
+      'index.a.competencia_b': 'Competència del Grau B:',
+      'index.a.grau_b': 'Forma part del Grau B:',
+      'index.a.sense_descripcio': 'No hi ha descripció oficial disponible.',
+      'index.a.carregant': 'Carregant...',
+      'index.a.error': 'No s\'ha pogut carregar el contingut. Torna-ho a provar.',
+
       /* ── index.html — mode toggle + ocupació ── */
       'index.mode.nom': 'Cerca per nom/codi de grau',
       'index.mode.ocupacio': 'Cerca per ocupació',
@@ -745,6 +753,14 @@
       'index.itinerari.children_c_loe_none': 'Ningún certificado C asociado.',
       'index.itinerari.children_c_loe_err': 'Error cargando certificados C.',
       'index.itinerari.children_c_loe_loading': 'Cargando...',
+
+      /* ── Pla 068: panell "En què consisteix" dels Graus A ── */
+      'index.a.consisteix': 'En qué consiste',
+      'index.a.competencia_b': 'Competencia del Grado B:',
+      'index.a.grau_b': 'Forma parte del Grado B:',
+      'index.a.sense_descripcio': 'No hay descripción oficial disponible.',
+      'index.a.carregant': 'Cargando...',
+      'index.a.error': 'No se ha podido cargar el contenido. Inténtalo de nuevo.',
 
       /* ── index.html — mode toggle + ocupació ── */
       'index.mode.nom': 'Buscar por nombre/código de grado',
