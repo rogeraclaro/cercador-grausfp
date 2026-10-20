@@ -169,10 +169,45 @@
 
 @media (pointer: coarse) {
   .lang-btn,
-  .auth-btn {
+  .auth-btn,
+  .site-footer a {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     min-height: 44px;
+  }
+}
+
+/* ── Shared footer (rendered by footer.js) ── */
+.site-footer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px 30px;
+  border-top: 1px solid var(--border);
+  padding: 20px 48px;
+}
+
+.site-footer a {
+  font-size: var(--fs-small);
+  color: var(--warm);
+  text-decoration: none;
+}
+
+.site-footer a:hover,
+.site-footer a:focus-visible {
+  color: var(--dark);
+}
+
+.site-footer a[aria-current="page"] {
+  color: var(--dark);
+  font-weight: 500;
+}
+
+@media (max-width: 768px) {
+  .site-footer {
+    justify-content: center;
+    gap: 8px 20px;
+    padding: 16px;
   }
 }

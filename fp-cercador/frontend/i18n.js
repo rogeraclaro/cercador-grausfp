@@ -1,6 +1,12 @@
 (function () {
   var TRANSLATIONS = {
     ca: {
+      /* ── Shared footer (footer.js) ── */
+      'footer.perque': 'Per què GrausFP?',
+      'footer.fonts': 'Fonts de dades',
+      'footer.historial': 'Historial d\'actualitzacions',
+      'footer.obs': 'Observatori',
+      'footer.priv': 'Política de privacitat',
       /* ── Topbar / auth widget ── */
       'nav.greeting': 'Hola, {email}',
       'nav.logout': 'Sortir',
@@ -36,7 +42,6 @@
       'perfil.login.required': 'Cal <a href="login.html">iniciar sessió</a> per veure el teu perfil.',
       'perfil.loading': 'Carregant el teu perfil...',
       'perfil.error': 'Error carregant les dades del perfil.',
-      'perfil.footer.back': '← Tornar al cercador',
 
       /* ── Topbar logos (per a <title> de pàgina) ── */
       'page.title.index': 'Cercador Graus FP',
@@ -254,12 +259,6 @@
       'ocup.fitxa': 'Fitxa',
       'ocup.wall.msg': 'Registra\'t per veure tots els graus i triar la vista.',
 
-      /* ── index.html — footer ── */
-      'index.footer.perque': 'Per què GrausFP?',
-      'index.footer.fonts': 'Fonts de dades',
-      'index.footer.historial': 'Historial d\'actualitzacions',
-      'index.footer.obs': 'Observatori',
-      'index.footer.ocupacions': 'Cerca per ocupació',
 
       /* ── fonts.html ── */
       'fonts.page.title': 'Fonts de dades — Cercador Graus FP',
@@ -321,9 +320,6 @@
       'fonts.s4.p': 'El compte d\'usuari (registre, favorits, alertes i seguiments de centres) es desa en una base de dades pròpia i no es comparteix amb cap tercer. L\'<a href="historial.html">Historial d\'actualitzacions</a> i l\'<a href="observatori.html">Observatori</a> es generen a partir dels registres de les actualitzacions periòdiques del mateix cercador.',
       'fonts.s5.h2': 'Amb quina freqüència s\'actualitza',
       'fonts.s5.p': 'El cercador torna a llegir les fonts automàticament un cop per setmana: el catàleg de graus, les fitxes del Ministeri i els cursos FPO (SOC, PIMEC, Foment, Cecot i CCOO). L\'índex d\'ocupacions es regenera un cop al mes, i els centres del Registre Estatal s\'actualitzen a demanda des del panell d\'administració. Cada actualització queda registrada, amb el detall dels canvis, a l\'<a href="historial.html">Historial d\'actualitzacions</a>.',
-      'fonts.footer.back': '← Tornar al cercador',
-      'fonts.footer.perque': 'Per què GrausFP?',
-      'fonts.footer.historial': 'Historial d\'actualitzacions',
       'fonts.s6.h2': 'Servei Públic d\'Ocupació de Catalunya (SOC)',
       'fonts.s6.host': 'serveiocupacio.gencat.cat',
       'fonts.s6.p': 'Font d\'àmbit autonòmic: cobreix únicament l\'oferta de formació professional per a l\'ocupació (FPO) gestionada per la Generalitat de Catalunya. És un sistema diferent de la FP reglada estatal i no inclou cap altra comunitat autònoma.',
@@ -451,8 +447,6 @@
       'perque.faq.5.a': 'Res. Ni ara ni en el futur previsible. La plataforma és un projecte sense ànim de lucre orientat al servei públic educatiu.',
       'perque.cta.p': 'La primera eina que dona una visió completa, instantània i personalitzable de tota l\'oferta de Formació Professional a Espanya.',
       'perque.cta.btn': 'Entra al cercador →',
-      'perque.footer.back': '← Tornar al cercador',
-      'perque.footer.historial': 'Historial d\'actualitzacions',
 
       /* ── ocupacions.html ── */
       'ocupacions.hero.h1': 'Cerca per ocupació',
@@ -466,7 +460,6 @@
       'alertes.hero.h1': 'Les meves',
       'alertes.hero.h1.em': 'alertes',
       'alertes.hero.sub': "Rebràs un email quan apareguin nous ensenyaments que encaixin amb els teus filtres",
-      'alertes.footer.back': '← Tornar al cercador',
 
       /* ── alertes.js ── */
       'alertes.loading': 'Carregant alertes...',
@@ -504,9 +497,6 @@
       'seguiment.err.delete': "No s'ha pogut eliminar el seguiment. Torna-ho a provar.",
       'seguiment.err.toggle': "No s'ha pogut canviar l'estat. Torna-ho a provar.",
       'seguiment.error': 'Error carregant els seguiments.',
-      'seguiment.footer.back': '← Tornar al cercador',
-      'seguiment.footer.alerts': 'Les meves alertes',
-      'seguiment.footer.priv': 'Política de privacitat',
 
       /* ── login.html ── */
       'login.h1': 'Inicia sessió',
@@ -576,7 +566,6 @@
       'obs.novetats.empty': 'Sense novetats recents',
       'obs.novetats.no.detail': 'Sense denominacions detallades',
       'obs.footer.note': 'Font: Ministerio de Educación, FP.es (todofp.es). Actualitzat automàticament cada setmana.',
-      'obs.footer.historial': "← Veure l'historial complet",
 
       /* ── historial.html ── */
       'hist.hero.h1': "Historial<br><em>d'actualitzacions</em>",
@@ -591,8 +580,6 @@
       'hist.changes.none': 'Sense canvis',
       'hist.changes.added': '+ Nous ({n})',
       'hist.changes.removed': '− Eliminats ({n})',
-      'hist.footer.back': '← Tornar al cercador',
-      'hist.footer.obs': 'Observatori',
 
       /* ── politica-privacitat.html ── */
       'priv.h1': 'Política de privacitat',
@@ -601,6 +588,12 @@
     },
 
     es: {
+      /* ── Shared footer (footer.js) ── */
+      'footer.perque': '¿Por qué GrausFP?',
+      'footer.fonts': 'Fuentes de datos',
+      'footer.historial': 'Historial de actualizaciones',
+      'footer.obs': 'Observatorio',
+      'footer.priv': 'Política de privacidad',
       /* ── Topbar / auth widget ── */
       'nav.greeting': 'Hola, {email}',
       'nav.logout': 'Salir',
@@ -636,7 +629,6 @@
       'perfil.login.required': 'Es necesario <a href="login.html">iniciar sesión</a> para ver tu perfil.',
       'perfil.loading': 'Cargando tu perfil...',
       'perfil.error': 'Error al cargar los datos del perfil.',
-      'perfil.footer.back': '← Volver al buscador',
 
       /* ── Títols de pàgina ── */
       'page.title.index': 'Buscador Grados FP',
@@ -854,12 +846,6 @@
       'ocup.fitxa': 'Ficha',
       'ocup.wall.msg': 'Regístrate para ver todos los grados y elegir la vista.',
 
-      /* ── index.html — footer ── */
-      'index.footer.perque': '¿Por qué GrausFP?',
-      'index.footer.fonts': 'Fuentes de datos',
-      'index.footer.historial': 'Historial de actualizaciones',
-      'index.footer.obs': 'Observatorio',
-      'index.footer.ocupacions': 'Búsqueda por ocupación',
 
       /* ── fonts.html ── */
       'fonts.page.title': 'Fuentes de datos — Cercador Graus FP',
@@ -921,9 +907,6 @@
       'fonts.s4.p': 'La cuenta de usuario (registro, favoritos, alertas y seguimientos de centros) se guarda en una base de datos propia y no se comparte con ningún tercero. El <a href="historial.html">Historial de actualizaciones</a> y el <a href="observatori.html">Observatorio</a> se generan a partir de los registros de las actualizaciones periódicas del propio buscador.',
       'fonts.s5.h2': 'Con qué frecuencia se actualiza',
       'fonts.s5.p': 'El buscador vuelve a leer las fuentes automáticamente una vez por semana: el catálogo de grados, las fichas del Ministerio y los cursos FPO (SOC, PIMEC, Foment, Cecot y CCOO). El índice de ocupaciones se regenera una vez al mes, y los centros del Registro Estatal se actualizan bajo demanda desde el panel de administración. Cada actualización queda registrada, con el detalle de los cambios, en el <a href="historial.html">Historial de actualizaciones</a>.',
-      'fonts.footer.back': '← Volver al buscador',
-      'fonts.footer.perque': '¿Por qué GrausFP?',
-      'fonts.footer.historial': 'Historial de actualizaciones',
       'fonts.s6.h2': 'Servicio Público de Empleo de Cataluña (SOC)',
       'fonts.s6.host': 'serveiocupacio.gencat.cat',
       'fonts.s6.p': 'Fuente de ámbito autonómico: cubre únicamente la oferta de formación profesional para el empleo (FPO) gestionada por la Generalitat de Catalunya. Es un sistema distinto de la FP reglada estatal y no incluye ninguna otra comunidad autónoma.',
@@ -1051,8 +1034,6 @@
       'perque.faq.5.a': 'Nada. Ni ahora ni en el futuro previsible. La plataforma es un proyecto sin ánimo de lucro orientado al servicio público educativo.',
       'perque.cta.p': 'La primera herramienta que da una visión completa, instantánea y personalizable de toda la oferta de Formación Profesional en España.',
       'perque.cta.btn': 'Entra al buscador →',
-      'perque.footer.back': '← Volver al buscador',
-      'perque.footer.historial': 'Historial de actualizaciones',
 
       /* ── ocupacions.html ── */
       'ocupacions.hero.h1': 'Búsqueda por ocupación',
@@ -1066,7 +1047,6 @@
       'alertes.hero.h1': 'Mis',
       'alertes.hero.h1.em': 'alertas',
       'alertes.hero.sub': 'Recibirás un email cuando aparezcan nuevas enseñanzas que coincidan con tus filtros',
-      'alertes.footer.back': '← Volver al buscador',
 
       /* ── alertes.js ── */
       'alertes.loading': 'Cargando alertas...',
@@ -1104,9 +1084,6 @@
       'seguiment.err.delete': 'No se ha podido eliminar el seguimiento. Inténtalo de nuevo.',
       'seguiment.err.toggle': 'No se ha podido cambiar el estado. Inténtalo de nuevo.',
       'seguiment.error': 'Error al cargar los seguimientos.',
-      'seguiment.footer.back': '← Volver al buscador',
-      'seguiment.footer.alerts': 'Mis alertas',
-      'seguiment.footer.priv': 'Política de privacidad',
 
       /* ── login.html ── */
       'login.h1': 'Iniciar sesión',
@@ -1176,7 +1153,6 @@
       'obs.novetats.empty': 'Sin novedades recientes',
       'obs.novetats.no.detail': 'Sin denominaciones detalladas',
       'obs.footer.note': 'Fuente: Ministerio de Educación, FP.es (todofp.es). Actualizado automáticamente cada semana.',
-      'obs.footer.historial': '← Ver el historial completo',
 
       /* ── historial.html ── */
       'hist.hero.h1': 'Historial<br><em>de actualizaciones</em>',
@@ -1191,8 +1167,6 @@
       'hist.changes.none': 'Sin cambios',
       'hist.changes.added': '+ Nuevos ({n})',
       'hist.changes.removed': '− Eliminados ({n})',
-      'hist.footer.back': '← Volver al buscador',
-      'hist.footer.obs': 'Observatorio',
 
       /* ── politica-privacitat.html ── */
       'priv.h1': 'Política de privacidad',

@@ -15,7 +15,7 @@
     href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Serif+Display:ital@0;1&family=Geist+Mono:wght@400&display=swap"
     rel="stylesheet">
 
-  <link rel="stylesheet" href="site.css?v=1">
+  <link rel="stylesheet" href="site.css?v=2">
   <style>
     *,
     *::before,
@@ -1468,8 +1468,7 @@
       .lang-btn,
       .auth-btn,
       .save-alert-btn,
-      .clear-btn,
-      footer a {
+      .clear-btn {
         display: inline-flex;
         align-items: center;
         justify-content: center;
@@ -3565,18 +3564,8 @@
     </div>
   </div><!-- /x-data -->
 
-  <footer style="border-top:1px solid var(--border); padding:20px 48px; text-align:right;">
-    <a href="per-que-grausfp.html" style="font-size:var(--fs-small); color:var(--warm); text-decoration:none;"
-      data-i18n="index.footer.perque">Per què GrausFP?</a>
-    <a href="fonts.html" style="font-size:var(--fs-small); color:var(--warm); text-decoration:none; margin-left:30px;"
-      data-i18n="index.footer.fonts">Fonts de dades</a>
-    <a href="historial.html" style="font-size:var(--fs-small); color:var(--warm); text-decoration:none; margin-left:30px;"
-      data-i18n="index.footer.historial">Historial d'actualitzacions</a>
-    <a href="observatori.html" style="font-size:var(--fs-small); color:var(--warm); text-decoration:none; margin-left:30px;"
-      data-i18n="index.footer.obs">Observatori</a>
-    <!-- <a href="index.html?mode=ocupacio" style="font-size:var(--fs-small); color:var(--warm); text-decoration:none; margin-left:30px;"
-      data-i18n="index.footer.ocupacions">Cerca per ocupació</a> -->
-  </footer>
+  <footer class="site-footer" id="site-footer"></footer>
+  <script src="footer.js"></script>
 </body>
 
 </html>
