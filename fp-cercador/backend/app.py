@@ -25,6 +25,9 @@ Rutes:
   DELETE /api/favorites/<oferta_id>   → elimina oferta dels favorits
   POST   /api/favorites/<oferta_id>/centres         → marca un centre dins d'un favorit
   DELETE /api/favorites/<oferta_id>/centres/<centre_id> → desmarca un centre d'un favorit
+  POST   /api/feedback               → comentari d'usuari (anònim amb email; Pla 069)
+  GET    /api/admin/feedback         → llista de comentaris (admin)
+  PATCH  /api/admin/feedback/<id>    → estat i nota d'un comentari (admin)
 
 Decisions de disseny:
   - Sense Blueprints: rutes no justifiquen la complexitat addicional
@@ -184,7 +187,7 @@ def _set_auth_cors(response):
         response.headers["Access-Control-Allow-Origin"] = origin
         response.headers["Access-Control-Allow-Credentials"] = "true"
         response.headers["Access-Control-Allow-Headers"] = "Content-Type"
-        response.headers["Access-Control-Allow-Methods"] = "GET, POST, DELETE, OPTIONS"
+        response.headers["Access-Control-Allow-Methods"] = "GET, POST, PATCH, DELETE, OPTIONS"
         response.headers["Vary"] = "Origin"
     return response
 
@@ -193,7 +196,7 @@ def _needs_auth_cors(path):
     return (path.startswith("/api/auth/") or path.startswith("/api/favorites")
             or path.startswith("/api/fpo/favorites")
             or path.startswith("/api/alerts") or path.startswith("/api/centres-watch")
-            or path.startswith("/api/feedback"))
+            or path.startswith("/api/feedback") or path.startswith("/api/admin/feedback"))
 
 
 @app.before_request
@@ -3051,6 +3054,73 @@ def feedback_create():
 
     _notify_feedback(email, kind, message, context)
     return jsonify({"id": feedback_id}), 201
+
+
+_FEEDBACK_STATUSES = {"new", "in_progress", "done", "discarded"}
+_FEEDBACK_NOTE_MAX_CHARS = 1000
+_FEEDBACK_ADMIN_COLUMNS = "id, user_id, email, kind, message, context, status, admin_note, created_at, updated_at"
+
+
+def _feedback_row(row) -> dict:
+    item = dict(row)
+    try:
+        item["context"] = json.loads(item["context"] or "{}")
+    except ValueError:
+        item["context"] = {}
+    return item
+
+
+@app.route("/api/admin/feedback", methods=["GET"])
+def admin_feedback_list():
+    """Comentaris dels usuaris, més nous primer (màx. 500)."""
+    if not _check_admin(request):
+        return jsonify({"error": "Unauthorized"}), 401
+    import db as _db
+    conn = _db.get_db()
+    try:
+        rows = _db.query_all(
+            conn,
+            f"SELECT {_FEEDBACK_ADMIN_COLUMNS} FROM feedback ORDER BY created_at DESC, id DESC LIMIT 500",
+        )
+        return jsonify([_feedback_row(r) for r in rows]), 200
+    finally:
+        conn.close()
+
+
+@app.route("/api/admin/feedback/<int:feedback_id>", methods=["PATCH"])
+def admin_feedback_update(feedback_id):
+    """Canvia l'estat i/o la nota interna d'un comentari."""
+    if not _check_admin(request):
+        return jsonify({"error": "Unauthorized"}), 401
+    import db as _db
+    body = request.get_json(silent=True) or {}
+    updates = {}
+    if "status" in body:
+        if body["status"] not in _FEEDBACK_STATUSES:
+            return jsonify({"error": "Estat no vàlid"}), 400
+        updates["status"] = body["status"]
+    if "admin_note" in body:
+        note = body["admin_note"]
+        if note is not None and not isinstance(note, str):
+            return jsonify({"error": "Nota no vàlida"}), 400
+        note = (note or "").strip()
+        if len(note) > _FEEDBACK_NOTE_MAX_CHARS:
+            return jsonify({"error": f"La nota és massa llarga (màxim {_FEEDBACK_NOTE_MAX_CHARS} caràcters)"}), 400
+        updates["admin_note"] = note or None
+    conn = _db.get_db()
+    try:
+        sets = "".join(f"{col} = ?, " for col in updates)  # columnes fixes, no entrada d'usuari
+        conn.execute(
+            f"UPDATE feedback SET {sets}updated_at = datetime('now') WHERE id = ?",
+            (*updates.values(), feedback_id),
+        )
+        conn.commit()
+        row = _db.query_one(conn, f"SELECT {_FEEDBACK_ADMIN_COLUMNS} FROM feedback WHERE id = ?", (feedback_id,))
+        if not row:
+            return jsonify({"error": "Comentari no trobat"}), 404
+        return jsonify(_feedback_row(row)), 200
+    finally:
+        conn.close()
 
 
 # ---------------------------------------------------------------------------

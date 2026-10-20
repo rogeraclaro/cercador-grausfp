@@ -271,3 +271,95 @@ def test_preflight_cors_amb_credencials(client):
     })
     assert r.headers.get("Access-Control-Allow-Origin") == "http://localhost:8080"
     assert r.headers.get("Access-Control-Allow-Credentials") == "true"
+
+
+# --- Fase 3: admin -------------------------------------------------------------
+
+@pytest.fixture
+def admin_client(client):
+    return _register_and_login(client, "admin@test.com", admin=True)
+
+
+def _seed(n=2):
+    conn = db.get_db()
+    try:
+        for i in range(n):
+            conn.execute(
+                "INSERT INTO feedback (email, kind, message, context, created_at) VALUES (?, 'idea', ?, ?, ?)",
+                (f"p{i}@test.cat", f"Missatge {i}", json.dumps({"path": f"/p{i}.html"}),
+                 f"2026-10-0{i + 1} 10:00:00"),
+            )
+        conn.commit()
+        return [r[0] for r in conn.execute("SELECT id FROM feedback ORDER BY id")]
+    finally:
+        conn.close()
+
+
+def test_admin_sense_permis_401(auth_client):
+    [fid] = _seed(1)
+    assert auth_client.get("/api/admin/feedback").status_code == 401
+    r = auth_client.patch(f"/api/admin/feedback/{fid}", data=json.dumps({"status": "done"}),
+                          content_type="application/json")
+    assert r.status_code == 401
+
+
+def test_admin_amb_bearer_token(client):
+    _seed(1)
+    r = client.get("/api/admin/feedback", headers={"Authorization": f"Bearer {app_module.ADMIN_TOKEN}"})
+    assert r.status_code == 200
+
+
+def test_admin_llista_mes_nous_primer(admin_client):
+    _seed(2)
+    items = admin_client.get("/api/admin/feedback").get_json()
+    assert [i["message"] for i in items] == ["Missatge 1", "Missatge 0"]
+    first = items[0]
+    assert first["context"] == {"path": "/p1.html"}
+    assert first["email"] == "p1@test.cat"
+    assert first["kind"] == "idea" and first["status"] == "new" and first["admin_note"] is None
+    assert {"id", "user_id", "created_at", "updated_at"} <= first.keys()
+
+
+def test_admin_canvia_estat_i_nota(admin_client):
+    [fid] = _seed(1)
+    r = admin_client.patch(f"/api/admin/feedback/{fid}",
+                           data=json.dumps({"status": "in_progress", "admin_note": "  Ho mirem  "}),
+                           content_type="application/json")
+    assert r.status_code == 200
+    body = r.get_json()
+    assert body["status"] == "in_progress" and body["admin_note"] == "Ho mirem"
+    [row] = _rows()
+    assert row["status"] == "in_progress" and row["admin_note"] == "Ho mirem"
+
+
+def test_admin_nota_buida_queda_null(admin_client):
+    [fid] = _seed(1)
+    admin_client.patch(f"/api/admin/feedback/{fid}", data=json.dumps({"admin_note": "x"}),
+                       content_type="application/json")
+    admin_client.patch(f"/api/admin/feedback/{fid}", data=json.dumps({"admin_note": "  "}),
+                       content_type="application/json")
+    assert _rows()[0]["admin_note"] is None
+    assert _rows()[0]["status"] == "new"
+
+
+@pytest.mark.parametrize("body", [{"status": "seen"}, {"admin_note": 5}, {"admin_note": "x" * 1001}])
+def test_admin_patch_invalid_400(admin_client, body):
+    [fid] = _seed(1)
+    r = admin_client.patch(f"/api/admin/feedback/{fid}", data=json.dumps(body),
+                           content_type="application/json")
+    assert r.status_code == 400
+
+
+def test_admin_patch_inexistent_404(admin_client):
+    r = admin_client.patch("/api/admin/feedback/999", data=json.dumps({"status": "done"}),
+                           content_type="application/json")
+    assert r.status_code == 404
+
+
+def test_preflight_patch_admin_feedback(client):
+    r = client.options("/api/admin/feedback/1", headers={
+        "Origin": "http://localhost:8080",
+        "Access-Control-Request-Method": "PATCH",
+    })
+    assert r.headers.get("Access-Control-Allow-Credentials") == "true"
+    assert "PATCH" in r.headers.get("Access-Control-Allow-Methods", "")
