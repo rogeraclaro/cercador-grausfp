@@ -84,6 +84,7 @@ CICLOS_PATH = os.path.join(_DATA_DIR, "ciclos_fp.json")
 BC_LOE_PATH = os.path.join(_DATA_DIR, "bc_loe.json")
 BC_LOMLOE_PATH = os.path.join(_DATA_DIR, "bc_lomloe.json")  # Pla 057: {codigo_c: [codigo_b]}
 D_MODULOS_PATH = os.path.join(_DATA_DIR, "d_modulos.json")  # Pla 058: {str(id_d): {modulos, ensenanzaFP}}
+B_CONTINGUT_PATH = os.path.join(_DATA_DIR, "b_contingut.json")  # Pla 068: {codigo_b: {ecp, ra}}
 SOC_CURSOS_PATH = os.path.join(_DATA_DIR, "soc_cursos.json")    # Pla 059: cursos FPO (SOC)
 SOC_ESPECS_PATH = os.path.join(_DATA_DIR, "soc_especs.json")    # Pla 059: especialitats formatives (SOC)
 SOC_CENTRES_PATH = os.path.join(_DATA_DIR, "soc_centres.json")  # Pla 059: centres de formació (SOC)
@@ -1208,6 +1209,32 @@ def _get_d_modulos() -> dict:
         return {}
 
 
+_b_contingut_cache: dict = {"mtime": None, "index": None}
+
+
+def _get_b_contingut() -> dict:
+    """
+    Pla 068: {codigo_b: {ecp: [{codigo, text}], ra: [{codigo, text}]}} de b_contingut.json.
+    Cache invalidada per mtime. {} si el fitxer no existeix o és corrupte.
+    """
+    if not os.path.exists(B_CONTINGUT_PATH):
+        return {}
+    mtime = os.path.getmtime(B_CONTINGUT_PATH)
+    if _b_contingut_cache["mtime"] == mtime and _b_contingut_cache["index"] is not None:
+        return _b_contingut_cache["index"]
+    try:
+        with open(B_CONTINGUT_PATH, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+        if not isinstance(data, dict):
+            logger.warning("_get_b_contingut: b_contingut.json no és un objecte — s'ignora")
+            return {}
+        _b_contingut_cache.update(mtime=mtime, index=data)
+        return data
+    except (OSError, json.JSONDecodeError) as exc:
+        logger.warning("_get_b_contingut: error llegint b_contingut.json: %s", exc)
+        return {}
+
+
 _cd_lomloe_cache: dict = {"key": None, "data": None}
 
 
@@ -1654,7 +1681,8 @@ def api_itinerari():
     """F5: Retorna l'itinerari local per a un registre A, B o C LOE.
 
     GET /api/itinerari?grado=A&codigo=ADG_A_3001_01
-      → {"parent_b": {"codigo": "ADG_B_3001", "denominacion": "...", "grado": "B"}}
+      → {"parent_b": {"codigo": "ADG_B_3001", "denominacion": "...", "grado": "B"},
+         "contingut": {"ra": {"codigo": "ADG_RA_3001_01", "text": "..."} | null, "ecp": [...]}}
 
     GET /api/itinerari?grado=B&codigo=ADG_B_3001
       → {"children_a": [{"codigo": "ADG_A_3001_01", "denominacion": "...", "grado": "A"}, ...]}
@@ -1745,7 +1773,13 @@ def api_itinerari():
     if grado == 'A':
         mock_rec = {'grado': 'A', 'codigo': codigo}
         parent = itinerary.get_parent_b(mock_rec, idx)
-        return jsonify({'parent_b': _serialize(parent) if parent else None})
+        # Pla 068: "en què consisteix" l'A = el seu RA (mateix sufix, _A_ → _RA_)
+        # dins la fitxa del B pare, més l'ECP del B. Els B LOE no tenen RA.
+        b_cont = _get_b_contingut().get(parent['codigo'], {}) if parent else {}
+        ra_codigo = codigo.replace('_A_', '_RA_', 1)
+        ra = next((x for x in b_cont.get('ra', []) if x.get('codigo') == ra_codigo), None)
+        return jsonify({'parent_b': _serialize(parent) if parent else None,
+                        'contingut': {'ra': ra, 'ecp': b_cont.get('ecp', [])}})
 
     # grado == 'B'
     mock_rec = {'grado': 'B', 'codigo': codigo}

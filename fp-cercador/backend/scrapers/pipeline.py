@@ -329,6 +329,20 @@ def run(on_progress=None) -> dict:
     except Exception as exc:
         logger.warning("pipeline: build_d_modulos ha fallat (no fatal): %s", exc)
 
+    # --- Pla 068: contingut (ECP + RA) de cada fitxa B via todofp (no fatal) ---
+    # Com el bloc 057, necessita els ficha_id acabats de refrescar (~15 min, 4 fils).
+    _report('Contingut fitxes B (fitxes todofp)')
+    try:
+        from scrapers.b_contingut_scraper import build_b_contingut, write_b_contingut
+        b_contingut = build_b_contingut(
+            all_records,
+            on_progress=lambda phase, i, n: _report(f'{phase} {i}/{n}'),
+        )
+        write_b_contingut(b_contingut, os.path.join(os.path.dirname(DATA_PATH), 'b_contingut.json'))
+        logger.info("pipeline: b_contingut.json escrit (%d fitxes B)", len(b_contingut))
+    except Exception as exc:
+        logger.warning("pipeline: build_b_contingut ha fallat (no fatal): %s", exc)
+
     # --- Pla 059: cursos FPO del SOC (Catalunya) via Algolia (no fatal) ---
     _report('Cursos FPO (SOC Catalunya)')
     try:
