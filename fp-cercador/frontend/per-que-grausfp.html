@@ -49,7 +49,7 @@
 
     .content {
       padding: 40px 48px 80px;
-      max-width: 860px;
+      max-width: 1200px;
     }
 
     /* Tipografia de contingut */
@@ -75,6 +75,7 @@
 
     .content p {
       line-height: 1.7;
+      max-width: 75ch;
       color: #3a2e28;
       margin-bottom: 12px;
     }
@@ -136,6 +137,10 @@
     }
 
     /* Taula de comparació */
+    .table-scroll {
+      overflow-x: auto;
+    }
+
     .compare-table {
       width: 100%;
       border-collapse: collapse;
@@ -199,9 +204,13 @@
       border-radius: 4px;
       padding: 24px 28px;
       margin: 16px 0 32px;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      column-gap: 40px;
     }
 
     .profile-block h3 {
+      grid-column: 1 / -1;
       margin-top: 0;
       font-size: 16px;
       font-weight: 600;
@@ -213,6 +222,10 @@
     .feature-item {
       margin-bottom: 14px;
       line-height: 1.65;
+    }
+
+    .feature-item p {
+      max-width: none;
     }
 
     .feature-item:last-child {
@@ -294,6 +307,7 @@
       .hero { padding: 24px 16px 20px; }
       .hero h1 { font-size: 32px; }
       .content { padding: 24px 16px 48px; }
+      .profile-block { grid-template-columns: 1fr; }
       footer { padding: 20px 16px; }
       .compare-table { font-size: 12px; }
       .compare-table th, .compare-table td { padding: 8px 8px; }
@@ -401,6 +415,7 @@
     </div>
 
     <h2 data-i18n="perque.s4.h2">Per què és diferent de tot el que ja existeix</h2>
+    <div class="table-scroll">
     <table class="compare-table">
       <thead>
         <tr>
@@ -477,6 +492,7 @@
         </tr>
       </tbody>
     </table>
+    </div>
 
     <h2 data-i18n="perque.s5.h2">Com funciona el registre</h2>
     <p data-i18n="perque.s5.p1">El registre és <strong>gratuït i en 30 segons</strong>. Pots fer-ho amb el teu email o directament amb el teu compte de Google (un sol clic, sense recordar cap contrasenya nova).</p>
