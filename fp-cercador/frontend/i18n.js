@@ -826,7 +826,7 @@
       'fpo.fav.track_course': 'Seguir este curso',
       'ocup.repr.targetes': 'Tarjetas',
       'ocup.repr.taula': 'Tabla',
-      'ocup.search.placeholder': 'soldador, programador, cuidador… (en castellano)',
+      'ocup.search.placeholder': 'soldador, programador, cuidador…',
       'ocup.veure.cercador': 'Ver en el buscador',
       'ocup.fitxa': 'Ficha',
       'ocup.wall.msg': 'Regístrate para ver todos los grados y elegir la vista.',
