@@ -1595,7 +1595,8 @@
         parentBLomloeData: {},  // parent B LOMLOE per codigo C (Pla 058)
         childrenCLoeData: {},   // {row.id: [{codigo, denominacion}] | 'loading' | 'error'}
         childrenCLoeVisible: {}, // {row.id: bool}
-        contingutAData: {},     // Pla 068: {codigo_a: {parent_b, contingut} | 'loading' | 'error'}
+        contingutAData: {},     // Pla 068: {codigo_a: {parents_b, contingut} | 'loading' | 'error'}
+        aLoePares: {},          // Pla 068: {codigo_UF: [codigo_MF]} pares reals dels A LOE (fitxa oficial)
 
         // Pla 060 — Mode FPO (cursos del SOC Catalunya)
         fpoEspecs: [],           // de /api/fpo/especialitats
@@ -1738,17 +1739,16 @@
               _normCod: (r.codigo || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
             }));
             this.families = [...new Set(this.allRecords.map(r => r.familia))].sort();
-            // F5 — Índex B per a derivació A→B local (LOMLOE i LOE)
-            this._bByCode = {};     // {codigo_B: record} LOMLOE
-            this._bByUfNum = {};    // {'0038': record}  LOE
+            // F5 — Índex B per a derivació A→B local (LOMLOE pel codi; LOE via aLoePares)
+            this._bByCode = {};     // {codigo_B: record}
             for (const r of this.allRecords) {
-              if (r.grado === 'B') {
-                if (r.codigo) this._bByCode[r.codigo] = r;
-                const m = r.codigo && r.codigo.match(/^MF(\d+)_/);
-                if (m) this._bByUfNum[m[1]] = r;
-              }
+              if (r.grado === 'B' && r.codigo) this._bByCode[r.codigo] = r;
             }
             this.state = 'ready';
+            fetch(API_BASE + '/api/a-loe-pares')
+              .then(r => r.json())
+              .then(d => { this.aLoePares = d || {}; })
+              .catch(() => { });
             fetch(API_BASE + '/api/centres/count')
               .then(r => r.json())
               .then(d => { this.centresCount = d; })
@@ -2125,15 +2125,21 @@
           return ['', ...[...new Set(data.map(c => c.ccaa).filter(Boolean))].sort()];
         },
 
-        parentBOf(row) {
-          if (row.grado !== 'A' || !row.codigo) return null;
+        parentsBOf(row) {
+          if (row.grado !== 'A' || !row.codigo) return [];
           // LOMLOE: ADG_A_3001_01 → ADG_B_3001
-          let m = row.codigo.match(/^([A-Z]+)_A_(\d+)_\d+$/);
-          if (m) return this._bByCode[`${m[1]}_B_${m[2]}`] || null;
-          // LOE: UF0038 → MF0038_*
-          m = row.codigo.match(/^UF(\d+)$/);
-          if (m) return this._bByUfNum[m[1]] || null;
-          return null;
+          const m = row.codigo.match(/^([A-Z]+)_A_(\d+)_\d+$/);
+          if (m) {
+            const b = this._bByCode[`${m[1]}_B_${m[2]}`];
+            return b ? [b] : [];
+          }
+          // LOE: el pare NO surt del número (UF0038 → MF0706_1) i pot haver-n'hi
+          // diversos; ve de la fitxa oficial de l'A (/api/a-loe-pares).
+          return (this.aLoePares[row.codigo] || []).map(c => this._bByCode[c]).filter(Boolean);
+        },
+
+        parentBOf(row) {
+          return this.parentsBOf(row)[0] || null;
         },
 
         async fetchCiclosD(codigo) {
@@ -2161,7 +2167,7 @@
             if (!res.ok) throw new Error('HTTP ' + res.status);
             const data = await res.json();
             this.contingutAData = { ...this.contingutAData, [codigo]: {
-              parent_b: data.parent_b || null,
+              parents_b: data.parents_b || (data.parent_b ? [data.parent_b] : []),
               contingut: data.contingut || { ra: null, ecp: [] },
             } };
           } catch (e) {
@@ -2252,7 +2258,7 @@
             this.expandedRows = { ...this.expandedRows, [row.id]: !this.expandedRows[row.id] };
             if (row.plan_antiguo) this.fetchFpoByCert(row.codigo);
             return;
-          } else if (['A','B','C'].includes(row.grado) && row.ficha_id) {
+          } else if (['B','C'].includes(row.grado) && row.ficha_id) {
             this.loggedIn ? window.open(API_BASE + '/api/ficha-redirect?grado=' + row.grado + '&codigo=' + encodeURIComponent(row.codigo), '_blank') : this.showCentresModal();
           } else if (['D','E'].includes(row.grado) && row.ficha_url) {
             this.loggedIn ? window.open(row.ficha_url, '_blank') : this.showCentresModal();
@@ -2867,8 +2873,8 @@
                     <span>
                       <span x-text="t('index.itinerari.parent_b_prefix')" class="textpetit"></span><span
                         class="badge-itinerari-b"
-                        :title="t('index.itinerari.parent_b_title') + (parentBOf(row)||{}).denominacion"
-                        x-text="'→ ' + ((parentBOf(row)||{}).codigo || '')"></span>
+                        :title="t('index.itinerari.parent_b_title') + parentsBOf(row).map(b => b.codigo + ' — ' + b.denominacion).join('; ')"
+                        x-text="'→ ' + ((parentBOf(row)||{}).codigo || '') + (parentsBOf(row).length > 1 ? ' +' + (parentsBOf(row).length - 1) : '')"></span>
                     </span>
                   </template>
                   <template x-if="row.grado === 'B' && row.codigo && (/^MF\d{4}_\d+$/.test(row.codigo) || /^[A-Z]{3}_B_\d{4}$/.test(row.codigo))">
@@ -3044,14 +3050,16 @@
                         <template x-if="!contingutAData[row.codigo].contingut.ra && contingutAData[row.codigo].contingut.ecp.length === 0">
                           <p class="detall-ciclos-d" style="margin-bottom:0;" x-text="t('index.a.sense_descripcio')"></p>
                         </template>
-                        <template x-if="contingutAData[row.codigo].parent_b">
+                        <template x-if="contingutAData[row.codigo].parents_b.length > 0">
                           <div class="detall-ciclos-d">
-                            <span x-text="t('index.a.grau_b')"></span>
+                            <span x-text="t(contingutAData[row.codigo].parents_b.length > 1 ? 'index.a.graus_b' : 'index.a.grau_b')"></span>
                             <ul class="ciclos-d-list">
-                              <li><a href="#"
-                                  @click.prevent="loggedIn ? window.open(API_BASE + '/api/ficha-redirect?grado=B&codigo=' + encodeURIComponent(contingutAData[row.codigo].parent_b.codigo), '_blank') : showCentresModal()"
-                                  x-text="contingutAData[row.codigo].parent_b.codigo + ' — ' + contingutAData[row.codigo].parent_b.denominacion"></a>
-                              </li>
+                              <template x-for="pb in contingutAData[row.codigo].parents_b" :key="pb.codigo">
+                                <li><a href="#"
+                                    @click.prevent="loggedIn ? window.open(API_BASE + '/api/ficha-redirect?grado=B&codigo=' + encodeURIComponent(pb.codigo), '_blank') : showCentresModal()"
+                                    x-text="pb.codigo + ' — ' + pb.denominacion"></a>
+                                </li>
+                              </template>
                             </ul>
                           </div>
                         </template>
