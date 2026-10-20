@@ -192,7 +192,8 @@ def _set_auth_cors(response):
 def _needs_auth_cors(path):
     return (path.startswith("/api/auth/") or path.startswith("/api/favorites")
             or path.startswith("/api/fpo/favorites")
-            or path.startswith("/api/alerts") or path.startswith("/api/centres-watch"))
+            or path.startswith("/api/alerts") or path.startswith("/api/centres-watch")
+            or path.startswith("/api/feedback"))
 
 
 @app.before_request
@@ -2932,6 +2933,124 @@ def centres_watch_unsubscribe(watch_id):
         return jsonify({"ok": True, "message": "Seguiment desactivat correctament"}), 200
     finally:
         conn.close()
+
+
+# ---------------------------------------------------------------------------
+# Comentaris d'usuaris (Pla 069)
+# ---------------------------------------------------------------------------
+
+_FEEDBACK_KINDS = {"error", "idea", "data", "other"}
+_FEEDBACK_KIND_LABELS = {"error": "Error", "idea": "Idea", "data": "Dades incorrectes", "other": "Altre"}
+_FEEDBACK_MAX_CHARS = 2000
+_FEEDBACK_CONTEXT_KEYS = ("path", "query", "lang")
+_FEEDBACK_EMAIL_RE = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
+_FEEDBACK_ANON_LIMIT = 5        # comentaris anònims...
+_FEEDBACK_ANON_WINDOW = 3600    # ...per IP i hora
+
+# Límit en memòria: gunicorn corre amb 1 worker (pla 004), així no cal desar IPs a la BD.
+_feedback_hits: dict = {}
+_feedback_lock = threading.Lock()
+
+
+def _feedback_now() -> float:
+    return time.time()
+
+
+def _run_in_background(fn) -> None:
+    threading.Thread(target=fn, daemon=True).start()
+
+
+def _client_ip(req) -> str:
+    """IP del client. Les capçaleres de nginx només es creuen si la petició ve de loopback."""
+    peer = req.remote_addr or ""
+    if peer in ("127.0.0.1", "::1"):
+        real = req.headers.get("X-Real-IP", "").strip()
+        if real:
+            return real
+        forwarded = req.headers.get("X-Forwarded-For", "")
+        if forwarded:
+            return forwarded.split(",")[-1].strip()
+    return peer
+
+
+def _feedback_rate_ok(ip: str) -> bool:
+    """Registra un intent anònim i diu si és dins del límit."""
+    now = _feedback_now()
+    with _feedback_lock:
+        recent = [t for t in _feedback_hits.get(ip, []) if now - t < _FEEDBACK_ANON_WINDOW]
+        if len(recent) >= _FEEDBACK_ANON_LIMIT:
+            _feedback_hits[ip] = recent
+            return False
+        recent.append(now)
+        _feedback_hits[ip] = recent
+        return True
+
+
+def _sanitize_feedback_context(raw) -> dict:
+    if not isinstance(raw, dict):
+        return {}
+    return {k: raw[k][:500] for k in _FEEDBACK_CONTEXT_KEYS if isinstance(raw.get(k), str)}
+
+
+def _notify_feedback(email: str, kind: str, message: str, context: dict) -> None:
+    """Avís opcional al propietari. Mai bloqueja ni fa fallar el comentari."""
+    notify_to = os.environ.get("FEEDBACK_NOTIFY_EMAIL", "").strip()
+    if not notify_to:
+        return
+    page = (context.get("path", "") + context.get("query", "")) or "—"
+    body = (f"{email} ha deixat un comentari ({_FEEDBACK_KIND_LABELS.get(kind, kind)}).\n"
+            f"Pàgina: {page}\n\n{message}\n")
+
+    def send():
+        try:
+            import email_service
+            email_service.send_email(notify_to, "Nou comentari a GrausFP", body)
+        except Exception as exc:
+            logger.warning("No s'ha pogut enviar l'avís de comentari: %s", exc)
+
+    _run_in_background(send)
+
+
+@app.route("/api/feedback", methods=["POST"])
+def feedback_create():
+    """Desa un comentari. Anònims: email obligatori, honeypot i límit per IP."""
+    import db as _db
+    data = request.get_json(silent=True) or {}
+    if data.get("website"):  # honeypot: un humà no veu aquest camp
+        return jsonify({"ok": True}), 201
+
+    kind = data.get("kind")
+    if kind not in _FEEDBACK_KINDS:
+        return jsonify({"error": "Tipus de comentari no vàlid"}), 400
+    message = data.get("message").strip() if isinstance(data.get("message"), str) else ""
+    if not message:
+        return jsonify({"error": "Escriu un comentari"}), 400
+    if len(message) > _FEEDBACK_MAX_CHARS:
+        return jsonify({"error": f"El comentari és massa llarg (màxim {_FEEDBACK_MAX_CHARS} caràcters)"}), 400
+    context = _sanitize_feedback_context(data.get("context"))
+
+    user_id = _get_session_user(request)
+    conn = _db.get_db()
+    try:
+        if user_id:
+            email = _db.query_one(conn, "SELECT email FROM users WHERE id = ?", (user_id,))["email"]
+        else:
+            email = (data.get("email") or "").strip().lower() if isinstance(data.get("email"), str) else ""
+            if not email or len(email) > 254 or not _FEEDBACK_EMAIL_RE.match(email):
+                return jsonify({"error": "Cal un email vàlid"}), 400
+            if not _feedback_rate_ok(_client_ip(request)):
+                return jsonify({"error": "Massa comentaris. Torna-ho a provar d'aquí a una estona."}), 429
+        cur = conn.execute(
+            "INSERT INTO feedback (user_id, email, kind, message, context) VALUES (?, ?, ?, ?, ?)",
+            (user_id, email, kind, message, json.dumps(context, ensure_ascii=False)),
+        )
+        conn.commit()
+        feedback_id = cur.lastrowid
+    finally:
+        conn.close()
+
+    _notify_feedback(email, kind, message, context)
+    return jsonify({"id": feedback_id}), 201
 
 
 # ---------------------------------------------------------------------------
