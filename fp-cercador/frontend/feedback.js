@@ -20,7 +20,7 @@
     'fb.kind.idea': 'Idea',
     'fb.kind.data': 'Dades incorrectes',
     'fb.kind.other': 'Altre',
-    'fb.label': 'Explica-ho amb una frase. Ja sabem en quina pàgina eres.',
+    'fb.label': 'Explica-ns-ho amb tot el detall que vulguis. Ja sabem en quina pàgina eres.',
     'fb.email.label': 'El teu email, per poder-te respondre',
     'fb.cancel': 'Cancel·la',
     'fb.send': 'Envia',
