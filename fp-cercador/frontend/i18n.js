@@ -153,6 +153,8 @@
       'csv.header.niv': 'Nivell',
       'csv.header.old': 'Pla antic',
       'csv.header.centres': 'Centres seleccionats',
+      'csv.yes': 'Sí',
+      'csv.no': 'No',
       'index.btn.exportTitle': 'Exporta {n} registres a CSV',
       'index.btn.exportTitle_one': 'Exporta 1 registre a CSV',
 
@@ -762,6 +764,8 @@
       'csv.header.niv': 'Nivel',
       'csv.header.old': 'Plan antiguo',
       'csv.header.centres': 'Centros seleccionados',
+      'csv.yes': 'Sí',
+      'csv.no': 'No',
       'index.btn.exportTitle': 'Exportar {n} registros a CSV',
       'index.btn.exportTitle_one': 'Exportar 1 registro a CSV',
 
