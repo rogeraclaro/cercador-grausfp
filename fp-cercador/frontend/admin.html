@@ -714,7 +714,7 @@
             <button onclick="toggleUser(${u.id}, ${u.is_active})"
               style="margin-top:0;padding:6px 12px;font-size:12px;background:${u.is_active ? 'var(--warm)' : 'var(--dark)'};"
               id="user-toggle-${u.id}">${u.is_active ? 'Desactivar' : 'Activar'}</button>
-            <button onclick="deleteUser(${u.id}, '${escapeHtml(u.email).replace(/'/g, '')}')"
+            <button class="user-delete-btn" data-user-id="${u.id}"
               style="margin-top:0;margin-left:6px;padding:6px 12px;font-size:12px;background:#dc2626;">
               Eliminar</button>
           </td>
@@ -728,6 +728,15 @@
             <tbody>${rows}</tbody>
           </table>
         </div>`;
+      // L'email és dada de l'usuari: no pot anar dins d'un onclick inline
+      // (el navegador descodifica &#39; abans d'executar-lo).
+      const usersById = new Map(users.map(u => [String(u.id), u]));
+      usersContainer.querySelectorAll('.user-delete-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const u = usersById.get(btn.dataset.userId);
+          if (u) deleteUser(u.id, u.email);
+        });
+      });
     }
 
     usersLoadBtn.addEventListener('click', async () => {
