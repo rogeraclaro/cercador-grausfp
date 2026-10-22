@@ -309,3 +309,60 @@ def test_register_limit_per_ip(client):
     assert all(r == (201, 1) for r in results[:20])
     assert results[20] == (429, 0)
     assert reg(99, "198.51.100.2") == (201, 1)
+
+
+# ---------------------------------------------------------------------------
+# Google OAuth: vinculació per email
+# ---------------------------------------------------------------------------
+
+def _google_callback(client, monkeypatch, userinfo):
+    """Completa el callback amb Google mockejat; retorna la resposta."""
+    from unittest.mock import MagicMock
+    monkeypatch.setenv("GOOGLE_CLIENT_ID", "test-client")
+    monkeypatch.setenv("GOOGLE_CLIENT_SECRET", "test-secret")
+    token_resp = MagicMock(ok=True)
+    token_resp.json.return_value = {"access_token": "at"}
+    info_resp = MagicMock(ok=True)
+    info_resp.json.return_value = userinfo
+    client.set_cookie("oauth_state", "st")
+    with patch("app.requests.post", return_value=token_resp), \
+         patch("app.requests.get", return_value=info_resp):
+        return client.get("/api/auth/google/callback?state=st&code=c")
+
+
+def _google_id(email):
+    conn = db.get_db()
+    row = conn.execute("SELECT google_id FROM users WHERE email = ?", (email,)).fetchone()
+    conn.close()
+    return row[0] if row else None
+
+
+def test_google_sobre_compte_no_verificat_invalida_la_contrasenya_previa(client, monkeypatch):
+    """Pre-hijack: qui registra l'email d'un altre no pot entrar després que el titular usi Google."""
+    _register(client, email="victim@test.com", password="attackerpass1")
+    rv = _google_callback(client, monkeypatch,
+                          {"sub": "g-victim", "email": "victim@test.com", "email_verified": True})
+    assert rv.status_code == 302 and "google=1" in rv.headers["Location"]
+    assert _google_id("victim@test.com") == "g-victim"
+    with flask_app.test_client() as attacker:
+        assert _login(attacker, email="victim@test.com", password="attackerpass1").status_code == 401
+
+
+def test_google_sobre_compte_verificat_conserva_la_contrasenya(client, monkeypatch):
+    _register(client, email="owner@test.com", password="ownerpass99")
+    _verify_user("owner@test.com")
+    rv = _google_callback(client, monkeypatch,
+                          {"sub": "g-owner", "email": "owner@test.com", "email_verified": True})
+    assert "google=1" in rv.headers["Location"]
+    with flask_app.test_client() as other:
+        assert _login(other, email="owner@test.com", password="ownerpass99").status_code == 200
+
+
+@pytest.mark.parametrize("claim", [{"email_verified": False}, {}])
+def test_google_sense_email_verificat_no_vincula_ni_inicia_sessio(client, monkeypatch, claim):
+    _register(client, email="owner@test.com", password="ownerpass99")
+    _verify_user("owner@test.com")
+    rv = _google_callback(client, monkeypatch, {"sub": "g-x", "email": "owner@test.com", **claim})
+    assert "google_error=" in rv.headers["Location"]
+    assert _google_id("owner@test.com") is None
+    assert "session=" not in rv.headers.get("Set-Cookie", "")

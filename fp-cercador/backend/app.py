@@ -2139,6 +2139,9 @@ def auth_google_callback():
     email      = (info.get("email") or "").strip().lower()
     if not email or not google_sub:
         return _redirect("/?google_error=no_email")
+    # L'email és la clau de vinculació amb comptes existents: només si Google l'ha verificat.
+    if info.get("email_verified") is not True:
+        return _redirect("/?google_error=unverified_email")
 
     conn = _db.get_db()
     try:
@@ -2147,10 +2150,16 @@ def auth_google_callback():
         if not user:
             user = _db.query_one(
                 conn,
-                "SELECT id, is_admin FROM users WHERE email = ? AND deleted_at IS NULL AND is_active = 1",
+                "SELECT id, is_admin, verified FROM users WHERE email = ? AND deleted_at IS NULL AND is_active = 1",
                 (email,),
             )
             if user:
+                if not user["verified"]:
+                    # Ningú no havia demostrat ser el titular de l'email: la contrasenya,
+                    # sessions i tokens previs poden ser d'un tercer (pre-hijack).
+                    conn.execute("UPDATE users SET password_hash = 'google' WHERE id = ?", (user["id"],))
+                    conn.execute("DELETE FROM sessions WHERE user_id = ?", (user["id"],))
+                    conn.execute("DELETE FROM tokens WHERE user_id = ?", (user["id"],))
                 # Vincula google_id a compte existent
                 conn.execute("UPDATE users SET google_id = ?, verified = 1 WHERE id = ?",
                              (google_sub, user["id"]))
