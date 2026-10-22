@@ -1076,8 +1076,11 @@ def get_certificado_detail(codigo):
 
 _FICHA_BASE = 'https://www.todofp.es/buscadorgradosfp'
 _FICHA_INDEX_TTL = 3600  # segons
+# Marge mínim entre reconstruccions (també si fallen): sense ell, cada codigo
+# inventat (anònim) disparava ~10 peticions a todofp sota el lock global.
+_FICHA_MISS_REBUILD_FLOOR = 300  # segons
 # {codigo: id_viu}. Reconstruït quan expira el TTL o davant un miss.
-_ficha_index = {"built_at": 0.0, "map": {}}
+_ficha_index = {"built_at": 0.0, "map": {}, "last_attempt": float("-inf")}
 _ficha_index_lock = threading.Lock()
 
 
@@ -1104,7 +1107,9 @@ def _resolve_ficha_id(codigo: str):
     with _ficha_index_lock:
         # Pot haver-se reconstruït mentre esperàvem el lock.
         now = time.monotonic()
-        if (now - _ficha_index["built_at"]) >= _FICHA_INDEX_TTL or codigo not in _ficha_index["map"]:
+        needs_rebuild = (now - _ficha_index["built_at"]) >= _FICHA_INDEX_TTL or codigo not in _ficha_index["map"]
+        if needs_rebuild and (now - _ficha_index["last_attempt"]) >= _FICHA_MISS_REBUILD_FLOOR:
+            _ficha_index["last_attempt"] = now
             new_map = _build_ficha_index()
             _ficha_index.update(built_at=time.monotonic(), map=new_map)
         return _ficha_index["map"].get(codigo)
