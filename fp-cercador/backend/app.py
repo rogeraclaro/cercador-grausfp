@@ -46,6 +46,7 @@ import sys
 import threading
 import time
 from datetime import date, datetime, timezone
+from urllib.parse import urlsplit
 
 import requests
 from bs4 import BeautifulSoup
@@ -994,6 +995,18 @@ def admin_refresh_centres():
 
 _CERT_BASE = 'https://www.todofp.es/buscadorcertificados'
 _CODIGO_RE = re.compile(r'^[A-Z0-9_]{4,20}$')
+_BOE_HOSTS = {'boe.es', 'www.boe.es'}
+
+
+def _is_boe_url(href):
+    """True només per a URLs http(s) amb host boe.es: el valor acaba a window.open al frontend."""
+    if not href:
+        return False
+    try:
+        parts = urlsplit(href.strip())
+    except ValueError:
+        return False
+    return parts.scheme in ('http', 'https') and (parts.hostname or '') in _BOE_HOSTS
 
 
 @app.route('/api/certificado/<string:codigo>')
@@ -1041,9 +1054,8 @@ def get_certificado_detail(codigo):
         resp.raise_for_status()
 
         soup = BeautifulSoup(resp.text, 'html.parser')
-        boe_link = soup.find('a', class_='enlace-ficha-boe',
-                             href=re.compile(r'boe\.es'))
-        url_boe = boe_link['href'] if boe_link else None
+        boe_link = soup.find('a', class_='enlace-ficha-boe', href=_is_boe_url)
+        url_boe = boe_link['href'].strip() if boe_link else None
 
         return jsonify({'codigo': codigo, 'url_boe': url_boe})
 
