@@ -351,6 +351,11 @@
       container.innerHTML = html;
     }
 
+    function esc(s) {
+      return String(s).replace(/[&<>"']/g, c =>
+        ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    }
+
     function renderNovetats(recentChanges) {
       const list = document.getElementById('novetats-list');
       if (!recentChanges.length) {
@@ -361,7 +366,8 @@
         const chips = Object.entries(entry.new_by_grado).flatMap(([grado, denoms]) =>
           denoms.slice(0, 5).map(d => {
             const q = encodeURIComponent(d);
-            return `<a class="chip chip-new chip-link" href="index.html?grado=${grado}&q=${q}" title="${d}">Grau ${grado}: ${d.length > 40 ? d.slice(0, 40) + '…' : d}</a>`;
+            const label = d.length > 40 ? d.slice(0, 40) + '…' : d;
+            return `<a class="chip chip-new chip-link" href="index.html?grado=${encodeURIComponent(grado)}&q=${q}" title="${esc(d)}">Grau ${esc(grado)}: ${esc(label)}</a>`;
           })
         ).join('');
         return `<li class="noveta-item">
