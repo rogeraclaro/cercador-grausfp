@@ -1542,6 +1542,11 @@
       ? 'http://localhost:5001'
       : '';
 
+    // URLs raspades de tercers: només http(s), mai javascript:/data: dins un href.
+    function safeHttpUrl(u) {
+      return typeof u === 'string' && /^https?:\/\//i.test(u.trim()) ? u.trim() : null;
+    }
+
     document.addEventListener('alpine:init', () => {
       Alpine.data('cercador', () => ({
         state: 'loading',
@@ -3359,8 +3364,8 @@
                     <!-- Pla 061: ⭐ desa especialitat + checkbox per curs -->
                     <div class="detall-btns">
                       <a class="btn-doc" target="_blank" rel="noopener"
-                        x-show="fpoDetall[esp.codi] && fpoDetall[esp.codi].programaUrl"
-                        :href="fpoDetall[esp.codi] && fpoDetall[esp.codi].programaUrl"
+                        x-show="fpoDetall[esp.codi] && safeHttpUrl(fpoDetall[esp.codi].programaUrl)"
+                        :href="fpoDetall[esp.codi] && safeHttpUrl(fpoDetall[esp.codi].programaUrl)"
                         x-text="t('fpo.detall.programa')"></a>
                       <button x-show="loggedIn" type="button" class="btn-doc"
                         :class="{ 'btn-fav--active': fpoFavSet.has(esp.codi) }"
@@ -3445,7 +3450,7 @@
                                   <span x-show="curs.modalitat" x-text="tc(curs.modalitat)" style="margin-left:8px;"></span>
                                   <span x-show="curs.hores && curs.font && curs.font !== 'soc'"
                                     x-text="Math.round(curs.hores) + ' h'" style="margin-left:8px;"></span>
-                                  <a class="btn-doc" :href="curs.fitxaUrl" target="_blank" rel="noopener"
+                                  <a class="btn-doc" :href="safeHttpUrl(curs.fitxaUrl)" target="_blank" rel="noopener"
                                     x-text="t(curs.font && curs.font !== 'soc' ? 'fpo.detall.fitxa_ext' : 'fpo.detall.fitxa_soc')"
                                     style="margin-left:8px;"></a>
                                 </div>

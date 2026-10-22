@@ -514,6 +514,11 @@
 
       var LOCALE = getLang() === 'ca' ? 'ca-ES' : 'es-ES';
 
+      // URLs raspades de tercers: només http(s), mai javascript:/data: dins un href.
+      function safeHttpUrl(u) {
+        return typeof u === 'string' && /^https?:\/\//i.test(u.trim()) ? u.trim() : null;
+      }
+
       function esc(s) {
         return String(s).replace(/[&<>"']/g, function (c) {
           return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]);
@@ -784,7 +789,7 @@
         if (c.horariText) rows.push('<span style="font-size:11px;"><strong>' + t('fpo.detall.horari') + ':</strong> ' + esc(c.horariText) + '</span>');
         var badgeLine = c.estat ? fpoEstatBadge(c.estat) : '';
         if (c.modalitat) badgeLine += ' <span style="font-size:11px;color:var(--warm);">' + esc(c.modalitat) + '</span>';
-        if (c.fitxaUrl) badgeLine += ' <a href="' + esc(c.fitxaUrl) + '" target="_blank" rel="noopener" style="font-size:11px;">' + t(c.font && c.font !== 'soc' ? 'fpo.detall.fitxa_ext' : 'fpo.detall.fitxa_soc') + '</a>';
+        if (safeHttpUrl(c.fitxaUrl)) badgeLine += ' <a href="' + esc(safeHttpUrl(c.fitxaUrl)) + '" target="_blank" rel="noopener" style="font-size:11px;">' + t(c.font && c.font !== 'soc' ? 'fpo.detall.fitxa_ext' : 'fpo.detall.fitxa_soc') + '</a>';
         rows.push(badgeLine);
 
         return '<div style="border:1px solid var(--border);border-radius:6px;padding:8px 10px;margin-top:6px;font-size:13px;line-height:1.5;">' +
@@ -813,8 +818,8 @@
             var nCursos = (e.cursos || []).length;
 
             var bodyParts = [];
-            if (e.programaUrl) {
-              bodyParts.push('<a class="btn-doc" href="' + esc(e.programaUrl) + '" target="_blank" rel="noopener" ' +
+            if (safeHttpUrl(e.programaUrl)) {
+              bodyParts.push('<a class="btn-doc" href="' + esc(safeHttpUrl(e.programaUrl)) + '" target="_blank" rel="noopener" ' +
                 'style="display:inline-block;margin:8px 0;">' + t('fpo.detall.programa') + '</a>');
             }
             if (nCursos) {
