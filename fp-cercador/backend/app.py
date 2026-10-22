@@ -1896,6 +1896,31 @@ def _get_session_user(req):
         conn.close()
 
 
+# Límit per IP dels endpoints anònims que envien email (register, forgot-password).
+# Generós perquè una classe sencera pot registrar-se des de la IP d'una escola.
+_AUTH_EMAIL_IP_LIMIT = 20
+_AUTH_EMAIL_IP_WINDOW = 3600
+_AUTH_RESET_COOLDOWN_MINUTES = 15   # un sol email de reset per compte i finestra
+
+# En memòria, com _feedback_hits: gunicorn corre amb 1 worker.
+_auth_rate_hits: dict = {}
+_auth_rate_lock = threading.Lock()
+
+
+def _auth_rate_ok(bucket: str, ip: str) -> bool:
+    """Registra una petició de `bucket` per a `ip` i diu si és dins del límit."""
+    key = (bucket, ip)
+    now = time.time()
+    with _auth_rate_lock:
+        recent = [t for t in _auth_rate_hits.get(key, []) if now - t < _AUTH_EMAIL_IP_WINDOW]
+        if len(recent) >= _AUTH_EMAIL_IP_LIMIT:
+            _auth_rate_hits[key] = recent
+            return False
+        recent.append(now)
+        _auth_rate_hits[key] = recent
+        return True
+
+
 @app.route("/api/auth/register", methods=["POST"])
 def auth_register():
     import secrets as _secrets
@@ -1907,6 +1932,8 @@ def auth_register():
     password = data.get("password") or ""
     if not email or "@" not in email or len(password) < 8:
         return jsonify({"error": "Email o contrasenya invàlids"}), 400
+    if not _auth_rate_ok("register", _client_ip(request)):
+        return jsonify({"error": "Massa intents. Torna-ho a provar més tard."}), 429
     conn = _db.get_db()
     try:
         existing = _db.query_one(conn, "SELECT id FROM users WHERE email = ?", (email,))
@@ -2190,12 +2217,21 @@ def auth_forgot_password():
     email = (data.get("email") or "").strip().lower()
     if not email:
         return jsonify({"message": "Si l'email existeix, rebràs un missatge."}), 200
+    if not _auth_rate_ok("forgot", _client_ip(request)):
+        return jsonify({"error": "Massa intents. Torna-ho a provar més tard."}), 429
     conn = _db.get_db()
     try:
         user = _db.query_one(
             conn, "SELECT id FROM users WHERE email = ? AND deleted_at IS NULL AND is_active = 1", (email,)
         )
-        if user:
+        recent_reset = user and _db.query_one(
+            conn,
+            "SELECT 1 FROM tokens WHERE user_id = ? AND type = 'password_reset' "
+            "AND created_at > datetime('now', ?)",
+            (user["id"], f"-{_AUTH_RESET_COOLDOWN_MINUTES} minutes"),
+        )
+        # Resposta idèntica encara que no s'enviï res: no revela si el compte existeix.
+        if user and not recent_reset:
             token = _secrets.token_hex(32)
             expires = (datetime.now(timezone.utc) + timedelta(hours=1)).strftime("%Y-%m-%d %H:%M:%S")
             conn.execute(

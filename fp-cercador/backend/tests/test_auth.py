@@ -254,3 +254,58 @@ def test_rate_limit_login_ignora_x_real_ip_si_no_ve_del_proxy(client):
         environ_base={"REMOTE_ADDR": "192.0.2.10"},
     )
     assert rv.status_code == 429
+
+
+# ---------------------------------------------------------------------------
+# Límits d'enviament d'emails (forgot-password / register)
+# ---------------------------------------------------------------------------
+
+def _forgot(client, email="user@test.com", real_ip=None):
+    kwargs = {}
+    if real_ip:
+        kwargs = {"headers": {"X-Real-IP": real_ip}, "environ_base": {"REMOTE_ADDR": "127.0.0.1"}}
+    return client.post(
+        "/api/auth/forgot-password",
+        data=json.dumps({"email": email}),
+        content_type="application/json",
+        **kwargs,
+    )
+
+
+def test_forgot_password_un_sol_email_per_compte_cada_15_minuts(client):
+    _register(client)
+    _verify_user()
+    with patch("email_service.send_password_reset_email") as send:
+        first = _forgot(client, real_ip="203.0.113.1")
+        second = _forgot(client, real_ip="203.0.113.2")
+    assert first.status_code == 200
+    assert second.status_code == 200
+    assert second.get_json() == first.get_json()
+    assert send.call_count == 1
+
+
+def test_forgot_password_limit_per_ip(client):
+    with patch("email_service.send_password_reset_email"):
+        codes = [_forgot(client, email=f"nobody{i}@test.com", real_ip="203.0.113.9").status_code
+                 for i in range(21)]
+    assert codes[:20] == [200] * 20
+    assert codes[20] == 429
+    with patch("email_service.send_password_reset_email"):
+        assert _forgot(client, email="altre@test.com", real_ip="198.51.100.1").status_code == 200
+
+
+def test_register_limit_per_ip(client):
+    def reg(i, ip):
+        with patch("email_service.send_verification_email") as send:
+            rv = client.post(
+                "/api/auth/register",
+                data=json.dumps({"email": f"u{i}@test.com", "password": "password123"}),
+                content_type="application/json",
+                headers={"X-Real-IP": ip},
+                environ_base={"REMOTE_ADDR": "127.0.0.1"},
+            )
+        return rv.status_code, send.call_count
+    results = [reg(i, "203.0.113.20") for i in range(21)]
+    assert all(r == (201, 1) for r in results[:20])
+    assert results[20] == (429, 0)
+    assert reg(99, "198.51.100.2") == (201, 1)

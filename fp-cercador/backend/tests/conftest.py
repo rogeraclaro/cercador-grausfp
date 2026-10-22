@@ -122,3 +122,12 @@ def _isola_ext_cursos(tmp_path, monkeypatch):
     monkeypatch.setattr(app_module, "EXT_CURSOS_PATH", str(tmp_path / "no_ext_cursos.json"), raising=False)
     monkeypatch.setattr(app_module, "_ext_cursos_cache", {"mtime": None, "index": None}, raising=False)
     monkeypatch.setattr(app_module, "_ext_index_cache", {"key": None, "data": None}, raising=False)
+
+
+@pytest.fixture(autouse=True)
+def _reset_auth_rate_limits():
+    """Els límits per IP de register/forgot són en memòria: es buiden entre tests."""
+    app_module = sys.modules.get("app")
+    if app_module is not None and hasattr(app_module, "_auth_rate_hits"):
+        app_module._auth_rate_hits.clear()
+    yield
