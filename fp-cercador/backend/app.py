@@ -1968,7 +1968,8 @@ def auth_login():
     data = request.get_json(silent=True) or {}
     email = (data.get("email") or "").strip().lower()
     password = data.get("password") or ""
-    ip = request.remote_addr or ""
+    # Darrere nginx remote_addr és sempre 127.0.0.1: sense això el límit és global.
+    ip = _client_ip(request)
     conn = _db.get_db()
     try:
         attempts = _db.query_one(
@@ -2142,7 +2143,7 @@ def auth_google_callback():
         # Crea sessió (idèntic al login normal)
         session_token = _secrets.token_hex(32)
         expires = (datetime.now(timezone.utc) + timedelta(days=30)).strftime("%Y-%m-%d %H:%M:%S")
-        ip = request.remote_addr or ""
+        ip = _client_ip(request)
         conn.execute(
             "INSERT INTO sessions (user_id, token, expires_at, ip, user_agent) VALUES (?, ?, ?, ?, ?)",
             (uid, session_token, expires, ip, request.headers.get("User-Agent", "")),

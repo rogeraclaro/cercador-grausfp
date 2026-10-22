@@ -211,3 +211,46 @@ def test_rate_limit_login(client):
         _login(client, password="malpassword")
     rv = _login(client, password="malpassword")
     assert rv.status_code == 429
+
+
+def _login_via_proxy(client, real_ip, email="user@test.com", password="password123"):
+    """Simula nginx: la connexió ve de loopback i la IP real arriba a X-Real-IP."""
+    return client.post(
+        "/api/auth/login",
+        data=json.dumps({"email": email, "password": password}),
+        content_type="application/json",
+        headers={"X-Real-IP": real_ip},
+        environ_base={"REMOTE_ADDR": "127.0.0.1"},
+    )
+
+
+def test_rate_limit_login_per_client_darrere_proxy(client):
+    """Els intents fallits d'un client no bloquegen el login d'un altre client."""
+    _register(client)
+    _verify_user()
+    for _ in range(5):
+        _login_via_proxy(client, "203.0.113.66", password="malpassword")
+    assert _login_via_proxy(client, "203.0.113.66").status_code == 429
+    assert _login_via_proxy(client, "198.51.100.7").status_code == 200
+
+
+def test_rate_limit_login_ignora_x_real_ip_si_no_ve_del_proxy(client):
+    """Un client directe no pot esquivar el límit canviant X-Real-IP."""
+    _register(client)
+    _verify_user()
+    for i in range(5):
+        client.post(
+            "/api/auth/login",
+            data=json.dumps({"email": "user@test.com", "password": "malpassword"}),
+            content_type="application/json",
+            headers={"X-Real-IP": f"10.0.0.{i}"},
+            environ_base={"REMOTE_ADDR": "192.0.2.10"},
+        )
+    rv = client.post(
+        "/api/auth/login",
+        data=json.dumps({"email": "user@test.com", "password": "password123"}),
+        content_type="application/json",
+        headers={"X-Real-IP": "10.0.0.99"},
+        environ_base={"REMOTE_ADDR": "192.0.2.10"},
+    )
+    assert rv.status_code == 429
