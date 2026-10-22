@@ -126,11 +126,12 @@ def _build_email_body(new_centres: list, watch: dict, unsubscribe_token: str, ba
 
 
 def _get_or_create_unsubscribe_token(conn, watch_id: int, user_id: int) -> str:
+    prefix = f"cw_{watch_id}_"  # substr i no LIKE: el '_' de LIKE és comodí
     row = _db.query_one(
         conn,
         "SELECT token FROM tokens WHERE user_id = ? AND type = 'centres_watch_unsubscribe' "
-        "AND token LIKE ?",
-        (user_id, f"cw_{watch_id}_%"),
+        "AND substr(token, 1, ?) = ?",
+        (user_id, len(prefix), prefix),
     )
     if row:
         return row["token"].split("_", 2)[2]

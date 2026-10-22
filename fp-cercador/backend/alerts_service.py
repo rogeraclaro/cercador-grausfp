@@ -124,11 +124,12 @@ def _build_email_body(matched: list, description: str, alert_id: int, unsubscrib
 
 def _get_or_create_unsubscribe_token(conn, alert_id: int, user_id: int) -> str:
     """Retorna el token de baixa de l'alerta, o en crea un de nou si no existeix."""
+    prefix = f"alert_{alert_id}_"  # substr i no LIKE: el '_' de LIKE és comodí
     row = _db.query_one(
         conn,
         "SELECT token FROM tokens WHERE user_id = ? AND type = 'alert_unsubscribe' "
-        "AND token LIKE ?",
-        (user_id, f"alert_{alert_id}_%"),
+        "AND substr(token, 1, ?) = ?",
+        (user_id, len(prefix), prefix),
     )
     if row:
         return row["token"].split("_", 2)[2]  # extreu el token real

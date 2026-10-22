@@ -366,3 +366,35 @@ def test_google_sense_email_verificat_no_vincula_ni_inicia_sessio(client, monkey
     assert "google_error=" in rv.headers["Location"]
     assert _google_id("owner@test.com") is None
     assert "session=" not in rv.headers.get("Set-Cookie", "")
+
+
+# ---------------------------------------------------------------------------
+# Reset de contrasenya: revoca sessions i altres tokens de reset
+# ---------------------------------------------------------------------------
+
+def test_reset_password_revoca_sessions_i_altres_tokens(client):
+    _register(client)
+    _verify_user()
+    assert _login(client).status_code == 200  # sessió prèvia al reset
+    with patch("email_service.send_password_reset_email"):
+        client.post("/api/auth/forgot-password", data=json.dumps({"email": "user@test.com"}),
+                    content_type="application/json")
+    conn = db.get_db()
+    tok_a = conn.execute("SELECT token FROM tokens WHERE type = 'password_reset'").fetchone()[0]
+    # un segon token de reset pendent (p. ex. demanat abans del cooldown)
+    conn.execute("INSERT INTO tokens (user_id, token, type, expires_at) "
+                 "SELECT id, 'tok-b', 'password_reset', datetime('now', '+1 hour') FROM users")
+    conn.commit()
+    conn.close()
+
+    with flask_app.test_client() as other:
+        rv = other.post("/api/auth/reset-password",
+                        data=json.dumps({"token": tok_a, "password": "novapassword99"}),
+                        content_type="application/json")
+        assert rv.status_code == 200
+        reuse = other.post("/api/auth/reset-password",
+                           data=json.dumps({"token": "tok-b", "password": "altrapassword99"}),
+                           content_type="application/json")
+        assert reuse.status_code == 400
+
+    assert client.get("/api/auth/me").status_code == 401

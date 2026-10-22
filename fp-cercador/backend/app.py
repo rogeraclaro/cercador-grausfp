@@ -2285,7 +2285,11 @@ def auth_reset_password():
         conn.execute(
             "UPDATE users SET password_hash = ? WHERE id = ?", (pw_hash, row["user_id"])
         )
-        conn.execute("DELETE FROM tokens WHERE token = ?", (token,))
+        # Recuperar el compte ha d'expulsar qualsevol sessió o reset previ.
+        conn.execute(
+            "DELETE FROM tokens WHERE user_id = ? AND type = 'password_reset'", (row["user_id"],)
+        )
+        conn.execute("DELETE FROM sessions WHERE user_id = ?", (row["user_id"],))
         conn.commit()
     finally:
         conn.close()
@@ -2770,7 +2774,13 @@ def alerts_delete(alert_id):
         if not row:
             return jsonify({"error": "Alerta no trobada"}), 404
         conn.execute("DELETE FROM alerts WHERE id = ?", (alert_id,))
-        conn.execute("DELETE FROM tokens WHERE token LIKE ?", (f"alert_{alert_id}_%",))
+        # substr i no LIKE: a LIKE el '_' és comodí i 'alert_1_%' també casava 'alert_10_...'.
+        prefix = f"alert_{alert_id}_"
+        conn.execute(
+            "DELETE FROM tokens WHERE user_id = ? AND type = 'alert_unsubscribe' "
+            "AND substr(token, 1, ?) = ?",
+            (user_id, len(prefix), prefix),
+        )
         conn.commit()
         return "", 204
     finally:
@@ -2791,10 +2801,17 @@ def alerts_toggle(alert_id):
     conn = _db.get_db()
     try:
         row = _db.query_one(
-            conn, "SELECT id FROM alerts WHERE id = ? AND user_id = ?", (alert_id, user_id)
+            conn, "SELECT id, active FROM alerts WHERE id = ? AND user_id = ?", (alert_id, user_id)
         )
         if not row:
             return jsonify({"error": "Alerta no trobada"}), 404
+        # El límit de creació també s'ha de complir en reactivar (si no, desactivar-crear-reactivar el salta).
+        if active and not row["active"]:
+            count = _db.query_one(
+                conn, "SELECT COUNT(*) FROM alerts WHERE user_id = ? AND active = 1", (user_id,)
+            )[0]
+            if count >= 10:
+                return jsonify({"error": "Màxim 10 alertes actives per usuari"}), 429
         conn.execute("UPDATE alerts SET active = ? WHERE id = ?", (active, alert_id))
         conn.commit()
         updated = _db.query_one(
@@ -2935,7 +2952,12 @@ def centres_watch_delete(watch_id):
         if not row:
             return jsonify({"error": "Seguiment no trobat"}), 404
         conn.execute("DELETE FROM centres_watch WHERE id = ?", (watch_id,))
-        conn.execute("DELETE FROM tokens WHERE token LIKE ?", (f"cw_{watch_id}_%",))
+        prefix = f"cw_{watch_id}_"  # substr i no LIKE (vegeu alerts_delete)
+        conn.execute(
+            "DELETE FROM tokens WHERE user_id = ? AND type = 'centres_watch_unsubscribe' "
+            "AND substr(token, 1, ?) = ?",
+            (user_id, len(prefix), prefix),
+        )
         conn.commit()
         return "", 204
     finally:
@@ -2956,10 +2978,17 @@ def centres_watch_toggle(watch_id):
     conn = _db.get_db()
     try:
         row = _db.query_one(
-            conn, "SELECT id FROM centres_watch WHERE id = ? AND user_id = ?", (watch_id, user_id)
+            conn, "SELECT id, active FROM centres_watch WHERE id = ? AND user_id = ?", (watch_id, user_id)
         )
         if not row:
             return jsonify({"error": "Seguiment no trobat"}), 404
+        # El límit de creació també s'ha de complir en reactivar (vegeu alerts_toggle).
+        if active and not row["active"]:
+            count = _db.query_one(
+                conn, "SELECT COUNT(*) FROM centres_watch WHERE user_id = ? AND active = 1", (user_id,)
+            )[0]
+            if count >= CENTRES_WATCH_MAX_PER_USER:
+                return jsonify({"error": "Màxim 10 seguiments actius per usuari"}), 429
         conn.execute("UPDATE centres_watch SET active = ? WHERE id = ?", (active, watch_id))
         conn.commit()
         updated = _db.query_one(
