@@ -1,6 +1,6 @@
 # 071 — Itinerari: endpoint de cadena completa + relació D→C
 
-**Prioritat:** P2 · **Esforç:** M · **Depèn de:** — · **Estat:** TODO
+**Prioritat:** P2 · **Esforç:** M · **Depèn de:** — · **Estat:** DONE
 **Spec:** `docs/superpowers/specs/2026-10-23-itinerari-visual-design.md` (llegeix-la abans: hi ha el model de dades comú).
 
 ## Objectiu

@@ -59,6 +59,7 @@ import fpo_ext
 import feed
 import history
 import itinerary
+import itinerary_graph
 import centres_inherit
 import notifier
 import refresh_state
@@ -90,6 +91,7 @@ BC_LOMLOE_PATH = os.path.join(_DATA_DIR, "bc_lomloe.json")  # Pla 057: {codigo_c
 D_MODULOS_PATH = os.path.join(_DATA_DIR, "d_modulos.json")  # Pla 058: {str(id_d): {modulos, ensenanzaFP}}
 B_CONTINGUT_PATH = os.path.join(_DATA_DIR, "b_contingut.json")  # Pla 068: {codigo_b: {ecp, ra}}
 A_LOE_PARES_PATH = os.path.join(_DATA_DIR, "a_loe_pares.json")  # Pla 068: {codigo_uf: [codigo_mf]}
+CE_ACCES_PATH = os.path.join(_DATA_DIR, "ce_acces.json")  # Pla 074 (pendent): {str(id_d): [id_e]}
 SOC_CURSOS_PATH = os.path.join(_DATA_DIR, "soc_cursos.json")    # Pla 059: cursos FPO (SOC)
 SOC_ESPECS_PATH = os.path.join(_DATA_DIR, "soc_especs.json")    # Pla 059: especialitats formatives (SOC)
 SOC_CENTRES_PATH = os.path.join(_DATA_DIR, "soc_centres.json")  # Pla 059: centres de formació (SOC)
@@ -1873,6 +1875,100 @@ def api_itinerari():
     response['children_c_loe'] = children_c
 
     return jsonify(response)
+
+
+# ---------------------------------------------------------------------------
+# Pla 071 — Itinerari complet A→B→C→D(→E) com a nodes + arestes
+# ---------------------------------------------------------------------------
+
+_itinerary_graph_cache: dict = {"key": None, "data": None}
+
+
+def _load_json_dict(path: str):
+    """Contingut d'un JSON objecte, o None si no existeix / és corrupte."""
+    if not os.path.exists(path):
+        return None
+    try:
+        with open(path, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+    except (OSError, json.JSONDecodeError) as exc:
+        logger.warning("_load_json_dict: error llegint %s: %s", path, exc)
+        return None
+    return data if isinstance(data, dict) else None
+
+
+def _get_itinerary_graph():
+    """
+    Graf complet (itinerary_graph.build_graph) + avisos de fonts que falten.
+    Cache invalidada per mtimes de tots els fitxers que hi intervenen.
+    None si ofertes.json no es pot llegir.
+    """
+    def _mt(path):
+        return os.path.getmtime(path) if os.path.exists(path) else None
+
+    sources = {'a_loe_pares.json': A_LOE_PARES_PATH, 'bc_loe.json': BC_LOE_PATH,
+               'bc_lomloe.json': BC_LOMLOE_PATH, 'd_modulos.json': D_MODULOS_PATH,
+               'ciclos_fp.json': CICLOS_PATH}
+    key = (_mt(DATA_PATH), _mt(CE_ACCES_PATH), *(_mt(p) for p in sources.values()))
+    if _itinerary_graph_cache["key"] == key and _itinerary_graph_cache["data"] is not None:
+        return _itinerary_graph_cache["data"]
+    try:
+        with open(DATA_PATH, 'r', encoding='utf-8') as f:
+            records = json.load(f)
+    except (OSError, json.JSONDecodeError) as exc:
+        logger.error("_get_itinerary_graph: error llegint ofertes.json: %s", exc)
+        return None
+
+    graph = itinerary_graph.build_graph(
+        records,
+        a_loe_pares=_get_a_loe_pares(),
+        bc_loe=_load_json_dict(BC_LOE_PATH),
+        bc_lomloe=_get_bc_lomloe(),
+        c_lomloe_to_d=_get_c_lomloe_to_d()['index'],
+        ciclos_fp=_load_json_dict(CICLOS_PATH),
+        ce_acces=_load_json_dict(CE_ACCES_PATH),  # absent fins al Pla 074: sense avís
+    )
+    warnings = [f'{name} no disponible — cal fer un refresh'
+                for name, path in sources.items() if not os.path.exists(path)]
+    data = {'graph': graph, 'warnings': warnings}
+    _itinerary_graph_cache.update(key=key, data=data)
+    return data
+
+
+@app.route('/api/itinerari/complet')
+def api_itinerari_complet():
+    """Pla 071: cadena completa d'un grau (ascendents + descendents).
+
+    GET /api/itinerari/complet?grado=A|B|C&codigo=…  o  ?grado=D|E&id=…  [&depth=1]
+      → {"focus": "C:ADG_C_001_3B", "nodes": [...], "edges": [...], "warnings": [...]}
+    """
+    grado = (request.args.get('grado') or '').upper()
+    codigo = request.args.get('codigo')
+    id_ = request.args.get('id')
+    depth = request.args.get('depth')
+
+    if grado in ('A', 'B', 'C'):
+        if id_ is not None or not codigo or not _CODIGO_RE.match(codigo):
+            return jsonify({'error': 'Codi invàlid'}), 400
+        focus = f'{grado}:{codigo}'
+    elif grado in ('D', 'E'):
+        if codigo is not None or not id_ or not (id_.isascii() and id_.isdigit()):
+            return jsonify({'error': 'id invàlid'}), 400
+        focus = f'{grado}:{int(id_)}'
+    else:
+        return jsonify({'error': 'grado ha de ser A, B, C, D o E'}), 400
+    if depth not in (None, '1'):
+        return jsonify({'error': 'depth només admet 1'}), 400
+
+    data = _get_itinerary_graph()
+    if data is None:
+        return jsonify({'error': 'Dades no disponibles'}), 503
+    if focus not in data['graph']['records']:
+        return jsonify({'error': 'Grau no trobat'}), 404
+
+    body = itinerary_graph.subgraph(data['graph'], focus, depth=1 if depth else None)
+    body['warnings'] = data['warnings'] + body['warnings']
+    return jsonify(body)
 
 
 # ---------------------------------------------------------------------------
