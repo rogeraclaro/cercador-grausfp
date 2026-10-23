@@ -1,6 +1,6 @@
 # 073 — Itinerari: pestanya "Graf" interactiu (Cytoscape.js) amb exploració
 
-**Prioritat:** P3 · **Esforç:** M · **Depèn de:** 071, 072 · **Estat:** TODO
+**Prioritat:** P3 · **Esforç:** M · **Depèn de:** 071, 072 · **Estat:** DONE
 **Spec:** `docs/superpowers/specs/2026-10-23-itinerari-visual-design.md`
 
 ## Objectiu

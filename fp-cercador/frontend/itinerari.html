@@ -204,7 +204,20 @@
       text-transform: uppercase;
     }
 
+    .tl-head { flex-wrap: wrap; }
     .tl-head .count { color: var(--warm); font-weight: 500; letter-spacing: 0; }
+    .tl-head .grade-name {
+      flex-basis: 100%;
+      font-size: var(--fs-small);
+      font-weight: 500;
+      letter-spacing: 0;
+      text-transform: none;
+      color: var(--ink-soft);
+      line-height: 1.3;
+    }
+
+    .graph-legend { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 6px 16px; list-style: none; font-size: var(--fs-small); }
+    .graph-legend li { display: flex; align-items: center; gap: 6px; }
 
     .tl-empty { color: var(--faded); padding: 8px 2px; }
 
@@ -366,6 +379,88 @@
 
     .t-leaf .node-main { flex-direction: row; flex-wrap: wrap; align-items: center; gap: 4px 8px; }
 
+    /* ── Selector de vista (només ordinador) ── */
+    .view-tabs {
+      display: inline-flex;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .view-tab {
+      font: inherit;
+      font-size: var(--fs-small);
+      padding: 5px 12px;
+      border: 0;
+      background: none;
+      color: var(--warm);
+      cursor: pointer;
+    }
+
+    .view-tab + .view-tab { border-left: 1px solid var(--border); }
+    .view-tab:hover { color: var(--dark); }
+    .view-tab[aria-pressed="true"] { background: var(--dark); color: var(--white); }
+
+    /* ── Graf (pla 073, Cytoscape.js; només ordinador) ── */
+    .graph {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 280px;
+      gap: 12px 16px;
+    }
+
+    .graph-bar {
+      grid-column: 1 / -1;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px 12px;
+      font-size: var(--fs-small);
+      color: var(--warm);
+    }
+
+    .graph-bar .hint { flex: 1 1 24rem; }
+
+    .graph-warn {
+      grid-column: 1 / -1;
+      padding: 8px 12px;
+      background: var(--amber-bg);
+      color: var(--amber-ink);
+      border-radius: 2px;
+      font-size: var(--fs-small);
+    }
+
+    .graph-stage { position: relative; min-width: 0; }
+
+    .graph-canvas {
+      height: clamp(460px, calc(100vh - 300px), 760px);
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 2px;
+    }
+
+    .graph-stage .msg { position: absolute; top: 16px; left: 16px; right: 16px; border: 0; }
+
+    .graph-detail {
+      align-self: start;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding: 16px;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--g, var(--border));
+      border-radius: 2px;
+      font-size: var(--fs-small);
+      line-height: 1.45;
+    }
+
+    .graph-detail .detail-body { display: flex; flex-direction: column; gap: 8px; }
+    .graph-detail .head { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; color: var(--warm); }
+    .graph-detail h2 { font-size: var(--fs-body); font-weight: 600; overflow-wrap: anywhere; }
+    .graph-detail .muted { color: var(--warm); }
+    .graph-detail .actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+
     /* Modal de registre: mateixos estils que a index.html */
     .centres-modal-overlay {
       position: fixed;
@@ -475,7 +570,7 @@
       .t-actions { margin-left: 6px; }
     }
   </style>
-  <script src="i18n.js?v=20261023a"></script>
+  <script src="i18n.js?v=20261024a"></script>
   <script src="auth.js"></script>
   <script>
     const API_BASE = window.location.hostname === 'localhost' ? 'http://localhost:5001' : '';
@@ -496,6 +591,9 @@
 
     function nodeLabel(n) { return n.codigo || n.denominacion || ''; }
 
+    // Nom descriptiu del grau: mateixa redacció que la taula de per-que-grausfp.html.
+    function gradeName(g) { return t('perque.grau.' + g.toLowerCase() + '.nom'); }
+
     // Mateixa família que el focus primer; després els lligats a un element visible
     // de la columna veïna (perquè les línies no quedin penjant); després per codi.
     function byRelevance(familia, linked) {
@@ -505,7 +603,113 @@
     }
 
     function readView() {
-      try { return localStorage.getItem(VIEW_KEY) === 'tree' ? 'tree' : 'timeline'; } catch (e) { return 'timeline'; }
+      try {
+        const v = localStorage.getItem(VIEW_KEY);
+        return v === 'tree' || v === 'graph' ? v : 'timeline';
+      } catch (e) { return 'timeline'; }
+    }
+
+    function itinQs(q) {
+      return 'grado=' + encodeURIComponent(q.grado)
+        + (q.codigo ? '&codigo=' + encodeURIComponent(q.codigo) : '&id=' + encodeURIComponent(q.id));
+    }
+
+    // ── Graf (pla 073) ──
+    // Cytoscape.js 3.34.3 (MIT), vendoritzat des del registre npm: cytoscape@3.34.3 dist/cytoscape.min.js.
+    // Es carrega només en entrar a la pestanya Graf, perquè la vista per defecte no en pagui el pes.
+    const CY_SRC = 'vendor/cytoscape-3.34.3.min.js';
+    const GRAPH_CAP = 300;            // límit de seguretat de nodes
+    const COL_W = 230, ROW_H = 46;    // disposició per columnes de grau (A a l'esquerra … E a la dreta)
+    let cy = null;                    // instància fora d'Alpine: no s'ha de fer reactiva
+    let cyFor = 0;                    // _seq de les dades amb què s'ha construït el graf
+    let cyLoading = null;
+    let cyFitted = false;             // encara no s'ha pogut encaixar (contenidor amagat en construir-lo)
+
+    function loadCytoscape() {
+      if (window.cytoscape) return Promise.resolve();
+      cyLoading = cyLoading || new Promise((resolve, reject) => {
+        const s = document.createElement('script');
+        s.src = CY_SRC;
+        s.onload = () => resolve();
+        s.onerror = () => { cyLoading = null; s.remove(); reject(new Error('cytoscape')); };
+        document.head.append(s);
+      });
+      return cyLoading;
+    }
+
+    function reducedMotion() { return window.matchMedia('(prefers-reduced-motion: reduce)').matches; }
+
+    function edgeId(e) { return e.from + '>' + e.to; }
+
+    // Encaixa el graf al contenidor sense ampliar més d'1,2× (un graf petit no ha d'ocupar-ho tot amb lletra enorme).
+    function fitGraph(animate) {
+      const from = { zoom: cy.zoom(), pan: { ...cy.pan() } };
+      cy.resize();
+      cy.fit(undefined, 30);
+      if (cy.zoom() > 1.2) { cy.zoom(1.2); cy.center(); }
+      if (!animate) return;
+      const to = { zoom: cy.zoom(), pan: { ...cy.pan() } };
+      cy.viewport(from);
+      cy.animate(to, { duration: 350 });
+    }
+
+    function cyNode(n, focusKey) {
+      return { group: 'nodes', data: { id: n.key, label: nodeLabel(n), grado: n.grado, old: !!n.plan_antiguo, n: { ...n } },
+        classes: n.key === focusKey ? 'focus' : '' };
+    }
+
+    function cyEdge(e) {
+      return { group: 'edges', data: { id: edgeId(e), source: e.from, target: e.to } };
+    }
+
+    // x fixa per grau (com les columnes del timeline). Dins de cada columna, de dins (focus)
+    // cap enfora: cada node s'ordena per la y mitjana dels seus veïns ja col·locats
+    // (menys encreuaments), després mateixa família que el focus i codi.
+    function graphPositions(nodes, edges, focus) {
+      const nbr = {};
+      for (const n of nodes) nbr[n.key] = [];
+      for (const e of edges) if (nbr[e.from] && nbr[e.to]) { nbr[e.from].push(e.to); nbr[e.to].push(e.from); }
+      const fi = GRADES.indexOf(focus.grado);
+      const order = GRADES.slice().sort((a, b) => Math.abs(GRADES.indexOf(a) - fi) - Math.abs(GRADES.indexOf(b) - fi));
+      const sort = byRelevance(focus.familia);
+      const pos = {};
+      const bary = n => {
+        const ys = nbr[n.key].filter(k => pos[k]).map(k => pos[k].y);
+        return ys.length ? ys.reduce((s, y) => s + y, 0) / ys.length : Infinity;
+      };
+      for (const g of order) {
+        const col = nodes.filter(n => n.grado === g);
+        const by = new Map(col.map(n => [n.key, bary(n)]));
+        col.sort((a, b) => (b.key === focus.key) - (a.key === focus.key) || (by.get(a.key) - by.get(b.key)) || sort(a, b));
+        col.forEach((n, i) => { pos[n.key] = { x: GRADES.indexOf(g) * COL_W, y: (i - (col.length - 1) / 2) * ROW_H }; });
+      }
+      return pos;
+    }
+
+    function graphStyle() {
+      const css = getComputedStyle(document.documentElement);
+      const v = name => css.getPropertyValue(name).trim();
+      return [
+        { selector: 'node', style: {
+          shape: 'round-rectangle', width: 150, height: 34, 'border-width': 0,
+          label: 'data(label)', color: v('--white'), 'font-family': 'Geist Mono, ui-monospace, monospace',
+          'font-size': 12, 'text-valign': 'center', 'text-halign': 'center',
+          'text-wrap': 'ellipsis', 'text-max-width': 136,
+        } },
+        ...GRADES.map(g => ({ selector: `node[grado = "${g}"]`, style: { 'background-color': v('--g-' + g.toLowerCase()) } })),
+        // Pla antic: vora discontínua (com l'etiqueta "pla antic" del cercador)
+        { selector: 'node[?old]', style: { 'border-width': 2, 'border-style': 'dashed', 'border-color': v('--dark') } },
+        { selector: 'node.focus', style: {
+          width: 170, height: 40, 'font-size': 13, 'font-weight': 700,
+          'underlay-color': v('--dark'), 'underlay-opacity': 0.18, 'underlay-padding': 6,
+        } },
+        { selector: 'node:selected', style: { 'overlay-color': v('--dark'), 'overlay-opacity': 0.18, 'overlay-padding': 5 } },
+        { selector: 'edge', style: {
+          width: 1.5, 'curve-style': 'bezier', 'line-color': v('--warm'), 'target-arrow-color': v('--warm'),
+          'target-arrow-shape': 'triangle', 'arrow-scale': 0.8, opacity: 0.45,
+        } },
+        { selector: 'edge.on', style: { width: 2.5, opacity: 1, 'line-color': v('--dark'), 'target-arrow-color': v('--dark') } },
+      ];
     }
 
     function writeView(v) {
@@ -529,11 +733,15 @@
         _seq: 0,
         loggedIn: false,           // com a index.html: les fitxes oficials només per a usuaris registrats
         centresModalVisible: false,
+        graphState: 'idle',        // idle | loading | ready | error
+        graphSel: null,            // node seleccionat al graf (panell de detall)
+        graphFull: false,          // s'ha arribat al límit de GRAPH_CAP
+        graphMsg: '',              // estat de l'última exploració (aria-live)
 
         async init() {
           const mq = window.matchMedia('(max-width: 759px)');
           this.isMobile = mq.matches;
-          mq.addEventListener('change', e => { this.isMobile = e.matches; this.redraw(); });
+          mq.addEventListener('change', e => { this.isMobile = e.matches; this.$nextTick(() => this.redraw()); });
 
           const p = new URLSearchParams(location.search);
           const grado = (p.get('grado') || '').toUpperCase();
@@ -544,6 +752,7 @@
           this.$watch('hoverKey', () => this.paintLines());
           const ro = new ResizeObserver(() => this.redraw());
           ro.observe(this.$refs.tl);
+          new ResizeObserver(() => this.fitIfVisible()).observe(this.$refs.cy);
           let raf = 0;
           window.addEventListener('resize', () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(() => this.redraw()); });
           if (document.fonts) document.fonts.ready.then(() => this.redraw());
@@ -572,10 +781,10 @@
 
         get view() { return this.isMobile ? 'tree' : this.viewPref; },
 
-        toggleView() {
-          this.viewPref = this.viewPref === 'tree' ? 'timeline' : 'tree';
-          writeView(this.viewPref);
-          this.redraw();
+        setView(v) {
+          this.viewPref = v;
+          writeView(v);
+          this.$nextTick(() => this.redraw());
         },
 
         get focus() { return this.byKey[this.focusKey] || null; },
@@ -585,10 +794,9 @@
           this.query = q;
           this.state = 'loading';
           this.hoverKey = null;
-          const qs = 'grado=' + encodeURIComponent(q.grado)
-            + (q.codigo ? '&codigo=' + encodeURIComponent(q.codigo) : '&id=' + encodeURIComponent(q.id));
+          this.destroyGraph();
           try {
-            const res = await fetch(API_BASE + '/api/itinerari/complet?' + qs);
+            const res = await fetch(API_BASE + '/api/itinerari/complet?' + itinQs(q));
             if (seq !== this._seq) return;
             if (res.status === 404 || res.status === 400) { this.state = 'notfound'; return; }
             if (!res.ok) throw new Error('HTTP ' + res.status);
@@ -673,8 +881,114 @@
         },
 
         redraw() {
-          if (this.state !== 'data' || this.view !== 'timeline') return;
-          this.drawLines();
+          if (this.state !== 'data') return;
+          if (this.view === 'timeline') this.drawLines();
+          else if (this.view === 'graph') this.showGraph();
+        },
+
+        // ── Graf ──
+        destroyGraph() {
+          if (cy) cy.destroy();
+          cy = null;
+          this.graphState = 'idle';
+          this.graphSel = null;
+          this.graphFull = false;
+          this.graphMsg = '';
+        },
+
+        async showGraph() {
+          if (cy && cyFor === this._seq) { this.fitIfVisible(); return; }
+          const seq = this._seq;
+          this.graphState = 'loading';
+          try {
+            await loadCytoscape();
+          } catch (e) {
+            if (seq === this._seq) this.graphState = 'error';
+            return;
+          }
+          if (seq !== this._seq || this.state !== 'data') return;
+          if (this.view !== 'graph') { this.graphState = 'idle'; return; } // es construirà en tornar-hi
+          if (!cy || cyFor !== seq) this.buildGraph();
+        },
+
+        buildGraph() {
+          this.destroyGraph();
+          cyFor = this._seq;
+          const focusKey = this.focusKey;
+          cy = window.cytoscape({
+            container: this.$refs.cy,
+            elements: [...this.nodes.map(n => cyNode(n, focusKey)), ...this.edges.map(cyEdge)],
+            style: graphStyle(),
+            layout: { name: 'preset', positions: graphPositions(this.nodes, this.edges, this.focus), fit: false },
+            minZoom: 0.15,
+            maxZoom: 2.5,
+            boxSelectionEnabled: false,
+          });
+          cy.on('select', 'node', ev => {
+            this.graphSel = { ...ev.target.data('n') };
+            ev.target.connectedEdges().addClass('on');
+          });
+          cy.on('unselect', 'node', ev => {
+            ev.target.connectedEdges().removeClass('on');
+            if (this.graphSel && this.graphSel.key === ev.target.id()) this.graphSel = null;
+          });
+          cy.on('dbltap', 'node', ev => this.expandGraph(ev.target.data('n')));
+          this.graphFull = this.nodes.length >= GRAPH_CAP;
+          this.graphState = 'ready';
+          cyFitted = false;
+          this.fitIfVisible();
+        },
+
+        // Cytoscape no pot encaixar el graf dins un contenidor amb mida 0 (x-show encara no l'ha mostrat).
+        fitIfVisible() {
+          if (!cy || !this.$refs.cy.offsetWidth) return;
+          cy.resize();
+          if (!cyFitted) { fitGraph(false); cyFitted = true; }
+        },
+
+        get gs() { return this.graphSel || {}; },
+
+        resetGraph() {
+          if (this.state === 'data' && window.cytoscape) this.buildGraph();
+        },
+
+        // Exploració: afegeix els veïns directes del node (depth=1), sense duplicar nodes ni arestes.
+        async expandGraph(n) {
+          if (!cy || this.graphFull) return;
+          const inst = cy;
+          let body;
+          try {
+            const res = await fetch(API_BASE + '/api/itinerari/complet?' + itinQs(n) + '&depth=1');
+            if (!res.ok) throw new Error('HTTP ' + res.status);
+            body = await res.json();
+          } catch (e) {
+            if (inst === cy) this.graphMsg = t('itin.graph.expand_error');
+            return;
+          }
+          if (inst !== cy) return; // s'ha recentrat o reiniciat mentrestant
+          const newNodes = body.nodes.filter(x => cy.getElementById(x.key).empty());
+          const newEdges = body.edges.filter(e => cy.getElementById(edgeId(e)).empty());
+          if (cy.nodes().length + newNodes.length > GRAPH_CAP) {
+            this.graphFull = true;
+            this.graphMsg = '';
+            return;
+          }
+          if (!newNodes.length && !newEdges.length) { this.graphMsg = t('itin.graph.nothing_new'); return; }
+          const added = cy.add([...newNodes.map(x => cyNode(x, this.focusKey)), ...newEdges.map(cyEdge)]);
+          cy.edges().removeClass('on');
+          cy.nodes(':selected').connectedEdges().addClass('on');
+          const animate = !reducedMotion();
+          const positions = graphPositions(
+            cy.nodes().map(x => x.data('n')),
+            cy.edges().map(x => ({ from: x.data('source'), to: x.data('target') })),
+            this.focus);
+          if (animate) added.nodes().style('opacity', 0);
+          const layout = cy.layout({ name: 'preset', positions, fit: false, animate, animationDuration: 350 });
+          layout.one('layoutstop', () => { if (inst === cy) fitGraph(animate); });
+          layout.run();
+          if (animate) added.nodes().animate({ style: { opacity: 1 } }, { duration: 350 });
+          this.graphMsg = !newNodes.length ? t('itin.graph.nothing_new')
+            : newNodes.length === 1 ? t('itin.graph.added_one') : t('itin.graph.added', { n: newNodes.length });
         },
 
         drawLines() {
@@ -776,7 +1090,7 @@
 
         summary(n, nKids, kidGrade) {
           const s = el('summary');
-          s.append(el('span', 'grade-badge', n.grado));
+          s.append(gradeBadge(n.grado));
           if (n.codigo) s.append(el('span', 't-code', n.codigo));
           s.append(el('span', 't-name', n.denominacion));
           if (n.plan_antiguo) s.append(el('span', 'badge-old', t('index.badge.old')));
@@ -790,7 +1104,7 @@
           const li = el('li', 't-leaf g-' + n.grado.toLowerCase());
           const btn = el('button', 'node-main');
           btn.type = 'button';
-          btn.append(el('span', 'grade-badge', n.grado));
+          btn.append(gradeBadge(n.grado));
           if (n.codigo) btn.append(el('span', 't-code', n.codigo));
           btn.append(el('span', 't-name', n.denominacion));
           if (n.plan_antiguo) btn.append(el('span', 'badge-old', t('index.badge.old')));
@@ -817,6 +1131,13 @@
         },
       }));
     });
+
+    // Insígnia de l'arbre: la lletra sola, amb el nom del grau com a tooltip.
+    function gradeBadge(g) {
+      const b = el('span', 'grade-badge', g);
+      b.title = t('itin.grade', { g }) + ' · ' + gradeName(g);
+      return b;
+    }
 
     function el(tag, cls, text) {
       const e = document.createElement(tag);
@@ -849,7 +1170,7 @@
           <h1 x-text="focus.denominacion"></h1>
           <div class="hero-meta" :class="'g-' + focus.grado.toLowerCase()">
             <span class="grade-badge" x-text="focus.grado"></span>
-            <span x-text="t('itin.grade', {g: focus.grado})"></span>
+            <span x-text="t('itin.grade', {g: focus.grado}) + ' · ' + gradeName(focus.grado)"></span>
             <span class="mono" x-show="focus.codigo" x-text="focus.codigo"></span>
             <span x-show="focus.familia" x-text="focus.familia"></span>
             <span x-show="focus.plan_antiguo" class="badge-old" x-text="t('index.badge.old')"></span>
@@ -862,9 +1183,14 @@
     <main class="content">
       <div class="toolbar">
         <a href="index.html" class="back-link" data-i18n="itin.back">← Torna al cercador</a>
-        <button type="button" class="btn" x-cloak x-show="state === 'data' && nodes.length > 1 && !isMobile"
-          @click="toggleView()" :aria-pressed="String(view === 'tree')"
-          x-text="view === 'tree' ? t('itin.view.timeline') : t('itin.view.tree')"></button>
+        <!-- Selector de vista: només a l'ordinador (al mòbil sempre arbre, sense graf) -->
+        <div class="view-tabs" role="group" :aria-label="t('itin.views.aria')" x-cloak
+          x-show="state === 'data' && nodes.length > 1 && !isMobile">
+          <template x-for="v in ['timeline', 'tree', 'graph']" :key="v">
+            <button type="button" class="view-tab" @click="setView(v)" :aria-pressed="String(view === v)"
+              x-text="t('itin.view.' + v)"></button>
+          </template>
+        </div>
       </div>
 
       <p class="msg" x-show="state === 'loading'" data-i18n="itin.loading">Carregant l'itinerari…</p>
@@ -889,6 +1215,7 @@
                 <span class="grade-badge" x-text="col.grado"></span>
                 <span x-text="t('itin.grade', {g: col.grado})"></span>
                 <span class="count" x-show="col.total" x-text="'(' + col.total + ')'"></span>
+                <span class="grade-name" x-text="gradeName(col.grado)"></span>
               </h2>
               <p class="tl-empty" x-show="!col.total">—</p>
               <template x-for="n in col.items" :key="n.key">
@@ -919,6 +1246,51 @@
 
       <!-- Arbre (mòbil, o forçat a l'ordinador) -->
       <div class="tree" x-ref="tree" x-cloak x-show="state === 'data' && nodes.length > 1 && view === 'tree'"></div>
+
+      <!-- Graf (només ordinador). x-show: el contenidor ha d'existir per a Cytoscape. Etiquetes = text al canvas. -->
+      <section class="graph" x-cloak x-show="state === 'data' && nodes.length > 1 && view === 'graph'">
+        <div class="graph-bar">
+          <p class="hint" x-text="t('itin.graph.hint')"></p>
+          <p role="status" aria-live="polite" x-text="graphMsg"></p>
+          <button type="button" class="btn" @click="resetGraph()" x-show="graphState === 'ready'"
+            x-text="t('itin.graph.reset')"></button>
+        </div>
+        <ul class="graph-legend" :aria-label="t('itin.graph.legend')">
+          <template x-for="g in gradesShown" :key="g">
+            <li :class="'g-' + g.toLowerCase()">
+              <span class="grade-badge" x-text="g"></span><span x-text="gradeName(g)"></span>
+            </li>
+          </template>
+        </ul>
+        <p class="graph-warn" role="alert" x-show="graphFull" x-text="t('itin.graph.cap', {n: GRAPH_CAP})"></p>
+        <div class="graph-stage">
+          <div class="graph-canvas" x-ref="cy" role="img" :aria-label="t('itin.graph.aria')"></div>
+          <p class="msg" x-show="graphState === 'loading'" x-text="t('itin.graph.loading')"></p>
+          <p class="msg" role="alert" x-show="graphState === 'error'" x-text="t('itin.graph.error')"></p>
+        </div>
+        <!-- x-show (no x-if): "Centra" recarrega les dades i el botó no pot desaparèixer del DOM mentre $refs encara es resolen des d'ell. -->
+        <aside class="graph-detail" :class="gs.grado ? 'g-' + gs.grado.toLowerCase() : ''">
+          <p class="muted" x-show="!graphSel" x-text="t('itin.graph.none')"></p>
+          <div class="detail-body" x-show="graphSel">
+            <div class="head">
+              <span class="grade-badge" x-text="gs.grado"></span>
+              <span x-text="gs.grado ? t('itin.grade', {g: gs.grado}) + ' · ' + gradeName(gs.grado) : ''"></span>
+              <span class="node-code" x-show="gs.codigo" x-text="gs.codigo"></span>
+              <span class="badge-old" x-show="gs.plan_antiguo" x-text="t('index.badge.old')"></span>
+            </div>
+            <h2 x-text="gs.denominacion"></h2>
+            <p class="muted" x-show="gs.familia" x-text="gs.familia"></p>
+            <div class="actions">
+              <button type="button" class="btn" x-show="gs.key && gs.key !== focusKey" @click="go(graphSel)"
+                x-text="t('itin.center')"></button>
+              <a class="btn" href="#" x-show="gs.key && fichaHref(gs)" @click.prevent="openFicha(graphSel)"
+                :aria-label="t('itin.ficha_aria', {name: gs.denominacion})" x-text="t('itin.ficha') + ' ↗'"></a>
+              <button type="button" class="btn" x-show="gs.key && !graphFull" @click="expandGraph(graphSel)"
+                x-text="t('itin.graph.expand')"></button>
+            </div>
+          </div>
+        </aside>
+      </section>
     </main>
 
     <!-- Modal de registre: còpia del de index.html (mateix gating de les fitxes oficials) -->
