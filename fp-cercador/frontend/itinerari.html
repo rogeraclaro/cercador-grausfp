@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="ca">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title data-i18n="itin.page.title">Itinerari formatiu — Cercador Graus FP</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=DM+Serif+Display:ital@0;1&family=Geist+Mono:wght@400;500&display=swap"
+    rel="stylesheet">
+
+  <link rel="stylesheet" href="site.css?v=3">
+  <style>
+    :root {
+      /* Colors per grau: els mateixos a la timeline i a l'arbre (pla 072). */
+      --g-a: #8c6d3f;
+      --g-b: #2f6f73;
+      --g-c: #9b3b2f;
+      --g-d: #4f5a8c;
+      --g-e: #6b6b6b;
+      --focus-bg: #fff3df;
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: var(--fs-body);
+      color: var(--dark);
+      background: var(--bg);
+    }
+
+    [x-cloak] { display: none !important; }
+
+    .g-a { --g: var(--g-a); }
+    .g-b { --g: var(--g-b); }
+    .g-c { --g: var(--g-c); }
+    .g-d { --g: var(--g-d); }
+    .g-e { --g: var(--g-e); }
+
+    .hero {
+      border-bottom: 2px solid var(--dark);
+      padding: 32px 48px 24px;
+    }
+
+    .hero-kicker {
+      font-size: var(--fs-label);
+      font-weight: 600;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      color: var(--warm);
+      margin-bottom: 8px;
+    }
+
+    .hero h1 {
+      font-family: 'DM Serif Display', serif;
+      font-size: var(--fs-display-sm);
+      font-weight: 400;
+      line-height: 1.15;
+      margin-bottom: 10px;
+      overflow-wrap: anywhere;
+    }
+
+    .hero-meta {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 6px 12px;
+      font-size: var(--fs-small);
+      color: var(--warm);
+    }
+
+    .hero-meta .mono { font-family: 'Geist Mono', ui-monospace, monospace; font-size: var(--fs-mono); }
+
+    .hero-intro {
+      margin-top: 12px;
+      max-width: 75ch;
+      line-height: 1.6;
+      color: var(--ink-soft);
+    }
+
+    .content { padding: 24px 48px 64px; }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .back-link {
+      color: var(--warm);
+      font-size: var(--fs-small);
+      text-decoration: none;
+    }
+
+    .back-link:hover, .back-link:focus-visible { color: var(--dark); }
+
+    .btn {
+      font: inherit;
+      font-size: var(--fs-small);
+      padding: 5px 12px;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      background: var(--white);
+      color: var(--dark);
+      cursor: pointer;
+    }
+
+    a.btn { text-decoration: none; display: inline-block; }
+    .btn:hover { border-color: var(--warm); }
+
+    :is(button, a, summary):focus-visible {
+      outline: 2px solid var(--dark);
+      outline-offset: 2px;
+    }
+
+    .msg {
+      padding: 20px;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      line-height: 1.6;
+      max-width: 75ch;
+    }
+
+    .msg a { color: var(--dark); }
+    .msg .btn { margin-top: 12px; }
+
+    .badge-old {
+      display: inline-block;
+      background: var(--amber-bg);
+      color: var(--amber-ink);
+      font-size: var(--fs-label);
+      font-weight: 600;
+      padding: 1px 6px;
+      border-radius: 3px;
+      white-space: nowrap;
+      vertical-align: middle;
+    }
+
+    .grade-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 22px;
+      height: 22px;
+      padding: 0 5px;
+      border-radius: 3px;
+      background: var(--g);
+      color: var(--white);
+      font-size: var(--fs-label);
+      font-weight: 700;
+    }
+
+    /* ── Timeline ── */
+    .tl-scroll { overflow-x: auto; padding-bottom: 8px; }
+
+    .tl {
+      position: relative;
+      display: grid;
+      grid-template-columns: repeat(var(--cols), minmax(170px, 1fr));
+      gap: 28px;
+      align-items: start;
+    }
+
+    .tl-lines {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      overflow: visible;
+    }
+
+    .tl-lines path {
+      fill: none;
+      stroke: color-mix(in srgb, var(--warm) 40%, transparent);
+      stroke-width: 1.5;
+    }
+
+    .tl-lines path.on { stroke: var(--warm); stroke-width: 2; }
+    .tl-lines path.off { opacity: 0.35; }
+
+    .tl-col { position: relative; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+
+    .tl-head {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid var(--dark);
+      font-size: var(--fs-label);
+      font-weight: 600;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+    }
+
+    .tl-head .count { color: var(--warm); font-weight: 500; letter-spacing: 0; }
+
+    .tl-empty { color: var(--faded); padding: 8px 2px; }
+
+    .node {
+      position: relative;
+      display: flex;
+      align-items: flex-start;
+      gap: 4px;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--g);
+      border-radius: 2px;
+    }
+
+    .node.is-focus {
+      background: var(--focus-bg);
+      box-shadow: 0 0 0 2px color-mix(in srgb, var(--g) 30%, transparent);
+    }
+
+    .node.dim { opacity: 0.35; }
+
+    @media (prefers-reduced-motion: no-preference) {
+      .node, .tl-lines path { transition: opacity 0.15s, stroke 0.15s; }
+    }
+
+    .node-main {
+      flex: 1;
+      min-width: 0;
+      text-align: left;
+      font: inherit;
+      color: inherit;
+      background: none;
+      border: 0;
+      padding: 8px 4px 8px 10px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .node.is-focus .node-main { cursor: default; }
+
+    .node-code {
+      font-family: 'Geist Mono', ui-monospace, monospace;
+      font-size: var(--fs-mono);
+      color: var(--warm);
+    }
+
+    .node-name { font-size: var(--fs-small); line-height: 1.35; overflow-wrap: anywhere; }
+    .node-main:hover .node-name { text-decoration: underline; text-decoration-color: var(--warm); }
+    .node.is-focus .node-main:hover .node-name { text-decoration: none; }
+
+    .node-ficha {
+      flex: none;
+      padding: 8px 8px 4px 4px;
+      color: var(--warm);
+      font-size: var(--fs-small);
+      text-decoration: none;
+      line-height: 1;
+    }
+
+    .node-ficha:hover { color: var(--dark); }
+
+    .more-btn {
+      align-self: flex-start;
+      font: inherit;
+      font-size: var(--fs-small);
+      color: var(--dark);
+      background: none;
+      border: 1px dashed var(--border);
+      border-radius: 3px;
+      padding: 4px 10px;
+      cursor: pointer;
+    }
+
+    .more-btn:hover { border-color: var(--warm); }
+
+    /* ── Arbre ── */
+    .tree { max-width: 820px; }
+
+    .tree-up {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      gap: 6px 10px;
+      margin-bottom: 14px;
+      padding: 12px 14px;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 2px;
+    }
+
+    .tree-up > .label, .tree-label {
+      font-size: var(--fs-label);
+      font-weight: 600;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      color: var(--warm);
+    }
+
+    .tree ul { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+    .tree-up ul { flex-basis: 100%; }
+
+    .tree details > ul { margin: 8px 0 0 14px; padding-left: 12px; border-left: 1px solid var(--border); }
+
+    .tree summary {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      cursor: pointer;
+      padding: 8px 10px;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--g);
+      border-radius: 2px;
+      list-style: none;
+    }
+
+    .tree summary::-webkit-details-marker { display: none; }
+    .tree summary::before { content: '▸'; color: var(--warm); font-size: var(--fs-label); }
+    .tree details[open] > summary::before { content: '▾'; }
+    .tree details.root > summary { background: var(--focus-bg); box-shadow: 0 0 0 2px color-mix(in srgb, var(--g) 30%, transparent); }
+
+    .tree .t-name { flex: 1 1 12rem; min-width: 0; font-size: var(--fs-small); overflow-wrap: anywhere; }
+    .tree .t-code { font-family: 'Geist Mono', ui-monospace, monospace; font-size: var(--fs-mono); color: var(--warm); }
+
+    .tag {
+      font-size: var(--fs-label);
+      font-weight: 600;
+      color: var(--warm);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      padding: 1px 6px;
+      white-space: nowrap;
+    }
+
+    .pill {
+      font-size: var(--fs-label);
+      font-weight: 600;
+      color: var(--path-ink);
+      background: var(--path-bg);
+      border-radius: 3px;
+      padding: 1px 6px;
+      white-space: nowrap;
+    }
+
+    .t-actions { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0 0 14px; }
+
+    .t-leaf {
+      display: flex;
+      align-items: flex-start;
+      gap: 4px;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--g);
+      border-radius: 2px;
+    }
+
+    .t-leaf .node-main { flex-direction: row; flex-wrap: wrap; align-items: center; gap: 4px 8px; }
+
+    /* Modal de registre: mateixos estils que a index.html */
+    .centres-modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: var(--scrim);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+
+    .centres-modal {
+      background: var(--white);
+      border-radius: 8px;
+      padding: 28px 32px 24px;
+      max-width: 380px;
+      width: 90%;
+      text-align: center;
+      box-shadow: 0 8px 32px rgba(28, 20, 16, 0.18);
+      position: relative;
+    }
+
+    .centres-modal-close {
+      position: absolute;
+      top: 10px;
+      right: 12px;
+      background: none;
+      border: none;
+      font-size: 18px;
+      color: var(--warm);
+      cursor: pointer;
+      line-height: 1;
+      padding: 2px 4px;
+    }
+
+    .centres-modal-close:hover {
+      color: var(--dark);
+    }
+
+    .centres-modal-msg {
+      font-size: var(--fs-body);
+      font-weight: 500;
+      color: var(--dark);
+      margin-bottom: 20px;
+      line-height: 1.4;
+    }
+
+    .centres-modal-actions {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .centres-modal-btn {
+      display: inline-block;
+      padding: 9px 24px;
+      border-radius: 6px;
+      font-size: var(--fs-body);
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      font-family: inherit;
+      border: none;
+      transition: background 0.15s;
+    }
+
+    .centres-modal-btn--primary {
+      background: var(--dark);
+      color: var(--white);
+      width: 100%;
+    }
+
+    .centres-modal-btn--primary:hover {
+      background: var(--ink-soft);
+    }
+
+    .centres-modal-btn--secondary {
+      background: none;
+      color: var(--warm);
+      font-size: var(--fs-small);
+      font-weight: 400;
+    }
+
+    .centres-modal-btn--secondary:hover {
+      text-decoration: underline;
+    }
+
+    .centres-modal-login-link {
+      display: block;
+      margin-top: 12px;
+      font-size: var(--fs-small);
+      color: var(--warm);
+      text-align: center;
+      text-decoration: none;
+    }
+
+    .centres-modal-login-link:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 768px) {
+      .topbar { padding: 0 16px; }
+      .hero { padding: 24px 16px 20px; }
+      .content { padding: 20px 16px 48px; }
+      .tree details > ul { margin-left: 6px; padding-left: 8px; }
+      .t-actions { margin-left: 6px; }
+    }
+  </style>
+  <script src="i18n.js?v=20261023a"></script>
+  <script src="auth.js"></script>
+  <script>
+    const API_BASE = window.location.hostname === 'localhost' ? 'http://localhost:5001' : '';
+    const GRADES = ['A', 'B', 'C', 'D', 'E'];
+    const COL_CAP = 5;
+    const VIEW_KEY = 'itin.view';
+
+    // URLs raspades de tercers: només http(s), mai javascript:/data: dins un href.
+    function safeHttpUrl(u) {
+      return typeof u === 'string' && /^https?:\/\//i.test(u.trim()) ? u.trim() : null;
+    }
+
+    // node.ficha: '/api/ficha-redirect?…' (A/B/C, mateix backend) o ficha_url de todofp (D/E).
+    function fichaHref(n) {
+      if (typeof n.ficha === 'string' && n.ficha.startsWith('/api/ficha-redirect?')) return API_BASE + n.ficha;
+      return safeHttpUrl(n.ficha);
+    }
+
+    function nodeLabel(n) { return n.codigo || n.denominacion || ''; }
+
+    // Mateixa família que el focus primer; després els lligats a un element visible
+    // de la columna veïna (perquè les línies no quedin penjant); després per codi.
+    function byRelevance(familia, linked) {
+      return (a, b) => (b.familia === familia) - (a.familia === familia)
+        || (linked ? linked(b) - linked(a) : 0)
+        || nodeLabel(a).localeCompare(nodeLabel(b), 'es');
+    }
+
+    function readView() {
+      try { return localStorage.getItem(VIEW_KEY) === 'tree' ? 'tree' : 'timeline'; } catch (e) { return 'timeline'; }
+    }
+
+    function writeView(v) {
+      try { localStorage.setItem(VIEW_KEY, v); } catch (e) { /* sense emmagatzematge: no es recorda */ }
+    }
+
+    document.addEventListener('alpine:init', () => {
+      Alpine.data('itinerari', () => ({
+        state: 'loading',          // loading | error | notfound | noparams | data
+        query: null,               // {grado, codigo?, id?}
+        focusKey: null,
+        nodes: [],
+        edges: [],
+        byKey: {},
+        up: {},                    // key → [keys] (cap amunt: A→B→C→D→E)
+        down: {},                  // key → [keys]
+        expanded: {},              // grado → bool (columna desplegada)
+        hoverKey: null,
+        isMobile: false,
+        viewPref: readView(),
+        _seq: 0,
+        loggedIn: false,           // com a index.html: les fitxes oficials només per a usuaris registrats
+        centresModalVisible: false,
+
+        async init() {
+          const mq = window.matchMedia('(max-width: 759px)');
+          this.isMobile = mq.matches;
+          mq.addEventListener('change', e => { this.isMobile = e.matches; this.redraw(); });
+
+          const p = new URLSearchParams(location.search);
+          const grado = (p.get('grado') || '').toUpperCase();
+          if (['A', 'B', 'C'].includes(grado) && p.get('codigo')) this.load({ grado, codigo: p.get('codigo') });
+          else if (['D', 'E'].includes(grado) && p.get('id')) this.load({ grado, id: p.get('id') });
+          else this.state = 'noparams';
+
+          this.$watch('hoverKey', () => this.paintLines());
+          const ro = new ResizeObserver(() => this.redraw());
+          ro.observe(this.$refs.tl);
+          let raf = 0;
+          window.addEventListener('resize', () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(() => this.redraw()); });
+          if (document.fonts) document.fonts.ready.then(() => this.redraw());
+          const authRes = await fetch(API_BASE + '/api/auth/me', { credentials: 'include' }).catch(() => ({ ok: false }));
+          this.loggedIn = authRes.ok;
+        },
+
+        showCentresModal() {
+          this.centresModalVisible = true;
+        },
+
+        // Mateix gating que index.html: sense sessió, la fitxa obre el modal de registre.
+        openFicha(n) {
+          const href = fichaHref(n);
+          if (!href) return;
+          this.loggedIn ? window.open(href, '_blank', 'noopener') : this.showCentresModal();
+        },
+
+        fichaLink(n, asButton) {
+          const a = el('a', asButton ? 'btn' : 'node-ficha', asButton ? t('itin.ficha') + ' ↗' : '↗');
+          a.href = '#';
+          a.setAttribute('aria-label', t('itin.ficha_aria', { name: n.denominacion }));
+          a.addEventListener('click', ev => { ev.preventDefault(); this.openFicha(n); });
+          return a;
+        },
+
+        get view() { return this.isMobile ? 'tree' : this.viewPref; },
+
+        toggleView() {
+          this.viewPref = this.viewPref === 'tree' ? 'timeline' : 'tree';
+          writeView(this.viewPref);
+          this.redraw();
+        },
+
+        get focus() { return this.byKey[this.focusKey] || null; },
+
+        async load(q) {
+          const seq = ++this._seq;
+          this.query = q;
+          this.state = 'loading';
+          this.hoverKey = null;
+          const qs = 'grado=' + encodeURIComponent(q.grado)
+            + (q.codigo ? '&codigo=' + encodeURIComponent(q.codigo) : '&id=' + encodeURIComponent(q.id));
+          try {
+            const res = await fetch(API_BASE + '/api/itinerari/complet?' + qs);
+            if (seq !== this._seq) return;
+            if (res.status === 404 || res.status === 400) { this.state = 'notfound'; return; }
+            if (!res.ok) throw new Error('HTTP ' + res.status);
+            const body = await res.json();
+            if (seq !== this._seq) return;
+            this.setData(body);
+            this.state = 'data';
+            document.title = this.focus.denominacion + ' — ' + t('itin.page.title');
+            this.$nextTick(() => { this.renderTree(); this.redraw(); });
+          } catch (e) {
+            if (seq === this._seq) this.state = 'error';
+          }
+        },
+
+        setData(body) {
+          const byKey = {}, up = {}, down = {};
+          for (const n of body.nodes) { byKey[n.key] = n; up[n.key] = []; down[n.key] = []; }
+          const edges = body.edges.filter(e => byKey[e.from] && byKey[e.to]);
+          for (const e of edges) { up[e.from].push(e.to); down[e.to].push(e.from); }
+          this.byKey = byKey; this.up = up; this.down = down;
+          this.nodes = body.nodes; this.edges = edges;
+          this.focusKey = body.focus;
+          this.expanded = {};
+        },
+
+        go(n) {
+          if (n.key === this.focusKey) return;
+          const q = n.codigo ? { grado: n.grado, codigo: n.codigo } : { grado: n.grado, id: String(n.id) };
+          const url = new URL(location.href);
+          url.search = '';
+          url.searchParams.set('grado', q.grado);
+          if (q.codigo) url.searchParams.set('codigo', q.codigo); else url.searchParams.set('id', q.id);
+          history.replaceState(null, '', url);
+          window.scrollTo({ top: 0 });
+          this.load(q);
+        },
+
+        retry() { if (this.query) this.load(this.query); },
+
+        // ── Timeline ──
+        get gradesShown() {
+          return GRADES.filter(g => g !== 'E' || this.nodes.some(n => n.grado === 'E'));
+        },
+
+        get columns() {
+          if (!this.focus) return [];
+          const fi = GRADES.indexOf(this.focus.grado);
+          const fam = this.focus.familia;
+          const visible = {};
+          const out = {};
+          // De dins (focus) cap enfora: cada columna prioritza els lligats a la veïna ja retallada.
+          const order = this.gradesShown.slice().sort((a, b) =>
+            Math.abs(GRADES.indexOf(a) - fi) - Math.abs(GRADES.indexOf(b) - fi));
+          for (const g of order) {
+            const gi = GRADES.indexOf(g);
+            const near = visible[GRADES[gi < fi ? gi + 1 : gi - 1]];
+            const linked = near ? (n => (this.up[n.key].concat(this.down[n.key])).some(k => near.has(k))) : null;
+            const all = this.nodes.filter(n => n.grado === g).sort(byRelevance(fam, linked));
+            const shown = this.expanded[g] ? all : all.slice(0, COL_CAP);
+            visible[g] = new Set(shown.map(n => n.key));
+            out[g] = { grado: g, total: all.length, items: shown, hidden: all.length - shown.length };
+          }
+          return this.gradesShown.map(g => out[g]);
+        },
+
+        toggleColumn(g) {
+          this.expanded = { ...this.expanded, [g]: !this.expanded[g] };
+          this.$nextTick(() => this.redraw());
+        },
+
+        // Ascendents + descendents del node apuntat (el seu camí sencer).
+        get hoverSet() {
+          if (!this.hoverKey || !this.byKey[this.hoverKey]) return null;
+          const set = new Set([this.hoverKey]);
+          for (const dir of [this.up, this.down]) {
+            const stack = [this.hoverKey];
+            while (stack.length) {
+              for (const k of dir[stack.pop()] || []) if (!set.has(k)) { set.add(k); stack.push(k); }
+            }
+          }
+          return set;
+        },
+
+        redraw() {
+          if (this.state !== 'data' || this.view !== 'timeline') return;
+          this.drawLines();
+        },
+
+        drawLines() {
+          const wrap = this.$refs.tl, svg = this.$refs.lines;
+          while (svg.firstChild) svg.removeChild(svg.firstChild);
+          const box = wrap.getBoundingClientRect();
+          if (!box.width) return;
+          svg.setAttribute('width', wrap.offsetWidth);
+          svg.setAttribute('height', wrap.offsetHeight);
+          const pos = {};
+          wrap.querySelectorAll('.node[data-key]').forEach(el => {
+            const r = el.getBoundingClientRect();
+            pos[el.dataset.key] = { l: r.left - box.left, r: r.right - box.left, y: r.top - box.top + r.height / 2 };
+          });
+          const NS = 'http://www.w3.org/2000/svg';
+          for (const e of this.edges) {
+            const a = pos[e.from], b = pos[e.to];
+            if (!a || !b) continue; // només entre elements visibles
+            const mx = (a.r + b.l) / 2;
+            const path = document.createElementNS(NS, 'path');
+            path.setAttribute('d', `M ${a.r},${a.y} C ${mx},${a.y} ${mx},${b.y} ${b.l},${b.y}`);
+            path.dataset.from = e.from;
+            path.dataset.to = e.to;
+            svg.appendChild(path);
+          }
+          this.paintLines();
+        },
+
+        paintLines() {
+          const set = this.hoverSet;
+          this.$refs.lines.querySelectorAll('path').forEach(p => {
+            const on = !!set && set.has(p.dataset.from) && set.has(p.dataset.to);
+            p.classList.toggle('on', on);
+            p.classList.toggle('off', !!set && !on);
+          });
+        },
+
+        // Aresta entre el focus i un veí directe amb mòduls compartits (C→D LOMLOE).
+        sharedWithFocus(key) {
+          const e = this.edges.find(x => (x.from === key && x.to === this.focusKey) || (x.from === this.focusKey && x.to === key));
+          return e && e.total ? t('itin.shared', { n: e.shared, m: e.total }) : '';
+        },
+
+        // ── Arbre (DOM amb textContent: mai innerHTML amb dades) ──
+        renderTree() {
+          const root = this.$refs.tree;
+          root.replaceChildren();
+          if (!this.focus) return;
+          const f = this.focus;
+          const fi = GRADES.indexOf(f.grado);
+          const sort = byRelevance(f.familia);
+
+          const upNodes = this.nodes.filter(n => GRADES.indexOf(n.grado) > fi)
+            .sort((a, b) => GRADES.indexOf(a.grado) - GRADES.indexOf(b.grado) || sort(a, b));
+          if (upNodes.length) {
+            const box = el('div', 'tree-up');
+            box.append(el('span', 'label', t('itin.leads_to')));
+            const ul = el('ul');
+            this.appendCapped(ul, upNodes, n => this.leaf(n));
+            box.append(ul);
+            root.append(box);
+          }
+
+          const det = el('details', 'root g-' + f.grado.toLowerCase());
+          det.open = true;
+          det.append(this.summary(f, this.down[f.key].length));
+          const actions = el('div', 't-actions');
+          if (fichaHref(f)) actions.append(this.fichaLink(f, true));
+          if (actions.childNodes.length) det.append(actions);
+          const children = this.down[f.key].map(k => this.byKey[k]).sort(sort);
+          if (children.length) {
+            const ul = el('ul');
+            this.appendCapped(ul, children, n => this.branch(n, sort));
+            det.append(ul);
+          }
+          root.append(det);
+        },
+
+        // Les arestes sempre pugen de grau (A→B→C→D→E): no hi pot haver cicles.
+        branch(n, sort) {
+          const kids = this.down[n.key].map(k => this.byKey[k]).sort(sort);
+          if (!kids.length) return this.leaf(n);
+          const li = el('li');
+          const det = el('details', 'g-' + n.grado.toLowerCase());
+          det.append(this.summary(n, kids.length, kids[0].grado));
+          const actions = el('div', 't-actions');
+          const center = el('button', 'btn', t('itin.center'));
+          center.type = 'button';
+          center.addEventListener('click', () => this.go(n));
+          actions.append(center);
+          if (fichaHref(n)) actions.append(this.fichaLink(n, true));
+          det.append(actions);
+          const ul = el('ul');
+          this.appendCapped(ul, kids, k => this.branch(k, sort));
+          det.append(ul);
+          li.append(det);
+          return li;
+        },
+
+        summary(n, nKids, kidGrade) {
+          const s = el('summary');
+          s.append(el('span', 'grade-badge', n.grado));
+          if (n.codigo) s.append(el('span', 't-code', n.codigo));
+          s.append(el('span', 't-name', n.denominacion));
+          if (n.plan_antiguo) s.append(el('span', 'badge-old', t('index.badge.old')));
+          const shared = n.key !== this.focusKey ? this.sharedWithFocus(n.key) : '';
+          if (shared) s.append(el('span', 'pill', shared));
+          if (kidGrade) s.append(el('span', 'tag', nKids + ' ' + kidGrade));
+          return s;
+        },
+
+        leaf(n) {
+          const li = el('li', 't-leaf g-' + n.grado.toLowerCase());
+          const btn = el('button', 'node-main');
+          btn.type = 'button';
+          btn.append(el('span', 'grade-badge', n.grado));
+          if (n.codigo) btn.append(el('span', 't-code', n.codigo));
+          btn.append(el('span', 't-name', n.denominacion));
+          if (n.plan_antiguo) btn.append(el('span', 'badge-old', t('index.badge.old')));
+          const shared = this.sharedWithFocus(n.key);
+          if (shared) btn.append(el('span', 'pill', shared));
+          btn.addEventListener('click', () => this.go(n));
+          li.append(btn);
+          if (fichaHref(n)) li.append(this.fichaLink(n, false));
+          return li;
+        },
+
+        appendCapped(ul, items, render) {
+          items.slice(0, COL_CAP).forEach(n => ul.append(render(n)));
+          if (items.length <= COL_CAP) return;
+          const li = el('li');
+          const more = el('button', 'more-btn', t('itin.more', { n: items.length - COL_CAP }));
+          more.type = 'button';
+          more.addEventListener('click', () => {
+            li.remove();
+            items.slice(COL_CAP).forEach(n => ul.append(render(n)));
+          });
+          li.append(more);
+          ul.append(li);
+        },
+      }));
+    });
+
+    function el(tag, cls, text) {
+      const e = document.createElement(tag);
+      if (cls) e.className = cls;
+      if (text != null) e.textContent = text;
+      return e;
+    }
+  </script>
+  <script defer src="vendor/alpinejs-3.15.11.min.js"></script>
+</head>
+
+<body>
+
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a href="index.html" class="topbar-logo">GrausFP</a>
+      <div id="auth-widget"></div>
+      <div class="lang-selector" aria-label="Language selector">
+        <button class="lang-btn" data-lang="ca" onclick="setLang('ca')">CA</button>
+        <button class="lang-btn" data-lang="es" onclick="setLang('es')">ES</button>
+      </div>
+    </div>
+  </header>
+
+  <div x-data="itinerari">
+    <div class="hero">
+      <p class="hero-kicker" data-i18n="itin.kicker">Itinerari formatiu</p>
+      <template x-if="state === 'data' && focus">
+        <div>
+          <h1 x-text="focus.denominacion"></h1>
+          <div class="hero-meta" :class="'g-' + focus.grado.toLowerCase()">
+            <span class="grade-badge" x-text="focus.grado"></span>
+            <span x-text="t('itin.grade', {g: focus.grado})"></span>
+            <span class="mono" x-show="focus.codigo" x-text="focus.codigo"></span>
+            <span x-show="focus.familia" x-text="focus.familia"></span>
+            <span x-show="focus.plan_antiguo" class="badge-old" x-text="t('index.badge.old')"></span>
+          </div>
+        </div>
+      </template>
+      <p class="hero-intro" data-i18n="itin.intro">De quins graus està format i a quins graus dona accés. Clica qualsevol element per centrar-hi l'itinerari.</p>
+    </div>
+
+    <main class="content">
+      <div class="toolbar">
+        <a href="index.html" class="back-link" data-i18n="itin.back">← Torna al cercador</a>
+        <button type="button" class="btn" x-cloak x-show="state === 'data' && nodes.length > 1 && !isMobile"
+          @click="toggleView()" :aria-pressed="String(view === 'tree')"
+          x-text="view === 'tree' ? t('itin.view.timeline') : t('itin.view.tree')"></button>
+      </div>
+
+      <p class="msg" x-show="state === 'loading'" data-i18n="itin.loading">Carregant l'itinerari…</p>
+      <div class="msg" x-cloak x-show="state === 'error'" role="alert">
+        <p data-i18n="itin.error">No s'ha pogut carregar l'itinerari.</p>
+        <button type="button" class="btn" @click="retry()" data-i18n="itin.retry">Torna-ho a provar</button>
+      </div>
+      <p class="msg" x-cloak x-show="state === 'notfound'" role="alert" data-i18n="itin.notfound"></p>
+      <p class="msg" x-cloak x-show="state === 'noparams'" data-i18n="itin.noparams"></p>
+
+      <template x-if="state === 'data' && nodes.length === 1">
+        <p class="msg" x-text="t('itin.empty')"></p>
+      </template>
+
+      <!-- Timeline (ordinador). x-show, no x-if: els refs han d'existir per a les línies. -->
+      <div class="tl-scroll" x-cloak x-show="state === 'data' && nodes.length > 1 && view === 'timeline'">
+        <div class="tl" x-ref="tl" :style="'--cols:' + gradesShown.length" role="group" :aria-label="t('itin.timeline.aria')">
+          <svg class="tl-lines" x-ref="lines" aria-hidden="true"></svg>
+          <template x-for="col in columns" :key="col.grado">
+            <section class="tl-col" :class="'g-' + col.grado.toLowerCase()">
+              <h2 class="tl-head">
+                <span class="grade-badge" x-text="col.grado"></span>
+                <span x-text="t('itin.grade', {g: col.grado})"></span>
+                <span class="count" x-show="col.total" x-text="'(' + col.total + ')'"></span>
+              </h2>
+              <p class="tl-empty" x-show="!col.total">—</p>
+              <template x-for="n in col.items" :key="n.key">
+                <div class="node" :data-key="n.key"
+                  :class="{ 'is-focus': n.key === focusKey, dim: hoverSet && !hoverSet.has(n.key) }"
+                  @mouseenter="hoverKey = n.key" @mouseleave="hoverKey = null"
+                  @focusin="hoverKey = n.key" @focusout="hoverKey = null">
+                  <button type="button" class="node-main" @click="go(n)"
+                    :aria-current="n.key === focusKey ? 'true' : null">
+                    <span class="node-code" x-show="n.codigo" x-text="n.codigo"></span>
+                    <span class="node-name" x-text="n.denominacion"></span>
+                    <span x-show="n.plan_antiguo"><span class="badge-old" x-text="t('index.badge.old')"></span></span>
+                    <span x-show="n.key !== focusKey && sharedWithFocus(n.key)"><span class="pill" x-text="sharedWithFocus(n.key)"></span></span>
+                  </button>
+                  <template x-if="fichaHref(n)">
+                    <a class="node-ficha" href="#" @click.prevent="openFicha(n)"
+                      :aria-label="t('itin.ficha_aria', {name: n.denominacion})">↗</a>
+                  </template>
+                </div>
+              </template>
+              <button type="button" class="more-btn" x-show="col.hidden > 0 || expanded[col.grado]"
+                @click="toggleColumn(col.grado)" :aria-expanded="String(!!expanded[col.grado])"
+                x-text="expanded[col.grado] ? t('itin.less') : t('itin.more', {n: col.hidden})"></button>
+            </section>
+          </template>
+        </div>
+      </div>
+
+      <!-- Arbre (mòbil, o forçat a l'ordinador) -->
+      <div class="tree" x-ref="tree" x-cloak x-show="state === 'data' && nodes.length > 1 && view === 'tree'"></div>
+    </main>
+
+    <!-- Modal de registre: còpia del de index.html (mateix gating de les fitxes oficials) -->
+    <div x-show="centresModalVisible" @click="centresModalVisible = false"
+      @keydown.escape.window="centresModalVisible && (centresModalVisible = false)"
+      x-effect="if (centresModalVisible) { $data._prevFocusCentres = document.activeElement; $nextTick(() => $refs.centresModalClose && $refs.centresModalClose.focus()); } else if ($data._prevFocusCentres) { $data._prevFocusCentres.focus(); $data._prevFocusCentres = null; }"
+      class="centres-modal-overlay" x-cloak role="dialog" aria-modal="true" data-i18n-aria="modal.gate.aria"
+      aria-label="Registre requerit"
+      x-transition:enter.opacity.duration.150ms x-transition:leave.opacity.duration.100ms>
+      <div class="centres-modal" @click.stop>
+        <button class="centres-modal-close" x-ref="centresModalClose" @click="centresModalVisible = false"
+          data-i18n-aria="modal.close.aria" aria-label="Tanca"><span aria-hidden="true">✕</span></button>
+        <p class="centres-modal-msg" data-i18n="modal.gate.msg">Registra't o entra amb el teu usuari per a accedir a
+          tota la informació</p>
+        <p style="font-size:var(--fs-small);color:var(--warm);text-align:center;margin-top:6px;" data-i18n="modal.gate.free">El
+          registre és gratuït</p>
+        <div class="centres-modal-actions">
+          <a href="register.html" class="centres-modal-btn centres-modal-btn--primary"
+            data-i18n="modal.gate.register">Registrar-me</a>
+          <button class="centres-modal-btn centres-modal-btn--secondary" @click="centresModalVisible = false"
+            data-i18n="modal.gate.later">Ara no</button>
+        </div>
+        <a href="login.html" class="centres-modal-login-link" data-i18n="modal.gate.login">Entrar</a>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer" id="site-footer"></footer>
+  <script src="footer.js?v=1"></script>
+  <script src="feedback.js?v=2"></script>
+
+</body>
+</html>

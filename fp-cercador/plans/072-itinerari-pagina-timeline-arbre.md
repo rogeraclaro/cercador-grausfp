@@ -1,6 +1,6 @@
 # 072 — Itinerari: pàgina `itinerari.html` (timeline + arbre) i resum al cercador
 
-**Prioritat:** P2 · **Esforç:** M–L · **Depèn de:** 071 · **Estat:** TODO
+**Prioritat:** P2 · **Esforç:** M–L · **Depèn de:** 071 · **Estat:** DONE
 **Spec:** `docs/superpowers/specs/2026-10-23-itinerari-visual-design.md` · **Maqueta:** https://claude.ai/artifact/8VUN8EBhey4EesvXa19U5d (formes A i B; el propietari pot obrir-la, una sessió nova no).
 
 ## Objectiu

@@ -1012,6 +1012,12 @@
       font-weight: 600;
     }
 
+    .itin-line {
+      font-family: 'Geist Mono', ui-monospace, monospace;
+      font-size: var(--fs-mono);
+      color: var(--dark);
+    }
+
     .ciclos-d-list {
       margin: 4px 0 0 16px;
       padding: 0;
@@ -1535,7 +1541,7 @@
     }
   </style>
 
-  <script src="i18n.js?v=20261022a"></script>
+  <script src="i18n.js?v=20261023a"></script>
   <script src="auth.js"></script>
   <script>
     const API_BASE = window.location.hostname === 'localhost'
@@ -1600,6 +1606,7 @@
         childrenCLoeData: {},   // {row.id: [{codigo, denominacion}] | 'loading' | 'error'}
         childrenCLoeVisible: {}, // {row.id: bool}
         contingutAData: {},     // Pla 068: {codigo_a: {parents_b, contingut} | 'loading' | 'error'}
+        itinSummary: {},        // Pla 072: {'grado=…&codigo=…': {line, n} | 'loading' | 'error'}
         aLoePares: {},          // Pla 068: {codigo_UF: [codigo_MF]} pares reals dels A LOE (fitxa oficial)
 
         // Pla 060 — Mode FPO (cursos del SOC Catalunya)
@@ -2199,6 +2206,40 @@
           }
         },
 
+        // Pla 072: enllaç i línia resum de l'itinerari complet (itinerari.html).
+        itinQuery(row) {
+          return ['D', 'E'].includes(row.grado)
+            ? 'grado=' + row.grado + '&id=' + encodeURIComponent(row.id)
+            : 'grado=' + row.grado + '&codigo=' + encodeURIComponent(row.codigo);
+        },
+
+        itinUrl(row) { return 'itinerari.html?' + this.itinQuery(row); },
+
+        itinPanelOpen(row) {
+          return (['A', 'C'].includes(row.grado) && !!this.expandedRows[row.id])
+            || (row.grado === 'B' && !!this.childrenCLoeVisible[row.id]);
+        },
+
+        async fetchItinSummary(row) {
+          const q = this.itinQuery(row);
+          if (this.itinSummary[q] && this.itinSummary[q] !== 'error') return;
+          this.itinSummary = { ...this.itinSummary, [q]: 'loading' };
+          try {
+            const res = await fetch(API_BASE + '/api/itinerari/complet?' + q);
+            if (!res.ok) throw new Error('HTTP ' + res.status);
+            const data = await res.json();
+            const counts = {};
+            for (const n of data.nodes || []) counts[n.grado] = (counts[n.grado] || 0) + 1;
+            // A (4) → B (3) → [C] → D (1): el focus entre claudàtors, sense els graus buits.
+            const line = ['A', 'B', 'C', 'D', 'E']
+              .map(g => g === row.grado ? '[' + g + ']' : (counts[g] ? g + ' (' + counts[g] + ')' : null))
+              .filter(Boolean).join(' → ');
+            this.itinSummary = { ...this.itinSummary, [q]: { line, n: (data.nodes || []).length } };
+          } catch (e) {
+            this.itinSummary = { ...this.itinSummary, [q]: 'error' };
+          }
+        },
+
         async fetchChildrenCLoe(row) {
           // Toggle: si ja és visible i carregat, amaga'l
           if (this.childrenCLoeVisible[row.id] && this.childrenCLoeData[row.id] !== undefined) {
@@ -2206,6 +2247,7 @@
             return;
           }
           this.childrenCLoeVisible = { ...this.childrenCLoeVisible, [row.id]: true };
+          this.fetchItinSummary(row);
           if (this.childrenCLoeData[row.id] !== undefined) return; // ja carregat
           this.childrenCLoeData = { ...this.childrenCLoeData, [row.id]: 'loading' };
           try {
@@ -2276,11 +2318,12 @@
         activateRow(row) {
           if (row.grado === 'A') {
             this.expandedRows = { ...this.expandedRows, [row.id]: !this.expandedRows[row.id] };
-            if (this.expandedRows[row.id]) this.fetchContingutA(row.codigo);
+            if (this.expandedRows[row.id]) { this.fetchContingutA(row.codigo); this.fetchItinSummary(row); }
             return;
           } else if (row.grado === 'C') {
             this.expandedRows = { ...this.expandedRows, [row.id]: !this.expandedRows[row.id] };
             if (row.plan_antiguo) this.fetchFpoByCert(row.codigo);
+            if (this.expandedRows[row.id]) this.fetchItinSummary(row);
             return;
           } else if (['B','C'].includes(row.grado) && row.ficha_id) {
             this.loggedIn ? window.open(API_BASE + '/api/ficha-redirect?grado=' + row.grado + '&codigo=' + encodeURIComponent(row.codigo), '_blank') : this.showCentresModal();
@@ -2907,6 +2950,10 @@
                       @keydown.space.prevent.stop="fetchChildrenCLoe(row)"
                       x-text="t('index.itinerari.children_c_loe_btn')"></span>
                   </template>
+                  <template x-if="row.grado === 'D'">
+                    <a class="badge-itinerari-b" style="cursor:pointer;text-decoration:none" :href="itinUrl(row)" @click.stop
+                      x-text="t('itin.d_link') + ' →'"></a>
+                  </template>
                 </td>
                 <td class="col-codi" :class="{ 'cell-empty': row.codigo == null }" x-text="row.codigo ?? '—'"></td>
                 <td class="col-fam" x-text="row.familia"></td>
@@ -3123,6 +3170,19 @@
                         </ul>
                       </div>
                     </template>
+                  </div>
+                </td>
+              </tr>
+              <!-- Pla 072: resum de l'itinerari complet (A, B i C) -->
+              <tr x-show="itinPanelOpen(row) && itinSummary[itinQuery(row)] && itinSummary[itinQuery(row)] !== 'error' && itinSummary[itinQuery(row)].n !== 1">
+                <td colspan="5" class="detall-certificat">
+                  <div class="detall-inner">
+                    <div class="detall-btns" :aria-label="t('itin.summary.aria')" role="group">
+                      <span class="itin-line"
+                        x-text="itinSummary[itinQuery(row)] === 'loading' ? t('itin.summary.loading') : (itinSummary[itinQuery(row)] || {}).line"></span>
+                      <a class="btn-doc" :href="itinUrl(row)" @click.stop x-show="itinSummary[itinQuery(row)] !== 'loading'"
+                        x-text="t('itin.cta')"></a>
+                    </div>
                   </div>
                 </td>
               </tr>
