@@ -952,14 +952,15 @@
       background: var(--warm2);
     }
 
-    /* Grau obert: la fila i els seus panells formen un grup Parchment amb un filet Umber a l'esquerra,
-       per distingir-lo dels tancats (el Parchment sol ja és el del hover i dels favorits). */
-    .results-table tbody.row-open > tr > td {
-      background: var(--warm2);
+    /* Grau obert: la fila i els seus panells formen un grup Parchment emmarcat en Umber,
+       per distingir-lo dels tancats (el Parchment sol ja és el del hover i dels favorits).
+       Amb border-collapse la vora del tbody es pinta a tots els navegadors. */
+    .results-table tbody.row-open {
+      border: 3px solid var(--warm);
     }
 
-    .results-table tbody.row-open > tr > td:first-child {
-      box-shadow: inset 3px 0 0 var(--warm);
+    .results-table tbody.row-open > tr > td {
+      background: var(--warm2);
     }
 
     .checkbox-label--favs {
@@ -1358,14 +1359,6 @@
       .results-table tbody.row-open > tr:has(> td.col-nom),
       .results-table tbody tr:has(> td.col-nom):focus-visible {
         background: var(--warm2);
-      }
-
-      .results-table tbody.row-open > tr:has(> td.col-nom) {
-        box-shadow: inset 3px 0 0 var(--warm);
-      }
-
-      .results-table tbody.row-open > tr:has(> td.col-nom) > td:first-child {
-        box-shadow: none;
       }
 
       .results-table tbody tr:has(> td.col-nom) > td {
