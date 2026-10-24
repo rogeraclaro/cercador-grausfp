@@ -586,7 +586,7 @@
       .t-actions { margin-left: 6px; }
     }
   </style>
-  <script src="i18n.js?v=20261024e"></script>
+  <script src="i18n.js?v=20261024f"></script>
   <script src="auth.js"></script>
   <script>
     const API_BASE = window.location.hostname === 'localhost' ? 'http://localhost:5001' : '';
@@ -1297,14 +1297,15 @@
         <p class="msg" x-text="t('itin.empty')"></p>
       </template>
 
-      <!-- Llegenda de la força C→D (totes les vistes). Mostres de línia estàtiques; textos via t(). -->
+      <!-- Llegenda de la força C→D (totes les vistes); textos via t(). -->
       <div class="cd-legend" x-cloak x-show="state === 'data' && nodes.length > 1 && cdTiers" role="group"
         :aria-label="t('itin.legend.aria')">
         <p class="cd-legend-title" x-text="t('itin.legend.title')"></p>
         <ul>
-          <li x-show="cdTiers && cdTiers.has('full')"><svg class="cd-swatch" viewBox="0 0 36 8" aria-hidden="true"><path class="t-full" d="M2 4H34"/></svg><span x-text="t('itin.legend.full')"></span></li>
-          <li x-show="cdTiers && cdTiers.has('part')"><svg class="cd-swatch" viewBox="0 0 36 8" aria-hidden="true"><path class="t-part" d="M2 4H34"/></svg><span x-text="t('itin.legend.part')"></span></li>
-          <li x-show="cdTiers && cdTiers.has('old')"><svg class="cd-swatch" viewBox="0 0 36 8" aria-hidden="true"><path class="t-old" d="M2 4H34"/></svg><span x-text="t('itin.legend.old')"></span></li>
+          <!-- Columnes i graf: mostra de línia. Arbre: no dibuixa línies, així que s'hi mostra la mateixa etiqueta que porta cada C. -->
+          <li x-show="cdTiers && cdTiers.has('full')"><svg class="cd-swatch" x-show="view !== 'tree'" viewBox="0 0 36 8" aria-hidden="true"><path class="t-full" d="M2 4H34"/></svg><span class="pill" x-show="view === 'tree'" x-text="t('itin.legend.full')"></span><span x-text="(view === 'tree' ? '' : t('itin.legend.full') + ' — ') + t('itin.legend.full_desc')"></span></li>
+          <li x-show="cdTiers && cdTiers.has('part')"><svg class="cd-swatch" x-show="view !== 'tree'" viewBox="0 0 36 8" aria-hidden="true"><path class="t-part" d="M2 4H34"/></svg><span class="pill part" x-show="view === 'tree'" x-text="t('itin.legend.part')"></span><span x-text="(view === 'tree' ? '' : t('itin.legend.part') + ' — ') + t('itin.legend.part_desc')"></span></li>
+          <li x-show="cdTiers && cdTiers.has('old')"><svg class="cd-swatch" x-show="view !== 'tree'" viewBox="0 0 36 8" aria-hidden="true"><path class="t-old" d="M2 4H34"/></svg><span class="badge-old" x-show="view === 'tree'" x-text="t('itin.legend.old')"></span><span x-text="(view === 'tree' ? '' : t('itin.legend.old') + ' — ') + t('itin.legend.old_desc')"></span></li>
         </ul>
       </div>
 
