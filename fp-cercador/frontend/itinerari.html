@@ -190,6 +190,18 @@
     .tl-lines path.on { stroke: var(--warm); stroke-width: 2; }
     .tl-lines path.off { opacity: 0.35; }
 
+    /* Força C→D: complet = continu, parcial = discontinu, pla antic = puntejat i més clar */
+    .tl-lines path.t-part, .cd-swatch .t-part { stroke-dasharray: 7 4; }
+    .tl-lines path.t-old, .cd-swatch .t-old { stroke-dasharray: 1.5 4; stroke-linecap: round; }
+    .tl-lines path.t-old:not(.on) { stroke: color-mix(in srgb, var(--warm) 30%, transparent); }
+
+    .cd-legend { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 14px; margin-bottom: 16px; font-size: var(--fs-small); color: var(--ink-soft); }
+    .cd-legend-title { font-weight: 600; }
+    .cd-legend ul { list-style: none; display: flex; flex-wrap: wrap; gap: 4px 18px; }
+    .cd-legend li { display: flex; align-items: center; gap: 8px; }
+    .cd-swatch { flex: none; width: 36px; height: 8px; }
+    .cd-swatch path { fill: none; stroke: var(--warm); stroke-width: 2; }
+
     .tl-col { position: relative; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
 
     .tl-head {
@@ -364,6 +376,10 @@
       padding: 1px 6px;
       white-space: nowrap;
     }
+
+    /* Enllaç C→D parcial / pla antic: neutre (el verd queda per al complet) */
+    .pill.part, .pill.old { color: var(--ink-soft); background: transparent; box-shadow: inset 0 0 0 1px var(--border); }
+    .pill.old { font-weight: 500; color: var(--faded); }
 
     .t-actions { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0 0 14px; }
 
@@ -570,7 +586,7 @@
       .t-actions { margin-left: 6px; }
     }
   </style>
-  <script src="i18n.js?v=20261024b"></script>
+  <script src="i18n.js?v=20261024c"></script>
   <script src="auth.js"></script>
   <script>
     const API_BASE = window.location.hostname === 'localhost' ? 'http://localhost:5001' : '';
@@ -597,10 +613,28 @@
 
     // Mateixa família que el focus primer; després els lligats a un element visible
     // de la columna veïna (perquè les línies no quedin penjant); després per codi.
-    function byRelevance(familia, linked) {
-      return (a, b) => (b.familia === familia) - (a.familia === familia)
+    // Amb `strength` (n → cdScore), primer la força de l'enllaç C→D amb la columna/pare cap al focus.
+    function byRelevance(familia, linked, strength) {
+      return (a, b) => (strength ? strength(b) - strength(a) : 0)
+        || (b.familia === familia) - (a.familia === familia)
         || (linked ? linked(b) - linked(a) : 0)
         || nodeLabel(a).localeCompare(nodeLabel(b), 'es');
+    }
+
+    // Força d'un enllaç C→D (només kind 'cd'): 'full' si el certificat cobreix tots els mòduls
+    // en comú (shared === total), 'part' si només una part, 'old' si no hi ha detall (pla antic,
+    // relació de ciclos_fp sense shared/total). '' per a la resta d'arestes.
+    function cdTier(e) {
+      if (!e || e.kind !== 'cd') return '';
+      if (!e.total) return 'old';
+      return e.shared >= e.total ? 'full' : 'part';
+    }
+
+    // Puntuació per ordenar (més alta, abans): complet (3 + shared/1000, més mòduls primer),
+    // parcial (2 + ràtio, que és < 1), pla antic (1), sense relació C→D (0).
+    function cdScore(e) {
+      const tier = cdTier(e);
+      return tier === 'full' ? 3 + e.shared / 1000 : tier === 'part' ? 2 + e.shared / e.total : tier === 'old' ? 1 : 0;
     }
 
     function readView() {
@@ -660,7 +694,7 @@
     }
 
     function cyEdge(e) {
-      return { group: 'edges', data: { id: edgeId(e), source: e.from, target: e.to } };
+      return { group: 'edges', data: { id: edgeId(e), source: e.from, target: e.to, tier: cdTier(e) } };
     }
 
     // x fixa per grau (com les columnes del timeline). Dins de cada columna, de dins (focus)
@@ -709,6 +743,9 @@
           width: 1.5, 'curve-style': 'bezier', 'line-color': v('--warm'), 'target-arrow-color': v('--warm'),
           'target-arrow-shape': 'triangle', 'arrow-scale': 0.8, opacity: 0.45,
         } },
+        // Força C→D: complet = continu (per defecte), parcial = discontinu, pla antic = puntejat i més clar
+        { selector: 'edge[tier = "part"]', style: { 'line-style': 'dashed', 'line-dash-pattern': [7, 4] } },
+        { selector: 'edge[tier = "old"]', style: { 'line-style': 'dotted', 'line-dash-pattern': [2, 4], opacity: 0.35 } },
         { selector: 'edge.on', style: { width: 2.5, opacity: 1, 'line-color': v('--dark'), 'target-arrow-color': v('--dark') } },
       ];
     }
@@ -725,6 +762,7 @@
         nodes: [],
         edges: [],
         byKey: {},
+        edgeBy: {},                // edgeId → aresta
         up: {},                    // key → [keys] (cap amunt: A→B→C→D→E)
         down: {},                  // key → [keys]
         expanded: {},              // grado → nombre d'elements extra mostrats (trams de COL_STEP)
@@ -816,8 +854,9 @@
           const byKey = {}, up = {}, down = {};
           for (const n of body.nodes) { byKey[n.key] = n; up[n.key] = []; down[n.key] = []; }
           const edges = body.edges.filter(e => byKey[e.from] && byKey[e.to]);
-          for (const e of edges) { up[e.from].push(e.to); down[e.to].push(e.from); }
-          this.byKey = byKey; this.up = up; this.down = down;
+          const edgeBy = {};
+          for (const e of edges) { up[e.from].push(e.to); down[e.to].push(e.from); edgeBy[edgeId(e)] = e; }
+          this.byKey = byKey; this.up = up; this.down = down; this.edgeBy = edgeBy;
           this.nodes = body.nodes; this.edges = edges;
           this.focusKey = body.focus;
           this.expanded = {};
@@ -854,8 +893,11 @@
           for (const g of order) {
             const gi = GRADES.indexOf(g);
             const near = visible[GRADES[gi < fi ? gi + 1 : gi - 1]];
-            const linked = near ? (n => (this.up[n.key].concat(this.down[n.key])).some(k => near.has(k))) : null;
-            const all = this.nodes.filter(n => n.grado === g).sort(byRelevance(fam, linked));
+            const nbrs = n => this.up[n.key].concat(this.down[n.key]).filter(k => near.has(k));
+            const linked = near ? (n => nbrs(n).length > 0) : null;
+            // Un C es relaciona amb molts D: compta el seu millor enllaç amb la columna veïna visible.
+            const strength = near ? (n => Math.max(0, ...nbrs(n).map(k => cdScore(this.edgeBetween(n.key, k))))) : null;
+            const all = this.nodes.filter(n => n.grado === g).sort(byRelevance(fam, linked, strength));
             const shown = all.slice(0, COL_CAP + (this.expanded[g] || 0));
             visible[g] = new Set(shown.map(n => n.key));
             out[g] = { grado: g, total: all.length, items: shown, hidden: all.length - shown.length };
@@ -1018,6 +1060,8 @@
             path.setAttribute('d', `M ${a.r},${a.y} C ${mx},${a.y} ${mx},${b.y} ${b.l},${b.y}`);
             path.dataset.from = e.from;
             path.dataset.to = e.to;
+            const tier = cdTier(e);
+            if (tier) path.classList.add('t-' + tier);
             svg.appendChild(path);
           }
           this.paintLines();
@@ -1032,10 +1076,23 @@
           });
         },
 
-        // Aresta entre el focus i un veí directe amb mòduls compartits (C→D LOMLOE).
-        sharedWithFocus(key) {
-          const e = this.edges.find(x => (x.from === key && x.to === this.focusKey) || (x.from === this.focusKey && x.to === key));
-          return e && e.total ? t('itin.shared', { n: e.shared, m: e.total }) : '';
+        edgeBetween(a, b) { return this.edgeBy[a + '>' + b] || this.edgeBy[b + '>' + a] || null; },
+
+        // Etiqueta de força de l'enllaç C→D entre `key` i `rel` (per defecte, el focus):
+        // {text, cls} o null. Pla antic: només la pista "sense detall" (el node ja porta "Pla antic").
+        cdPill(key, rel) {
+          const e = this.edgeBetween(key, rel || this.focusKey);
+          const tier = cdTier(e);
+          if (tier === 'full') return { text: t('itin.shared_full', { n: e.shared, m: e.total }), cls: 'pill' };
+          if (tier === 'part') return { text: t('itin.shared_part', { n: e.shared, m: e.total }), cls: 'pill part' };
+          if (tier === 'old') return { text: t('itin.no_detail'), cls: 'pill old' };
+          return null;
+        },
+
+        // Llegenda només si hi ha alguna cosa a distingir: més d'un tipus d'enllaç C→D, o algun no complet.
+        get cdTiers() {
+          const tiers = new Set(this.edges.map(cdTier).filter(Boolean));
+          return tiers.size > 1 || (tiers.size === 1 && !tiers.has('full')) ? tiers : null;
         },
 
         // ── Arbre (DOM amb textContent: mai innerHTML amb dades) ──
@@ -1047,39 +1104,47 @@
           const fi = GRADES.indexOf(f.grado);
           const sort = byRelevance(f.familia);
 
+          const toFocus = n => cdScore(this.edgeBetween(n.key, f.key));
           const upNodes = this.nodes.filter(n => GRADES.indexOf(n.grado) > fi)
-            .sort((a, b) => GRADES.indexOf(a.grado) - GRADES.indexOf(b.grado) || sort(a, b));
+            .sort((a, b) => GRADES.indexOf(a.grado) - GRADES.indexOf(b.grado) || toFocus(b) - toFocus(a) || sort(a, b));
           if (upNodes.length) {
             const box = el('div', 'tree-up');
             box.append(el('span', 'label', t('itin.leads_to')));
             const ul = el('ul');
-            this.appendCapped(ul, upNodes, n => this.leaf(n));
+            this.appendCapped(ul, upNodes, n => this.leaf(n, f.key));
             box.append(ul);
             root.append(box);
           }
 
           const det = el('details', 'root g-' + f.grado.toLowerCase());
           det.open = true;
-          det.append(this.summary(f, this.down[f.key].length));
+          det.append(this.summary(f));
           const actions = el('div', 't-actions');
           if (fichaHref(f)) actions.append(this.fichaLink(f, true));
           if (actions.childNodes.length) det.append(actions);
-          const children = this.down[f.key].map(k => this.byKey[k]).sort(sort);
+          const children = this.kidsOf(f, sort);
           if (children.length) {
             const ul = el('ul');
-            this.appendCapped(ul, children, n => this.branch(n, sort));
+            this.appendCapped(ul, children, n => this.branch(n, sort, f.key));
             det.append(ul);
           }
           root.append(det);
         },
 
+        // Fills d'un node a l'arbre: si l'enllaç amb el pare és C→D, primer els més forts.
+        kidsOf(n, sort) {
+          const score = k => cdScore(this.edgeBetween(k.key, n.key));
+          return this.down[n.key].map(k => this.byKey[k]).sort((a, b) => score(b) - score(a) || sort(a, b));
+        },
+
         // Les arestes sempre pugen de grau (A→B→C→D→E): no hi pot haver cicles.
-        branch(n, sort) {
-          const kids = this.down[n.key].map(k => this.byKey[k]).sort(sort);
-          if (!kids.length) return this.leaf(n);
+        // `parentKey`: el node de dalt a l'arbre; les etiquetes de força són relatives a ell.
+        branch(n, sort, parentKey) {
+          const kids = this.kidsOf(n, sort);
+          if (!kids.length) return this.leaf(n, parentKey);
           const li = el('li');
           const det = el('details', 'g-' + n.grado.toLowerCase());
-          det.append(this.summary(n, kids.length, kids[0].grado));
+          det.append(this.summary(n, parentKey, kids));
           const actions = el('div', 't-actions');
           const center = el('button', 'btn', t('itin.center'));
           center.type = 'button';
@@ -1088,25 +1153,35 @@
           if (fichaHref(n)) actions.append(this.fichaLink(n, true));
           det.append(actions);
           const ul = el('ul');
-          this.appendCapped(ul, kids, k => this.branch(k, sort));
+          this.appendCapped(ul, kids, k => this.branch(k, sort, n.key));
           det.append(ul);
           li.append(det);
           return li;
         },
 
-        summary(n, nKids, kidGrade) {
+        summary(n, parentKey, kids) {
           const s = el('summary');
           s.append(gradeBadge(n.grado));
           if (n.codigo) s.append(el('span', 't-code', n.codigo));
           s.append(el('span', 't-name', n.denominacion));
           if (n.plan_antiguo) s.append(el('span', 'badge-old', t('index.badge.old')));
-          const shared = n.key !== this.focusKey ? this.sharedWithFocus(n.key) : '';
-          if (shared) s.append(el('span', 'pill', shared));
-          if (kidGrade) s.append(el('span', 'tag', nKids + ' ' + kidGrade));
+          const pill = parentKey ? this.cdPill(n.key, parentKey) : null;
+          if (pill) s.append(el('span', pill.cls, pill.text));
+          if (kids) s.append(el('span', 'tag', this.kidsTag(n, kids)));
           return s;
         },
 
-        leaf(n) {
+        // "20 C" → "6 C · 14 pla antic" quan part dels fills són enllaços C→D sense detall.
+        kidsTag(n, kids) {
+          const g = kids[0].grado;
+          const nOld = kids.filter(k => cdTier(this.edgeBetween(k.key, n.key)) === 'old').length;
+          const nNew = kids.length - nOld;
+          if (!nOld) return kids.length + ' ' + g;
+          if (!nNew) return nOld + ' ' + g + ' · ' + t('index.badge.old');
+          return nNew + ' ' + g + ' · ' + t('itin.tag_old', { n: nOld });
+        },
+
+        leaf(n, parentKey) {
           const li = el('li', 't-leaf g-' + n.grado.toLowerCase());
           const btn = el('button', 'node-main');
           btn.type = 'button';
@@ -1114,8 +1189,8 @@
           if (n.codigo) btn.append(el('span', 't-code', n.codigo));
           btn.append(el('span', 't-name', n.denominacion));
           if (n.plan_antiguo) btn.append(el('span', 'badge-old', t('index.badge.old')));
-          const shared = this.sharedWithFocus(n.key);
-          if (shared) btn.append(el('span', 'pill', shared));
+          const pill = this.cdPill(n.key, parentKey);
+          if (pill) btn.append(el('span', pill.cls, pill.text));
           btn.addEventListener('click', () => this.go(n));
           li.append(btn);
           if (fichaHref(n)) li.append(this.fichaLink(n, false));
@@ -1221,6 +1296,17 @@
         <p class="msg" x-text="t('itin.empty')"></p>
       </template>
 
+      <!-- Llegenda de la força C→D (totes les vistes). Mostres de línia estàtiques; textos via t(). -->
+      <div class="cd-legend" x-cloak x-show="state === 'data' && nodes.length > 1 && cdTiers" role="group"
+        :aria-label="t('itin.legend.aria')">
+        <p class="cd-legend-title" x-text="t('itin.legend.title')"></p>
+        <ul>
+          <li x-show="cdTiers && cdTiers.has('full')"><svg class="cd-swatch" viewBox="0 0 36 8" aria-hidden="true"><path class="t-full" d="M2 4H34"/></svg><span x-text="t('itin.legend.full')"></span></li>
+          <li x-show="cdTiers && cdTiers.has('part')"><svg class="cd-swatch" viewBox="0 0 36 8" aria-hidden="true"><path class="t-part" d="M2 4H34"/></svg><span x-text="t('itin.legend.part')"></span></li>
+          <li x-show="cdTiers && cdTiers.has('old')"><svg class="cd-swatch" viewBox="0 0 36 8" aria-hidden="true"><path class="t-old" d="M2 4H34"/></svg><span x-text="t('itin.legend.old')"></span></li>
+        </ul>
+      </div>
+
       <!-- Timeline (ordinador). x-show, no x-if: els refs han d'existir per a les línies. -->
       <div class="tl-scroll" x-cloak x-show="state === 'data' && nodes.length > 1 && view === 'timeline'">
         <div class="tl" x-ref="tl" :style="'--cols:' + gradesShown.length" role="group" :aria-label="t('itin.timeline.aria')">
@@ -1244,7 +1330,7 @@
                     <span class="node-code" x-show="n.codigo" x-text="n.codigo"></span>
                     <span class="node-name" x-text="n.denominacion"></span>
                     <span x-show="n.plan_antiguo"><span class="badge-old" x-text="t('index.badge.old')"></span></span>
-                    <span x-show="n.key !== focusKey && sharedWithFocus(n.key)"><span class="pill" x-text="sharedWithFocus(n.key)"></span></span>
+                    <span x-show="n.key !== focusKey && cdPill(n.key)"><span :class="(cdPill(n.key) || {}).cls" x-text="(cdPill(n.key) || {}).text"></span></span>
                   </button>
                   <template x-if="fichaHref(n)">
                     <a class="node-ficha" href="#" @click.prevent="openFicha(n)"
