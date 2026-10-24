@@ -2356,8 +2356,13 @@
             .catch(() => { this.fpoByCert = { ...this.fpoByCert, [codigo]: {} }; });
         },
 
+        // B amb codi de mòdul: la fila desplega els C que l'acrediten (com A i C), no obre la fitxa.
+        bExpandable(row) {
+          return row.grado === 'B' && !!row.codigo && (/^MF\d{4}_\d+$/.test(row.codigo) || /^[A-Z]{3}_B_\d{4}$/.test(row.codigo));
+        },
+
         rowIsActionable(row) {
-          return !!(row.grado === 'A' || row.grado === 'C' || (['A','B','C'].includes(row.grado) && row.ficha_id) || (['D','E'].includes(row.grado) && row.ficha_url));
+          return !!(row.grado === 'A' || row.grado === 'C' || this.bExpandable(row) || (['A','B','C'].includes(row.grado) && row.ficha_id) || (['D','E'].includes(row.grado) && row.ficha_url));
         },
 
         activateRow(row) {
@@ -2369,6 +2374,9 @@
             this.expandedRows = { ...this.expandedRows, [row.id]: !this.expandedRows[row.id] };
             if (row.plan_antiguo) this.fetchFpoByCert(row.codigo);
             if (this.expandedRows[row.id]) this.fetchItinSummary(row);
+            return;
+          } else if (this.bExpandable(row)) {
+            this.fetchChildrenCLoe(row);
             return;
           } else if (['B','C'].includes(row.grado) && row.ficha_id) {
             this.loggedIn ? window.open(API_BASE + '/api/ficha-redirect?grado=' + row.grado + '&codigo=' + encodeURIComponent(row.codigo), '_blank') : this.showCentresModal();
@@ -2949,7 +2957,7 @@
                 :data-row-id="row.id"
                 :class="{ 'row-link': rowIsActionable(row), 'row-fav': favorites.has(row.id) }"
                 :tabindex="rowIsActionable(row) ? 0 : null"
-                :aria-expanded="['A','C'].includes(row.grado) ? String(!!expandedRows[row.id]) : null"
+                :aria-expanded="['A','C'].includes(row.grado) ? String(!!expandedRows[row.id]) : (bExpandable(row) ? String(!!childrenCLoeVisible[row.id]) : null)"
                 @click="activateRow(row)"
                 @keydown.enter.self="activateRow(row)"
                 @keydown.space.self.prevent="activateRow(row)">
@@ -2989,7 +2997,7 @@
                         x-text="'→ ' + ((parentBOf(row)||{}).codigo || '') + (parentsBOf(row).length > 1 ? ' +' + (parentsBOf(row).length - 1) : '')"></span>
                     </span>
                   </template>
-                  <template x-if="row.grado === 'B' && row.codigo && (/^MF\d{4}_\d+$/.test(row.codigo) || /^[A-Z]{3}_B_\d{4}$/.test(row.codigo))">
+                  <template x-if="bExpandable(row)">
                     <span class="badge-itinerari-b" style="cursor:pointer" role="button" tabindex="0"
                       @click.stop="fetchChildrenCLoe(row)" @keydown.enter.stop="fetchChildrenCLoe(row)"
                       @keydown.space.prevent.stop="fetchChildrenCLoe(row)"
@@ -3204,7 +3212,7 @@
                     </template>
                     <template x-if="Array.isArray(childrenCLoeData[row.id]) && childrenCLoeData[row.id].length > 0">
                       <div>
-                        <span x-text="t('index.itinerari.children_c_loe_cap')"></span>
+                        <strong x-text="t('index.itinerari.children_c_loe_cap')"></strong>
                         <ul class="ciclos-d-list">
                           <template x-for="cert in childrenCLoeData[row.id]" :key="cert.codigo">
                             <li><a href="#"
@@ -3215,6 +3223,11 @@
                         </ul>
                       </div>
                     </template>
+                    <div class="detall-btns" x-show="row.ficha_id">
+                      <a class="btn-doc" href="#"
+                        @click.prevent="loggedIn ? window.open(API_BASE + '/api/ficha-redirect?grado=B&codigo=' + encodeURIComponent(row.codigo), '_blank') : showCentresModal()"
+                        x-text="t('index.detall.ficha_todofp')"></a>
+                    </div>
                   </div>
                 </td>
               </tr>
