@@ -1059,12 +1059,27 @@
       padding: 0 !important;
     }
 
+    /* Mateixos marges que el bloc de detall de sobre (td 28px + .detall-inner 16px; a dalt
+       10px + 8px del .detall-ciclos-d, a baix 10px), perquè el text quedi alineat. */
     .centres-container {
       background: var(--warm2);
       border-top: 2px solid var(--dark);
-      padding: 12px 16px;
+      padding: 18px 44px 10px;
       max-height: 400px;
       overflow-y: auto;
+    }
+
+    /* Títols del bloc de centres amb la mida i el pes de "En què consisteix" */
+    .centres-container .textpetit,
+    .centres-header > span,
+    .centres-container .centre-nom {
+      font-size: var(--fs-small);
+      font-weight: 700;
+      color: var(--dark);
+    }
+
+    .centres-container .textpetit {
+      margin: 0 0 8px;
     }
 
     .centres-header {
@@ -1437,6 +1452,10 @@
 
       .results-table .detall-inner {
         padding: 16px;
+      }
+
+      .centres-container {
+        padding: 24px 44px 16px;
       }
 
       /* FPO: code is the first meta cell, no separator */
