@@ -3155,7 +3155,7 @@
                         </template>
                         <template x-if="contingutAData[row.codigo].contingut.ecp.length > 0">
                           <div class="detall-ciclos-d">
-                            <span x-text="t('index.a.competencia_b')"></span>
+                            <strong x-text="t('index.a.competencia_b')"></strong>
                             <ul class="ciclos-d-list">
                               <template x-for="ecp in contingutAData[row.codigo].contingut.ecp" :key="ecp.codigo">
                                 <li x-text="ecp.text + ' (' + ecp.codigo + ')'"></li>
@@ -3168,7 +3168,7 @@
                         </template>
                         <template x-if="contingutAData[row.codigo].parents_b.length > 0">
                           <div class="detall-ciclos-d">
-                            <span x-text="t(contingutAData[row.codigo].parents_b.length > 1 ? 'index.a.graus_b' : 'index.a.grau_b')"></span>
+                            <strong x-text="t(contingutAData[row.codigo].parents_b.length > 1 ? 'index.a.graus_b' : 'index.a.grau_b')"></strong>
                             <ul class="ciclos-d-list">
                               <template x-for="pb in contingutAData[row.codigo].parents_b" :key="pb.codigo">
                                 <li><a href="#"
