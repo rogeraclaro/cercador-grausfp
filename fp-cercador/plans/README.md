@@ -87,7 +87,7 @@ amb quins prerequisits i quins passos manuals calen al servidor.
 | 071 | Itinerari: endpoint `/api/itinerari/complet` (cadena sencera ascendents+descendents com a nodes/arestes, `depth=1` per explorar) + relació inversa D→C. Spec `docs/superpowers/specs/2026-10-23-itinerari-visual-design.md` | P2 | M | — | DONE |
 | 072 | Itinerari: pàgina pública `itinerari.html` (timeline A·B·C·D·E a l'ordinador, arbre desplegable al mòbil, clic recentra) + línia resum i botó al panell del cercador | P2 | M–L | 071 | DONE |
 | 073 | Itinerari: pestanya "Graf" (Cytoscape.js vendoritzat, excepció al CLAUDE.md) amb arrossegar/zoom i exploració per doble clic; només ordinador | P3 | M | 071, 072 | DONE |
-| 074 | Cursos E: scraper dels requisits d'accés de todofp (relació D→E: per enllaç, per nom i overrides manuals), bloc no fatal al pipeline, avís d'unmatched a l'admin i columna E a l'itinerari | P2 | M | 071 (per exposar-ho) | TODO |
+| 074 | Cursos E: scraper dels requisits d'accés de todofp (relació D→E: per enllaç, per nom i overrides manuals), bloc no fatal al pipeline, avís d'unmatched a l'admin i columna E a l'itinerari | P2 | M | 071 (per exposar-ho) | DONE |
 
 Valors de Status: `TODO` | `IN PROGRESS` | `DONE` | `BLOCKED (motiu en una línia)` | `REJECTED (motiu en una línia)`
 

@@ -1,6 +1,6 @@
 # 074 — Cursos E: requisits d'accés (relació D→E) i columna E a l'itinerari
 
-**Prioritat:** P2 · **Esforç:** M · **Depèn de:** 071 (per exposar-ho); el scraper es pot fer abans · **Estat:** TODO
+**Prioritat:** P2 · **Esforç:** M · **Depèn de:** 071 (per exposar-ho); el scraper es pot fer abans · **Estat:** DONE
 **Spec:** `docs/superpowers/specs/2026-10-23-itinerari-visual-design.md`
 
 ## Objectiu

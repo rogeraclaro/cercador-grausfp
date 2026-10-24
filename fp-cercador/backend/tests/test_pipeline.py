@@ -12,6 +12,7 @@ Cobreix:
   D-08 Retorna dict estructurat
 """
 import json
+import os
 import logging
 import unittest.mock as mock
 
@@ -84,6 +85,9 @@ def isolate_data_path(tmp_path, monkeypatch):
     # Pla 059: el bloc soc faria xarxa (Algolia) — desactivat per defecte.
     import scrapers.soc_scraper as soc
     monkeypatch.setattr(soc, 'build_soc_data', lambda **kw: {'cursos': [], 'especs': [], 'centres': []})
+    # Pla 074: el bloc ce_acces faria xarxa (fitxes E) — desactivat per defecte.
+    import scrapers.ce_acces_scraper as ces
+    monkeypatch.setattr(ces, 'build_ce_acces', lambda records, **kw: {})
 
 
 def _run_with_mocks(buscador_data, d_basico=None, d_medio=None, d_superior=None, e=None):
@@ -108,7 +112,8 @@ def test_run_returns_schema():
     )
     required_keys = {
         'total', 'by_grado', 'families', 'denominacions',
-        'denominacions_by_grado', 'meta_by_grado', 'errors', 'unknown_families', 'duration_seconds',
+        'denominacions_by_grado', 'meta_by_grado', 'errors', 'warnings', 'unknown_families',
+        'duration_seconds',
     }
     assert required_keys == set(result.keys())
     assert result['errors'] == []
@@ -333,3 +338,53 @@ def test_run_soc_error_avisa_admin_amb_ratelimit(tmp_path):
         _run_with_mocks(buscador_data={'A': [], 'B': [], 'C': [_rec_c_lomloe()]})
         _run_with_mocks(buscador_data={'A': [], 'B': [], 'C': [_rec_c_lomloe()]})
     assert len(sent) == 1   # el segon avís queda dins el rate-limit de 24 h
+
+
+# ---------------------------------------------------------------------------
+# Pla 074: requisits d'accés dels E (bloc no fatal)
+# ---------------------------------------------------------------------------
+
+@pytest.fixture
+def offline_extres(monkeypatch):
+    """Talla la xarxa dels blocs no mockejats per defecte (certificats, FPO extern)."""
+    import scrapers.certificados_scraper as cs
+    import scrapers.pipeline as pl
+
+    def no_net():
+        raise RuntimeError('sense xarxa als tests')
+    monkeypatch.setattr(cs, 'fetch_all', no_net)
+    monkeypatch.setattr(pl, 'refresh_ext_cursos', lambda data_dir: None)
+
+
+def test_ce_acces_escrit_i_unmatched_a_warnings(monkeypatch, offline_extres):
+    import scrapers.ce_acces_scraper as ces
+    import scrapers.pipeline as pl
+    monkeypatch.setattr(ces, 'build_ce_acces', lambda records, **kw: {
+        str(records[-1]['id']): {'d_ids': [], 'unmatched': ['Títol antic']}})
+
+    result = _run_with_mocks(buscador_data={'A': [], 'B': [], 'C': []}, e=[_html_rec('Curs E')])
+
+    path = os.path.join(os.path.dirname(pl.DATA_PATH), 'ce_acces.json')
+    with open(path, encoding='utf-8') as f:
+        assert list(json.load(f).values()) == [{'d_ids': [], 'unmatched': ['Títol antic']}]
+    assert len(result['warnings']) == 1
+    assert 'Curs E' in result['warnings'][0] and 'Títol antic' in result['warnings'][0]
+    assert result['errors'] == []
+
+
+def test_ce_acces_falla_conserva_fitxer_anterior(monkeypatch, offline_extres):
+    import scrapers.ce_acces_scraper as ces
+    import scrapers.pipeline as pl
+    path = os.path.join(os.path.dirname(pl.DATA_PATH), 'ce_acces.json')
+    with open(path, 'w', encoding='utf-8') as f:
+        f.write('{"1": {"d_ids": [2], "unmatched": []}}')
+
+    def boom(records, **kw):
+        raise RuntimeError('estructura canviada')
+    monkeypatch.setattr(ces, 'build_ce_acces', boom)
+
+    result = _run_with_mocks(buscador_data={'A': [], 'B': [], 'C': []}, e=[_html_rec('Curs E')])
+
+    with open(path, encoding='utf-8') as f:
+        assert json.load(f) == {'1': {'d_ids': [2], 'unmatched': []}}
+    assert len(result['warnings']) == 1 and 'estructura canviada' in result['warnings'][0]

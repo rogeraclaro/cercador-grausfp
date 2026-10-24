@@ -215,3 +215,50 @@ def test_grau_inexistent_404(client, qs):
 def test_ficha_d_no_http_es_null(client):
     body = _get(client, 'grado=D&id=12800')
     assert next(n for n in body['nodes'] if n['key'] == 'D:12800')['ficha'] is None
+
+
+# --- Pla 074: D → E via ce_acces.json ({id_e: {d_ids, unmatched}}) ---------
+
+URL_E = 'https://www.todofp.es/que-estudiar/familias-profesionales/x/ce-curs.html'
+
+
+@pytest.fixture
+def client_e(data_dir, monkeypatch, tmp_path):
+    ofertes = OFERTES + [_rec(13000, None, 'E', denominacion='Curso E', ficha_url=URL_E)]
+    data_dir['ofertes'].write_text(json.dumps(ofertes), encoding='utf-8')
+    (tmp_path / 'ce_acces.json').write_text(json.dumps({
+        # 99999 no existeix: s'ignora sense trencar res.
+        '13000': {'d_ids': [12776, 99999], 'unmatched': ['Títol antic']},
+    }), encoding='utf-8')
+    os.environ['ADMIN_TOKEN'] = 'test-token'
+    app_module.app.config['TESTING'] = True
+    with app_module.app.test_client() as c:
+        yield c
+
+
+def test_d_porta_a_e(client_e):
+    body = _get(client_e, 'grado=D&id=12776')
+    assert ('D:12776', 'E:13000', 'de') in _edges(body)
+    e = next(n for n in body['nodes'] if n['key'] == 'E:13000')
+    assert (e['grado'], e['id'], e['ficha']) == ('E', 13000, URL_E)
+
+
+def test_e_focus_mostra_els_seus_d_i_la_cadena(client_e):
+    body = _get(client_e, 'grado=E&id=13000')
+    assert body['focus'] == 'E:13000'
+    assert ('D:12776', 'E:13000', 'de') in _edges(body)
+    assert {'D:12776', 'C:ADG_C_001_3B', 'C:ADGG0408', 'A:UF0510'} <= _keys(body)
+
+
+def test_c_arriba_fins_a_e(client_e):
+    body = _get(client_e, 'grado=C&codigo=ADG_C_001_3B')
+    assert ('D:12776', 'E:13000', 'de') in _edges(body)
+
+
+def test_ce_acces_canviat_invalida_cache(client_e, tmp_path):
+    assert ('D:12776', 'E:13000', 'de') in _edges(_get(client_e, 'grado=E&id=13000'))
+    p = tmp_path / 'ce_acces.json'
+    p.write_text(json.dumps({'13000': {'d_ids': [], 'unmatched': []}}), encoding='utf-8')
+    st = p.stat()
+    os.utime(p, (st.st_atime, st.st_mtime + 10))
+    assert not any(e['kind'] == 'de' for e in _get(client_e, 'grado=E&id=13000')['edges'])

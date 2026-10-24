@@ -14,7 +14,7 @@ Fonts de cada aresta:
       LOE:    ciclos_fp.json, resolt contra els D per ficha_url i, si no, per
               denominació curta normalitzada + família. Els no resolts es
               guarden a 'unresolved' (no s'inventen ids).
-  de  ce_acces.json (Pla 074): {str(id_d): [id_e, ...]}. Encara no existeix.
+  de  ce_acces.json (Pla 074): {str(id_e): {d_ids: [id_d], unmatched: [...]}}.
 """
 from urllib.parse import urlsplit
 
@@ -162,9 +162,9 @@ def build_graph(records, *, a_loe_pares=None, bc_loe=None, bc_lomloe=None,
             else:
                 unresolved.setdefault(c_key, []).append(den)
 
-    # D → E: punt d'extensió per a ce_acces.json (Pla 074).
-    for d_id, e_ids in (ce_acces or {}).items():
-        for e_id in e_ids:
+    # D → E: requisits d'accés dels cursos E (Pla 074).
+    for e_id, entry in (ce_acces or {}).items():
+        for d_id in (entry or {}).get('d_ids', []):
             add(f'D:{d_id}', f'E:{e_id}', 'de')
 
     return {'records': by_key, 'up': up, 'down': down, 'unresolved': unresolved}

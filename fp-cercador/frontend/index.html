@@ -2950,7 +2950,7 @@
                       @keydown.space.prevent.stop="fetchChildrenCLoe(row)"
                       x-text="t('index.itinerari.children_c_loe_btn')"></span>
                   </template>
-                  <template x-if="row.grado === 'D'">
+                  <template x-if="row.grado === 'D' || row.grado === 'E'">
                     <a class="badge-itinerari-b" style="cursor:pointer;text-decoration:none" :href="itinUrl(row)" @click.stop
                       x-text="t('itin.d_link') + ' →'"></a>
                   </template>

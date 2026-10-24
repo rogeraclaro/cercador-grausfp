@@ -401,11 +401,14 @@
         ? Object.entries(state.by_grado)
           .map(([g, n]) => `<tr><td>Grau ${g}</td><td>${n}</td></tr>`).join('')
         : '';
+      // Avisos no fatals (p. ex. títols d'accés dels cursos E no lligats → ce_acces_overrides.json)
+      const warns = (state.warnings || []).map(w => `<li>${escapeHtml(w)}</li>`).join('');
       setStatus(`
         <strong>Refresh completat.</strong><br>
         Total: ${state.total} registres<br>
         Durada: ${state.duration_seconds} s
         ${rows ? `<div class="table-wrap"><table class="by-grado-table"><thead><tr><th>Grau</th><th>Registres</th></tr></thead><tbody>${rows}</tbody></table></div>` : ''}
+        ${warns ? `<details style="margin-top:8px;"><summary>Avisos (${state.warnings.length})</summary><ul style="margin-top:8px;padding-left:20px;">${warns}</ul></details>` : ''}
       `, 'success');
     }
 

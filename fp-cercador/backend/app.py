@@ -91,7 +91,7 @@ BC_LOMLOE_PATH = os.path.join(_DATA_DIR, "bc_lomloe.json")  # Pla 057: {codigo_c
 D_MODULOS_PATH = os.path.join(_DATA_DIR, "d_modulos.json")  # Pla 058: {str(id_d): {modulos, ensenanzaFP}}
 B_CONTINGUT_PATH = os.path.join(_DATA_DIR, "b_contingut.json")  # Pla 068: {codigo_b: {ecp, ra}}
 A_LOE_PARES_PATH = os.path.join(_DATA_DIR, "a_loe_pares.json")  # Pla 068: {codigo_uf: [codigo_mf]}
-CE_ACCES_PATH = os.path.join(_DATA_DIR, "ce_acces.json")  # Pla 074 (pendent): {str(id_d): [id_e]}
+CE_ACCES_PATH = os.path.join(_DATA_DIR, "ce_acces.json")  # Pla 074: {str(id_e): {d_ids, unmatched}}
 SOC_CURSOS_PATH = os.path.join(_DATA_DIR, "soc_cursos.json")    # Pla 059: cursos FPO (SOC)
 SOC_ESPECS_PATH = os.path.join(_DATA_DIR, "soc_especs.json")    # Pla 059: especialitats formatives (SOC)
 SOC_CENTRES_PATH = os.path.join(_DATA_DIR, "soc_centres.json")  # Pla 059: centres de formació (SOC)
@@ -546,6 +546,7 @@ def admin_refresh():
         by_grado=None,
         duration_seconds=None,
         errors=[],
+        warnings=[],
         phase=None,
     )
 
@@ -558,6 +559,7 @@ def admin_refresh():
                 by_grado=result["by_grado"],
                 duration_seconds=result["duration_seconds"],
                 errors=result["errors"],
+                warnings=result.get("warnings", []),
                 phase=None,
             )
             try:
@@ -1926,7 +1928,7 @@ def _get_itinerary_graph():
         bc_lomloe=_get_bc_lomloe(),
         c_lomloe_to_d=_get_c_lomloe_to_d()['index'],
         ciclos_fp=_load_json_dict(CICLOS_PATH),
-        ce_acces=_load_json_dict(CE_ACCES_PATH),  # absent fins al Pla 074: sense avís
+        ce_acces=_load_json_dict(CE_ACCES_PATH),  # opcional (Pla 074): sense avís si falta
     )
     warnings = [f'{name} no disponible — cal fer un refresh'
                 for name, path in sources.items() if not os.path.exists(path)]

@@ -49,3 +49,11 @@ def test_scheduled_refresh_history_failure_does_not_break_state():
         scheduler_service._scheduled_refresh()
     assert refresh_state.get_state()["status"] == "done"
     assert not refresh_state._lock.locked()
+
+
+def test_scheduled_refresh_exposa_warnings_no_fatals():
+    """Pla 074: els avisos no fatals del pipeline arriben a /api/refresh-status."""
+    result = {**RESULT, "warnings": ["Requisits E «X»: títol no lligat a cap D: Y"]}
+    with mock.patch("scheduler_service.pipeline.run", return_value=result):
+        scheduler_service._scheduled_refresh()
+    assert refresh_state.get_state()["warnings"] == result["warnings"]

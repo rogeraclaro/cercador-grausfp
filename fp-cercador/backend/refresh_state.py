@@ -23,6 +23,7 @@ _state = {
     "by_grado": None,
     "duration_seconds": None,
     "errors": [],
+    "warnings": [],            # avisos no fatals del darrer refresh (p. ex. Pla 074)
     "phase": None,             # nom de la fase en curs (només durant "running")
 }
 

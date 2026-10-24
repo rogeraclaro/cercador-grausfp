@@ -1,0 +1,15 @@
+{
+ "_doc": "Pla 074: {ficha_url del curs E: [ficha_url dels D que hi donen accés]}. Per als E en prosa o amb títols que no lliguen per nom. Si un E hi és, els seus títols no lligats es donen per revisats.",
+ "https://www.todofp.es/que-estudiar/familias-profesionales/agraria/ce-floristeria-arte-floral.html": [
+  "https://www.todofp.es/que-estudiar/familias-profesionales/agraria/jardineria-floristeria.html"
+ ],
+ "https://www.todofp.es/que-estudiar/familias-profesionales/comercio-marketing/ce-comercio-electronico.html": [
+  "https://www.todofp.es/que-estudiar/familias-profesionales/artes-graficas/diseno-gestion-produccion-grafica.html"
+ ],
+ "https://www.todofp.es/que-estudiar/familias-profesionales/industrias-alimentarias/ce-tecnologia-gestion-quesera.html": [
+  "https://www.todofp.es/que-estudiar/familias-profesionales/quimica/lab-analisis-control-calidad.html"
+ ],
+ "https://www.todofp.es/que-estudiar/familias-profesionales/transporte-mantenimiento-vehiculos/ce-inspeccion-tecnica-peritacion-siniestro.html": [
+  "https://www.todofp.es/que-estudiar/familias-profesionales/transporte-mantenimiento-vehiculos/mtmo-sistemas-electronicos-avionicos-aeronaves.html"
+ ]
+}

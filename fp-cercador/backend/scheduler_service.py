@@ -121,6 +121,7 @@ def _scheduled_refresh() -> None:
         by_grado=None,
         duration_seconds=None,
         errors=[],
+        warnings=[],
     )
     try:
         result = pipeline.run()
@@ -130,6 +131,7 @@ def _scheduled_refresh() -> None:
             by_grado=result["by_grado"],
             duration_seconds=result["duration_seconds"],
             errors=result["errors"],
+            warnings=result.get("warnings", []),
         )
         try:
             history.append(result)

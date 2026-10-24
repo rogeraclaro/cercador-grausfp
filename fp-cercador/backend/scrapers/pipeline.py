@@ -200,6 +200,7 @@ def run(on_progress=None) -> dict:
         "total": int,
         "by_grado": {"A": int, "B": int, "C": int, "D": int, "E": int},
         "errors": [],
+        "warnings": [str],  # avisos no fatals (p. ex. títols E no lligats, Pla 074)
         "duration_seconds": float,
     }
     """
@@ -218,6 +219,7 @@ def run(on_progress=None) -> dict:
 
     all_records: list = []
     by_grado: dict = {}
+    warnings: list = []  # avisos no fatals per a l'estat del refresc (admin)
 
     # Una sola Session compartida per A/B/C — todofp.es rota JSESSIONID a cada
     # resposta i la Session propaga les cookies actualitzades (D-Phase6 fix).
@@ -357,6 +359,23 @@ def run(on_progress=None) -> dict:
     except Exception as exc:
         logger.warning("pipeline: build_a_loe_pares ha fallat (no fatal): %s", exc)
 
+    # --- Pla 074: requisits d'accés dels cursos E (relació D→E) via todofp (no fatal) ---
+    # Va amb els id acabats d'assignar (ce_acces.json és per id d'E i de D).
+    # Si falla, es conserva el fitxer anterior. Els títols no lligats s'avisen a l'admin.
+    _report("Requisits d'accés dels cursos E (fitxes todofp)")
+    try:
+        from scrapers.ce_acces_scraper import build_ce_acces, unmatched_warnings, write_ce_acces
+        ce_acces = build_ce_acces(
+            all_records,
+            on_progress=lambda phase, i, n: _report(f'{phase} {i}/{n}'),
+        )
+        write_ce_acces(ce_acces, os.path.join(os.path.dirname(DATA_PATH), 'ce_acces.json'))
+        warnings.extend(unmatched_warnings(ce_acces, all_records))
+        logger.info("pipeline: ce_acces.json escrit (%d cursos E)", len(ce_acces))
+    except Exception as exc:
+        logger.warning("pipeline: build_ce_acces ha fallat (no fatal): %s", exc)
+        warnings.append(f"ce_acces.json no actualitzat (es conserva l'anterior): {exc}")
+
     # --- Pla 059: cursos FPO del SOC (Catalunya) via Algolia (no fatal) ---
     _report('Cursos FPO (SOC Catalunya)')
     try:
@@ -405,6 +424,7 @@ def run(on_progress=None) -> dict:
         "denominacions_by_grado": denominacions_by_grado,
         "meta_by_grado": meta_by_grado,           # NOU — per a F3 alertes
         "errors": [],
+        "warnings": warnings,
         "unknown_families": sorted(_unknown),
         "duration_seconds": round(time.time() - start, 2),
     }
