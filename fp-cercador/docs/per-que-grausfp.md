@@ -12,6 +12,12 @@ Fins ara.
 
 **Cercador FP España** consolida *tota* l'oferta formativa del sistema FP espanyol (Llei Orgànica 3/2022) en un únic cercador de resposta instantània. Sense instal·lar res. Sense pagar res. Sense frustracions.
 
+A més, el sistema està en plena transició. La Llei Orgànica 3/2022 ha reordenat l'FP en graus A–E, però l'oferta anterior no ha desaparegut: els antics certificats de professionalitat continuen vigents fins que un nou reial decret els substitueixi, i mentrestant s'ofereixen dins del Grau C amb el nom de certificats professionals (Reial decret 659/2023). El ministeri els va renovant a poc a poc, i per això avui conviuen dues versions de molts cursos: la del pla antic (codis com ADGD0108) i la del pla nou (codis com ADG_C_001_3B). Gairebé 6 de cada 10 certificats C encara són del pla antic.
+
+Qui ja té un certificat del pla antic no perd res: la llei li reconeix les competències equivalents del nou sistema. El que costa és orientar-se, perquè les dues versions tenen noms semblants però mòduls i convalidacions diferents. GrausFP marca cada registre del pla antic, permet amagar-los o veure només aquests i, a l'itinerari, distingeix quan sabem exactament quins mòduls es convaliden (pla nou) i quan la font oficial només indica que hi ha relació (pla antic).
+
+Fonts i dades: `docs/2026-10-25-pla-antic-transicio.md`.
+
 ---
 
 ## Quins grados trobaràs
