@@ -1136,6 +1136,21 @@
       font-weight: 400;
     }
 
+    /* ".centres-header button" (pensat per a la ✕) li treia el fons i l'enviava a la dreta amb
+       margin-left:auto: el botó d'avís va enganxat al cercador, amb el gap de la capçalera. */
+    .centres-header .watch-btn {
+      margin-left: 0;
+      background: var(--white);
+    }
+
+    .centres-header .watch-btn:hover {
+      background: var(--warm2);
+    }
+
+    .centres-header .watch-btn--active {
+      background: var(--ok-bg);
+    }
+
     .centres-loading {
       color: var(--warm);
       font-style: italic;
