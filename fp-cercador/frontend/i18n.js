@@ -191,7 +191,6 @@
       /* ── F5: Itineraris formatius ── */
       'index.itinerari.parent_b_title': 'Part de la unitat de competència: ',
       'index.itinerari.parent_b_prefix': ' acreditació parcial de competència de: ',
-      'index.itinerari.ciclos_d_btn': 'Cicles FP (D)',
       'index.itinerari.ciclos_d_cap': 'Cicles formatius de grau D que convaliden aquest certificat:',
       'index.itinerari.ciclos_d_none': 'No hi ha cicles associats.',
       'index.itinerari.ciclos_d_err': 'Error carregant cicles: ',
@@ -856,7 +855,6 @@
       /* ── F5: Itineraris formatius ── */
       'index.itinerari.parent_b_title': 'Parte de la unidad de competencia: ',
       'index.itinerari.parent_b_prefix': ' acreditación parcial de competencia de: ',
-      'index.itinerari.ciclos_d_btn': 'Ciclos FP (D)',
       'index.itinerari.ciclos_d_cap': 'Ciclos formativos de grado D que convalidan este certificado:',
       'index.itinerari.ciclos_d_none': 'No hay ciclos asociados.',
       'index.itinerari.ciclos_d_err': 'Error cargando ciclos: ',
