@@ -3011,6 +3011,14 @@
               <tr x-show="expandedRows[row.id] && row.grado === 'C' && row.plan_antiguo">
                 <td colspan="5" class="detall-certificat">
                   <div class="detall-inner">
+                    <div class="detall-btns">
+                      <span class="detall-hores" x-show="row.duracion_horas" x-text="row.duracion_horas + ' h.'"></span>
+                      <a :href="row.url_anexo_pdf" target="_blank" rel="noopener" class="btn-doc"
+                        x-text="t('index.detall.annexe')"></a>
+                      <a :href="row.url_europass_es" target="_blank" rel="noopener" class="btn-doc">Europass ES</a>
+                      <a :href="row.url_europass_en" target="_blank" rel="noopener" class="btn-doc">Europass EN</a>
+                      <button @click.stop="fetchBoe(row.codigo)" class="btn-doc">BOE / RD</button>
+                    </div>
                     <!-- F5: Cicles D -->
                     <template x-if="ciclosDData[row.codigo] && ciclosDData[row.codigo] !== 'loading'">
                       <div class="detall-ciclos-d">
@@ -3065,14 +3073,6 @@
                           x-text="t('index.itinerari.fpo_veure')" style="margin-left:6px;"></a>
                       </div>
                     </template>
-                    <div class="detall-btns">
-                      <span class="detall-hores" x-show="row.duracion_horas" x-text="row.duracion_horas + ' h.'"></span>
-                      <a :href="row.url_anexo_pdf" target="_blank" rel="noopener" class="btn-doc"
-                        x-text="t('index.detall.annexe')"></a>
-                      <a :href="row.url_europass_es" target="_blank" rel="noopener" class="btn-doc">Europass ES</a>
-                      <a :href="row.url_europass_en" target="_blank" rel="noopener" class="btn-doc">Europass EN</a>
-                      <button @click.stop="fetchBoe(row.codigo)" class="btn-doc">BOE / RD</button>
-                    </div>
                   </div>
                 </td>
               </tr>
