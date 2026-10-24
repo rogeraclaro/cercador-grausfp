@@ -952,6 +952,16 @@
       background: var(--warm2);
     }
 
+    /* Grau obert: la fila i els seus panells formen un grup Parchment amb un filet Umber a l'esquerra,
+       per distingir-lo dels tancats (el Parchment sol ja és el del hover i dels favorits). */
+    .results-table tbody.row-open > tr > td {
+      background: var(--warm2);
+    }
+
+    .results-table tbody.row-open > tr > td:first-child {
+      box-shadow: inset 3px 0 0 var(--warm);
+    }
+
     .checkbox-label--favs {
       cursor: pointer;
       display: inline-flex;
@@ -1345,8 +1355,17 @@
 
       .results-table tbody tr:has(> td.col-nom):hover,
       .results-table tbody tr:has(> td.col-nom).row-fav,
+      .results-table tbody.row-open > tr:has(> td.col-nom),
       .results-table tbody tr:has(> td.col-nom):focus-visible {
         background: var(--warm2);
+      }
+
+      .results-table tbody.row-open > tr:has(> td.col-nom) {
+        box-shadow: inset 3px 0 0 var(--warm);
+      }
+
+      .results-table tbody.row-open > tr:has(> td.col-nom) > td:first-child {
+        box-shadow: none;
       }
 
       .results-table tbody tr:has(> td.col-nom) > td {
@@ -2894,7 +2913,7 @@
             </template>
           </tbody>
           <template x-for="row in pagedRecords" :key="row.id">
-            <tbody>
+            <tbody :class="{ 'row-open': expandedRows[row.id] || childrenCLoeVisible[row.id] || centresVisible[row.id] }">
               <tr
                 :data-row-id="row.id"
                 :class="{ 'row-link': rowIsActionable(row), 'row-fav': favorites.has(row.id) }"
