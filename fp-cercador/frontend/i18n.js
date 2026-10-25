@@ -275,6 +275,8 @@
       'index.d.c_cap': 'Certificats C que convaliden mòduls d\'aquest cicle:',
       'index.d.e_cap': 'Cursos d\'especialització (E) als quals dona accés:',
       'index.e.d_cap': 'Cicles (D) que hi donen accés:',
+      'index.e.alt_gm': 'Sense cap d\'aquests títols: si queden places, cada comunitat autònoma pot admetre fins a un 20 % de persones amb un altre títol d\'FP i experiència o una prova, o sense títol d\'FP acreditant coneixements previs (Reial decret 659/2023, art. 120).',
+      'index.e.alt_gs': 'Sense cap d\'aquests títols: si queden places després d\'admetre els titulats, cada comunitat autònoma pot admetre persones amb un altre títol de tècnic superior i experiència o una prova, o sense títol acreditant coneixements previs. En aquest cas no s\'obté el títol de Màster d\'FP, sinó un certificat d\'aprofitament (Reial decret 659/2023, art. 121).',
 
       /* ── Mode FPO (SOC Catalunya) ── */
       'fpo.note': 'Formació professional per a l\'ocupació a Catalunya: l\'oferta pública del Servei d\'Ocupació (SOC) i els cursos d\'altres entitats formadores (patronals, sindicats…). Cada curs indica la font i el tipus (subvencionat, bonificable…). És un sistema diferent de la FP reglada i cobreix només Catalunya.',
@@ -943,6 +945,8 @@
       'index.d.c_cap': 'Certificados C que convalidan módulos de este ciclo:',
       'index.d.e_cap': 'Cursos de especialización (E) a los que da acceso:',
       'index.e.d_cap': 'Ciclos (D) que dan acceso:',
+      'index.e.alt_gm': 'Sin ninguno de estos títulos: si quedan plazas, cada comunidad autónoma puede admitir hasta un 20 % de personas con otro título de FP y experiencia o una prueba, o sin título de FP acreditando conocimientos previos (Real Decreto 659/2023, art. 120).',
+      'index.e.alt_gs': 'Sin ninguno de estos títulos: si quedan plazas tras admitir a los titulados, cada comunidad autónoma puede admitir a personas con otro título de técnico superior y experiencia o una prueba, o sin título acreditando conocimientos previos. En ese caso no se obtiene el título de Máster de FP, sino una certificación de aprovechamiento (Real Decreto 659/2023, art. 121).',
 
       /* ── Modo FPO (SOC Cataluña) ── */
       'fpo.note': 'Formación profesional para el empleo en Cataluña: la oferta pública del Servicio de Empleo (SOC) y los cursos de otras entidades formadoras (patronales, sindicatos…). Cada curso indica la fuente y el tipo (subvencionado, bonificable…). Es un sistema distinto de la FP reglada y cubre solo Cataluña.',
