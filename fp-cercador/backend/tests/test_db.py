@@ -7,6 +7,12 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 import db
 
 
+# Nombre de migracions de migrations/ (001_…sql, 002_…sql…): cada una deixa una fila a schema_version.
+LATEST_VERSION = max(
+    int(f[:3]) for f in os.listdir(db._MIGRATIONS_DIR) if f.endswith(".sql") and f[:3].isdigit()
+)
+
+
 @pytest.fixture
 def mem_db():
     conn = db.init_db(db_path=":memory:")
@@ -28,9 +34,9 @@ def test_schema_creates_all_tables(mem_db):
     assert expected.issubset(tables)
 
 
-def test_schema_version_is_1(mem_db):
+def test_schema_version_is_latest_migration(mem_db):
     v = mem_db.execute("SELECT MAX(version) FROM schema_version").fetchone()[0]
-    assert v == 1
+    assert v == LATEST_VERSION
 
 
 def test_foreign_keys_cascade(mem_db):
@@ -60,4 +66,4 @@ def test_run_migrations_idempotent(mem_db):
     count = mem_db.execute(
         "SELECT COUNT(*) FROM schema_version"
     ).fetchone()[0]
-    assert count == 1
+    assert count == LATEST_VERSION
