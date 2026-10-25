@@ -115,10 +115,10 @@ def _build_email_body(matched: list, description: str, alert_id: int, unsubscrib
         f"{bullets}\n\n"
         f"Consulta els detalls a:\n{base_url}\n\n"
         f"---\n"
-        f"Reps aquest email perquè tens una alerta activa al Cercador FP España.\n"
+        f"Reps aquest email perquè tens una alerta activa a GrausFP.\n"
         f"Per deixar de rebre'l, clica aquí (sense necessitat d'entrar):\n"
         f"{unsubscribe_url}\n\n"
-        f"Cercador FP España · {base_url}"
+        f"GrausFP · {base_url}"
     )
 
 

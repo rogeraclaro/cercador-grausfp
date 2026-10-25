@@ -119,9 +119,9 @@ def _build_email_body(new_centres: list, watch: dict, unsubscribe_token: str, ba
         f"{bullets}\n\n"
         f"Consulta'ls al cercador:\n{base_url}\n\n"
         f"---\n"
-        f"Reps aquest email perquè segueixes centres d'aquest ensenyament al Cercador FP España.\n"
+        f"Reps aquest email perquè segueixes centres d'aquest ensenyament a GrausFP.\n"
         f"Per deixar de rebre'l:\n{unsubscribe_url}\n\n"
-        f"Cercador FP España · {base_url}"
+        f"GrausFP · {base_url}"
     )
 
 

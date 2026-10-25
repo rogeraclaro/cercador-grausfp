@@ -10,7 +10,7 @@ SMTP_PORT = int(os.environ.get("BREVO_SMTP_PORT", "587"))
 SMTP_USER = os.environ.get("BREVO_SMTP_USER", "")
 SMTP_KEY = os.environ.get("BREVO_SMTP_KEY", "")
 FROM_EMAIL = os.environ.get("EMAIL_FROM", "noreply@masellas.info")
-FROM_NAME = os.environ.get("EMAIL_FROM_NAME", "Cercador FP España")
+FROM_NAME = os.environ.get("EMAIL_FROM_NAME", "GrausFP")
 
 
 def send_email(to: str, subject: str, body: str) -> None:
@@ -33,7 +33,7 @@ def send_verification_email(to: str, token: str, base_url: str) -> None:
         to,
         "Verifica el teu compte — Cercador FP",
         f"Hola,\n\nClica aquest enllaç per verificar el teu compte:\n{link}\n\n"
-        "L'enllaç caduca en 24 hores.\n\nCercador FP España",
+        "L'enllaç caduca en 24 hores.\n\nGrausFP",
     )
 
 
@@ -44,5 +44,5 @@ def send_password_reset_email(to: str, token: str, base_url: str) -> None:
         "Restableix la teva contrasenya — Cercador FP",
         f"Hola,\n\nHas sol·licitat restablir la contrasenya:\n{link}\n\n"
         "L'enllaç caduca en 1 hora. Si no has fet cap sol·licitud, ignora aquest email.\n\n"
-        "Cercador FP España",
+        "GrausFP",
     )

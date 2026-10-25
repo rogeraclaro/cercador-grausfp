@@ -63,7 +63,7 @@ def notify_if_new() -> bool:
     api_key = os.environ.get("BREVO_API_KEY", "")
     list_id = os.environ.get("BREVO_LIST_ID", "")
     sender_email = os.environ.get("BREVO_SENDER_EMAIL", "")
-    sender_name = os.environ.get("BREVO_SENDER_NAME", "Cercador FP España")
+    sender_name = os.environ.get("BREVO_SENDER_NAME", "GrausFP")
 
     if not api_key or not list_id or not sender_email:
         logger.debug("notifier: credencials Brevo no configurades, skip")
