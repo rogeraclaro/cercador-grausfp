@@ -1837,10 +1837,31 @@
               .catch(() => { });
             const ofertaParam = new URLSearchParams(location.search).get('oferta');
             if (ofertaParam) this.openOfertaFromLink(parseInt(ofertaParam));
+            // Tornada des de l'itinerari: ?grado=X&codigo=… o ?grado=D|E&id=… obre aquell grau.
+            const itinParams = new URLSearchParams(location.search);
+            if (itinParams.get('grado') && (itinParams.get('codigo') || itinParams.get('id'))) {
+              this.openRowFromItinerari(itinParams.get('grado'), itinParams.get('codigo'), itinParams.get('id'));
+            }
           } catch (e) {
             this.state = 'error';
           }
         },
+        openRowFromItinerari(grado, codigo, id) {
+          const row = this.allRecords.find(r => r.grado === grado
+            && (codigo ? r.codigo === codigo : String(r.id) === id));
+          if (!row) return;
+          this.search = row.codigo || row.denominacion;
+          this.resetPage();
+          this.$nextTick(() => {
+            // Un B sense codi de mòdul no es desplega (la fila obriria la fitxa): només el mostrem.
+            if (!(row.grado === 'B' && !this.bExpandable(row))) this.activateRow(row);
+            this.$nextTick(() => {
+              const el = document.querySelector('#results-table tr[data-row-id="' + row.id + '"]');
+              if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            });
+          });
+        },
+
         openOfertaFromLink(ofertaId) {
           const row = this.allRecords.find(r => r.id === ofertaId);
           if (!row) return;

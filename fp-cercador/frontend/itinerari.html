@@ -1309,7 +1309,7 @@
 
     <main class="content">
       <div class="toolbar">
-        <a href="index.html" class="back-link" data-i18n="itin.back">← Torna al cercador</a>
+        <a href="index.html" :href="focus ? 'index.html?' + itinQs(focus) : 'index.html'" class="back-link" data-i18n="itin.back">← Torna al cercador</a>
         <!-- Selector de vista: només a l'ordinador (al mòbil sempre arbre, sense graf) -->
         <div class="view-tabs" role="group" :aria-label="t('itin.views.aria')" x-cloak
           x-show="state === 'data' && nodes.length > 1 && !isMobile">
