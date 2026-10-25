@@ -88,6 +88,7 @@ amb quins prerequisits i quins passos manuals calen al servidor.
 | 072 | Itinerari: pàgina pública `itinerari.html` (timeline A·B·C·D·E a l'ordinador, arbre desplegable al mòbil, clic recentra) + línia resum i botó al panell del cercador | P2 | M–L | 071 | DONE |
 | 073 | Itinerari: pestanya "Graf" (Cytoscape.js vendoritzat, excepció al CLAUDE.md) amb arrossegar/zoom i exploració per doble clic; només ordinador | P3 | M | 071, 072 | DONE |
 | 074 | Cursos E: scraper dels requisits d'accés de todofp (relació D→E: per enllaç, per nom i overrides manuals), bloc no fatal al pipeline, avís d'unmatched a l'admin i columna E a l'itinerari | P2 | M | 071 (per exposar-ho) | DONE |
+| 075 | Cercador: millores UX/a11y d'una revisió externa (etiquetes de filtres traduïdes, `aria-pressed` CA/ES, Favorits amb teclat, "Suggeriments", 100 files + primera/última, "Sense centres registrats", cor visible, un sol botó d'alertes) | P2 | S–M | — | TODO |
 
 Valors de Status: `TODO` | `IN PROGRESS` | `DONE` | `BLOCKED (motiu en una línia)` | `REJECTED (motiu en una línia)`
 
