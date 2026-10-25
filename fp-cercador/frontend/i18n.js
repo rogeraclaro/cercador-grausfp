@@ -272,7 +272,9 @@
       'itin.cta': 'Veure itinerari formatiu complet',
       'itin.summary.aria': 'Resum de l\'itinerari',
       'itin.summary.loading': 'Carregant l\'itinerari…',
-      'itin.d_link': 'Itinerari',
+      'index.d.c_cap': 'Certificats C que convaliden mòduls d\'aquest cicle:',
+      'index.d.e_cap': 'Cursos d\'especialització (E) als quals dona accés:',
+      'index.e.d_cap': 'Cicles (D) que hi donen accés:',
 
       /* ── Mode FPO (SOC Catalunya) ── */
       'fpo.note': 'Formació professional per a l\'ocupació a Catalunya: l\'oferta pública del Servei d\'Ocupació (SOC) i els cursos d\'altres entitats formadores (patronals, sindicats…). Cada curs indica la font i el tipus (subvencionat, bonificable…). És un sistema diferent de la FP reglada i cobreix només Catalunya.',
@@ -938,7 +940,9 @@
       'itin.cta': 'Ver itinerario formativo completo',
       'itin.summary.aria': 'Resumen del itinerario',
       'itin.summary.loading': 'Cargando el itinerario…',
-      'itin.d_link': 'Itinerario',
+      'index.d.c_cap': 'Certificados C que convalidan módulos de este ciclo:',
+      'index.d.e_cap': 'Cursos de especialización (E) a los que da acceso:',
+      'index.e.d_cap': 'Ciclos (D) que dan acceso:',
 
       /* ── Modo FPO (SOC Cataluña) ── */
       'fpo.note': 'Formación profesional para el empleo en Cataluña: la oferta pública del Servicio de Empleo (SOC) y los cursos de otras entidades formadoras (patronales, sindicatos…). Cada curso indica la fuente y el tipo (subvencionado, bonificable…). Es un sistema distinto de la FP reglada y cubre solo Cataluña.',
