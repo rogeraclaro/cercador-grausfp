@@ -1859,6 +1859,10 @@
             const itinParams = new URLSearchParams(location.search);
             if (itinParams.get('grado') && (itinParams.get('codigo') || itinParams.get('id'))) {
               this.openRowFromItinerari(itinParams.get('grado'), itinParams.get('codigo'), itinParams.get('id'));
+              // Un sol ús: es treu de l'adreça perquè recarregar no torni a obrir aquest grau.
+              const cleanUrl = new URL(location.href);
+              ['grado', 'codigo', 'id'].forEach(k => cleanUrl.searchParams.delete(k));
+              history.replaceState(null, '', cleanUrl);
             }
           } catch (e) {
             this.state = 'error';
