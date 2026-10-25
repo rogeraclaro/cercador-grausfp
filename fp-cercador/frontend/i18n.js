@@ -275,6 +275,9 @@
       'index.d.c_cap': 'Certificats C que convaliden mòduls d\'aquest cicle:',
       'index.d.e_cap': 'Cursos d\'especialització (E) als quals dona accés:',
       'index.e.d_cap': 'Cicles (D) que hi donen accés:',
+      'nivell.1': 'Bàsic (1)',
+      'nivell.2': 'Mitjà (2)',
+      'nivell.3': 'Superior (3)',
       'index.e.alt_gm': 'Sense cap dels títols que hi donen accés: si queden places, cada comunitat autònoma pot admetre fins a un 20 % de persones amb un altre títol d\'FP i experiència o una prova, o sense títol d\'FP acreditant coneixements previs (Reial decret 659/2023, art. 120).',
       'index.e.alt_gs': 'Sense cap dels títols que hi donen accés: si queden places després d\'admetre els titulats, cada comunitat autònoma pot admetre persones amb un altre títol de tècnic superior i experiència o una prova, o sense títol acreditant coneixements previs. En aquest cas no s\'obté el títol de Màster d\'FP, sinó un certificat d\'aprofitament (Reial decret 659/2023, art. 121).',
 
@@ -945,6 +948,9 @@
       'index.d.c_cap': 'Certificados C que convalidan módulos de este ciclo:',
       'index.d.e_cap': 'Cursos de especialización (E) a los que da acceso:',
       'index.e.d_cap': 'Ciclos (D) que dan acceso:',
+      'nivell.1': 'Básico (1)',
+      'nivell.2': 'Medio (2)',
+      'nivell.3': 'Superior (3)',
       'index.e.alt_gm': 'Sin ninguno de los títulos que dan acceso: si quedan plazas, cada comunidad autónoma puede admitir hasta un 20 % de personas con otro título de FP y experiencia o una prueba, o sin título de FP acreditando conocimientos previos (Real Decreto 659/2023, art. 120).',
       'index.e.alt_gs': 'Sin ninguno de los títulos que dan acceso: si quedan plazas tras admitir a los titulados, cada comunidad autónoma puede admitir a personas con otro título de técnico superior y experiencia o una prueba, o sin título acreditando conocimientos previos. En ese caso no se obtiene el título de Máster de FP, sino una certificación de aprovechamiento (Real Decreto 659/2023, art. 121).',
 
