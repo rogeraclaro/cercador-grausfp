@@ -8,7 +8,9 @@
       'footer.obs': 'Observatori',
       'footer.priv': 'Política de privacitat',
       /* ── Feedback tab + dialog (feedback.js) ── */
-      'fb.tab': 'Feedback',
+      'fb.tab': 'Suggeriments',
+      'fb.tab.aria': "Envia'ns un suggeriment o avisa'ns d'un error",
+      'index.centres.none': 'Sense centres registrats',
       'fb.dialog.aria': 'Envia un comentari',
       'fb.title': 'Què vols dir-nos?',
       'fb.kinds.aria': 'Tipus de comentari',
@@ -102,7 +104,6 @@
       'index.filter.hideOld': 'Ocultar pla antic',
       'index.filter.onlyOld': 'Només pla antic',
       'index.filter.favs': 'Favorits',
-      'index.btn.alerts': 'Veure alertes',
       'index.btn.saveAlert': 'Desa com a alerta',
       'index.btn.exportCsv': '↓ Exporta CSV',
       'index.btn.clearFilters': 'Esborrar filtres ×',
@@ -695,7 +696,9 @@
       'footer.obs': 'Observatorio',
       'footer.priv': 'Política de privacidad',
       /* ── Feedback tab + dialog (feedback.js) ── */
-      'fb.tab': 'Feedback',
+      'fb.tab': 'Sugerencias',
+      'fb.tab.aria': 'Envíanos una sugerencia o avísanos de un error',
+      'index.centres.none': 'Sin centros registrados',
       'fb.dialog.aria': 'Envía un comentario',
       'fb.title': '¿Qué quieres decirnos?',
       'fb.kinds.aria': 'Tipo de comentario',
@@ -789,7 +792,6 @@
       'index.filter.hideOld': 'Ocultar plan antiguo',
       'index.filter.onlyOld': 'Solo plan antiguo',
       'index.filter.favs': 'Favoritos',
-      'index.btn.alerts': 'Ver alertas',
       'index.btn.saveAlert': 'Guardar como alerta',
       'index.btn.exportCsv': '↓ Exportar CSV',
       'index.btn.clearFilters': 'Borrar filtros ×',
@@ -1424,6 +1426,7 @@
     /* Actualitza lang selector visual */
     document.querySelectorAll('.lang-btn').forEach(function (btn) {
       btn.classList.toggle('lang-btn--active', btn.dataset.lang === _lang);
+      btn.setAttribute('aria-pressed', btn.dataset.lang === _lang ? 'true' : 'false');
     });
   });
 })();

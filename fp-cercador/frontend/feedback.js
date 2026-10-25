@@ -12,7 +12,8 @@
   var SENSITIVE_PARAMS = ['token', 'code', 'state', 'email', 'password', 'key', 'session'];
 
   var CA = {
-    'fb.tab': 'Feedback',
+    'fb.tab': 'Suggeriments',
+    'fb.tab.aria': "Envia'ns un suggeriment o avisa'ns d'un error",
     'fb.dialog.aria': 'Envia un comentari',
     'fb.title': 'Què vols dir-nos?',
     'fb.kinds.aria': 'Tipus de comentari',
@@ -61,6 +62,7 @@
   tab.id = 'fb-tab';
   tab.className = 'fb-tab';
   tab.textContent = tr('fb.tab');
+  tab.setAttribute('aria-label', tr('fb.tab.aria'));
 
   var dialog = document.createElement('dialog');
   dialog.className = 'fb-dialog';

@@ -1,6 +1,6 @@
 # 075 — Millores UX/a11y del cercador (revisió externa)
 
-**Prioritat:** P2 · **Esforç:** S-M · **Depèn de:** — · **Estat:** TODO
+**Prioritat:** P2 · **Esforç:** S-M · **Depèn de:** — · **Estat:** DONE (2026-10-25)
 **Origen:** anàlisi UX/UI externa (2026-10-25), verificada contra el codi. Descartats: `aria-sort` (ja existeix, `index.html:3197`) i botó "Cercar" (la cerca és instantània; un botó faria creure que cal prémer-lo).
 
 Tot és frontend (`frontend/index.html`, `frontend/i18n.js`, `frontend/feedback.js`, `frontend/site.css` si cal). Cap canvi de backend. Cada canvi d'i18n: bump `i18n.js?v=` a les 14 pàgines.
@@ -52,3 +52,9 @@ Treure l'enllaç "Veure alertes" (`index.html:3038`) de la barra de filtres; que
 
 - Si 100 files per pàgina fa que la pàgina vagi visiblement més lenta en un mòbil (render > ~200 ms), quedar-se a 50 i informar.
 - No tocar el modal d'alertes (comparteix classes amb el de registre).
+
+## Resultat (2026-10-25)
+
+- Fets: 1, 2, 3, 4, 6, 7, 8.
+- Punt 5: **es queda a 50 files** per la STOP condition: canviar de pàgina tardava ~240 ms amb 100 files i ~160 ms amb 50 (ordinador). Els botons "Primera/Última" no s'han afegit: `buildPagination` ja mostra sempre la pàgina 1 i l'última. PRODUCT.md corregit a 50.
+- Punt 1: reutilitza les claus `fpo.filter.familia` i `fpo.filter.nivell` (sense claus noves).

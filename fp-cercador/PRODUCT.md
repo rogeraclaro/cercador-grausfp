@@ -33,7 +33,7 @@ The only tool that combines, in one place: all grades A–E together, search by 
 ## Capabilities and Constraints
 
 - Stack: Flask backend (scrapers + API), static frontend in vanilla HTML/CSS/JS. Alpine.js 3.x (vendored, no CDN) is the only accepted frontend library; no other frameworks.
-- Search filters the full catalogue (~12,900 records) instantly in the browser; results render paginated at 200 rows per page.
+- Search filters the full catalogue (~12,900 records) instantly in the browser; results render paginated at 50 rows per page.
 - Bilingual UI: Catalan and Spanish, switchable instantly (`i18n.js`).
 - Responsive; deployed on a VPS (CloudPanel, Ubuntu 24.04).
 - Terminology: "Grado A–E", "família professional", "itinerari", "fitxa oficial", "FPO".
