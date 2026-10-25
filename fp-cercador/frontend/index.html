@@ -3254,6 +3254,7 @@
                           <template x-for="nd in (itinNear(row, sec[0]) || [])" :key="nd.key">
                             <li><a href="#" @click.prevent="openNodeFicha(nd)"
                                 x-text="(nd.codigo ? nd.codigo + ' — ' : '') + nd.denominacion + (nd.total && nd.shared < nd.total ? ' — ' + t('index.itinerari.ciclos_d_parcial', {n: nd.shared, m: nd.total}) : '')"></a>
+                              <span class="badge-old" x-show="nd.plan_antiguo" x-text="t('index.badge.old')"></span>
                             </li>
                           </template>
                         </ul>
