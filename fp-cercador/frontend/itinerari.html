@@ -1017,8 +1017,10 @@
           'text-wrap': 'ellipsis', 'text-max-width': 136,
         } },
         ...GRADES.map(g => ({ selector: `node[grado = "${g}"]`, style: { 'background-color': v('--g-' + g.toLowerCase()) } })),
-        // Pla antic: vora discontínua (com l'etiqueta "pla antic" del cercador)
-        { selector: 'node[?old]', style: { 'border-width': 2, 'border-style': 'dashed', 'border-color': v('--dark') } },
+        // Pla antic: vora sòlida ambre (els colors de l'etiqueta "Pla antic"); la línia discontínua és per als enllaços parcials
+        { selector: 'node[?old]', style: {
+          'border-width': 3, 'border-color': v('--amber-bg'), 'outline-width': 1.5, 'outline-color': v('--amber-ink'),
+        } },
         { selector: 'node.focus', style: {
           width: 170, height: 40, 'font-size': 13, 'font-weight': 700,
           'underlay-color': v('--dark'), 'underlay-opacity': 0.18, 'underlay-padding': 6,
@@ -1703,6 +1705,7 @@
               <span class="grade-badge" x-text="g"></span><span x-text="gradeName(g)"></span>
             </li>
           </template>
+          <li x-show="nodes.some(n => n.plan_antiguo)"><span class="badge-old" x-text="t('index.badge.old')"></span></li>
         </ul>
         <p class="graph-warn" role="alert" x-show="graphFull" x-text="t('itin.graph.cap', {n: GRAPH_CAP})"></p>
         <div class="graph-stage">
