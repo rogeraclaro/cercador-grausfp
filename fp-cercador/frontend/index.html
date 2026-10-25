@@ -1814,6 +1814,12 @@
       filterOld: 'all', filterFavs: false, sortCol: '', sortDir: 0, currentPage: 1 };
     const LIST_STATE_FIELDS = Object.keys(LIST_STATE_DEFAULTS);
 
+    // Memòria de filteredRecords. Alpine no memoritza els getters i la taula el llegeix desenes de
+    // vegades per render (paginació, recomptes...): sense això, cada canvi de pàgina refiltrava i
+    // reordenava els ~13.000 registres moltes vegades. Fora d'Alpine perquè desar-la no dispari renders.
+    let filteredMemo = { inputs: null, result: null };
+    const sameInputs = (a, b) => a.length === b.length && a.every((v, i) => v === b[i]);
+
     document.addEventListener('alpine:init', () => {
       Alpine.data('cercador', () => ({
         state: 'loading',
@@ -2111,6 +2117,10 @@
           if (this.searchMode === 'ocupacio' && this.reprOcup === 'taula' && this.loggedIn) {
             return this.ocupMatchedRecords();
           }
+          // Llegir totes les entrades cada cop fa que Alpine en continuï seguint els canvis.
+          const inputs = [this.allRecords, this.search, this.filterOld, this.filterGrado, this.filterFamilia,
+            this.filterNivel, this.filterFavs, this.favorites, this.sortCol, this.sortDir];
+          if (filteredMemo.inputs && sameInputs(filteredMemo.inputs, inputs)) return filteredMemo.result;
           const q = this.search.normalize('NFD')
             .replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
           const groups = this.expandSearch(q);
@@ -2138,6 +2148,7 @@
               return va < vb ? -dir : va > vb ? dir : 0;
             });
           }
+          filteredMemo = { inputs, result };
           return result;
         },
 
