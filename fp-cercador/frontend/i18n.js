@@ -1375,6 +1375,9 @@
     }
   };
 
+  /* ?lang=ca|es (enllaços compartits) mana sobre la preferència desada, i la desa. */
+  var _urlLang = new URLSearchParams(location.search).get('lang');
+  if (_urlLang === 'ca' || _urlLang === 'es') localStorage.setItem('lang', _urlLang);
   var _lang = localStorage.getItem('lang') || 'ca';
   var _dict = TRANSLATIONS[_lang] || TRANSLATIONS['ca'];
 

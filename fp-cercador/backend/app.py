@@ -57,6 +57,7 @@ from flask_cors import CORS
 import cd_lomloe
 import fpo_ext
 import feed
+import og_page
 import history
 import itinerary
 import itinerary_graph
@@ -1117,6 +1118,15 @@ def _resolve_ficha_id(codigo: str):
             new_map = _build_ficha_index()
             _ficha_index.update(built_at=time.monotonic(), map=new_map)
         return _ficha_index["map"].get(codigo)
+
+
+@app.route('/api/og-page/<page>')
+def og_page_es(page):
+    """Pàgina pública amb les metadades de previsualització en castellà (nginx hi envia ?lang=es)."""
+    body = og_page.render_es(page)
+    if body is None:
+        return jsonify({'error': 'not found'}), 404
+    return body, 200, {'Content-Type': 'text/html; charset=utf-8'}
 
 
 @app.route('/api/ficha-redirect')
