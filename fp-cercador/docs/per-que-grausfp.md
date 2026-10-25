@@ -1,4 +1,4 @@
-# Cercador FP España — Tot l'FP en un sol lloc
+# GrausFP — Tot l'FP en un sol lloc
 
 **Per a estudiants, orientadors i educadors**
 
@@ -10,7 +10,7 @@ L'oferta de Formació Professional a Espanya és enorme i està dispersa. Grados
 
 Fins ara.
 
-**Cercador FP España** consolida *tota* l'oferta formativa del sistema FP espanyol (Llei Orgànica 3/2022) en un únic cercador de resposta instantània. Sense instal·lar res. Sense pagar res. Sense frustracions.
+**GrausFP** consolida *tota* l'oferta formativa del sistema FP espanyol (Llei Orgànica 3/2022) en un únic cercador de resposta instantània. Sense instal·lar res. Sense pagar res. Sense frustracions.
 
 A més, el sistema està en plena transició. La Llei Orgànica 3/2022 ha reordenat l'FP en graus A–E, però l'oferta anterior no ha desaparegut: els antics certificats de professionalitat continuen vigents fins que un nou reial decret els substitueixi, i mentrestant s'ofereixen dins del Grau C amb el nom de certificats professionals (Reial decret 659/2023). El ministeri els va renovant a poc a poc, i per això avui conviuen dues versions de molts cursos: la del pla antic (codis com ADGD0108) i la del pla nou (codis com ADG_C_001_3B). Gairebé 6 de cada 10 certificats C encara són del pla antic.
 
@@ -56,7 +56,7 @@ Tot el sistema. Tot a la vegada.
 
 ### Si ets orientador
 
-El teu temps és limitat i els estudiants volen respostes concretes. Cercador FP España et dona:
+El teu temps és limitat i els estudiants volen respostes concretes. GrausFP et dona:
 
 **Visió completa del sistema** — A, B, C, D i E simultàniament. No cal canviar de pàgina ni recórrer a PDFs. Una sola cerca et mostra tot el que existeix en una família professional o nivell.
 
@@ -84,7 +84,7 @@ El teu temps és limitat i els estudiants volen respostes concretes. Cercador FP
 
 ## Per què és diferent de tot el que ja existeix
 
-| | Cercador FP España | Web del Ministeri | Buscadorcertificados | Webs autonòmiques |
+| | GrausFP | Web del Ministeri | Buscadorcertificados | Webs autonòmiques |
 |---|---|---|---|---|
 | Tots els grados (A–E) | ✅ | Dispersos en múltiples seccions | ❌ | Parcial |
 | Cerca en temps real | ✅ | ❌ | ❌ | ❌ |
@@ -127,7 +127,7 @@ Res. Ni ara ni en el futur previsible. La plataforma és un projecte sense ànim
 
 ## En resum
 
-Cercador FP España és la primera eina que dona una visió **completa, instantània i personalitzable** de tota l'oferta de Formació Professional a Espanya. Va ser construïda per a estudiants que no saben per on començar, per a orientadors que necessiten respostes ràpides i rigoroses, i per a educadors que volen entendre el sistema sencer sense perdre hores navegant webs oficials disperses.
+GrausFP és la primera eina que dona una visió **completa, instantània i personalitzable** de tota l'oferta de Formació Professional a Espanya. Va ser construïda per a estudiants que no saben per on començar, per a orientadors que necessiten respostes ràpides i rigoroses, i per a educadors que volen entendre el sistema sencer sense perdre hores navegant webs oficials disperses.
 
 **Entra. Cerca. Troba.**
 

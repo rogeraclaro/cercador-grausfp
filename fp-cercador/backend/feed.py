@@ -67,7 +67,7 @@ def render_rss(items: list, base_url: str = "https://grausfp.masellas.info") -> 
         '<?xml version="1.0" encoding="UTF-8"?>\n'
         '<rss version="2.0">\n'
         '  <channel>\n'
-        '    <title>Cercador FP España — Novetats</title>\n'
+        '    <title>GrausFP — Novetats</title>\n'
         f'    <link>{base_url}</link>\n'
         '    <description>Nous ensenyaments i canvis a l\'oferta FP publicats pel Ministeri.</description>\n'
         '    <language>ca</language>\n'
@@ -81,7 +81,7 @@ def render_json_feed(items: list, base_url: str = "https://grausfp.masellas.info
     """Genera l'estructura JSON Feed 1.1."""
     return {
         "version": "https://jsonfeed.org/version/1.1",
-        "title": "Cercador FP España — Novetats",
+        "title": "GrausFP — Novetats",
         "home_page_url": base_url,
         "feed_url": f"{base_url}/api/feed.json",
         "items": [
