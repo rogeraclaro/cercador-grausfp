@@ -2104,6 +2104,7 @@
         get filteredCount() { return this.filteredRecords.length; },
 
         async exportCSV() {
+          if (!this.loggedIn) { this.showCentresModal(); return; }
           // Els centres marcats es desen al compte, però els seus noms només es
           // carreguen en obrir el desplegable: sense això, en una visita nova la
           // columna de centres sortia buida.
