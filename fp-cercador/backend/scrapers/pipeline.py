@@ -73,6 +73,41 @@ def _write_atomic(data: list, output_path: str) -> None:
     os.replace(tmp_path, output_path)
 
 
+# d_modulos.json i ce_acces.json van per id de registre, i els id es reassignen a cada refresc.
+# Si el seu scraper falla, el fitxer anterior es conserva traduint-ne els id per ficha_url
+# (única per a cada D i E); si no, els id vells apuntarien a uns altres cicles.
+
+def id_remap_by_ficha(old_records: list, new_records: list) -> dict:
+    """id vell → id nou dels registres D i E, lligats per ficha_url."""
+    new_by_url = {r['ficha_url']: r['id'] for r in new_records
+                  if r.get('grado') in ('D', 'E') and r.get('ficha_url')}
+    return {r['id']: new_by_url[r['ficha_url']] for r in old_records
+            if r.get('grado') in ('D', 'E') and r.get('ficha_url') in new_by_url}
+
+
+def remap_d_modulos(index: dict, remap: dict) -> dict:
+    return {str(remap[int(k)]): v for k, v in index.items() if int(k) in remap}
+
+
+def remap_ce_acces(index: dict, remap: dict) -> dict:
+    return {str(remap[int(k)]): {**v, 'd_ids': [remap[d] for d in v['d_ids'] if d in remap]}
+            for k, v in index.items() if int(k) in remap}
+
+
+def _keep_previous_remapped(path: str, remap_fn, remap: dict) -> str:
+    """Reescriu el fitxer anterior amb els id nous. Retorna el text de l'avís per a l'admin."""
+    name = os.path.basename(path)
+    try:
+        with open(path, encoding='utf-8') as fh:
+            old_index = json.load(fh)
+    except (OSError, ValueError):
+        return f"{name} no actualitzat i sense versió anterior utilitzable"
+    new_index = remap_fn(old_index, remap)
+    _write_atomic(new_index, path)
+    return (f"{name} no actualitzat: es conserva l'anterior amb els id d'aquest refresc "
+            f"({len(new_index)} de {len(old_index)} entrades)")
+
+
 # ---------------------------------------------------------------------------
 # Pla 059 — historial i avís d'admin del snapshot FPO (SOC)
 # ---------------------------------------------------------------------------
@@ -299,6 +334,14 @@ def run(on_progress=None) -> dict:
     for i, record in enumerate(all_records, start=1):
         record['id'] = i
 
+    # Catàleg anterior: per traduir els id dels fitxers per id si el seu scraper falla.
+    try:
+        with open(DATA_PATH, encoding='utf-8') as fh:
+            previous_records = json.load(fh)
+    except (OSError, ValueError):
+        previous_records = []
+    id_remap = id_remap_by_ficha(previous_records, all_records)
+
     _write_atomic(all_records, DATA_PATH)
 
     # --- Pla 057: relació B→C LOMLOE via fitxes todofp (no fatal) ---
@@ -330,6 +373,9 @@ def run(on_progress=None) -> dict:
         logger.info("pipeline: d_modulos.json escrit (%d cicles D)", len(d_modulos))
     except Exception as exc:
         logger.warning("pipeline: build_d_modulos ha fallat (no fatal): %s", exc)
+        warnings.append(_keep_previous_remapped(
+            os.path.join(os.path.dirname(DATA_PATH), 'd_modulos.json'), remap_d_modulos, id_remap
+        ) + f": {exc}")
 
     # --- Pla 068: contingut (ECP + RA) de cada fitxa B via todofp (no fatal) ---
     # Com el bloc 057, necessita els ficha_id acabats de refrescar (~15 min, 4 fils).
@@ -374,7 +420,9 @@ def run(on_progress=None) -> dict:
         logger.info("pipeline: ce_acces.json escrit (%d cursos E)", len(ce_acces))
     except Exception as exc:
         logger.warning("pipeline: build_ce_acces ha fallat (no fatal): %s", exc)
-        warnings.append(f"ce_acces.json no actualitzat (es conserva l'anterior): {exc}")
+        warnings.append(_keep_previous_remapped(
+            os.path.join(os.path.dirname(DATA_PATH), 'ce_acces.json'), remap_ce_acces, id_remap
+        ) + f": {exc}")
 
     # --- Pla 059: cursos FPO del SOC (Catalunya) via Algolia (no fatal) ---
     _report('Cursos FPO (SOC Catalunya)')
