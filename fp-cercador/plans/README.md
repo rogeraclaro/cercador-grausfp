@@ -90,6 +90,7 @@ amb quins prerequisits i quins passos manuals calen al servidor.
 | 074 | Cursos E: scraper dels requisits d'accés de todofp (relació D→E: per enllaç, per nom i overrides manuals), bloc no fatal al pipeline, avís d'unmatched a l'admin i columna E a l'itinerari | P2 | M | 071 (per exposar-ho) | DONE |
 | 075 | Cercador: millores UX/a11y d'una revisió externa (etiquetes de filtres traduïdes, `aria-pressed` CA/ES, Favorits amb teclat, "Suggeriments", 100 files + primera/última, "Sense centres registrats", cor visible, un sol botó d'alertes) | P2 | S–M | — | DONE (50 files: STOP de rendiment) |
 | 076 | Identificadors estables (`ref`) per a favorits, enllaços compartits, avisos i fitxers de centres: els `id` es reassignen a cada refresc | P1 | M–L | — | DONE (2026-10-26) |
+| 077 | Una pàgina pública per grau (`/grau/<ref>`), pàgines de família, `sitemap.xml` i `robots.txt` (SEO) | P1 | M–L | 076 | DONE (2026-10-26; falta nginx al VPS) |
 
 Valors de Status: `TODO` | `IN PROGRESS` | `DONE` | `BLOCKED (motiu en una línia)` | `REJECTED (motiu en una línia)`
 
