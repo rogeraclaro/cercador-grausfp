@@ -177,6 +177,225 @@
       text-align: left;
     }
 
+    /* ── Per on començo? (entrada per a qui no coneix la FP) ── */
+    .start {
+      max-width: 960px;
+      margin: 0 0 28px;
+      border-top: 1px solid var(--dark);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .start-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 0 10px;
+    }
+
+    .start-head h2 {
+      font-family: 'DM Serif Display', serif;
+      font-size: var(--fs-title);
+      font-weight: 400;
+      letter-spacing: -0.3px;
+      color: var(--dark);
+    }
+
+    .start-close {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      border: none;
+      border-radius: 4px;
+      background: transparent;
+      color: var(--faded);
+      cursor: pointer;
+      transition: color 0.15s, background 0.15s;
+    }
+
+    .start-close:hover {
+      color: var(--dark);
+      background: var(--warm2);
+    }
+
+    .start-list {
+      list-style: none;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      border-top: 1px solid var(--border);
+    }
+
+    .start-list li + li {
+      border-left: 1px solid var(--border);
+    }
+
+    .start-item {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: start;
+      gap: 4px 12px;
+      width: 100%;
+      height: 100%;
+      padding: 16px 18px 18px;
+      border: none;
+      background: transparent;
+      font-family: inherit;
+      text-align: left;
+      color: var(--dark);
+      cursor: pointer;
+      transition: background 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .start-list li:first-child .start-item {
+      padding-left: 0;
+    }
+
+    .start-item:hover,
+    .start-item[aria-expanded="true"] {
+      background: var(--warm2);
+    }
+
+    .start-list li:first-child .start-item:hover {
+      padding-left: 0;
+      box-shadow: -18px 0 0 var(--warm2);
+    }
+
+    .start-item:focus-visible,
+    .start-close:focus-visible {
+      outline: 2px solid var(--warm);
+      outline-offset: 2px;
+    }
+
+    .start-q {
+      font-family: 'DM Serif Display', serif;
+      font-size: 19px;
+      line-height: 1.2;
+      text-wrap: balance;
+    }
+
+    .start-a {
+      grid-column: 1;
+      font-size: var(--fs-small);
+      line-height: 1.45;
+      color: var(--warm);
+    }
+
+    .start-arrow {
+      grid-column: 2;
+      grid-row: 1;
+      margin-top: 3px;
+      color: var(--warm);
+      transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1), color 0.15s;
+    }
+
+    .start-item:hover .start-arrow {
+      transform: translateX(3px);
+      color: var(--dark);
+    }
+
+    .start-item[aria-expanded="true"] .start-arrow {
+      transform: rotate(90deg);
+    }
+
+    .start-grades {
+      border-top: 1px solid var(--border);
+      padding: 6px 0 16px;
+    }
+
+    .start-grades dl {
+      display: grid;
+      grid-template-columns: 44px minmax(0, 16rem) minmax(0, 1fr);
+    }
+
+    .start-grades dt,
+    .start-grades dd {
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .start-grades .g-letter {
+      font-family: 'DM Serif Display', serif;
+      font-size: 26px;
+      line-height: 1;
+      color: var(--dark);
+    }
+
+    .start-grades .g-name {
+      padding-right: 16px;
+      font-weight: 600;
+      font-size: var(--fs-body);
+      color: var(--dark);
+    }
+
+    .start-grades .g-desc {
+      font-size: var(--fs-small);
+      line-height: 1.5;
+      color: var(--ink-soft);
+    }
+
+    .start-grades .g-foot {
+      margin-top: 12px;
+      font-size: var(--fs-small);
+      color: var(--warm);
+      max-width: 75ch;
+    }
+
+    .start-grades .g-foot a {
+      color: var(--dark);
+      text-underline-offset: 3px;
+    }
+
+    .start-hint {
+      max-width: 640px;
+      margin: 10px 0 0;
+      font-size: var(--fs-small);
+      color: var(--warm);
+    }
+
+    @media (max-width: 768px) {
+      .start-list {
+        grid-template-columns: 1fr;
+      }
+
+      .start-list li + li {
+        border-left: none;
+        border-top: 1px solid var(--border);
+      }
+
+      .start-item,
+      .start-list li:first-child .start-item {
+        padding: 12px 0;
+      }
+
+      .start-item:hover,
+      .start-list li:first-child .start-item:hover {
+        box-shadow: -16px 0 0 var(--warm2), 16px 0 0 var(--warm2);
+      }
+
+      .start-q {
+        font-size: 17px;
+      }
+
+      .start-grades dl {
+        grid-template-columns: 32px minmax(0, 1fr);
+      }
+
+      .start-grades .g-name {
+        border-bottom: none;
+        padding-bottom: 2px;
+      }
+
+      .start-grades .g-desc {
+        grid-column: 2;
+        padding-top: 0;
+      }
+
+      .start-grades dt {
+        grid-row: span 2;
+      }
+    }
+
     .fpo-banner {
       background: var(--alert-bg);
       border: 1px solid var(--alert-edge);
@@ -1796,7 +2015,7 @@
     }
   </style>
 
-  <script src="i18n.js?v=20261026d"></script>
+  <script src="i18n.js?v=20261027a"></script>
   <script src="auth.js"></script>
   <script>
     const API_BASE = window.location.hostname === 'localhost'
@@ -1883,6 +2102,10 @@
         fpoEspecs: [],           // de /api/fpo/especialitats
         fpoLoaded: false,
         fpoWarning: null,
+        // Per on començo?: la franja es pot amagar i el navegador ho recorda.
+        startHidden: (() => { try { return localStorage.getItem('startHidden') === '1'; } catch (e) { return false; } })(),
+        gradesOpen: false,
+        startHint: false,
         fpoDetall: {},           // { codi: {…} } cache de /api/fpo/especialitat/<codi>
         fpoExpanded: {},         // { codi: bool }
         fpoByCert: {},           // { codigo: {nCursos,…} } cache de /api/fpo/by-cert (integració C LOE)
@@ -2645,6 +2868,25 @@
           }
         },
 
+        hideStart() {
+          this.startHidden = true;
+          this.startHint = false;
+          try { localStorage.setItem('startHidden', '1'); } catch (e) { /* sense memòria: tornarà a sortir */ }
+        },
+
+        // Canvia de mode i posa el cursor al cercador (els inputs són dins x-if: cal esperar el render).
+        _startFocus(mode) {
+          this.setSearchMode(mode);
+          this.$nextTick(() => {
+            const input = document.querySelector('.hero .search-wrap input[type="search"]');
+            if (input) { input.focus(); input.scrollIntoView({ block: 'center', behavior: 'smooth' }); }
+          });
+        },
+
+        startOcupacio() { this.startHint = false; this._startFocus('ocupacio'); },
+
+        startTitol() { this.startHint = true; this._startFocus('nom'); },
+
         // F8 — Mode toggle + cerca per ocupació
         setSearchMode(m) {
           this.searchMode = m;
@@ -3005,6 +3247,49 @@
       <h1><span data-i18n="index.hero.h1.line1">Formació</span><br><em data-i18n="index.hero.h1.line2">Professional</em>
       </h1>
       <p class="hero-sub" data-i18n="index.hero.sub">Explora els graus disponibles a l'estat espanyol</p>
+      <section class="start" x-show="!startHidden" x-cloak aria-labelledby="start-title">
+        <div class="start-head">
+          <h2 id="start-title" x-text="t('start.title')"></h2>
+          <button type="button" class="start-close" @click="hideStart()" :aria-label="t('start.close')" :title="t('start.close')">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+          </button>
+        </div>
+        <ul class="start-list">
+          <li>
+            <button type="button" class="start-item" @click="startOcupacio()">
+              <span class="start-q" x-text="t('start.ocup.q')"></span>
+              <svg class="start-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+              <span class="start-a" x-text="t('start.ocup.a')"></span>
+            </button>
+          </li>
+          <li>
+            <button type="button" class="start-item" @click="startTitol()">
+              <span class="start-q" x-text="t('start.titol.q')"></span>
+              <svg class="start-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+              <span class="start-a" x-text="t('start.titol.a')"></span>
+            </button>
+          </li>
+          <li>
+            <button type="button" class="start-item" @click="gradesOpen = !gradesOpen" :aria-expanded="gradesOpen ? 'true' : 'false'" aria-controls="start-grades">
+              <span class="start-q" x-text="t('start.graus.q')"></span>
+              <svg class="start-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+              <span class="start-a" x-text="t('start.graus.a')"></span>
+            </button>
+          </li>
+        </ul>
+        <div class="start-grades" id="start-grades" x-show="gradesOpen">
+          <dl>
+            <template x-for="g in ['a','b','c','d','e']" :key="g">
+              <div style="display: contents">
+                <dt class="g-letter" x-text="g.toUpperCase()"></dt>
+                <dd class="g-name" x-text="t('perque.grau.' + g + '.nom')"></dd>
+                <dd class="g-desc" x-text="t('start.grau.' + g)"></dd>
+              </div>
+            </template>
+          </dl>
+          <p class="g-foot"><span x-text="t('start.graus.foot')"></span> <a href="per-que-grausfp.html" x-text="t('start.graus.more')"></a></p>
+        </div>
+      </section>
       <div class="mode-toggle" role="tablist">
         <button :class="{ active: searchMode === 'nom' }" @click="setSearchMode('nom')"
           x-text="t('index.mode.nom')"></button>
@@ -3028,6 +3313,7 @@
             autocomplete="off">
         </div>
       </template>
+      <p class="start-hint" x-show="startHint && searchMode === 'nom'" x-cloak x-text="t('start.titol.hint')"></p>
       <template x-if="searchMode === 'ocupacio'">
         <div class="search-wrap">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" width="18"
