@@ -58,6 +58,7 @@ import cd_lomloe
 import fpo_ext
 import feed
 import og_page
+import grau_page
 import history
 import itinerary
 import itinerary_graph
@@ -81,6 +82,8 @@ if not ADMIN_TOKEN:
 
 SECRET_KEY = os.environ.get("SECRET_KEY", "")
 BASE_URL = os.environ.get("BASE_URL", "http://localhost:5001")
+# Pla 077: domini públic per a canonical, og:url, sitemap i robots (sense barra final).
+SITE_URL = os.environ.get("SITE_URL", "https://grausfp.masellas.info").rstrip("/")
 
 DATA_PATH = os.path.normpath(
     os.path.join(os.path.dirname(__file__), "data", "ofertes.json")
@@ -1814,6 +1817,24 @@ def api_a_loe_pares():
     return jsonify(_get_a_loe_pares())
 
 
+def _contingut_a(codigo: str, idx: dict) -> tuple[list, dict]:
+    """
+    Pla 068: B pares d'un A i "en què consisteix" l'A = el seu RA (mateix sufix,
+    _A_ → _RA_) dins la fitxa del B pare, més l'ECP de tots els pares sense
+    duplicats. Els B LOE no tenen RA. Retorna (pares, {'ra': … | None, 'ecp': [...]}).
+    """
+    parents = itinerary.get_parents_b({'grado': 'A', 'codigo': codigo}, idx)
+    b_contingut = _get_b_contingut()
+    ra_codigo = codigo.replace('_A_', '_RA_', 1)
+    ra = None
+    ecp: list = []
+    for p in parents:
+        b_cont = b_contingut.get(p['codigo'], {})
+        ra = ra or next((x for x in b_cont.get('ra', []) if x.get('codigo') == ra_codigo), None)
+        ecp += [x for x in b_cont.get('ecp', []) if x not in ecp]
+    return parents, {'ra': ra, 'ecp': ecp}
+
+
 @app.route('/api/itinerari')
 def api_itinerari():
     """F5: Retorna l'itinerari local per a un registre A, B o C LOE.
@@ -1910,24 +1931,12 @@ def api_itinerari():
         return jsonify({'error': 'Dades no disponibles'}), 503
 
     if grado == 'A':
-        mock_rec = {'grado': 'A', 'codigo': codigo}
         # Ampliació 068: un A LOE pot tenir diversos B pares; 'parent_b' (el
         # primer) es manté per compatibilitat.
-        parents = itinerary.get_parents_b(mock_rec, idx)
-        # Pla 068: "en què consisteix" l'A = el seu RA (mateix sufix, _A_ → _RA_)
-        # dins la fitxa del B pare, més l'ECP de tots els pares sense duplicats.
-        # Els B LOE no tenen RA.
-        b_contingut = _get_b_contingut()
-        ra_codigo = codigo.replace('_A_', '_RA_', 1)
-        ra = None
-        ecp: list = []
-        for p in parents:
-            b_cont = b_contingut.get(p['codigo'], {})
-            ra = ra or next((x for x in b_cont.get('ra', []) if x.get('codigo') == ra_codigo), None)
-            ecp += [x for x in b_cont.get('ecp', []) if x not in ecp]
+        parents, contingut = _contingut_a(codigo, idx)
         return jsonify({'parent_b': _serialize(parents[0]) if parents else None,
                         'parents_b': [_serialize(p) for p in parents],
-                        'contingut': {'ra': ra, 'ecp': ecp}})
+                        'contingut': contingut})
 
     # grado == 'B'
     mock_rec = {'grado': 'B', 'codigo': codigo}
@@ -2065,6 +2074,200 @@ def api_itinerari_complet():
     body = itinerary_graph.subgraph(data['graph'], focus, depth=1 if depth else None)
     body['warnings'] = data['warnings'] + body['warnings']
     return jsonify(body)
+
+
+# ---------------------------------------------------------------------------
+# Pla 077 — Pàgines públiques per grau i família, sitemap i robots (SEO)
+# nginx reescriu /grau/…, /familia/…, /families, /sitemap.xml i /robots.txt cap aquí.
+# ---------------------------------------------------------------------------
+
+_seo_cache: dict = {"key": None, "data": None}
+_SEO_CACHE_CONTROL = 'public, max-age=3600'
+
+
+def _get_seo_data() -> dict | None:
+    """
+    Índexs derivats per a les pàgines públiques: ocupacions per grau, bc_loe,
+    ce_acces, famílies i sitemap. Es refan quan canvia el mtime d'ofertes.json
+    (o d'un dels fitxers que hi intervenen). None si el catàleg no es pot llegir.
+    """
+    catalog = _get_catalog()
+    if not catalog:
+        return None
+
+    def _mt(path):
+        return os.path.getmtime(path) if os.path.exists(path) else None
+
+    key = (_catalog_cache["key"], _mt(OCUPACIONES_PATH), _mt(BC_LOE_PATH), _mt(CE_ACCES_PATH),
+           SITE_URL)
+    if _seo_cache["key"] == key and _seo_cache["data"] is not None:
+        return _seo_cache["data"]
+
+    # Ocupacions: els C per codi; els D/E per ficha_url (estable) o, si no, per id vigent.
+    ocupacions: dict = {}
+    for e in _get_ocupaciones():
+        if e.get('grado') == 'C':
+            k = ('C', e.get('codigo'))
+        else:
+            k = ('url', e['ficha_url']) if e.get('ficha_url') else ('id', e.get('id'))
+        noms = ocupacions.setdefault(k, [])
+        if e.get('ocupacio') and e['ocupacio'] not in noms:
+            noms.append(e['ocupacio'])
+
+    families: dict = {}  # prefix → (família, [registres])
+    for r in catalog["records"]:
+        prefix = oferta_ref.family_prefix(r.get('familia'))
+        if prefix:
+            families.setdefault(prefix, (r['familia'], []))[1].append(r)
+    families_list = sorted(((p, f, len(recs)) for p, (f, recs) in families.items()),
+                           key=lambda t: t[1])
+
+    lastmod = date.fromtimestamp(os.path.getmtime(DATA_PATH)).isoformat()
+    entries = [(SITE_URL + path, lastmod) for path in grau_page.STATIC_PAGES]
+    entries += [(f'{SITE_URL}/familia/{p}', lastmod) for p, _, _ in families_list]
+    entries += [(SITE_URL + grau_page.grau_path(r['ref']), lastmod) for r in catalog["records"]]
+
+    data = {
+        'ocupacions': ocupacions,
+        'bc_loe': _load_json_dict(BC_LOE_PATH) or {},
+        'ce_acces': _load_json_dict(CE_ACCES_PATH) or {},
+        'families': families,
+        'families_list': families_list,
+        'lastmod': lastmod,
+        'sitemap': grau_page.render_sitemap(entries),
+    }
+    _seo_cache.update(key=key, data=data)
+    return data
+
+
+def _grau_centres(ref: str) -> dict:
+    """Recompte de centres (el mateix que /api/centres/count, heretats inclosos) i per comunitat."""
+    try:
+        ids = _get_effective_oferta_centres().get(ref, [])
+    except (OSError, ValueError) as exc:
+        logger.warning("_grau_centres: centres no disponibles: %s", exc)
+        return {'total': 0, 'per_ccaa': []}
+    per_ccaa: dict = {}
+    for i in ids:
+        ccaa = (_centres_index.get(i) or {}).get('ccaa')
+        if ccaa:
+            per_ccaa[ccaa] = per_ccaa.get(ccaa, 0) + 1
+    return {'total': len(ids),
+            'per_ccaa': sorted(per_ccaa.items(), key=lambda kv: (-kv[1], kv[0]))}
+
+
+def _grau_context(rec: dict, seo: dict) -> dict:
+    """Dades de la pàgina d'un grau (grau_page.render_grau) a partir dels índexs en memòria."""
+    grado, codigo, ref = rec.get('grado'), rec.get('codigo'), rec['ref']
+
+    previs: list = []
+    seguents: list = []
+    graph_data = _get_itinerary_graph()
+    focus = f'{grado}:{ref}'
+    if graph_data and focus in graph_data['graph']['records']:
+        sub = itinerary_graph.subgraph(graph_data['graph'], focus, depth=1)
+        nodes = {n['key']: n for n in sub['nodes']}
+        for e in sub['edges']:
+            if e['to'] == focus and nodes[e['from']] not in previs:
+                previs.append(nodes[e['from']])
+            elif e['from'] == focus and nodes[e['to']] not in seguents:
+                seguents.append(nodes[e['to']])
+    order = lambda n: (n.get('grado') or '', n.get('denominacion') or '')  # noqa: E731
+    previs.sort(key=order)
+    seguents.sort(key=order)
+
+    contingut: dict = {}
+    if grado == 'A' and codigo:
+        _, c = _contingut_a(codigo, _get_itinerary_index())
+        contingut = {'ra': [c['ra']] if c['ra'] else [], 'ecp': c['ecp']}
+    elif grado == 'B' and codigo:
+        c = _get_b_contingut().get(codigo) or {}
+        contingut = {'ecp': c.get('ecp') or [], 'ra': c.get('ra') or []}
+    elif grado == 'C' and rec.get('plan_antiguo') and codigo:
+        b_by_uc = _get_itinerary_index().get('b_by_uc', {})
+        contingut = {'uc': [{'codigo': uc, 'nombre': (b_by_uc.get(uc) or {}).get('denominacion')}
+                            for uc in seo['bc_loe'].get(codigo, [])]}
+    elif grado == 'D':
+        modulos = (_get_d_modulos().get(str(rec.get('id'))) or {}).get('modulos') or []
+        contingut = {'modulos': [m['name'] for m in modulos if m.get('name')]}
+    elif grado == 'E':
+        # Els D que hi donen accés ja són els veïns "previs" del graf (ce_acces.json):
+        # es mostren com a requisits d'accés i no es repeteixen a l'itinerari.
+        entry = seo['ce_acces'].get(str(rec.get('id'))) or {}
+        contingut = {'acceso': previs, 'acceso_otros': entry.get('unmatched') or []}
+        previs = []
+
+    if grado == 'C':
+        ocup_key = ('C', codigo)
+    else:
+        ocup_key = ('url', rec['ficha_url']) if rec.get('ficha_url') else ('id', rec.get('id'))
+
+    return {
+        'contingut': contingut,
+        'ocupaciones': seo['ocupacions'].get(ocup_key, []),
+        'centres': _grau_centres(ref),
+        'previs': previs,
+        'seguents': seguents,
+        'familia_prefix': oferta_ref.family_prefix(rec.get('familia')),
+        'lastmod': seo['lastmod'],
+    }
+
+
+def _seo_response(body: str, status: int = 200, mimetype: str = 'text/html'):
+    cache = _SEO_CACHE_CONTROL if status == 200 else 'public, max-age=300'
+    return body, status, {'Content-Type': f'{mimetype}; charset=utf-8', 'Cache-Control': cache}
+
+
+def _seo_error(status: int):
+    return _seo_response(grau_page.render_error(SITE_URL, not_found=status == 404), status)
+
+
+@app.route('/api/grau/<path:ref>')
+def grau_publica(ref):
+    """Pàgina pública d'un grau (/grau/<ref>). 404 en HTML si el ref no existeix."""
+    seo = _get_seo_data()
+    if seo is None:
+        return _seo_error(503)
+    rec = _resolve_oferta(ref=ref) if oferta_ref.REF_RE.match(ref) else None
+    if not rec:
+        return _seo_error(404)
+    return _seo_response(grau_page.render_grau(rec, _grau_context(rec, seo), SITE_URL))
+
+
+@app.route('/api/familia/<path:prefix>')
+def familia_publica(prefix):
+    """Graus d'una família professional (/familia/<prefix>), agrupats per grau."""
+    seo = _get_seo_data()
+    if seo is None:
+        return _seo_error(503)
+    if prefix not in seo['families']:
+        return _seo_error(404)
+    familia, records = seo['families'][prefix]
+    return _seo_response(grau_page.render_familia(familia, prefix, records, SITE_URL))
+
+
+@app.route('/api/families')
+def families_publica():
+    """Llista de famílies professionals (/families)."""
+    seo = _get_seo_data()
+    if seo is None:
+        return _seo_error(503)
+    return _seo_response(grau_page.render_families(seo['families_list'], SITE_URL))
+
+
+@app.route('/api/sitemap.xml')
+def sitemap_xml():
+    """Sitemap dinàmic: pàgines estàtiques, famílies i un URL per grau (/sitemap.xml)."""
+    seo = _get_seo_data()
+    if seo is None:
+        return _seo_error(503)
+    return _seo_response(seo['sitemap'], mimetype='application/xml')
+
+
+@app.route('/api/robots.txt')
+def robots_txt():
+    """robots.txt amb la línia Sitemap: segons SITE_URL (/robots.txt)."""
+    return _seo_response(grau_page.render_robots(SITE_URL), mimetype='text/plain')
 
 
 # ---------------------------------------------------------------------------

@@ -26,6 +26,11 @@ for _prefix, _familia in PREFIX_MAP.items():
     _PREFIX_BY_FAMILIA.setdefault(_familia, _prefix)
 
 
+def family_prefix(familia) -> str | None:
+    """Prefix canònic d'una família (el de PREFIX_MAP), o None si no en té."""
+    return _PREFIX_BY_FAMILIA.get(familia)
+
+
 def duplicated_codes(records) -> set:
     """Codis A/B/C que surten a més d'un registre."""
     counts = Counter(r.get('codigo') for r in records
