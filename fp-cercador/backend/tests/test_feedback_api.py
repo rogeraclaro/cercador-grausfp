@@ -81,7 +81,7 @@ def test_taula_feedback_te_les_columnes_i_estat_per_defecte():
         row = conn.execute("SELECT status, created_at, updated_at FROM feedback").fetchone()
         assert row["status"] == "new"
         assert row["created_at"] and row["updated_at"]
-        assert conn.execute("SELECT MAX(version) FROM schema_version").fetchone()[0] == 11
+        assert conn.execute("SELECT MAX(version) FROM schema_version").fetchone()[0] >= 11
     finally:
         conn.close()
 

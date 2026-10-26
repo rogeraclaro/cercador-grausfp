@@ -8,6 +8,8 @@ Funcions públiques:
   query_one(conn, sql, params) → fetchone()
   query_all(conn, sql, params) → fetchall()
 """
+import json
+import logging
 import os
 import sqlite3
 
@@ -48,8 +50,105 @@ def run_migrations(conn):
         with open(filepath, encoding="utf-8") as fh:
             sql = fh.read()
         conn.executescript(sql)
+        if version == 12:
+            _backfill_refs_from_catalog(conn)
 
     conn.commit()
+
+
+# ---------------------------------------------------------------------------
+# Pla 076 — emplenat de la clau estable `ref` (migració 012)
+# ---------------------------------------------------------------------------
+
+_OFERTES_PATH = os.path.join(os.path.dirname(__file__), "data", "ofertes.json")
+_logger = logging.getLogger(__name__)
+
+
+def _pending_refs(conn) -> bool:
+    return bool(conn.execute("SELECT 1 FROM list_items WHERE oferta_ref IS NULL LIMIT 1").fetchone()
+                or conn.execute("SELECT 1 FROM centres_watch LIMIT 1").fetchone())
+
+
+def _backfill_refs_from_catalog(conn):
+    """Emplena els ref amb ofertes.json. Fail-soft: sense catàleg queden a NULL
+    (scripts/add_refs_076.py ho pot tornar a fer)."""
+    if not _pending_refs(conn):
+        return None
+    try:
+        with open(_OFERTES_PATH, encoding="utf-8") as fh:
+            records = json.load(fh)
+        counts = backfill_refs(conn, records)
+    except (OSError, ValueError) as exc:
+        _logger.warning("migració 012: refs no emplenats (%s)", exc)
+        return None
+    _logger.warning("migració 012: %s", counts)
+    return counts
+
+
+def backfill_refs(conn, records) -> dict:
+    """
+    Tradueix al ref vigent els favorits sense oferta_ref i les claus d'avís de
+    centres que encara no són un ref (codigo o str(id)). Idempotent.
+
+    Favorits: l'oferta_id pot apuntar a un altre grau si hi ha hagut refrescos
+    pel mig; si el favorit té oferta_codigo i no coincideix, mana el codi.
+    Avisos: tenen la denominació, que desfà els id desplaçats i els codis repetits.
+    """
+    from oferta_ref import ensure_refs
+
+    ensure_refs(records)
+    by_id = {r["id"]: r for r in records}
+    by_ref = {r["ref"]: r for r in records}
+    by_codigo: dict = {}
+    by_denom: dict = {}
+    for r in records:
+        if r.get("codigo"):
+            by_codigo.setdefault(r["codigo"], []).append(r)
+        by_denom.setdefault(r.get("denominacion"), r)
+
+    counts = dict.fromkeys(("favorits", "favorits_resolts", "favorits_corregits",
+                            "favorits_sense_resoldre", "avisos", "avisos_actualitzats",
+                            "avisos_sense_resoldre"), 0)
+
+    for item in conn.execute(
+            "SELECT id, oferta_id, oferta_codigo FROM list_items WHERE oferta_ref IS NULL").fetchall():
+        counts["favorits"] += 1
+        at_id = by_id.get(item["oferta_id"])
+        codigo = item["oferta_codigo"]
+        rec = at_id
+        if codigo and (not at_id or at_id.get("codigo") != codigo):
+            rec = (by_codigo.get(codigo) or [None])[0]
+            if rec and at_id:
+                counts["favorits_corregits"] += 1
+        if not rec:
+            counts["favorits_sense_resoldre"] += 1
+            continue
+        conn.execute("UPDATE list_items SET oferta_ref = ?, oferta_id = ?, oferta_codigo = ? WHERE id = ?",
+                     (rec["ref"], rec["id"], rec.get("codigo"), item["id"]))
+        counts["favorits_resolts"] += 1
+
+    for watch in conn.execute("SELECT id, oferta_key, oferta_denom FROM centres_watch").fetchall():
+        key, denom = watch["oferta_key"], watch["oferta_denom"]
+        if key in by_ref:
+            continue
+        counts["avisos"] += 1
+        if key.isdigit():
+            rec = by_id.get(int(key))
+            if not rec or rec.get("denominacion") != denom:
+                rec = by_denom.get(denom)
+        else:
+            candidates = by_codigo.get(key) or []
+            rec = next((r for r in candidates if r.get("denominacion") == denom),
+                       candidates[0] if candidates else None)
+        # OR IGNORE: si l'usuari ja segueix aquest ref, l'avís vell es deixa tal qual.
+        if rec and conn.execute("UPDATE OR IGNORE centres_watch SET oferta_key = ? WHERE id = ?",
+                                (rec["ref"], watch["id"])).rowcount:
+            counts["avisos_actualitzats"] += 1
+        else:
+            counts["avisos_sense_resoldre"] += 1
+
+    conn.commit()
+    return counts
 
 
 def init_db(db_path=None):
