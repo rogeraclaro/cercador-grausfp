@@ -22,6 +22,7 @@ import time
 
 from dotenv import load_dotenv
 
+from oferta_ref import assign_refs
 from scrapers.buscador_scraper import parse_buscador_all
 from scrapers.families import FAMILY_ALIASES, PREFIX_MAP
 from scrapers.html_scraper import (
@@ -333,6 +334,10 @@ def run(on_progress=None) -> dict:
     # Afegir id seqüencial 1-based
     for i, record in enumerate(all_records, start=1):
         record['id'] = i
+
+    # Pla 076: clau estable (favorits, enllaços, centres). Fail fast si n'hi ha de
+    # repetits: ofertes.json no s'escriu.
+    assign_refs(all_records)
 
     # Catàleg anterior: per traduir els id dels fitxers per id si el seu scraper falla.
     try:

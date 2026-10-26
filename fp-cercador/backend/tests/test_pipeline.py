@@ -11,6 +11,7 @@ Cobreix:
   D-03 IDs seqüencials A→B→C→D→E
   D-08 Retorna dict estructurat
 """
+import itertools
 import json
 import os
 import logging
@@ -35,9 +36,15 @@ PATCH_PARSE_E         = 'scrapers.pipeline.parse_grado_e'
 # Helper de registres
 # ---------------------------------------------------------------------------
 
-def _rec(codigo='IFC_A_0001_AB', denominacion='Den X',
+# Pla 076: el pipeline falla si dos registres tenen el mateix ref, i per defecte
+# cada registre de prova té un codi i una ficha_url pròpies.
+_SEQ = itertools.count(1)
+
+
+def _rec(codigo=None, denominacion='Den X',
          familia='Informática y Comunicaciones', nivel=1):
     """Registre mínim amb el schema del buscador (A/B/C)."""
+    codigo = codigo or f'IFC_A_{next(_SEQ):04d}_XY'
     return {
         'codigo': codigo,
         'denominacion': denominacion,
@@ -58,7 +65,7 @@ def _html_rec(denominacion='Den HTML', familia='Actividades Físicas y Deportiva
         'nivel': None,
         'plan_antiguo': False,
         'observaciones': '',
-        'ficha_url': 'https://www.todofp.es/x',
+        'ficha_url': f'https://www.todofp.es/que-estudiar/familias-profesionales/fam/x{next(_SEQ)}.html',
     }
 
 
@@ -388,3 +395,25 @@ def test_ce_acces_falla_conserva_fitxer_anterior(monkeypatch, offline_extres):
     with open(path, encoding='utf-8') as f:
         assert json.load(f) == {'1': {'d_ids': [2], 'unmatched': []}}
     assert len(result['warnings']) == 1 and 'estructura canviada' in result['warnings'][0]
+
+
+# ---------------------------------------------------------------------------
+# Pla 076 — clau estable ref
+# ---------------------------------------------------------------------------
+
+def test_run_afegeix_ref_a_cada_registre():
+    _run_with_mocks(buscador_data={'A': [_rec('IFC_A_0001_AB')], 'B': [], 'C': []},
+                    e=[_html_rec()])
+    import scrapers.pipeline as pl
+    with open(pl.DATA_PATH) as f:
+        records = json.load(f)
+    assert records[0]['ref'] == 'IFC_A_0001_AB'
+    assert records[1]['ref'].startswith('fam~x')
+
+
+def test_fail_fast_si_hi_ha_refs_repetits():
+    import scrapers.pipeline as pl
+    with pytest.raises(ValueError, match='refs repetits'):
+        _run_with_mocks(buscador_data={'A': [_rec('IFC_A_0001_AB'), _rec('IFC_A_0001_AB')],
+                                       'B': [], 'C': []})
+    assert not os.path.exists(pl.DATA_PATH)

@@ -17,8 +17,8 @@ El pipeline reassigna `id` seqüencials a cada refresc del catàleg (`backend/sc
 Camp nou `ref` a cada registre d'`ofertes.json`, calculat al pipeline:
 
 - A/B/C: `codigo`. Excepció: 21 codis A i 21 codis B de pla antic es repeteixen entre famílies (`MF0432_1` ×6). Per a aquests, `codigo~<prefix família>` (prefix de `PREFIX_MAP`, p. ex. `MF0432_1~ADG`).
-  **Decisió del propietari:** sufix sempre que el codi estigui repetit (recomanat; no fusiona favorits de famílies diferents) o fusionar-los.
-- D/E: l'últim segment de `ficha_url` sense `.html` (slug de todofp, únic als 233 registres).
+  **Decisió del propietari (2026-10-26):** sufix sempre que el codi estigui repetit (no es fusionen favorits de famílies diferents).
+- D/E: els dos últims segments de `ficha_url` sense `.html`, units amb `~` (`<carpeta família>~<slug>`, p. ex. `informatica-comunicaciones~informatica-oficina`). El slug sol no és únic: 9 cicles D surten a dues famílies (18 registres a producció, 2026-10-26). **Decisió del propietari (2026-10-26):** la família va a tots els D/E, no només als repetits, perquè el ref no canviï si un cicle apareix més endavant en una segona família. Amb aquesta regla, 0 repetits als 233 D/E de producció.
 - Test: `ref` únic a tot el catàleg; el pipeline falla (fail fast) si n'hi ha de repetits.
 
 ## Passos (TDD al backend)
