@@ -117,6 +117,8 @@
       'index.results.zero': 'Cap resultat trobat',
       'index.results.one': '1 resultat trobat',
       'index.results.many': '{n} resultats trobats',
+      'index.data_updated': 'dades actualitzades el {date}',
+      'index.centres.none_why': 'Les fonts oficials encara no publiquen els centres d\'aquest grau. No vol dir que no s\'imparteixi: consulta la fitxa oficial o el departament d\'educació de la teva comunitat.',
 
       /* ── index.html — taula ── */
       'index.col.nom': 'Denominació',
@@ -807,6 +809,8 @@
       'index.results.zero': 'Ningún resultado encontrado',
       'index.results.one': '1 resultado encontrado',
       'index.results.many': '{n} resultados encontrados',
+      'index.data_updated': 'datos actualizados el {date}',
+      'index.centres.none_why': 'Las fuentes oficiales aún no publican los centros de este grado. No significa que no se imparta: consulta la ficha oficial o la consejería de educación de tu comunidad.',
 
       /* ── index.html — taula ── */
       'index.col.nom': 'Denominación',
