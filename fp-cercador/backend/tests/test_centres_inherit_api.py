@@ -23,14 +23,14 @@ OFERTES = [
     {'id': 52, 'codigo': 'HOT_B_9999', 'grado': 'B', 'plan_antiguo': False, 'denominacion': 'B nou orfe', 'familia': 'H', 'nivel': 3},
     # Pla 058: un cicle D de la mateixa família que HOT_C_005_5B
     {'id': 700, 'codigo': None, 'grado': 'D', 'plan_antiguo': False, 'denominacion': 'T.S. Prova',
-     'familia': 'H', 'nivel': 3, 'ficha_url': 'https://x/y.html'},
+     'familia': 'H', 'nivel': 3, 'ficha_url': 'https://x/h/y.html'},
 ]
 CENTRES = [
     {'id': 'M1', 'nombre': 'IES A', 'provincia': 'BARCELONA', 'localitat': 'BCN'},
     {'id': 'M2', 'nombre': 'IES B', 'provincia': 'GIRONA', 'localitat': 'GIR'},
     {'id': 'M3', 'nombre': 'IES C', 'provincia': 'LLEIDA', 'localitat': 'LLE'},
 ]
-OFERTA_CENTRES = {'ADGG0408': ['M1', 'M2'], '60': ['M3']}
+OFERTA_CENTRES = {'ADGG0408': ['M1', 'M2'], 'HOT_C_005_5B': ['M3']}  # per ref (Pla 076)
 BC_LOE = {'ADGG0408': ['UC0969_1']}
 BC_LOMLOE = {'HOT_C_005_5B': ['HOT_B_0171']}
 # Pla 058: el mòdul del D 700 coincideix amb la denominació del B id 50 ('B nou').
@@ -110,9 +110,9 @@ def test_api_centres_a_loe_hereta_via_b(client):
 def test_api_centres_count_inclou_heretats_i_no_orfes(client):
     count = client.get('/api/centres/count').get_json()
     assert count['ADGG0408'] == 2
-    assert count['2'] == 2
-    assert count['3'] == 2
-    assert '4' not in count
+    assert count['MF0969_1'] == 2
+    assert count['UF0969'] == 2
+    assert 'MF9999_9' not in count
 
 
 def test_api_centres_directes_no_canvien(client):
@@ -123,9 +123,9 @@ def test_api_centres_directes_no_canvien(client):
 def test_watch_service_load_inclou_heretats(data_dir):
     oferta_centres, centres_index = centres_watch_service._load_centres_data()
     assert oferta_centres['ADGG0408'] == ['M1', 'M2']
-    assert oferta_centres['2'] == ['M1', 'M2']
-    assert oferta_centres['3'] == ['M1', 'M2']   # A LOE via a_loe_pares
-    assert '4' not in oferta_centres
+    assert oferta_centres['MF0969_1'] == ['M1', 'M2']
+    assert oferta_centres['UF0969'] == ['M1', 'M2']   # A LOE via a_loe_pares
+    assert 'MF9999_9' not in oferta_centres
     assert set(centres_index) == {'M1', 'M2', 'M3'}
 
 
@@ -133,8 +133,8 @@ def test_watch_service_load_sense_bc_loe_es_fail_soft(data_dir):
     os.remove(data_dir['bc_loe'])
     oferta_centres, _ = centres_watch_service._load_centres_data()
     assert oferta_centres['ADGG0408'] == ['M1', 'M2']
-    assert '2' not in oferta_centres
-    assert oferta_centres['50'] == ['M3']  # LOMLOE segueix funcionant
+    assert 'MF0969_1' not in oferta_centres
+    assert oferta_centres['HOT_B_0171'] == ['M3']  # LOMLOE segueix funcionant
 
 
 # ---------------------------------------------------------------------------
@@ -153,15 +153,15 @@ def test_api_centres_a_lomloe_hereta_via_b(client):
 
 def test_api_centres_count_lomloe(client):
     count = client.get('/api/centres/count').get_json()
-    assert count['50'] == 1
-    assert count['51'] == 1
-    assert '52' not in count
+    assert count['HOT_B_0171'] == 1
+    assert count['HOT_A_0171_01'] == 1
+    assert 'HOT_B_9999' not in count
 
 
 def test_watch_service_load_inclou_lomloe(data_dir):
     oferta_centres, _ = centres_watch_service._load_centres_data()
-    assert oferta_centres['50'] == ['M3']
-    assert oferta_centres['51'] == ['M3']
+    assert oferta_centres['HOT_B_0171'] == ['M3']
+    assert oferta_centres['HOT_A_0171_01'] == ['M3']
 
 
 def test_itinerari_b_lomloe_retorna_children_c(client):
@@ -184,8 +184,8 @@ def test_itinerari_c_lomloe_retorna_parent_b_lomloe(client):
 def test_itinerari_c_lomloe_ciclos_d(client):
     d = client.get('/api/itinerari?grado=C&codigo=HOT_C_005_5B').get_json()
     assert d['ciclos_d'] == [{
-        'id': 700, 'denominacion': 'T.S. Prova', 'familia': 'H',
-        'ficha_url': 'https://x/y.html', 'shared': 1, 'total': 1,
+        'id': 700, 'ref': 'h~y', 'denominacion': 'T.S. Prova', 'familia': 'H',
+        'ficha_url': 'https://x/h/y.html', 'shared': 1, 'total': 1,
     }]
 
 

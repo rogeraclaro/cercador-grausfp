@@ -11,13 +11,11 @@ Flow:
 
 Genera:
   backend/data/centres.json       — catàleg de centres únics
-  backend/data/oferta_centres.json — relació {oferta_key: [codigoMinisterio, ...]}
+  backend/data/oferta_centres.json — relació {ref: [codigoMinisterio, ...]} (ref = clau estable, Pla 076)
 
-Clau dels resultats:
-  - Grado C LOE:    clau = código SEPE (ex. "ADGG0408")
-  - Grado C LOMLOE: clau = id intern de l'oferta (com D/E), perquè el frontend
-                    ja envia id= per a tot el que no sigui C LOE
-  - Grado D/E:      clau = id intern de l'oferta a ofertes.json (ex. "12664")
+Clau dels resultats: el `ref` de l'oferta (Pla 076), estable entre refrescos
+  - Grado C (LOE i LOMLOE): el codi (ex. "ADGG0408", "ADG_C_001_3B")
+  - Grado D/E:              <carpeta família>~<slug> de la ficha_url
 
 Execució directa: python3 -m backend.scrapers.centres_scraper
 Rate-limit: 1 req/s (~20 min per al conjunt complet de ~1.212 consultes).
@@ -31,6 +29,8 @@ import time
 from datetime import date
 
 import requests
+
+from oferta_ref import ensure_refs
 
 logger = logging.getLogger(__name__)
 
@@ -143,7 +143,7 @@ def _short_denom(denominacion: str) -> str:
 
 def _load_ofertes() -> tuple[list, list, list, list]:
     with open(_OFERTES_PATH, encoding='utf-8') as f:
-        all_ofertes = json.load(f)
+        all_ofertes = ensure_refs(json.load(f))
     c_loe = [r for r in all_ofertes if r.get('grado') == 'C' and r.get('plan_antiguo')]
     c_lomloe = [r for r in all_ofertes if r.get('grado') == 'C' and not r.get('plan_antiguo')]
     d_list = [r for r in all_ofertes if r.get('grado') == 'D']
@@ -172,7 +172,7 @@ def scrape_centres(on_progress=None) -> tuple[dict, dict]:
     """
     Retorna:
       centres_by_id: {codigoMinisterio: centre_dict}
-      oferta_centres: {oferta_key: [codigoMinisterio, ...]}
+      oferta_centres: {ref: [codigoMinisterio, ...]}
 
     on_progress(phase: str, current: int, total: int, unique_centres: int) —
     callback opcional cridat periòdicament (a l'inici de cada fase i cada
@@ -216,14 +216,13 @@ def scrape_centres(on_progress=None) -> tuple[dict, dict]:
     logger.info('=== Grado C LOE: %d ofertes ===', len(c_loe))
     _report('Grau C (pla antic)', 0, len(c_loe))
     for i, oferta in enumerate(c_loe):
-        codigo = oferta['codigo']
         ids = _do_fetch({
-            'ofertaCodigo': codigo,
+            'ofertaCodigo': oferta['codigo'],
             'iDisplayLength': PAGE_SIZE,
             'iDisplayStart': 0,
             'draw': 1,
         })
-        oferta_centres[codigo] = ids
+        oferta_centres[oferta['ref']] = ids
         if (i + 1) % 50 == 0:
             logger.info('C LOE %d/%d — centres únics: %d', i + 1, len(c_loe), len(centres_by_id))
             _save(centres_by_id, oferta_centres)
@@ -233,11 +232,11 @@ def scrape_centres(on_progress=None) -> tuple[dict, dict]:
     _save(centres_by_id, oferta_centres)
     _report('Grau C (pla antic)', len(c_loe), len(c_loe))
 
-    # ── Grado C LOMLOE (per ofertaCodigo, clau = id intern com D/E) ──
+    # ── Grado C LOMLOE (per ofertaCodigo) ──
     logger.info('=== Grado C LOMLOE: %d ofertes ===', len(c_lomloe))
     _report('Grau C (pla nou)', 0, len(c_lomloe))
     for i, oferta in enumerate(c_lomloe):
-        key = str(oferta['id'])
+        key = oferta['ref']
         ids = _do_fetch({
             'ofertaCodigo': oferta['codigo'],
             'iDisplayLength': PAGE_SIZE,
@@ -258,7 +257,7 @@ def scrape_centres(on_progress=None) -> tuple[dict, dict]:
     logger.info('=== Grado D: %d ofertes ===', len(d_list))
     _report('Grau D', 0, len(d_list))
     for i, oferta in enumerate(d_list):
-        key = str(oferta['id'])
+        key = oferta['ref']
         denom = _short_denom(oferta['denominacion'])
         ids = _do_fetch({
             'ofertaDenominacion': denom,
@@ -281,7 +280,7 @@ def scrape_centres(on_progress=None) -> tuple[dict, dict]:
     logger.info('=== Grado E: %d ofertes ===', len(e_list))
     _report('Grau E', 0, len(e_list))
     for i, oferta in enumerate(e_list):
-        key = str(oferta['id'])
+        key = oferta['ref']
         denom = _short_denom(oferta['denominacion'])
         ids = _do_fetch({
             'ofertaDenominacion': denom,

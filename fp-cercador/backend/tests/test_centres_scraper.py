@@ -22,6 +22,7 @@ def _rec(id_, codigo, grado, plan_antiguo, denominacion='X'):
         'id': id_, 'codigo': codigo, 'grado': grado,
         'plan_antiguo': plan_antiguo, 'denominacion': denominacion,
         'familia': 'F', 'nivel': 1, 'observaciones': '',
+        'ficha_url': f'https://www.todofp.es/familias-profesionales/fam/{codigo.lower()}.html',
     }
 
 
@@ -64,7 +65,7 @@ def test_load_ofertes_separa_c_lomloe(ofertes_path):
     assert [r['codigo'] for r in e_list] == ['E1']
 
 
-def test_scrape_centres_c_lomloe_usa_ofertacodigo_i_clau_id(ofertes_path, no_network):
+def test_scrape_centres_c_lomloe_usa_ofertacodigo_i_clau_ref(ofertes_path, no_network):
     ofertes_path.write_text(json.dumps([
         _rec(11683, 'ADG_C_001_3B', 'C', False),
     ]), encoding='utf-8')
@@ -76,8 +77,8 @@ def test_scrape_centres_c_lomloe_usa_ofertacodigo_i_clau_id(ofertes_path, no_net
     assert params['ofertaCodigo'] == 'ADG_C_001_3B'
     assert 'gradoProfesional' not in params
     assert 'ofertaDenominacion' not in params
-    assert oferta_centres == {'11683': ['M280006203G']}
-    assert 'ADG_C_001_3B' not in oferta_centres
+    # Pla 076: clau = ref (per a un C, el codi), no l'id que canvia a cada refresc.
+    assert oferta_centres == {'ADG_C_001_3B': ['M280006203G']}
     assert centres_by_id['M280006203G']['nombre'] == 'TAJAMAR'
 
 
@@ -91,3 +92,14 @@ def test_report_phase_c_lomloe(ofertes_path, no_network):
 
     assert ('Grau C (pla nou)', 0, 1) in phases
     assert ('Grau C (pla nou)', 1, 1) in phases
+
+
+def test_scrape_centres_d_i_e_per_ref(ofertes_path, no_network):
+    ofertes_path.write_text(json.dumps([
+        _rec(12000, 'D1', 'D', False, denominacion='Técnico en Gestión'),
+        _rec(13000, 'E1', 'E', False, denominacion='Curso de especialización en X'),
+    ]), encoding='utf-8')
+
+    _, oferta_centres = cs.scrape_centres()
+
+    assert oferta_centres == {'fam~d1': ['M280006203G'], 'fam~e1': ['M280006203G']}

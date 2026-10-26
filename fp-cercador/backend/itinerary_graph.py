@@ -5,7 +5,9 @@ Funcions pures: no fa I/O. Rep els registres d'ofertes.json i els fitxers de
 relacions ja carregats, i construeix un graf amb arestes dirigides "cap amunt"
 (A→B, B→C, C→D, D→E) indexades en totes dues direccions.
 
-Clau de node: "{grado}:{codigo}" per a A/B/C i "{grado}:{id}" per a D/E.
+Clau de node: "{grado}:{ref}" (clau estable del Pla 076, per a tots els graus).
+Els fitxers de relacions van per codi (A/B/C) o per id vigent (D/E) i es
+tradueixen a la clau del node aquí.
 
 Fonts de cada aresta:
   ab  itinerary.build_ab_index / get_parents_b (LOMLOE pel codi; LOE via a_loe_pares)
@@ -20,6 +22,7 @@ from urllib.parse import urlsplit
 
 import itinerary
 from cd_lomloe import normalize_module_name
+from oferta_ref import ensure_refs
 
 # Mateixos prefixos que certificados_scraper._D_PREFIXES: ciclosFP dona el nom curt.
 _D_PREFIXES = (
@@ -31,10 +34,8 @@ _D_PREFIXES = (
 
 def node_key(rec: dict) -> str | None:
     grado = rec.get('grado')
-    if grado in ('A', 'B', 'C'):
-        return f"{grado}:{rec['codigo']}" if rec.get('codigo') else None
-    if grado in ('D', 'E'):
-        return f"{grado}:{rec['id']}" if rec.get('id') is not None else None
+    if grado in ('A', 'B', 'C', 'D', 'E') and rec.get('ref'):
+        return f"{grado}:{rec['ref']}"
     return None
 
 
@@ -75,6 +76,7 @@ def serialize_node(rec: dict) -> dict:
     codigo = rec.get('codigo') if abc else None
     return {
         'key': node_key(rec),
+        'ref': rec.get('ref'),
         'grado': grado,
         'codigo': codigo,
         'id': None if abc else rec.get('id'),
@@ -94,18 +96,34 @@ def build_graph(records, *, a_loe_pares=None, bc_loe=None, bc_lomloe=None,
              'unresolved': {key_c: [denominacio_d, ...]}}.
     Cada aresta és {'from', 'to', 'kind'} (+ 'shared'/'total' a les cd LOMLOE).
     """
+    ensure_refs(records)
     by_key: dict = {}
+    key_by_code: dict = {}  # (grado, codigo) → clau; un codi repetit es queda el primer
+    key_by_id: dict = {}    # id vigent → clau (fitxers D/E per id)
     for r in records:
         k = node_key(r)
         if k:
             by_key[k] = r
+            if r.get('codigo'):
+                key_by_code.setdefault((r['grado'], r['codigo']), k)
+            if r.get('id') is not None:
+                key_by_id[r['id']] = k
+
+    def code_key(grado, codigo):
+        return key_by_code.get((grado, codigo))
+
+    def id_key(id_):
+        try:
+            return key_by_id.get(int(id_))
+        except (TypeError, ValueError):
+            return None
 
     up: dict = {}
     down: dict = {}
     seen: set = set()
 
     def add(src, dst, kind, **extra):
-        if src not in by_key or dst not in by_key or (src, dst) in seen:
+        if src not in by_key or dst not in by_key or (src, dst) in seen:  # None inclòs
             return
         seen.add((src, dst))
         edge = {'from': src, 'to': dst, 'kind': kind, **extra}
@@ -125,15 +143,15 @@ def build_graph(records, *, a_loe_pares=None, bc_loe=None, bc_lomloe=None,
         for uc in ucs:
             b = b_by_uc.get(uc)
             if b:
-                add(node_key(b), f'C:{c_code}', 'bc')
+                add(node_key(b), code_key('C', c_code), 'bc')
     for c_code, b_codes in (bc_lomloe or {}).items():
         for b_code in b_codes:
-            add(f'B:{b_code}', f'C:{c_code}', 'bc')
+            add(code_key('B', b_code), code_key('C', c_code), 'bc')
 
     # C → D LOMLOE (mòduls compartits)
     for c_code, entries in (c_lomloe_to_d or {}).items():
         for e in entries:
-            add(f'C:{c_code}', f"D:{e['id']}", 'cd', shared=e['shared'], total=e['total'])
+            add(code_key('C', c_code), id_key(e['id']), 'cd', shared=e['shared'], total=e['total'])
 
     # C → D LOE (ciclos_fp.json, sense id de D)
     d_by_url: dict = {}
@@ -149,7 +167,7 @@ def build_graph(records, *, a_loe_pares=None, bc_loe=None, bc_lomloe=None,
 
     unresolved: dict = {}
     for c_code, ciclos in (ciclos_fp or {}).items():
-        c_key = f'C:{c_code}'
+        c_key = code_key('C', c_code)
         if c_key not in by_key:
             continue
         for ciclo in ciclos:
@@ -165,7 +183,7 @@ def build_graph(records, *, a_loe_pares=None, bc_loe=None, bc_lomloe=None,
     # D → E: requisits d'accés dels cursos E (Pla 074).
     for e_id, entry in (ce_acces or {}).items():
         for d_id in (entry or {}).get('d_ids', []):
-            add(f'D:{d_id}', f'E:{e_id}', 'de')
+            add(id_key(d_id), id_key(e_id), 'de')
 
     return {'records': by_key, 'up': up, 'down': down, 'unresolved': unresolved}
 

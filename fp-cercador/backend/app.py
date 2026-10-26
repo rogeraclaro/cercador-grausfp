@@ -22,9 +22,9 @@ Rutes:
   GET    /api/admin/ocupaciones-status  → estat de la darrera regeneració (sense auth)
   GET    /api/favorites                → favorits de l'usuari autenticat (amb centres seleccionats)
   POST   /api/favorites                → afegeix oferta als favorits
-  DELETE /api/favorites/<oferta_id>   → elimina oferta dels favorits
-  POST   /api/favorites/<oferta_id>/centres         → marca un centre dins d'un favorit
-  DELETE /api/favorites/<oferta_id>/centres/<centre_id> → desmarca un centre d'un favorit
+  DELETE /api/favorites/<ref>        → elimina oferta dels favorits
+  POST   /api/favorites/<ref>/centres         → marca un centre dins d'un favorit
+  DELETE /api/favorites/<ref>/centres/<centre_id> → desmarca un centre d'un favorit
   POST   /api/feedback               → comentari d'usuari (anònim amb email; Pla 069)
   GET    /api/admin/feedback         → llista de comentaris (admin)
   PATCH  /api/admin/feedback/<id>    → estat i nota d'un comentari (admin)
@@ -63,6 +63,7 @@ import itinerary
 import itinerary_graph
 import centres_inherit
 import notifier
+import oferta_ref
 import refresh_state
 import scheduler_service
 from scrapers import buscador_scraper, pipeline
@@ -163,20 +164,79 @@ def _get_effective_oferta_centres() -> dict:
         return _effective_oc_cache["data"]
 
     inherited: dict = {}
-    if os.path.exists(DATA_PATH):
-        try:
-            with open(DATA_PATH, encoding="utf-8") as f:
-                records = json.load(f)
-            inherited = centres_inherit.build_inherited(
-                records, _get_itinerary_index(), _get_bc_loe_inverse(), _oferta_centres,
-                bc_lomloe=_get_bc_lomloe(),
-            )
-        except (OSError, json.JSONDecodeError) as exc:
-            logger.warning("_get_effective_oferta_centres: sense herència A/B: %s", exc)
+    catalog = _get_catalog()
+    if catalog:
+        inherited = centres_inherit.build_inherited(
+            catalog["records"], _get_itinerary_index(), _get_bc_loe_inverse(), _oferta_centres,
+            bc_lomloe=_get_bc_lomloe(),
+        )
 
     data = {**_oferta_centres, **inherited}
     _effective_oc_cache.update(key=key, data=data)
     return data
+
+
+# ---------------------------------------------------------------------------
+# Pla 076 — catàleg per ref (clau estable) i traducció dels paràmetres antics
+# ---------------------------------------------------------------------------
+
+_catalog_cache: dict = {"key": None, "data": None}
+
+
+def _get_catalog() -> dict | None:
+    """
+    ofertes.json amb `ref` garantit (els fitxers d'abans del Pla 076 no en
+    porten) i índexs per ref, per id vigent i per codi. None si no es pot llegir.
+    """
+    try:
+        key = (DATA_PATH, os.path.getmtime(DATA_PATH))
+    except OSError:
+        return None
+    if _catalog_cache["key"] == key:
+        return _catalog_cache["data"]
+    try:
+        with open(DATA_PATH, encoding="utf-8") as f:
+            records = oferta_ref.ensure_refs(json.load(f))
+    except (OSError, ValueError) as exc:
+        logger.error("_get_catalog: ofertes.json il·legible o amb refs repetits: %s", exc)
+        return None
+    by_codigo: dict = {}
+    for r in records:
+        if r.get("codigo"):
+            by_codigo.setdefault(r["codigo"], []).append(r)
+    data = {
+        "records": records,
+        "by_ref": {r["ref"]: r for r in records},
+        "by_id": {r["id"]: r for r in records},
+        "by_codigo": by_codigo,
+    }
+    _catalog_cache.update(key=key, data=data)
+    return data
+
+
+def _resolve_oferta(ref=None, oferta_id=None, codigo=None) -> dict | None:
+    """
+    Registre vigent per ref; o, per als paràmetres antics, per id (pot apuntar
+    a un altre grau si hi ha hagut un refresc pel mig) i per codi, que mana si
+    no coincideix amb el registre de l'id.
+    """
+    catalog = _get_catalog()
+    if not catalog:
+        return None
+    if ref is not None:
+        return catalog["by_ref"].get(ref) if isinstance(ref, str) else None
+    rec = catalog["by_id"].get(oferta_id) if isinstance(oferta_id, int) else None
+    if codigo and (not rec or rec.get("codigo") != codigo):
+        rec = (catalog["by_codigo"].get(codigo) or [None])[0]
+    return rec
+
+
+def _ref_from_url_key(key: str) -> str | None:
+    """Clau d'una ruta /api/favorites/<key>: un ref, o un id antic (només dígits)."""
+    if key.isascii() and key.isdigit():
+        rec = _resolve_oferta(oferta_id=int(key))
+        return rec["ref"] if rec else None
+    return key if oferta_ref.REF_RE.match(key) else None
 
 
 app = Flask(__name__)
@@ -286,8 +346,9 @@ def health():
 @app.route("/api/centres")
 def get_centres():
     """
-    GET /api/centres?codigo=ADGG0408   (Grado C LOE)
-    GET /api/centres?id=12664          (Grado D/E, C LOMLOE, i A/B LOE heretats)
+    GET /api/centres?ref=<ref>         (qualsevol grau; Pla 076)
+    GET /api/centres?codigo=ADGG0408   (antic: codi del grau)
+    GET /api/centres?id=12664          (antic: id vigent; millor esforç)
     Retorna array JSON de centres per a l'oferta indicada.
     """
     try:
@@ -295,9 +356,14 @@ def get_centres():
     except FileNotFoundError:
         return jsonify({"error": "centres.json no disponible"}), 503
 
-    clau = request.args.get("codigo") or request.args.get("id")
+    clau = request.args.get("ref")
+    if not clau and (request.args.get("codigo") or request.args.get("id")):
+        id_ = request.args.get("id") or ""
+        rec = _resolve_oferta(oferta_id=int(id_) if id_.isascii() and id_.isdigit() else None,
+                              codigo=request.args.get("codigo"))
+        clau = rec["ref"] if rec else request.args.get("codigo")
     if not clau:
-        return jsonify({"error": "cal el paràmetre codigo o id"}), 400
+        return jsonify({"error": "cal el paràmetre ref"}), 400
 
     ids = oferta_centres.get(clau, [])
     centres = [_centres_index[i] for i in ids if i in _centres_index]
@@ -1319,6 +1385,10 @@ def _get_c_lomloe_to_d() -> dict:
         records = []
     index = cd_lomloe.build_c_lomloe_to_d(records, _get_bc_lomloe(), _get_d_modulos())
     d_by_id = {str(r['id']): r for r in records if r.get('grado') == 'D'}
+    try:
+        oferta_ref.ensure_refs(records)  # 'ref' als cicles D retornats (Pla 076)
+    except ValueError as exc:
+        logger.warning("_get_c_lomloe_to_d: sense refs: %s", exc)
     data = {'index': index, 'd_by_id': d_by_id}
     _cd_lomloe_cache.update(key=key, data=data)
     return data
@@ -1793,6 +1863,7 @@ def api_itinerari():
                     continue
                 ciclos_lomloe.append({
                     'id': int(e['id']),
+                    'ref': d.get('ref'),
                     'denominacion': d.get('denominacion'),
                     'familia': d.get('familia'),
                     'ficha_url': d.get('ficha_url'),
@@ -1951,24 +2022,37 @@ def _get_itinerary_graph():
 def api_itinerari_complet():
     """Pla 071: cadena completa d'un grau (ascendents + descendents).
 
-    GET /api/itinerari/complet?grado=A|B|C&codigo=…  o  ?grado=D|E&id=…  [&depth=1]
+    GET /api/itinerari/complet?grado=A|B|C|D|E&ref=…  [&depth=1]   (Pla 076)
       → {"focus": "C:ADG_C_001_3B", "nodes": [...], "edges": [...], "warnings": [...]}
+    Paràmetres antics, millor esforç: ?grado=A|B|C&codigo=… i ?grado=D|E&id=… (id vigent).
     """
     grado = (request.args.get('grado') or '').upper()
+    ref = request.args.get('ref')
     codigo = request.args.get('codigo')
     id_ = request.args.get('id')
     depth = request.args.get('depth')
 
-    if grado in ('A', 'B', 'C'):
-        if id_ is not None or not codigo or not _CODIGO_RE.match(codigo):
-            return jsonify({'error': 'Codi invàlid'}), 400
-        focus = f'{grado}:{codigo}'
-    elif grado in ('D', 'E'):
-        if codigo is not None or not id_ or not (id_.isascii() and id_.isdigit()):
-            return jsonify({'error': 'id invàlid'}), 400
-        focus = f'{grado}:{int(id_)}'
-    else:
+    if grado not in ('A', 'B', 'C', 'D', 'E'):
         return jsonify({'error': 'grado ha de ser A, B, C, D o E'}), 400
+    if sum(p is not None for p in (ref, codigo, id_)) != 1:
+        return jsonify({'error': 'cal un sol paràmetre: ref'}), 400
+    if ref is not None:
+        if not oferta_ref.REF_RE.match(ref):
+            return jsonify({'error': 'ref invàlid'}), 400
+    elif codigo is not None:
+        if grado not in ('A', 'B', 'C') or not _CODIGO_RE.match(codigo):
+            return jsonify({'error': 'Codi invàlid'}), 400
+        rec = next((r for r in ((_get_catalog() or {}).get('by_codigo', {}).get(codigo) or [])
+                    if r.get('grado') == grado), None)
+        ref = rec['ref'] if rec else codigo
+    else:
+        if grado not in ('D', 'E') or not (id_.isascii() and id_.isdigit()):
+            return jsonify({'error': 'id invàlid'}), 400
+        rec = _resolve_oferta(oferta_id=int(id_))
+        if not rec:
+            return jsonify({'error': 'Grau no trobat'}), 404
+        ref = rec['ref']
+    focus = f'{grado}:{ref}'
     if depth not in (None, '1'):
         return jsonify({'error': 'depth només admet 1'}), 400
 
@@ -2422,7 +2506,8 @@ def _get_or_create_favorites_list(conn, user_id):
 
 @app.route("/api/favorites", methods=["GET"])
 def favorites_get():
-    """Retorna els favorits de l'usuari autenticat."""
+    """Retorna els favorits de l'usuari autenticat. `ref` és la clau estable (Pla 076);
+    `oferta_id` és l'id vigent del grau (canvia a cada refresc del catàleg)."""
     import db as _db
     user_id = _get_session_user(request)
     if not user_id:
@@ -2434,7 +2519,8 @@ def favorites_get():
             return jsonify([]), 200
         items = _db.query_all(
             conn,
-            "SELECT id, oferta_id, oferta_codigo, added_at FROM list_items WHERE list_id = ? ORDER BY added_at DESC",
+            "SELECT id, oferta_id, oferta_codigo, oferta_ref, added_at FROM list_items "
+            "WHERE list_id = ? ORDER BY added_at DESC",
             (list_id_row["id"],),
         )
         result = []
@@ -2444,8 +2530,10 @@ def favorites_get():
                 "SELECT centre_id FROM list_item_centres WHERE list_item_id = ? ORDER BY added_at",
                 (item["id"],),
             )
+            rec = _resolve_oferta(ref=item["oferta_ref"]) if item["oferta_ref"] else None
             result.append({
-                "oferta_id": item["oferta_id"],
+                "ref": item["oferta_ref"],
+                "oferta_id": rec["id"] if rec else item["oferta_id"],
                 "oferta_codigo": item["oferta_codigo"],
                 "added_at": item["added_at"],
                 "centres": [c["centre_id"] for c in centres],
@@ -2457,49 +2545,57 @@ def favorites_get():
 
 @app.route("/api/favorites", methods=["POST"])
 def favorites_add():
-    """Afegeix una oferta als favorits. Body: {oferta_id, oferta_codigo}."""
+    """
+    Afegeix una oferta als favorits. Body: {ref} (Pla 076), validat contra el catàleg.
+    Període de transició: també {oferta_id, oferta_codigo}, traduït al ref vigent.
+    """
     import db as _db
     user_id = _get_session_user(request)
     if not user_id:
         return jsonify({"error": "No autenticat"}), 401
     data = request.get_json(silent=True) or {}
-    oferta_id = data.get("oferta_id")
-    oferta_codigo = data.get("oferta_codigo") or None
-    if not isinstance(oferta_id, int):
-        return jsonify({"error": "oferta_id és obligatori i ha de ser enter"}), 400
+    if "ref" in data:
+        rec = _resolve_oferta(ref=data.get("ref"))
+    elif isinstance(data.get("oferta_id"), int):
+        rec = _resolve_oferta(oferta_id=data["oferta_id"], codigo=data.get("oferta_codigo") or None)
+    else:
+        return jsonify({"error": "ref és obligatori"}), 400
+    if not rec:
+        return jsonify({"error": "Grau desconegut"}), 400
     conn = _db.get_db()
     try:
         list_id = _get_or_create_favorites_list(conn, user_id)
         existing = _db.query_one(
-            conn, "SELECT id FROM list_items WHERE list_id = ? AND oferta_id = ?", (list_id, oferta_id)
+            conn, "SELECT id FROM list_items WHERE list_id = ? AND oferta_ref = ?", (list_id, rec["ref"])
         )
         if existing:
             return jsonify({"status": "already_exists"}), 200
         conn.execute(
-            "INSERT INTO list_items (list_id, oferta_id, oferta_codigo) VALUES (?, ?, ?)",
-            (list_id, oferta_id, oferta_codigo),
+            "INSERT INTO list_items (list_id, oferta_id, oferta_codigo, oferta_ref) VALUES (?, ?, ?, ?)",
+            (list_id, rec["id"], rec.get("codigo"), rec["ref"]),
         )
         conn.commit()
-        return jsonify({"status": "added"}), 201
+        return jsonify({"status": "added", "ref": rec["ref"]}), 201
     finally:
         conn.close()
 
 
-@app.route("/api/favorites/<int:oferta_id>", methods=["DELETE"])
-def favorites_remove(oferta_id):
-    """Elimina una oferta dels favorits."""
+@app.route("/api/favorites/<key>", methods=["DELETE"])
+def favorites_remove(key):
+    """Elimina una oferta dels favorits. <key> = ref (o id antic, millor esforç)."""
     import db as _db
     user_id = _get_session_user(request)
     if not user_id:
         return jsonify({"error": "No autenticat"}), 401
+    ref = _ref_from_url_key(key)
     conn = _db.get_db()
     try:
         list_id_row = _db.query_one(conn, "SELECT id FROM lists WHERE user_id = ? LIMIT 1", (user_id,))
-        if not list_id_row:
+        if not list_id_row or not ref:
             return jsonify({"status": "not_found"}), 404
         conn.execute(
-            "DELETE FROM list_items WHERE list_id = ? AND oferta_id = ?",
-            (list_id_row["id"], oferta_id),
+            "DELETE FROM list_items WHERE list_id = ? AND oferta_ref = ?",
+            (list_id_row["id"], ref),
         )
         conn.commit()
         return "", 204
@@ -2508,20 +2604,23 @@ def favorites_remove(oferta_id):
 
 
 
-def _get_favorite_list_item(conn, user_id, oferta_id):
-    """Retorna la fila de list_items del favorit indicat, o None."""
+def _get_favorite_list_item(conn, user_id, key):
+    """Retorna la fila de list_items del favorit indicat (ref o id antic), o None."""
     import db as _db
+    ref = _ref_from_url_key(key)
+    if not ref:
+        return None
     return _db.query_one(
         conn,
         "SELECT list_items.id FROM list_items "
         "JOIN lists ON lists.id = list_items.list_id "
-        "WHERE lists.user_id = ? AND list_items.oferta_id = ?",
-        (user_id, oferta_id),
+        "WHERE lists.user_id = ? AND list_items.oferta_ref = ?",
+        (user_id, ref),
     )
 
 
-@app.route("/api/favorites/<int:oferta_id>/centres", methods=["POST"])
-def favorites_add_centre(oferta_id):
+@app.route("/api/favorites/<key>/centres", methods=["POST"])
+def favorites_add_centre(key):
     """Marca un centre dins d'un favorit. Body: {centre_id}."""
     import db as _db
     user_id = _get_session_user(request)
@@ -2533,7 +2632,7 @@ def favorites_add_centre(oferta_id):
         return jsonify({"error": "centre_id és obligatori i ha de ser una cadena no buida"}), 400
     conn = _db.get_db()
     try:
-        item = _get_favorite_list_item(conn, user_id, oferta_id)
+        item = _get_favorite_list_item(conn, user_id, key)
         if not item:
             return jsonify({"error": "Favorit no trobat"}), 404
         existing = _db.query_one(
@@ -2553,8 +2652,8 @@ def favorites_add_centre(oferta_id):
         conn.close()
 
 
-@app.route("/api/favorites/<int:oferta_id>/centres/<centre_id>", methods=["DELETE"])
-def favorites_remove_centre(oferta_id, centre_id):
+@app.route("/api/favorites/<key>/centres/<centre_id>", methods=["DELETE"])
+def favorites_remove_centre(key, centre_id):
     """Desmarca un centre d'un favorit."""
     import db as _db
     user_id = _get_session_user(request)
@@ -2562,7 +2661,7 @@ def favorites_remove_centre(oferta_id, centre_id):
         return jsonify({"error": "No autenticat"}), 401
     conn = _db.get_db()
     try:
-        item = _get_favorite_list_item(conn, user_id, oferta_id)
+        item = _get_favorite_list_item(conn, user_id, key)
         if not item:
             return jsonify({"status": "not_found"}), 404
         conn.execute(
@@ -2991,6 +3090,7 @@ def centres_watch_create():
     Crea un seguiment.
     Body: {"oferta_key": "ADGG0408", "oferta_denom": "Gestió Administrativa",
            "provincia_filter": "BARCELONA"}   (provincia_filter és opcional)
+    oferta_key és el ref del grau (Pla 076); un id antic (només dígits) es tradueix al ref vigent.
     """
     import db as _db
     import json as _json
@@ -3005,6 +3105,9 @@ def centres_watch_create():
         provincia_filter = provincia_filter.strip().upper() or None
     if not oferta_key or not oferta_denom:
         return jsonify({"error": "oferta_key i oferta_denom són obligatoris"}), 400
+    if oferta_key.isascii() and oferta_key.isdigit():
+        rec = _resolve_oferta(oferta_id=int(oferta_key))
+        oferta_key = rec["ref"] if rec else oferta_key
 
     # Snapshot inicial: centres actuals per a aquesta oferta (heretats inclosos)
     try:

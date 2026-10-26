@@ -13,11 +13,14 @@ FAM = 'Administración y Gestión'
 FAB = 'Fabricación Mecánica'
 
 
-def _rec(id_, codigo, grado, plan_antiguo=False, denominacion='X', familia=FAM, ficha_url=None):
+def _rec(id_, codigo, grado, plan_antiguo=False, denominacion='X', familia=FAM, ficha_url=None,
+         ref=None):
     r = {'id': id_, 'codigo': codigo, 'grado': grado, 'plan_antiguo': plan_antiguo,
          'denominacion': denominacion, 'familia': familia, 'nivel': 1}
     if ficha_url is not None:
         r['ficha_url'] = ficha_url
+    if ref is not None:
+        r['ref'] = ref
     return r
 
 
@@ -31,11 +34,11 @@ OFERTES = [
     _rec(4, 'ADG_B_3001', 'B'),
     _rec(5, 'ADG_B_3002', 'B'),
     _rec(6, 'ADG_C_001_3B', 'C', denominacion='Actividades de grabación'),
-    # D (sense codi; s'identifiquen per id)
+    # D (sense codi; clau de node = ref, Pla 076)
     _rec(12776, None, 'D', denominacion='Título Profesional Básico en Servicios Administrativos',
          ficha_url=URL_D_SA),
     _rec(12800, None, 'D', denominacion='Técnico en Mecanizado', familia=FAB,
-         ficha_url='javascript:alert(1)'),
+         ficha_url='javascript:alert(1)', ref='fabricacion-mecanica~mecanizado'),
     # LOE: A amb dos B pare, cadascun en un C diferent
     _rec(20, 'UF0723', 'A', plan_antiguo=True, familia=FAB),
     _rec(21, 'MF0326_2', 'B', plan_antiguo=True, familia=FAB),
@@ -61,6 +64,11 @@ CICLOS_FP = {
     # Sense ficha_url: es resol per denominació normalitzada + família.
     'FMEF0108': [{'denominacion': 'Mecanizado', 'familia': FAB, 'ficha_url': None}],
 }
+
+
+# Claus de node dels D (Pla 076: per ref, no per id)
+D_SA = 'D:familias~servicios-administrativos'
+D_MEC = 'D:fabricacion-mecanica~mecanizado'
 
 
 @pytest.fixture
@@ -115,58 +123,58 @@ def test_c_lomloe_cadena_completa(client):
     assert body['focus'] == 'C:ADG_C_001_3B'
     assert _keys(body) == {
         'C:ADG_C_001_3B', 'B:ADG_B_3001', 'B:ADG_B_3002',
-        'A:ADG_A_3001_01', 'A:ADG_A_3001_02', 'A:ADG_A_3002_01', 'D:12776',
+        'A:ADG_A_3001_01', 'A:ADG_A_3001_02', 'A:ADG_A_3002_01', D_SA,
     }
     assert _edges(body) == {
         ('A:ADG_A_3001_01', 'B:ADG_B_3001', 'ab'), ('A:ADG_A_3001_02', 'B:ADG_B_3001', 'ab'),
         ('A:ADG_A_3002_01', 'B:ADG_B_3002', 'ab'),
         ('B:ADG_B_3001', 'C:ADG_C_001_3B', 'bc'), ('B:ADG_B_3002', 'C:ADG_C_001_3B', 'bc'),
-        ('C:ADG_C_001_3B', 'D:12776', 'cd'),
+        ('C:ADG_C_001_3B', D_SA, 'cd'),
     }
     cd = next(e for e in body['edges'] if e['kind'] == 'cd')
     assert (cd['shared'], cd['total']) == (2, 2)
     focus = next(n for n in body['nodes'] if n['key'] == 'C:ADG_C_001_3B')
     assert focus == {
-        'key': 'C:ADG_C_001_3B', 'grado': 'C', 'codigo': 'ADG_C_001_3B', 'id': None,
+        'key': 'C:ADG_C_001_3B', 'ref': 'ADG_C_001_3B', 'grado': 'C', 'codigo': 'ADG_C_001_3B', 'id': None,
         'denominacion': 'Actividades de grabación', 'familia': FAM, 'nivel': 1,
         'plan_antiguo': False, 'ficha': '/api/ficha-redirect?grado=C&codigo=ADG_C_001_3B',
     }
-    d = next(n for n in body['nodes'] if n['key'] == 'D:12776')
+    d = next(n for n in body['nodes'] if n['key'] == D_SA)
     assert (d['codigo'], d['id'], d['ficha']) == (None, 12776, URL_D_SA)
     assert body['warnings'] == []
 
 
 def test_a_no_inclou_germans(client):
     body = _get(client, 'grado=A&codigo=ADG_A_3001_01')
-    assert _keys(body) == {'A:ADG_A_3001_01', 'B:ADG_B_3001', 'C:ADG_C_001_3B', 'D:12776'}
+    assert _keys(body) == {'A:ADG_A_3001_01', 'B:ADG_B_3001', 'C:ADG_C_001_3B', D_SA}
 
 
 def test_a_loe_dos_pares_molts_a_molts(client):
     body = _get(client, 'grado=A&codigo=UF0723')
     assert _keys(body) == {'A:UF0723', 'B:MF0326_2', 'B:MF0333_2',
-                           'C:FMEF0108', 'C:FMEF0208', 'D:12800'}
+                           'C:FMEF0108', 'C:FMEF0208', D_MEC}
     assert ('B:MF0326_2', 'C:FMEF0108', 'bc') in _edges(body)
     assert ('B:MF0333_2', 'C:FMEF0208', 'bc') in _edges(body)
     # FMEF0108 → D resolt per denominació + família (ciclos_fp sense ficha_url)
-    assert ('C:FMEF0108', 'D:12800', 'cd') in _edges(body)
+    assert ('C:FMEF0108', D_MEC, 'cd') in _edges(body)
 
 
 def test_d_relacio_inversa_i_descendents(client):
     body = _get(client, 'grado=D&id=12776')
-    assert body['focus'] == 'D:12776'
+    assert body['focus'] == D_SA
     assert _keys(body) == {
-        'D:12776', 'C:ADG_C_001_3B', 'C:ADGG0408',
+        D_SA, 'C:ADG_C_001_3B', 'C:ADGG0408',
         'B:ADG_B_3001', 'B:ADG_B_3002', 'B:MF0973_1',
         'A:ADG_A_3001_01', 'A:ADG_A_3001_02', 'A:ADG_A_3002_01', 'A:UF0510',
     }
-    assert ('C:ADGG0408', 'D:12776', 'cd') in _edges(body)
+    assert ('C:ADGG0408', D_SA, 'cd') in _edges(body)
     assert not any(e['kind'] == 'de' for e in body['edges'])
     assert body['warnings'] == []
 
 
 def test_c_loe_ciclos_resolt_i_no_resolt(client):
     body = _get(client, 'grado=C&codigo=ADGG0408')
-    assert ('C:ADGG0408', 'D:12776', 'cd') in _edges(body)
+    assert ('C:ADGG0408', D_SA, 'cd') in _edges(body)
     loe_cd = next(e for e in body['edges'] if e['kind'] == 'cd')
     assert 'shared' not in loe_cd
     assert len(body['warnings']) == 1
@@ -183,10 +191,10 @@ def test_ciclos_fp_absent_avisa(client, data_dir):
 
 def test_depth_1_nomes_veins_directes(client):
     body = _get(client, 'grado=C&codigo=ADG_C_001_3B&depth=1')
-    assert _keys(body) == {'C:ADG_C_001_3B', 'B:ADG_B_3001', 'B:ADG_B_3002', 'D:12776'}
+    assert _keys(body) == {'C:ADG_C_001_3B', 'B:ADG_B_3001', 'B:ADG_B_3002', D_SA}
     assert _edges(body) == {
         ('B:ADG_B_3001', 'C:ADG_C_001_3B', 'bc'), ('B:ADG_B_3002', 'C:ADG_C_001_3B', 'bc'),
-        ('C:ADG_C_001_3B', 'D:12776', 'cd'),
+        ('C:ADG_C_001_3B', D_SA, 'cd'),
     }
 
 
@@ -214,12 +222,13 @@ def test_grau_inexistent_404(client, qs):
 
 def test_ficha_d_no_http_es_null(client):
     body = _get(client, 'grado=D&id=12800')
-    assert next(n for n in body['nodes'] if n['key'] == 'D:12800')['ficha'] is None
+    assert next(n for n in body['nodes'] if n['key'] == D_MEC)['ficha'] is None
 
 
 # --- Pla 074: D → E via ce_acces.json ({id_e: {d_ids, unmatched}}) ---------
 
 URL_E = 'https://www.todofp.es/que-estudiar/familias-profesionales/x/ce-curs.html'
+E_CURS = 'E:x~ce-curs'
 
 
 @pytest.fixture
@@ -238,25 +247,25 @@ def client_e(data_dir, monkeypatch, tmp_path):
 
 def test_d_porta_a_e(client_e):
     body = _get(client_e, 'grado=D&id=12776')
-    assert ('D:12776', 'E:13000', 'de') in _edges(body)
-    e = next(n for n in body['nodes'] if n['key'] == 'E:13000')
+    assert (D_SA, E_CURS, 'de') in _edges(body)
+    e = next(n for n in body['nodes'] if n['key'] == E_CURS)
     assert (e['grado'], e['id'], e['ficha']) == ('E', 13000, URL_E)
 
 
 def test_e_focus_mostra_els_seus_d_i_la_cadena(client_e):
     body = _get(client_e, 'grado=E&id=13000')
-    assert body['focus'] == 'E:13000'
-    assert ('D:12776', 'E:13000', 'de') in _edges(body)
-    assert {'D:12776', 'C:ADG_C_001_3B', 'C:ADGG0408', 'A:UF0510'} <= _keys(body)
+    assert body['focus'] == E_CURS
+    assert (D_SA, E_CURS, 'de') in _edges(body)
+    assert {D_SA, 'C:ADG_C_001_3B', 'C:ADGG0408', 'A:UF0510'} <= _keys(body)
 
 
 def test_c_arriba_fins_a_e(client_e):
     body = _get(client_e, 'grado=C&codigo=ADG_C_001_3B')
-    assert ('D:12776', 'E:13000', 'de') in _edges(body)
+    assert (D_SA, E_CURS, 'de') in _edges(body)
 
 
 def test_ce_acces_canviat_invalida_cache(client_e, tmp_path):
-    assert ('D:12776', 'E:13000', 'de') in _edges(_get(client_e, 'grado=E&id=13000'))
+    assert (D_SA, E_CURS, 'de') in _edges(_get(client_e, 'grado=E&id=13000'))
     p = tmp_path / 'ce_acces.json'
     p.write_text(json.dumps({'13000': {'d_ids': [], 'unmatched': []}}), encoding='utf-8')
     st = p.stat()

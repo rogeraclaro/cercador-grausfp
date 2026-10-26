@@ -13,11 +13,15 @@ formatives (A). Aquí es deriva, en memòria i sense I/O:
   LOMLOE (pla nou)
     A  FAM_A_NNNN_PP → B FAM_B_NNNN        (itinerary.get_parent_b)
     B  FAM_B_NNNN    → [codigo C]          (bc_lomloe invertit)
-    C  codigo        → str(id) → [centre_id] (oferta_centres[str(id)], pla 055)
+    C  codigo        → ref → [centre_id]   (oferta_centres[ref], Pla 076)
+
+oferta_centres.json i el resultat van per `ref`, la clau estable del Pla 076
+(per als C, el ref és el codi).
 """
 import re
 
 import itinerary
+from oferta_ref import ensure_refs
 
 _PAT_B_LOE = re.compile(r'^MF(\d{4})_(\d+)$')
 _PAT_A_LOE = re.compile(r'^UF\d{4}$')
@@ -37,10 +41,10 @@ def _centres_for_b_loe(codigo_b: str, bc_loe_inverse: dict, oferta_centres: dict
 
 
 def _centres_for_b_lomloe(codigo_b: str, b_lomloe_inverse: dict,
-                          c_lomloe_id: dict, oferta_centres: dict) -> list[str]:
+                          c_lomloe_ref: dict, oferta_centres: dict) -> list[str]:
     ids: set[str] = set()
     for codigo_c in b_lomloe_inverse.get(codigo_b, []):
-        key = c_lomloe_id.get(codigo_c)
+        key = c_lomloe_ref.get(codigo_c)
         if key:
             ids.update(oferta_centres.get(key, []))
     return sorted(ids)
@@ -49,18 +53,19 @@ def _centres_for_b_lomloe(codigo_b: str, b_lomloe_inverse: dict,
 def build_inherited(records: list[dict], ab_index: dict, bc_loe_inverse: dict,
                     oferta_centres: dict, bc_lomloe: dict | None = None) -> dict[str, list[str]]:
     """
-    Retorna {str(id_oferta): [centre_id, ...]} per a les ofertes A i B que
+    Retorna {ref: [centre_id, ...]} per a les ofertes A i B que
     hereten centres d'algun certificat C. Llistes ordenades i sense duplicats.
     Les ofertes sense cap centre heretat no apareixen.
 
     bc_lomloe: {codigo_c: [codigo_b, ...]} (bc_lomloe.json). Si és None o
     buit, la branca LOMLOE no aporta res.
     """
+    ensure_refs(records)
     b_lomloe_inverse: dict[str, list[str]] = {}
     for codigo_c, b_codes in (bc_lomloe or {}).items():
         for codigo_b in b_codes:
             b_lomloe_inverse.setdefault(codigo_b, []).append(codigo_c)
-    c_lomloe_id = {r['codigo']: str(r['id']) for r in records
+    c_lomloe_ref = {r['codigo']: r['ref'] for r in records
                    if r.get('grado') == 'C' and not r.get('plan_antiguo') and r.get('codigo')}
 
     inherited: dict[str, list[str]] = {}
@@ -72,7 +77,7 @@ def build_inherited(records: list[dict], ab_index: dict, bc_loe_inverse: dict,
                 b_cache[codigo_b] = _centres_for_b_loe(codigo_b, bc_loe_inverse, oferta_centres)
             elif _PAT_B_LOMLOE.match(codigo_b):
                 b_cache[codigo_b] = _centres_for_b_lomloe(
-                    codigo_b, b_lomloe_inverse, c_lomloe_id, oferta_centres)
+                    codigo_b, b_lomloe_inverse, c_lomloe_ref, oferta_centres)
             else:
                 b_cache[codigo_b] = []
         return b_cache[codigo_b]
@@ -89,5 +94,5 @@ def build_inherited(records: list[dict], ab_index: dict, bc_loe_inverse: dict,
         else:
             continue
         if ids:
-            inherited[str(r['id'])] = ids
+            inherited[r['ref']] = ids
     return inherited
