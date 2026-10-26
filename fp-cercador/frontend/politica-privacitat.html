@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title data-i18n="page.title.privacitat">Política de privacitat — Cercador Graus FP</title>
+  <title data-i18n="page.title.privacitat">Política de privacitat — GrausFP</title>
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link
@@ -34,16 +34,10 @@
       padding: 0 24px 64px;
     }
 
-    .provisional-badge {
-      display: inline-block;
-      background: var(--amber-bg);
-      border: 1px solid var(--amber-ink);
-      color: var(--amber-ink);
-      font-size: var(--fs-small);
-      font-weight: 600;
-      padding: 4px 10px;
-      border-radius: 4px;
-      margin-bottom: 24px;
+    /* Text llarg: un bloc per idioma; i18n.js posa <html lang> en carregar */
+    html[lang="es"] [data-lang-block="ca"],
+    html:not([lang="es"]) [data-lang-block="es"] {
+      display: none;
     }
 
     h1 {
@@ -106,7 +100,7 @@
     }
 
   </style>
-  <script src="i18n.js?v=20261025q"></script>
+  <script src="i18n.js?v=20261026a"></script>
   <script defer src="https://analytics.masellas.info/script.js" data-exclude-search="true" data-exclude-hash="true" data-website-id="ddb6c664-550b-4e2d-848f-796a676e4036"></script>
 </head>
 
@@ -123,55 +117,145 @@
 
   <main id="main">
   <div class="content">
-    <span class="provisional-badge" data-i18n="priv.badge">Text provisional — es completarà abans del llançament
-      públic</span>
     <h1 data-i18n="priv.h1">Política de privacitat</h1>
-    <p class="subtitle">Darrera actualització: juny 2026</p>
 
-    <h2>Responsable del tractament</h2>
-    <p>Roger Masellas · <a href="mailto:roger@lamosca.com">roger@lamosca.com</a></p>
+    <div class="lang-block" data-lang-block="ca">
+    <p class="subtitle">Darrera actualització: 26 d'octubre de 2026</p>
 
-    <h2>Quines dades emmagatzemem</h2>
+    <h2>Responsable</h2>
+    <p>Roger Masellas · <a href="mailto:roger@lamosca.com">roger@lamosca.com</a>. GrausFP és un projecte personal sense ànim
+      de lucre.</p>
+    <p>Pots fer servir el cercador sense compte. Només tractem dades personals si et registres, ens envies un suggeriment
+      o actives alertes.</p>
+
+    <h2>Quines dades tractem</h2>
     <ul>
-      <li><strong>Email</strong>: identificador del compte, verificació i, si ho sol·licites, enviament d'alertes.</li>
-      <li><strong>Contrasenya</strong>: emmagatzemada exclusivament com a hash irreversible (mai en text pla).</li>
-      <li><strong>Data de creació del compte</strong>: registre intern.</li>
-      <li><strong>Adreça IP i identificador del navegador</strong>: associats a les sessions actives per a seguretat i
-        resolució d'incidències.</li>
-      <li data-i18n="priv.feedback"><strong>Comentaris</strong>: si ens envies un comentari des de la pestanya Feedback,
-        en desem el text, el teu email i la pàgina on eres, només per respondre't i millorar el servei.</li>
+      <li><strong>Compte</strong>: correu electrònic, contrasenya (desada només com a hash irreversible, mai en text pla) i
+        data de creació. Si entres amb Google, en rebem el correu verificat i l'identificador del compte de Google; no
+        rebem la contrasenya ni cap altra dada.</li>
+      <li><strong>El que deses</strong>: favorits, centres desats, alertes (els filtres de cada alerta) i avisos de centres
+        nous.</li>
+      <li><strong>Sessions</strong>: adreça IP i navegador associats a cada sessió oberta, i els intents d'inici de sessió
+        (IP i correu) per protegir els comptes d'atacs.</li>
+      <li><strong>Suggeriments</strong>: si ens n'envies un des de la pestanya Suggeriments, en desem el text, el teu
+        correu i la pàgina on eres, només per respondre't i millorar el servei.</li>
     </ul>
-    <p>No emmagatzemem nom, telèfon, edat, localitat ni cap altra dada personal mentre no sigui necessari per a una
-      funcionalitat concreta.</p>
+    <p>No demanem nom, telèfon, edat, localitat ni cap altra dada.</p>
 
-    <h2>Finalitat del tractament</h2>
+    <h2>Per a què i amb quina base legal</h2>
     <ul>
-      <li>Autenticació i gestió del compte d'usuari.</li>
-      <li>Enviament d'emails transaccionals (verificació de compte, restabliment de contrasenya).</li>
-      <li>Alertes personalitzades de novetats en l'oferta formativa, si l'usuari les configura (funcionalitat futura).
-      </li>
+      <li>Gestionar el compte i el que hi deses, i enviar-te els correus del servei (verificació, canvi de contrasenya):
+        perquè ens has demanat el servei (RGPD art. 6.1.b).</li>
+      <li>Enviar-te alertes i avisos de centres nous: el teu consentiment (art. 6.1.a). El pots retirar quan vulguis
+        desactivant-les o amb l'enllaç de baixa de cada correu.</li>
+      <li>Protegir els comptes (sessions i intents d'inici de sessió): interès legítim en la seguretat del servei
+        (art. 6.1.f).</li>
+      <li>Respondre els suggeriments: el teu consentiment en enviar-los (art. 6.1.a).</li>
     </ul>
 
-    <h2>Base legal</h2>
-    <p>Consentiment explícit de l'usuari (RGPD art. 6.1.a), atorgat en acceptar aquesta política durant el registre.</p>
+    <h2>Galetes i estadístiques</h2>
+    <p>Només fem servir una galeta tècnica per mantenir la sessió oberta quan entres al compte (i una de temporal durant
+      l'inici de sessió amb Google). No hi ha galetes de publicitat ni de seguiment, i per això no cal demanar-te
+      permís.</p>
+    <p>Per saber quantes visites rep la web fem servir <strong>Umami</strong>, instal·lat al nostre propi servidor. No fa
+      servir galetes, no identifica persones i només en veiem dades agregades. L'idioma i algunes preferències de
+      visualització es guarden al teu navegador i no ens arriben.</p>
 
-    <h2>Conservació de les dades</h2>
-    <p>Les dades es conserven mentre el compte estigui actiu. En sol·licitar l'esborrat, les dades s'eliminen en un
-      termini màxim de 30 dies.</p>
+    <h2>Quant de temps les conservem</h2>
+    <ul>
+      <li>Compte i el que hi deses: mentre el compte estigui actiu. Si demanes esborrar-lo, ho fem en un màxim de 30
+        dies.</li>
+      <li>Sessions: 30 dies. Intents d'inici de sessió: 1 dia.</li>
+      <li>Suggeriments: el temps necessari per gestionar-los.</li>
+    </ul>
 
-    <h2>Drets de l'usuari</h2>
-    <p>Tens dret a accedir, rectificar i suprimir les teves dades (RGPD art. 15–17). Per exercir-los, envia un email a
-      <a href="mailto:roger@lamosca.com">roger@lamosca.com</a> indicant el teu email de registre.</p>
+    <h2>Qui hi té accés</h2>
+    <p>No venem ni cedim dades a ningú. Hi intervenen aquests proveïdors, només per prestar el servei:</p>
+    <ul>
+      <li><strong>Contabo GmbH</strong> (Alemanya): el servidor on s'allotgen la web i la base de dades.</li>
+      <li><strong>Brevo</strong> (Unió Europea): l'enviament dels correus.</li>
+      <li><strong>Google</strong>: només si tries entrar amb Google. Google pot tractar dades fora de la Unió Europea amb
+        les garanties del Marc de Privacitat de Dades UE-EUA.</li>
+    </ul>
 
-    <h2>Proveïdors externs</h2>
-    <p>Els emails es gestionen a través de <strong>Brevo</strong> (smtp-relay.brevo.com), ubicat a la Unió Europea. No
-      es transfereixen dades a tercers per a finalitats comercials.</p>
+    <h2>Els teus drets</h2>
+    <p>Pots accedir a les teves dades, rectificar-les, suprimir-les, oposar-te al tractament, limitar-lo, demanar-ne la
+      portabilitat i retirar el consentiment. Escriu a <a href="mailto:roger@lamosca.com">roger@lamosca.com</a> des del
+      correu del teu compte. Si creus que no s'han respectat els teus drets, pots reclamar a l'Agència Espanyola de
+      Protecció de Dades (<a href="https://www.aepd.es" target="_blank" rel="noopener">aepd.es</a>).</p>
+    </div>
 
-    <p class="back"><a href="register.html" data-i18n="priv.footer.back">← Tornar al cercador</a></p>
+    <div class="lang-block" data-lang-block="es">
+    <p class="subtitle">Última actualización: 26 de octubre de 2026</p>
+
+    <h2>Responsable</h2>
+    <p>Roger Masellas · <a href="mailto:roger@lamosca.com">roger@lamosca.com</a>. GrausFP es un proyecto personal sin ánimo
+      de lucro.</p>
+    <p>Puedes usar el buscador sin cuenta. Solo tratamos datos personales si te registras, nos envías una sugerencia o
+      activas alertas.</p>
+
+    <h2>Qué datos tratamos</h2>
+    <ul>
+      <li><strong>Cuenta</strong>: correo electrónico, contraseña (guardada solo como hash irreversible, nunca en texto
+        plano) y fecha de creación. Si entras con Google, recibimos tu correo verificado y el identificador de tu cuenta de
+        Google; no recibimos la contraseña ni ningún otro dato.</li>
+      <li><strong>Lo que guardas</strong>: favoritos, centros guardados, alertas (los filtros de cada alerta) y avisos de
+        centros nuevos.</li>
+      <li><strong>Sesiones</strong>: dirección IP y navegador asociados a cada sesión abierta, y los intentos de inicio de
+        sesión (IP y correo) para proteger las cuentas de ataques.</li>
+      <li><strong>Sugerencias</strong>: si nos envías una desde la pestaña Sugerencias, guardamos el texto, tu correo y la
+        página en la que estabas, solo para responderte y mejorar el servicio.</li>
+    </ul>
+    <p>No pedimos nombre, teléfono, edad, localidad ni ningún otro dato.</p>
+
+    <h2>Para qué y con qué base legal</h2>
+    <ul>
+      <li>Gestionar la cuenta y lo que guardas en ella, y enviarte los correos del servicio (verificación, cambio de
+        contraseña): porque nos has pedido el servicio (RGPD art. 6.1.b).</li>
+      <li>Enviarte alertas y avisos de centros nuevos: tu consentimiento (art. 6.1.a). Puedes retirarlo cuando quieras
+        desactivándolas o con el enlace de baja de cada correo.</li>
+      <li>Proteger las cuentas (sesiones e intentos de inicio de sesión): interés legítimo en la seguridad del servicio
+        (art. 6.1.f).</li>
+      <li>Responder las sugerencias: tu consentimiento al enviarlas (art. 6.1.a).</li>
+    </ul>
+
+    <h2>Cookies y estadísticas</h2>
+    <p>Solo usamos una cookie técnica para mantener la sesión abierta cuando entras en tu cuenta (y una temporal durante el
+      inicio de sesión con Google). No hay cookies de publicidad ni de seguimiento, por lo que no es necesario pedirte
+      permiso.</p>
+    <p>Para saber cuántas visitas recibe la web usamos <strong>Umami</strong>, instalado en nuestro propio servidor. No
+      usa cookies, no identifica a nadie y solo vemos datos agregados. El idioma y algunas preferencias de visualización
+      se guardan en tu navegador y no nos llegan.</p>
+
+    <h2>Cuánto tiempo los conservamos</h2>
+    <ul>
+      <li>Cuenta y lo que guardas en ella: mientras la cuenta esté activa. Si pides borrarla, lo hacemos en un máximo de
+        30 días.</li>
+      <li>Sesiones: 30 días. Intentos de inicio de sesión: 1 día.</li>
+      <li>Sugerencias: el tiempo necesario para gestionarlas.</li>
+    </ul>
+
+    <h2>Quién tiene acceso</h2>
+    <p>No vendemos ni cedemos datos a nadie. Intervienen estos proveedores, solo para prestar el servicio:</p>
+    <ul>
+      <li><strong>Contabo GmbH</strong> (Alemania): el servidor donde se alojan la web y la base de datos.</li>
+      <li><strong>Brevo</strong> (Unión Europea): el envío de los correos.</li>
+      <li><strong>Google</strong>: solo si eliges entrar con Google. Google puede tratar datos fuera de la Unión Europea
+        con las garantías del Marco de Privacidad de Datos UE-EE. UU.</li>
+    </ul>
+
+    <h2>Tus derechos</h2>
+    <p>Puedes acceder a tus datos, rectificarlos, suprimirlos, oponerte al tratamiento, limitarlo, pedir su portabilidad y
+      retirar el consentimiento. Escribe a <a href="mailto:roger@lamosca.com">roger@lamosca.com</a> desde el correo de tu
+      cuenta. Si crees que no se han respetado tus derechos, puedes reclamar ante la Agencia Española de Protección de
+      Datos (<a href="https://www.aepd.es" target="_blank" rel="noopener">aepd.es</a>).</p>
+    </div>
+
+    <p class="back"><a href="index.html" data-i18n="priv.footer.back">← Tornar al cercador</a></p>
   </div>
   </main>
   <footer class="site-footer" id="site-footer"></footer>
-  <script src="footer.js?v=1"></script>
+  <script src="footer.js?v=2"></script>
   <script src="feedback.js?v=3"></script>
 </body>
 

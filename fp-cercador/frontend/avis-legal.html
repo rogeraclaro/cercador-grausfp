@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="ca">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title data-i18n="page.title.legal">Avís legal — GrausFP</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=DM+Serif+Display:ital@0;1&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="site.css?v=3">
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 14px;
+      color: var(--dark);
+      background: var(--bg);
+      min-height: 100vh;
+    }
+
+    .content {
+      max-width: 680px;
+      margin: 48px auto;
+      padding: 0 24px 64px;
+    }
+
+    /* Text llarg: un bloc per idioma; i18n.js posa <html lang> en carregar */
+    html[lang="es"] [data-lang-block="ca"],
+    html:not([lang="es"]) [data-lang-block="es"] {
+      display: none;
+    }
+
+    h1 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 36px;
+      font-weight: 400;
+      color: var(--dark);
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      font-size: 14px;
+      color: var(--warm);
+      margin-bottom: 36px;
+    }
+
+    h2 {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--dark);
+      margin: 28px 0 10px;
+    }
+
+    p {
+      line-height: 1.6;
+      color: #3a2e28;
+      margin-bottom: 12px;
+    }
+
+    ul {
+      padding-left: 20px;
+      line-height: 1.8;
+      color: #3a2e28;
+      margin-bottom: 12px;
+    }
+
+    ul li {
+      margin-bottom: 4px;
+    }
+
+    a {
+      color: var(--dark);
+    }
+
+    .back {
+      margin-top: 36px;
+      font-size: 13px;
+    }
+
+    .back a {
+      color: var(--warm);
+    }
+
+    /* ── Lang selector ── */
+    .lang-selector {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      margin-left: auto;
+    }
+
+  </style>
+  <script src="i18n.js?v=20261026a"></script>
+  <script defer src="https://analytics.masellas.info/script.js" data-exclude-search="true" data-exclude-hash="true" data-website-id="ddb6c664-550b-4e2d-848f-796a676e4036"></script>
+</head>
+
+<body>
+  <div class="topbar">
+    <div class="topbar-inner">
+      <a class="topbar-logo" href="index.html">GrausFP</a>
+      <div class="lang-selector" aria-label="Language selector">
+        <button class="lang-btn" data-lang="ca" onclick="setLang('ca')">CA</button>
+        <button class="lang-btn" data-lang="es" onclick="setLang('es')">ES</button>
+      </div>
+    </div>
+  </div>
+
+  <main id="main">
+  <div class="content">
+    <h1 data-i18n="legal.h1">Avís legal</h1>
+
+    <div class="lang-block" data-lang-block="ca">
+    <p class="subtitle">Darrera actualització: 26 d'octubre de 2026</p>
+
+    <h2>Titular</h2>
+    <p>Roger Masellas · <a href="mailto:roger@lamosca.com">roger@lamosca.com</a></p>
+    <p>GrausFP és un projecte personal sense ànim de lucre: no té publicitat, no cobra res i no ven dades.</p>
+
+    <h2>Què és GrausFP</h2>
+    <p>Un cercador que recull i ordena la informació pública sobre l'oferta del Sistema de Formació Professional (graus A
+      a E) perquè sigui més fàcil de consultar.</p>
+
+    <h2>No és una web oficial</h2>
+    <p>GrausFP no té cap relació amb el Ministeri d'Educació, Formació Professional i Esports ni amb cap altra
+      administració. Les dades provenen de fonts oficials, que pots consultar a <a href="fonts.html">Fonts de
+      dades</a>, i s'actualitzen periòdicament.</p>
+    <p>Hi posem molta cura, però les dades poden contenir errors o estar desactualitzades. La informació vàlida és la
+      de les administracions: abans de prendre una decisió (matrícula, convalidacions, accés a un estudi), comprova-la a
+      la fitxa oficial o amb el centre.</p>
+
+    <h2>Enllaços</h2>
+    <p>GrausFP enllaça a webs d'altres organismes i centres. No en som responsables del contingut.</p>
+
+    <h2>Propietat intel·lectual</h2>
+    <p>Les dades de l'oferta formativa són informació pública de les administracions que la publiquen. El disseny i els
+      textos propis de GrausFP són del titular.</p>
+
+    <h2>Dades personals</h2>
+    <p>Com tractem les dades de qui es registra s'explica a la <a href="politica-privacitat.html">política de
+      privacitat</a>.</p>
+    </div>
+
+    <div class="lang-block" data-lang-block="es">
+    <p class="subtitle">Última actualización: 26 de octubre de 2026</p>
+
+    <h2>Titular</h2>
+    <p>Roger Masellas · <a href="mailto:roger@lamosca.com">roger@lamosca.com</a></p>
+    <p>GrausFP es un proyecto personal sin ánimo de lucro: no tiene publicidad, no cobra nada y no vende datos.</p>
+
+    <h2>Qué es GrausFP</h2>
+    <p>Un buscador que recoge y ordena la información pública sobre la oferta del Sistema de Formación Profesional
+      (grados A a E) para que sea más fácil de consultar.</p>
+
+    <h2>No es una web oficial</h2>
+    <p>GrausFP no tiene ninguna relación con el Ministerio de Educación, Formación Profesional y Deportes ni con ninguna
+      otra administración. Los datos proceden de fuentes oficiales, que puedes consultar en <a href="fonts.html">Fuentes
+      de datos</a>, y se actualizan periódicamente.</p>
+    <p>Ponemos mucho cuidado, pero los datos pueden contener errores o estar desactualizados. La información válida es la
+      de las administraciones: antes de tomar una decisión (matrícula, convalidaciones, acceso a un estudio),
+      compruébala en la ficha oficial o con el centro.</p>
+
+    <h2>Enlaces</h2>
+    <p>GrausFP enlaza a webs de otros organismos y centros. No somos responsables de su contenido.</p>
+
+    <h2>Propiedad intelectual</h2>
+    <p>Los datos de la oferta formativa son información pública de las administraciones que la publican. El diseño y los
+      textos propios de GrausFP son del titular.</p>
+
+    <h2>Datos personales</h2>
+    <p>Cómo tratamos los datos de quien se registra se explica en la <a href="politica-privacitat.html">política de
+      privacidad</a>.</p>
+    </div>
+
+    <p class="back"><a href="index.html" data-i18n="priv.footer.back">← Tornar al cercador</a></p>
+  </div>
+  </main>
+  <footer class="site-footer" id="site-footer"></footer>
+  <script src="footer.js?v=2"></script>
+  <script src="feedback.js?v=3"></script>
+</body>
+
+</html>

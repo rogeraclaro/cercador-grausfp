@@ -9,7 +9,8 @@
     { href: 'fonts.html', key: 'footer.fonts', ca: 'Fonts de dades' },
     { href: 'historial.html', key: 'footer.historial', ca: "Historial d'actualitzacions" },
     { href: 'observatori.html', key: 'footer.obs', ca: 'Observatori' },
-    { href: 'politica-privacitat.html', key: 'footer.priv', ca: 'Política de privacitat' }
+    { href: 'politica-privacitat.html', key: 'footer.priv', ca: 'Política de privacitat' },
+    { href: 'avis-legal.html', key: 'footer.legal', ca: 'Avís legal' }
   ];
 
   var currentPage = location.pathname.split('/').pop() || 'index.html';

@@ -7,6 +7,7 @@
       'footer.historial': 'Historial d\'actualitzacions',
       'footer.obs': 'Observatori',
       'footer.priv': 'Política de privacitat',
+      'footer.legal': 'Avís legal',
       /* ── Feedback tab + dialog (feedback.js) ── */
       'fb.tab': 'Suggeriments',
       'fb.tab.aria': "Envia'ns un suggeriment o avisa'ns d'un error",
@@ -76,7 +77,8 @@
       'page.title.reset': 'Nova contrasenya — Cercador Graus FP',
       'page.title.obs': "Observatori de l'oferta FP — Cercador Graus FP",
       'page.title.historial': 'Historial — Cercador Graus FP',
-      'page.title.privacitat': 'Política de privacitat — Cercador Graus FP',
+      'page.title.privacitat': 'Política de privacitat — GrausFP',
+      'page.title.legal': 'Avís legal — GrausFP',
 
       /* ── auth.js — toast ── */
       'auth.verified.toast': '✓ Compte verificat. Ja pots iniciar sessió.',
@@ -683,9 +685,8 @@
 
       /* ── politica-privacitat.html ── */
       'priv.h1': 'Política de privacitat',
-      'priv.badge': 'Text provisional — es completarà abans del llançament públic',
+      'legal.h1': 'Avís legal',
       'priv.footer.back': '← Tornar al cercador',
-      'priv.feedback': '<strong>Comentaris</strong>: si ens envies un comentari des de la pestanya Feedback, en desem el text, el teu email i la pàgina on eres, només per respondre\'t i millorar el servei.',
     },
 
     es: {
@@ -695,6 +696,7 @@
       'footer.historial': 'Historial de actualizaciones',
       'footer.obs': 'Observatorio',
       'footer.priv': 'Política de privacidad',
+      'footer.legal': 'Aviso legal',
       /* ── Feedback tab + dialog (feedback.js) ── */
       'fb.tab': 'Sugerencias',
       'fb.tab.aria': 'Envíanos una sugerencia o avísanos de un error',
@@ -764,7 +766,8 @@
       'page.title.reset': 'Nueva contraseña — Buscador Grados FP',
       'page.title.obs': 'Observatorio de la oferta FP — Buscador Grados FP',
       'page.title.historial': 'Historial — Buscador Grados FP',
-      'page.title.privacitat': 'Política de privacidad — Buscador Grados FP',
+      'page.title.privacitat': 'Política de privacidad — GrausFP',
+      'page.title.legal': 'Aviso legal — GrausFP',
 
       /* ── auth.js — toast ── */
       'auth.verified.toast': '✓ Cuenta verificada. Ya puedes iniciar sesión.',
@@ -1371,9 +1374,8 @@
 
       /* ── politica-privacitat.html ── */
       'priv.h1': 'Política de privacidad',
-      'priv.badge': 'Texto provisional — se completará antes del lanzamiento público',
+      'legal.h1': 'Aviso legal',
       'priv.footer.back': '← Volver al buscador',
-      'priv.feedback': '<strong>Comentarios</strong>: si nos envías un comentario desde la pestaña Feedback, guardamos el texto, tu email y la página en la que estabas, solo para responderte y mejorar el servicio.',
     }
   };
 
