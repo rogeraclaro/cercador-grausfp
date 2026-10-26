@@ -15,6 +15,7 @@ from typing import Optional
 
 from apscheduler.schedulers.background import BackgroundScheduler
 
+import heartbeat
 import history
 import refresh_state
 from scrapers import pipeline
@@ -142,9 +143,11 @@ def _scheduled_refresh() -> None:
             alerts_service.dispatch_alerts(result)
         except Exception as exc_a:
             logger.error("Could not dispatch alerts: %s", exc_a)
+        heartbeat.report_refresh(result)
     except Exception as exc:
         logger.error("scheduled_refresh failed: %s", exc)
         refresh_state.set_state(status="error", errors=[str(exc)])
+        heartbeat.report_refresh(None, error=str(exc))
     finally:
         refresh_state._lock.release()
 
