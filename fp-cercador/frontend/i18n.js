@@ -1382,7 +1382,18 @@
   /* ?lang=ca|es (enllaços compartits) mana sobre la preferència desada, i la desa. */
   var _urlLang = new URLSearchParams(location.search).get('lang');
   if (_urlLang === 'ca' || _urlLang === 'es') localStorage.setItem('lang', _urlLang);
-  var _lang = localStorage.getItem('lang') || 'ca';
+  /* Sense preferència desada, l'idioma del navegador: el primer català o castellà de la llista;
+     si no n'hi ha cap (anglès, basc, gallec…), castellà. No es desa: només ho fa triar-lo a mà. */
+  function _browserLang() {
+    var langs = navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || ''];
+    for (var i = 0; i < langs.length; i++) {
+      var code = String(langs[i]).toLowerCase().split('-')[0];
+      if (code === 'ca' || code === 'es') return code;
+    }
+    return 'es';
+  }
+  var _saved = localStorage.getItem('lang');
+  var _lang = (_saved === 'ca' || _saved === 'es') ? _saved : _browserLang();
   var _dict = TRANSLATIONS[_lang] || TRANSLATIONS['ca'];
 
   function _resolve(key) {
