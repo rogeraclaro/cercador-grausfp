@@ -1911,7 +1911,7 @@
 
         async toggleWatch(row) {
           if (!this.loggedIn) { this.showCentresModal(); return; }
-          const key = row.codigo || String(row.id);
+          const key = row.ref;  // Pla 076: clau estable
           if (this.watchedOfertaKeys.has(key)) return;
           this.watchSaving = true;
           this.watchSaveError = '';
@@ -2037,15 +2037,19 @@
               .then(r => r.json())
               .then(d => { this.centresNous = d; })
               .catch(() => { });
-            const ofertaParam = new URLSearchParams(location.search).get('oferta');
-            if (ofertaParam) this.openOfertaFromLink(parseInt(ofertaParam));
-            // Tornada des de l'itinerari: ?grado=X&codigo=… o ?grado=D|E&id=… obre aquell grau.
-            const itinParams = new URLSearchParams(location.search);
-            if (itinParams.get('grado') && (itinParams.get('codigo') || itinParams.get('id'))) {
-              this.openRowFromItinerari(itinParams.get('grado'), itinParams.get('codigo'), itinParams.get('id'));
+            // Enllaç del perfil: ?ref=… obre els centres d'aquell grau (antic: ?oferta=<id>).
+            const linkParams = new URLSearchParams(location.search);
+            if (!linkParams.get('grado') && (linkParams.get('ref') || linkParams.get('oferta'))) {
+              this.openOfertaFromLink(linkParams.get('ref'), linkParams.get('oferta'));
+            }
+            // Tornada des de l'itinerari: ?grado=X&ref=… obre aquell grau (antic: &codigo= o &id=).
+            if (linkParams.get('grado')
+                && (linkParams.get('ref') || linkParams.get('codigo') || linkParams.get('id'))) {
+              this.openRowFromItinerari(linkParams.get('grado'), linkParams.get('ref'),
+                linkParams.get('codigo'), linkParams.get('id'));
               // Un sol ús: es treu de l'adreça perquè recarregar no torni a obrir aquest grau.
               const cleanUrl = new URL(location.href);
-              ['grado', 'codigo', 'id'].forEach(k => cleanUrl.searchParams.delete(k));
+              ['grado', 'ref', 'codigo', 'id'].forEach(k => cleanUrl.searchParams.delete(k));
               history.replaceState(null, '', cleanUrl);
             }
           } catch (e) {
@@ -2072,9 +2076,11 @@
           window.scrollTo({ top: 0, behavior: 'smooth' });
         },
 
-        openRowFromItinerari(grado, codigo, id) {
+        // ref: clau estable (Pla 076). codigo/id: enllaços antics; l'id pot ser d'un altre grau
+        // si el catàleg s'ha refrescat pel mig.
+        openRowFromItinerari(grado, ref, codigo, id) {
           const row = this.allRecords.find(r => r.grado === grado
-            && (codigo ? r.codigo === codigo : String(r.id) === id));
+            && (ref ? r.ref === ref : codigo ? r.codigo === codigo : String(r.id) === id));
           if (!row) return;
           let saved = null;
           try { saved = JSON.parse(sessionStorage.getItem(LIST_STATE_KEY) || 'null'); } catch (e) { }
@@ -2099,15 +2105,15 @@
           });
         },
 
-        openOfertaFromLink(ofertaId) {
-          const row = this.allRecords.find(r => r.id === ofertaId);
+        openOfertaFromLink(ref, ofertaId) {
+          const row = this.allRecords.find(r => ref ? r.ref === ref : String(r.id) === ofertaId);
           if (!row) return;
           this.search = row.codigo || row.denominacion;
           this.resetPage();
           this.$nextTick(() => {
             this.toggleCentres(row);
             this.$nextTick(() => {
-              const el = document.querySelector('#results-table tr[data-row-id="' + ofertaId + '"]');
+              const el = document.querySelector('#results-table tr[data-row-id="' + row.id + '"]');
               if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
             });
           });
@@ -2130,7 +2136,7 @@
             if (this.filterGrado && r.grado !== this.filterGrado) return false;
             if (this.filterFamilia && r.familia !== this.filterFamilia) return false;
             if (this.filterNivel && r.nivel !== parseInt(this.filterNivel)) return false;
-            if (this.filterFavs && !this.favorites.has(r.id)) return false;
+            if (this.filterFavs && !this.favorites.has(r.ref)) return false;
             if (q) {
               const hitDen = groups
                 ? groups.every(g => g.some(v => r._normDen.includes(v)))
@@ -2160,7 +2166,7 @@
           // carreguen en obrir el desplegable: sense això, en una visita nova la
           // columna de centres sortia buida.
           const pending = this.filteredRecords.filter(r =>
-            this.selectedCentres[r.id] && this.selectedCentres[r.id].size > 0 && !this.centresData[r.id]);
+            this.selectedCentres[r.ref] && this.selectedCentres[r.ref].size > 0 && !this.centresData[r.id]);
           await Promise.all(pending.map(async r => {
             try {
               const resp = await fetch(this.centresUrl(r));
@@ -2184,7 +2190,7 @@
           };
           const rows = [headers.join(SEP)];
           for (const r of this.filteredRecords) {
-            const sel = this.selectedCentres[r.id];
+            const sel = this.selectedCentres[r.ref];
             const centreStr = (sel && sel.size > 0 && this.centresData[r.id])
               ? [...sel].map(id => {
                 const c = (this.centresData[r.id] || []).find(x => x.id === id);
@@ -2302,22 +2308,18 @@
           return str.toLowerCase().split(' ').map(w => w ? w[0].toUpperCase() + w.slice(1) : w).join(' ');
         },
 
+        // Pla 076: els recomptes, els centres nous i /api/centres van per ref.
         centres_count(row) {
           if (this.centresData[row.id]) return this.centresData[row.id].length;
-          const clau = row.grado === 'C' && row.plan_antiguo ? row.codigo : String(row.id);
-          return this.centresCount[clau] || 0;
+          return this.centresCount[row.ref] || 0;
         },
 
         esCentreNou(row, centreId) {
-          const clau = row.grado === 'C' && row.plan_antiguo ? row.codigo : String(row.id);
-          return (this.centresNous[clau] || []).includes(centreId);
+          return (this.centresNous[row.ref] || []).includes(centreId);
         },
 
         centresUrl(row) {
-          const param = row.grado === 'C' && row.plan_antiguo
-            ? 'codigo=' + row.codigo
-            : 'id=' + row.id;
-          return API_BASE + '/api/centres?' + param;
+          return API_BASE + '/api/centres?ref=' + encodeURIComponent(row.ref);
         },
 
         async toggleCentres(row) {
@@ -2379,10 +2381,12 @@
             const res = await fetch(API_BASE + '/api/favorites', { credentials: 'include' });
             if (!res.ok) return;
             const data = await res.json();
-            this.favorites = new Set(data.map(x => x.oferta_id));
+            // Pla 076: per ref (clau estable); un favorit sense ref no es pot mostrar.
+            const favs = data.filter(x => x.ref);
+            this.favorites = new Set(favs.map(x => x.ref));
             const centres = {};
-            data.forEach(x => {
-              if (x.centres && x.centres.length) centres[x.oferta_id] = new Set(x.centres);
+            favs.forEach(x => {
+              if (x.centres && x.centres.length) centres[x.ref] = new Set(x.centres);
             });
             this.selectedCentres = centres;
           } catch (e) { }
@@ -2390,22 +2394,22 @@
 
         async toggleFavorite(row) {
           if (!this.loggedIn) { this.showCentresModal(); return; }
-          const id = row.id;
-          if (this.favorites.has(id)) {
-            this.favorites.delete(id);
+          const ref = row.ref;
+          if (this.favorites.has(ref)) {
+            this.favorites.delete(ref);
             this.favorites = new Set(this.favorites);
-            fetch(API_BASE + '/api/favorites/' + id, { method: 'DELETE', credentials: 'include' }).catch(() => {
-              this.favorites.add(id); this.favorites = new Set(this.favorites);
+            fetch(API_BASE + '/api/favorites/' + encodeURIComponent(ref), { method: 'DELETE', credentials: 'include' }).catch(() => {
+              this.favorites.add(ref); this.favorites = new Set(this.favorites);
             });
           } else {
-            this.favorites.add(id);
+            this.favorites.add(ref);
             this.favorites = new Set(this.favorites);
             fetch(API_BASE + '/api/favorites', {
               method: 'POST', credentials: 'include',
               headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ oferta_id: id, oferta_codigo: row.codigo || null })
+              body: JSON.stringify({ ref })
             }).catch(() => {
-              this.favorites.delete(id); this.favorites = new Set(this.favorites);
+              this.favorites.delete(ref); this.favorites = new Set(this.favorites);
             });
           }
         },
@@ -2440,29 +2444,29 @@
         },
 
         toggleCentreSelect(row, centreId) {
-          const rowId = row.id;
-          const sel = new Set(this.selectedCentres[rowId] || []);
+          const ref = row.ref;
+          const sel = new Set(this.selectedCentres[ref] || []);
           const wasSelected = sel.has(centreId);
           if (wasSelected) {
             sel.delete(centreId);
           } else {
             sel.add(centreId);
           }
-          this.selectedCentres = { ...this.selectedCentres, [rowId]: sel };
+          this.selectedCentres = { ...this.selectedCentres, [ref]: sel };
           if (!this.loggedIn) return;
 
           // Seleccionar un centre marca automàticament l'oferta com a favorit
           // si encara no ho era — no té sentit fer seguiment d'un centre
           // d'una oferta que no tens desada.
-          if (!wasSelected && !this.favorites.has(rowId)) {
+          if (!wasSelected && !this.favorites.has(ref)) {
             this.toggleFavorite(row);
           }
 
           if (wasSelected) {
-            fetch(API_BASE + '/api/favorites/' + rowId + '/centres/' + centreId,
+            fetch(API_BASE + '/api/favorites/' + encodeURIComponent(ref) + '/centres/' + encodeURIComponent(centreId),
               { method: 'DELETE', credentials: 'include' }).catch(() => { });
           } else {
-            fetch(API_BASE + '/api/favorites/' + rowId + '/centres', {
+            fetch(API_BASE + '/api/favorites/' + encodeURIComponent(ref) + '/centres', {
               method: 'POST', credentials: 'include',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ centre_id: centreId })
@@ -2471,13 +2475,13 @@
         },
 
         centresSeleccionats(row) {
-          const sel = this.selectedCentres[row.id];
+          const sel = this.selectedCentres[row.ref];
           if (!sel || sel.size === 0 || !this.loggedIn) return [];
           return this.centresFiltrats(row).filter(c => sel.has(c.id));
         },
 
         centresNoSeleccionats(row) {
-          const sel = this.selectedCentres[row.id] || new Set();
+          const sel = this.selectedCentres[row.ref] || new Set();
           if (!this.loggedIn) return this.centresVisibles(row);
           return this.centresFiltrats(row).filter(c => !sel.has(c.id)).slice(0, 50);
         },
@@ -2539,9 +2543,7 @@
 
         // Pla 072: enllaç i línia resum de l'itinerari complet (itinerari.html).
         itinQuery(row) {
-          return ['D', 'E'].includes(row.grado)
-            ? 'grado=' + row.grado + '&id=' + encodeURIComponent(row.id)
-            : 'grado=' + row.grado + '&codigo=' + encodeURIComponent(row.codigo);
+          return 'grado=' + row.grado + '&ref=' + encodeURIComponent(row.ref);
         },
 
         itinUrl(row) { return 'itinerari.html?' + this.itinQuery(row); },
@@ -2557,10 +2559,10 @@
           return null;
         },
 
-        // Cicles D del panell d'un C: l'API no porta el nivell; es busca el registre per id o per fitxa.
+        // Cicles D del panell d'un C: l'API no porta el nivell; es busca el registre per ref o per fitxa.
         cicleNivell(cicle) {
           const d = this.allRecords.find(r => r.grado === 'D'
-            && ((cicle.id != null && r.id === cicle.id) || (cicle.ficha_url && r.ficha_url === cicle.ficha_url)));
+            && ((cicle.ref && r.ref === cicle.ref) || (cicle.ficha_url && r.ficha_url === cicle.ficha_url)));
           return this.nivellLabel(d);
         },
 
@@ -2926,9 +2928,10 @@
           const out = [];
           const seen = new Set();
           for (const g of this.ocupResults) {
+            // ficha_url abans que l'id: l'id d'ocupaciones.json pot ser d'un catàleg anterior (Pla 076).
             let rec = (g.codigo && byCod.get(g.codigo))
-              || (g.id != null && byId.get(String(g.id)))
               || (g.ficha_url && byFicha.get(g.ficha_url))
+              || (g.id != null && byId.get(String(g.id)))
               || null;
             if (rec) {
               if (seen.has(rec.id)) continue;
@@ -3281,7 +3284,7 @@
             <tbody :class="{ 'row-open': expandedRows[row.id] || childrenCLoeVisible[row.id] || centresVisible[row.id] }">
               <tr
                 :data-row-id="row.id"
-                :class="{ 'row-link': rowIsActionable(row), 'row-fav': favorites.has(row.id) }"
+                :class="{ 'row-link': rowIsActionable(row), 'row-fav': favorites.has(row.ref) }"
                 :tabindex="rowIsActionable(row) ? 0 : null"
                 :aria-expanded="['A','C','D','E'].includes(row.grado) ? String(!!expandedRows[row.id]) : (bExpandable(row) ? String(!!childrenCLoeVisible[row.id]) : null)"
                 @click="activateRow(row)"
@@ -3289,12 +3292,12 @@
                 @keydown.space.self.prevent="activateRow(row)">
                 <td class="col-nom">
                   <button class="btn-fav" @click.stop="toggleFavorite(row)"
-                    :class="{ 'btn-fav--active': favorites.has(row.id) }"
-                    :title="favorites.has(row.id) ? t('index.fav.remove') : t('index.fav.add')"
+                    :class="{ 'btn-fav--active': favorites.has(row.ref) }"
+                    :title="favorites.has(row.ref) ? t('index.fav.remove') : t('index.fav.add')"
                     :aria-label="t('index.filter.favs')"
-                    :aria-pressed="String(favorites.has(row.id))">
+                    :aria-pressed="String(favorites.has(row.ref))">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16">
-                      <path :fill="favorites.has(row.id) ? 'currentColor' : 'none'" stroke="currentColor"
+                      <path :fill="favorites.has(row.ref) ? 'currentColor' : 'none'" stroke="currentColor"
                         stroke-width="2" stroke-linejoin="round"
                         d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
                     </svg>
@@ -3620,11 +3623,11 @@
                           @focus="if(!loggedIn){ $event.target.blur(); showCentresModal(); }">
                         <template x-if="loggedIn">
                           <button class="watch-btn"
-                            :class="{ 'watch-btn--active': watchedOfertaKeys.has(row.codigo || String(row.id)) }"
-                            :disabled="watchSaving" @click.stop="watchedOfertaKeys.has(row.codigo || String(row.id))
+                            :class="{ 'watch-btn--active': watchedOfertaKeys.has(row.ref) }"
+                            :disabled="watchSaving" @click.stop="watchedOfertaKeys.has(row.ref)
                               ? (window.location.href = 'seguiment.html')
-                              : toggleWatch(row)" x-text="watchedOfertaKeys.has(row.codigo || String(row.id))
-                              ? (watchSaved[row.codigo || String(row.id)] ? t('index.centres.saved') : t('index.centres.watching'))
+                              : toggleWatch(row)" x-text="watchedOfertaKeys.has(row.ref)
+                              ? (watchSaved[row.ref] ? t('index.centres.saved') : t('index.centres.watching'))
                               : t('index.centres.watch')"></button>
                         </template>
                         <button @click.stop="centresVisible[row.id] = false">✕</button>

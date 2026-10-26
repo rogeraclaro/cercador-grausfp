@@ -562,16 +562,12 @@
       function fichaHref(row) {
         // Tots els graus C (pla antic i LOMLOE) despleguen el panell de detall
         // dins el cercador (Pla 058) — enllacem a la seva fila al llistat general.
-        if (row.grado === 'C') return 'index.html?oferta=' + row.oferta_id;
+        if (row.grado === 'C') return 'index.html?ref=' + encodeURIComponent(row.ref);
         if (['A', 'B', 'C'].includes(row.grado) && row.ficha_id) {
           return API_BASE + '/api/ficha-redirect?grado=' + row.grado + '&codigo=' + encodeURIComponent(row.codigo);
         }
         if (['D', 'E'].includes(row.grado) && row.ficha_url) return row.ficha_url;
         return null;
-      }
-
-      function centresClau(row) {
-        return row.grado === 'C' && row.plan_antiguo ? row.codigo : String(row.oferta_id ?? row.id);
       }
 
       async function loadFavorits() {
@@ -590,17 +586,18 @@
 
           var ofertesRes = await fetch(API_BASE + '/api/ofertes');
           var ofertes = ofertesRes.ok ? await ofertesRes.json() : [];
-          var byId = {};
-          ofertes.forEach(function (r) { byId[r.id] = r; });
+          // Pla 076: els favorits s'uneixen al catàleg per ref (els id canvien a cada refresc).
+          var byRef = {};
+          ofertes.forEach(function (r) { byRef[r.ref] = r; });
 
           var countRes = await fetch(API_BASE + '/api/centres/count');
           var centresCount = countRes.ok ? await countRes.json() : {};
 
           var rows = favs
             .map(function (f) {
-              var oferta = byId[f.oferta_id];
+              var oferta = f.ref && byRef[f.ref];
               if (!oferta) return null;
-              return Object.assign({}, oferta, { oferta_id: f.oferta_id, centreIds: f.centres || [] });
+              return Object.assign({}, oferta, { centreIds: f.centres || [] });
             })
             .filter(Boolean);
 
@@ -611,9 +608,7 @@
           await Promise.all(rows.map(async function (row) {
             if (!row.centreIds.length) { row.centres = []; return; }
             try {
-              var clau = centresClau(row);
-              var param = (row.grado === 'C' && row.plan_antiguo) ? 'codigo=' : 'id=';
-              var cRes = await fetch(API_BASE + '/api/centres?' + param + encodeURIComponent(clau));
+              var cRes = await fetch(API_BASE + '/api/centres?ref=' + encodeURIComponent(row.ref));
               var all = cRes.ok ? await cRes.json() : [];
               var activeIds = {};
               all.forEach(function (c) { activeIds[c.id] = true; });
@@ -643,7 +638,7 @@
               : esc(row.denominacion);
             var oldBadge = row.plan_antiguo ? '<span class="badge-old">' + t('index.badge.old') + '</span>' : '';
 
-            var totalCentres = centresCount[centresClau(row)] || 0;
+            var totalCentres = centresCount[row.ref] || 0;
             var centresHtml;
             if (row.centres.length) {
               var chips = row.centres.map(function (c) {
@@ -660,15 +655,15 @@
                   '<span>' + esc(c.nombre) +
                   (c.localitat ? ' <span style="color:var(--warm)">(' + esc(c.localitat) + ')</span>' : '') +
                   inactiveTag + contactLine + '</span>' +
-                  ' <button class="centre-chip-remove" data-oferta="' + row.oferta_id + '" data-centre="' + c.id +
+                  ' <button class="centre-chip-remove" data-oferta="' + esc(row.ref) + '" data-centre="' + esc(c.id) +
                   '" aria-label="' + t('index.fav.remove') + '">✕</button></span>';
               }).join('');
               centresHtml = '<div class="centres-chips">' + chips + '</div>' +
-                '<a class="centres-manage-link" href="index.html?oferta=' + row.oferta_id + '">' +
+                '<a class="centres-manage-link" href="index.html?ref=' + esc(encodeURIComponent(row.ref)) + '">' +
                 t('perfil.favs.centres.manage') + '</a>';
             } else if (totalCentres > 0) {
               centresHtml = '<div class="centres-none">' + t('perfil.favs.centres.none') + '</div>' +
-                '<a class="centres-manage-link" href="index.html?oferta=' + row.oferta_id + '">' +
+                '<a class="centres-manage-link" href="index.html?ref=' + esc(encodeURIComponent(row.ref)) + '">' +
                 t('perfil.favs.centres.manage') + '</a>';
             } else {
               centresHtml = '';
@@ -676,7 +671,7 @@
 
             return '<tr>' +
               '<td class="col-nom">' +
-              '<button class="btn-fav-remove" data-oferta="' + row.oferta_id + '" title="' + t('index.fav.remove') + '">' +
+              '<button class="btn-fav-remove" data-oferta="' + esc(row.ref) + '" title="' + t('index.fav.remove') + '">' +
               '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16">' +
               '<path fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linejoin="round" ' +
               'd="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />' +
@@ -710,7 +705,7 @@
               var ofertaId = btn.dataset.oferta;
               btn.disabled = true;
               try {
-                var r = await fetch(API_BASE + '/api/favorites/' + ofertaId, { method: 'DELETE', credentials: 'include' });
+                var r = await fetch(API_BASE + '/api/favorites/' + encodeURIComponent(ofertaId), { method: 'DELETE', credentials: 'include' });
                 if (!r.ok) throw new Error('HTTP ' + r.status);
                 await loadFavorits();
               } catch (e) {
@@ -725,7 +720,7 @@
               var centreId = btn.dataset.centre;
               btn.disabled = true;
               try {
-                var r = await fetch(API_BASE + '/api/favorites/' + ofertaId + '/centres/' + centreId,
+                var r = await fetch(API_BASE + '/api/favorites/' + encodeURIComponent(ofertaId) + '/centres/' + encodeURIComponent(centreId),
                   { method: 'DELETE', credentials: 'include' });
                 if (!r.ok) throw new Error('HTTP ' + r.status);
                 await loadFavorits();

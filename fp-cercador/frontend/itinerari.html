@@ -929,9 +929,11 @@
       } catch (e) { return 'timeline'; }
     }
 
+    // Pla 076: ref (clau estable). codigo/id només per als enllaços antics.
     function itinQs(q) {
       return 'grado=' + encodeURIComponent(q.grado)
-        + (q.codigo ? '&codigo=' + encodeURIComponent(q.codigo) : '&id=' + encodeURIComponent(q.id));
+        + (q.ref ? '&ref=' + encodeURIComponent(q.ref)
+          : q.codigo ? '&codigo=' + encodeURIComponent(q.codigo) : '&id=' + encodeURIComponent(q.id));
     }
 
     // ── Graf (pla 073) ──
@@ -1073,7 +1075,8 @@
 
           const p = new URLSearchParams(location.search);
           const grado = (p.get('grado') || '').toUpperCase();
-          if (['A', 'B', 'C'].includes(grado) && p.get('codigo')) this.load({ grado, codigo: p.get('codigo') });
+          if (['A', 'B', 'C', 'D', 'E'].includes(grado) && p.get('ref')) this.load({ grado, ref: p.get('ref') });
+          else if (['A', 'B', 'C'].includes(grado) && p.get('codigo')) this.load({ grado, codigo: p.get('codigo') });
           else if (['D', 'E'].includes(grado) && p.get('id')) this.load({ grado, id: p.get('id') });
           else this.state = 'noparams';
 
@@ -1132,6 +1135,7 @@
             if (seq !== this._seq) return;
             this.setData(body);
             this.state = 'data';
+            if (!q.ref && this.focus && this.focus.ref) this.setUrl(this.focus);  // enllaç antic → ref
             document.title = this.focus.denominacion + ' — ' + t('itin.page.title');
             this.$nextTick(() => { this.renderTree(); this.redraw(); });
           } catch (e) {
@@ -1151,16 +1155,20 @@
           this.expanded = {};
         },
 
-        go(n) {
-          if (n.key === this.focusKey) return;
-          const q = n.codigo ? { grado: n.grado, codigo: n.codigo } : { grado: n.grado, id: String(n.id) };
+        // L'adreça (i per tant l'enllaç de compartir) sempre amb grado + ref.
+        setUrl(n) {
           const url = new URL(location.href);
           url.search = '';
-          url.searchParams.set('grado', q.grado);
-          if (q.codigo) url.searchParams.set('codigo', q.codigo); else url.searchParams.set('id', q.id);
+          url.searchParams.set('grado', n.grado);
+          url.searchParams.set('ref', n.ref);
           history.replaceState(null, '', url);
+        },
+
+        go(n) {
+          if (n.key === this.focusKey) return;
+          this.setUrl(n);
           window.scrollTo({ top: 0 });
-          this.load(q);
+          this.load({ grado: n.grado, ref: n.ref });
         },
 
         // L'idioma va a l'enllaç perquè la previsualització (og:*) i la pàgina surtin en el mateix idioma.
