@@ -16,7 +16,8 @@ _MAX_MSG = 250  # Kuma guarda el missatge a l'historial; n'hi ha prou amb el res
 
 
 def report_refresh(result, error=None):
-    url = os.environ.get("KUMA_PUSH_URL", "").strip()
+    # Kuma mostra l'URL amb "?status=up&msg=OK&ping=" al darrere: ens quedem només amb la base
+    url = os.environ.get("KUMA_PUSH_URL", "").strip().split("?")[0]
     if not url:
         return
     problems = [error] if error else list(result.get("errors", [])) + list(result.get("warnings", []))

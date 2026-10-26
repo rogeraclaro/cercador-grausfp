@@ -56,6 +56,14 @@ def test_excepcio_del_refresc_envia_down(monkeypatch):
     assert "pipeline petat" in fake.calls[0][1]["msg"]
 
 
+def test_url_copiada_de_kuma_amb_parametres(monkeypatch):
+    fake = FakeGet()
+    monkeypatch.setenv("KUMA_PUSH_URL", "https://status.example/api/push/abc?status=up&msg=OK&ping=")
+    monkeypatch.setattr(heartbeat.requests, "get", fake)
+    heartbeat.report_refresh({"total": 1, "errors": [], "warnings": []})
+    assert fake.calls[0][0] == "https://status.example/api/push/abc"
+
+
 def test_si_kuma_no_respon_no_peta(monkeypatch):
     monkeypatch.setenv("KUMA_PUSH_URL", "https://status.example/api/push/abc")
     monkeypatch.setattr(heartbeat.requests, "get", FakeGet(fail=True))
