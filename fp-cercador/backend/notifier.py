@@ -36,7 +36,7 @@ def _save_state(state: dict) -> None:
         json.dump(state, f)
 
 
-def _build_html(items: list) -> str:
+def _build_html(items: list, base_url: str) -> str:
     rows = []
     for it in items:
         summary = item_summary(it["changes"]).replace("\n", "<br>")
@@ -53,12 +53,12 @@ def _build_html(items: list) -> str:
         f"{body}"
         "<hr style='margin-top:32px'>"
         "<p style='font-size:12px;color:#888'>Consulta tots els ensenyaments a "
-        "<a href='https://grausfp.masellas.info'>grausfp.masellas.info</a></p>"
+        f"<a href='{base_url}'>{base_url.split('://', 1)[-1]}</a></p>"
         "</body></html>"
     )
 
 
-def notify_if_new() -> bool:
+def notify_if_new(base_url: str) -> bool:
     """Crea i envia una campanya Brevo si hi ha ítems nous al feed. Retorna True si ha enviat."""
     api_key = os.environ.get("BREVO_API_KEY", "")
     list_id = os.environ.get("BREVO_LIST_ID", "")
@@ -104,7 +104,7 @@ def notify_if_new() -> bool:
                 "subject": f"Novetats FP — {date_str}",
                 "sender": {"name": sender_name, "email": sender_email},
                 "type": "classic",
-                "htmlContent": _build_html(new_items),
+                "htmlContent": _build_html(new_items, base_url),
                 "recipients": {"listIds": [int(list_id)]},
             },
             timeout=15,

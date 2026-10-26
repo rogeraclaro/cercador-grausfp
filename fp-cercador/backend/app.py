@@ -581,7 +581,7 @@ def observatory():
 @app.route("/api/feed.rss")
 def api_feed_rss():
     items = feed.load_feed_items()
-    rss = feed.render_rss(items)
+    rss = feed.render_rss(items, base_url=SITE_URL)
     return app.response_class(
         rss,
         mimetype="application/rss+xml",
@@ -592,7 +592,7 @@ def api_feed_rss():
 @app.route("/api/feed.json")
 def api_feed_json():
     items = feed.load_feed_items()
-    data = feed.render_json_feed(items)
+    data = feed.render_json_feed(items, base_url=SITE_URL)
     return jsonify(data), 200, {"Cache-Control": "public, max-age=3600"}
 
 
@@ -637,7 +637,7 @@ def admin_refresh():
             except Exception as exc_h:
                 logger.error("Could not write refresh history: %s", exc_h)
             try:
-                notifier.notify_if_new()
+                notifier.notify_if_new(SITE_URL)
             except Exception as exc_n:
                 logger.error("Could not send Brevo notification: %s", exc_n)
             try:
@@ -1192,7 +1192,7 @@ def _resolve_ficha_id(codigo: str):
 @app.route('/api/og-page/<page>')
 def og_page_es(page):
     """Pàgina pública amb les metadades de previsualització en castellà (nginx hi envia ?lang=es)."""
-    body = og_page.render_es(page)
+    body = og_page.render_es(page, SITE_URL)
     if body is None:
         return jsonify({'error': 'not found'}), 404
     return body, 200, {'Content-Type': 'text/html; charset=utf-8'}

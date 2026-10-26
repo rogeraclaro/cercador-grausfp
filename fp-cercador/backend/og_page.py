@@ -13,7 +13,7 @@ import re
 
 FRONTEND_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "frontend")
 
-OG_IMAGE_ES = "https://grausfp.masellas.info/og-image-es.png"
+OG_IMAGE_ES_PATH = "/og-image-es.png"  # sota SITE_URL; og:image ha de ser una URL absoluta
 OG_IMAGE_ALT_ES = "GrausFP: toda la Formación Profesional, en un solo buscador"
 
 # Pàgina → (og:title, descripció). La descripció va a og:description i a meta description.
@@ -43,20 +43,20 @@ def _set_meta(page_html, attr, key, value):
     return page_html.replace("</head>", tag + "</head>", 1)
 
 
-def localize_es(page_html, page):
+def localize_es(page_html, page, site_url):
     title, description = PAGES_ES[page]
     out = page_html.replace('<html lang="ca">', '<html lang="es">', 1)
     out = _set_meta(out, "name", "description", description)
     out = _set_meta(out, "property", "og:title", title)
     out = _set_meta(out, "property", "og:description", description)
-    out = _set_meta(out, "property", "og:image", OG_IMAGE_ES)
+    out = _set_meta(out, "property", "og:image", site_url + OG_IMAGE_ES_PATH)
     out = _set_meta(out, "property", "og:image:alt", OG_IMAGE_ALT_ES)
     return out
 
 
-def render_es(page):
+def render_es(page, site_url):
     """HTML de la pàgina amb les metadades en castellà, o None si no és una pàgina pública."""
     if page not in PAGES_ES:
         return None
     with open(os.path.join(FRONTEND_DIR, page + ".html"), encoding="utf-8") as fh:
-        return localize_es(fh.read(), page)
+        return localize_es(fh.read(), page, site_url)

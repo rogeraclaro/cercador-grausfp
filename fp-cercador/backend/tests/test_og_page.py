@@ -38,3 +38,10 @@ def test_itinerari_porta_titol_i_descripcio_en_castella(client):
 @pytest.mark.parametrize("name", ["admin", "perfil", "..%2Fapp", "index.html", "x"])
 def test_pagines_fora_de_la_llista_donen_404(client, name):
     assert client.get(f"/api/og-page/{name}").status_code == 404
+
+
+def test_la_imatge_segueix_site_url(client, monkeypatch):
+    import app as app_module
+    monkeypatch.setattr(app_module, "SITE_URL", "https://grausfp.example")
+    html = client.get("/api/og-page/index").get_data(as_text=True)
+    assert 'content="https://grausfp.example/og-image-es.png"' in html
