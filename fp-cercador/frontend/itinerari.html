@@ -612,6 +612,8 @@
     .graph-detail h2 { font-size: var(--fs-body); font-weight: 600; overflow-wrap: anywhere; }
     .graph-detail .muted { color: var(--warm); }
     .graph-detail .actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+    .graph-detail .grau-link { color: var(--dark); text-decoration: underline;
+      text-decoration-color: var(--warm); text-underline-offset: 2px; }
 
     /* Modal de registre: mateixos estils que a index.html */
     .centres-modal-overlay {
@@ -860,7 +862,7 @@
       .t-actions { margin-left: 6px; }
     }
   </style>
-  <script src="i18n.js?v=20261026b"></script>
+  <script src="i18n.js?v=20261026c"></script>
   <script src="auth.js"></script>
   <script>
     const API_BASE = window.location.hostname === 'localhost' ? 'http://localhost:5001' : '';
@@ -895,6 +897,9 @@
 
     // Nom descriptiu del grau: mateixa redacció que la taula de per-que-grausfp.html.
     function gradeName(g) { return t('perque.grau.' + g.toLowerCase() + '.nom'); }
+
+    // Pla 077: pàgina pública del grau (/grau/<ref>; en local, directament a Flask).
+    function grauUrl(n) { return (API_BASE ? API_BASE + '/api' : '') + '/grau/' + encodeURIComponent(n.ref); }
 
     // Mateixa família que el focus primer; després els lligats a un element visible
     // de la columna veïna (perquè les línies no quedin penjant); després per codi.
@@ -1742,6 +1747,7 @@
               <button type="button" class="btn" x-show="gs.key && !graphFull" @click="expandGraph(graphSel)"
                 x-text="t('itin.graph.expand')"></button>
             </div>
+            <p x-show="gs.ref"><a class="grau-link" :href="gs.ref ? grauUrl(gs) : '#'" x-text="t('grau.page_link')"></a></p>
           </div>
         </aside>
       </section>
