@@ -1,6 +1,6 @@
 # 076 — Identificadors estables per als graus (favorits, enllaços, centres)
 
-**Prioritat:** P1 (abans del llançament públic) · **Esforç:** M–L · **Depèn de:** — · **Estat:** TODO
+**Prioritat:** P1 (abans del llançament públic) · **Esforç:** M–L · **Depèn de:** — · **Estat:** DONE (2026-10-26)
 
 ## Problema
 
@@ -47,3 +47,12 @@ Camp nou `ref` a cada registre d'`ofertes.json`, calculat al pipeline:
 
 - Si algun `ref` surt repetit amb dades reals, aturar i informar (no inventar sufixos nous).
 - Si el backfill deixa més del 10 % de favorits sense resoldre, aturar abans de desplegar.
+
+## Resultat (2026-10-26)
+
+- `backend/oferta_ref.py`: `stable_ref`, `assign_refs` (pipeline, fail fast) i `ensure_refs` (catàlegs sense `ref`). Còpia de producció (13.006 registres): 0 refs repetits, 91 A/B amb sufix de família.
+- Migració 012 (`list_items.oferta_ref`) + `db.backfill_refs`: favorits per id o, si no hi coincideix, pel codi; avisos per id/codi + denominació (`UPDATE OR IGNORE` si l'usuari ja segueix el ref). BD local: 2 de 2 favorits resolts.
+- API: favorits per `ref` (body i rutes; `oferta_id` i ids antics acceptats), `/api/centres?ref=`, `oferta_centres.json` i centres heretats per ref, `/api/itinerari/complet?grado=&ref=` amb nodes `<grau>:<ref>`.
+- Frontend: favorits, centres marcats, avisos i recomptes per ref; enllaços `itinerari.html?grado=&ref=`, `index.html?ref=` (perfil) i `index.html?grado=&ref=` (tornada de l'itinerari). Els antics `?id=`, `?codigo=` i `?oferta=<id>` continuen funcionant.
+- `scripts/add_refs_076.py`: passa producció a ref sense refresc (ofertes.json, fitxers de centres i BD); surt amb 2 si més del 10 % dels favorits queden sense resoldre.
+- Pendent a producció: les claus per id de `oferta_centres.json` es tradueixen amb el catàleg actual; fins al proper scraping de centres poden arrossegar el desfasament antic.
