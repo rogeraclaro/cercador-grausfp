@@ -161,7 +161,7 @@ def _notify_admin_soc_failure(data_dir: str, exc: Exception, *, source: str = 'S
         return
     try:
         import email_service
-        to = os.environ.get('ADMIN_ALERT_EMAIL') or os.environ.get('EMAIL_FROM', 'noreply@masellas.info')
+        to = os.environ.get('ADMIN_ALERT_EMAIL') or os.environ.get('EMAIL_FROM', 'noreply@grausfp.es')
         email_service.send_email(
             to,
             f'Snapshot FPO ({source}) ha fallat',

@@ -9,7 +9,7 @@ SMTP_HOST = os.environ.get("BREVO_SMTP_HOST", "smtp-relay.brevo.com")
 SMTP_PORT = int(os.environ.get("BREVO_SMTP_PORT", "587"))
 SMTP_USER = os.environ.get("BREVO_SMTP_USER", "")
 SMTP_KEY = os.environ.get("BREVO_SMTP_KEY", "")
-FROM_EMAIL = os.environ.get("EMAIL_FROM", "noreply@masellas.info")
+FROM_EMAIL = os.environ.get("EMAIL_FROM", "noreply@grausfp.es")
 FROM_NAME = os.environ.get("EMAIL_FROM_NAME", "GrausFP")
 
 

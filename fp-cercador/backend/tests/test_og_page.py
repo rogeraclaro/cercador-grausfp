@@ -23,7 +23,7 @@ def test_pagina_publica_porta_la_imatge_en_castella(client, page):
     assert resp.status_code == 200
     assert resp.mimetype == "text/html"
     html = resp.get_data(as_text=True)
-    assert 'content="https://grausfp.masellas.info/og-image-es.png"' in html
+    assert 'content="https://grausfp.es/og-image-es.png"' in html
     assert "og-image.png" not in html
     assert '<html lang="es">' in html
 

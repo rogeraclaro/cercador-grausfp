@@ -148,7 +148,7 @@ def _get_or_create_unsubscribe_token(conn, watch_id: int, user_id: int) -> str:
     return raw_token
 
 
-def dispatch_centres_watch(base_url: str = "https://grausfp.masellas.info") -> int:
+def dispatch_centres_watch(base_url: str = "https://grausfp.es") -> int:
     """
     Llegeix oferta_centres.json (ja actualitzat pel scraping), calcula nous centres
     per a cada watch actiu i envia emails.

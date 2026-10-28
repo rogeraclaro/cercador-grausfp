@@ -83,7 +83,7 @@ if not ADMIN_TOKEN:
 SECRET_KEY = os.environ.get("SECRET_KEY", "")
 BASE_URL = os.environ.get("BASE_URL", "http://localhost:5001")
 # Pla 077: domini públic per a canonical, og:url, sitemap i robots (sense barra final).
-SITE_URL = os.environ.get("SITE_URL", "https://grausfp.masellas.info").rstrip("/")
+SITE_URL = os.environ.get("SITE_URL", "https://grausfp.es").rstrip("/")
 
 DATA_PATH = os.path.normpath(
     os.path.join(os.path.dirname(__file__), "data", "ofertes.json")

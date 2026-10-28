@@ -147,7 +147,7 @@ def _get_or_create_unsubscribe_token(conn, alert_id: int, user_id: int) -> str:
     return raw_token
 
 
-def dispatch_alerts(result: dict, base_url: str = "https://grausfp.masellas.info") -> int:
+def dispatch_alerts(result: dict, base_url: str = "https://grausfp.es") -> int:
     """
     Llegeix el darrer entry de l'historial (ja calculat per history.append) i envia
     emails per a les alertes actives que tinguin matches.
