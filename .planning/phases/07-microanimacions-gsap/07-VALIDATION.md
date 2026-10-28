@@ -48,9 +48,9 @@ Filled by the planner per task; decision → test mapping:
 | 07-01-T4 | D-04/D-05/D-08/D-10 | Reduced motion, GSAP blocked, no cascade on load/pagination, clean restart | e2e smoke | `motion_smoke.py -k index:` (8 checks) | ✅ (T2) | ⬜ pending |
 | 07-02-T1 | D-12/D-07/D-03 | Bars grow (scaleX) ≤ 600 ms; plain tags before inline script | e2e + structural | `motion_smoke.py -k observatori:bars-grow` + static | ✅ | ⬜ pending |
 | 07-02-T2 | D-12/D-04/D-05/D-06 | Final numbers correct mid-animation; reduced/blocked final at once | e2e smoke | `motion_smoke.py -k observatori:` (4 checks) | ✅ | ⬜ pending |
-| 07-03-T1 | D-13/D-03 | Solid segments draw A→E; deferred tags before Alpine | e2e + structural | `motion_smoke.py -k itinerari:solid-draw` + static | ✅ | ⬜ pending |
-| 07-03-T2 | D-13 | Dashed paths keep pattern via userSpaceOnUse mask, no leftovers, endpoints aligned | e2e smoke | `motion_smoke.py -k itinerari:` | ✅ | ⬜ pending |
-| 07-03-T3 | D-13/D-14/D-07/D-04/D-05 | Stops light up, first stop, ≤ 700 ms incl. redraw restarts, no re-animate, reduced/blocked | e2e smoke | `motion_smoke.py -k itinerari:` (8 checks) + full suite | ✅ | ⬜ pending |
+| 07-03-T1 | D-13/D-03/D-07 | Solid segments draw A→E; one sequence per data load, rebuilds on early redraws seek to elapsed time (first→last animated frame ≤ 617 ms = 600 ms + 1 frame, also with a forced mid-sequence redraw); deferred tags before Alpine | e2e + structural | `motion_smoke.py -k itinerari:` (`solid-draw`, `restart-keeps-t0`) + static | ✅ | ⬜ pending |
+| 07-03-T2 | D-13 | Dashed paths keep pattern via userSpaceOnUse mask, no leftovers, endpoints aligned | e2e smoke | `motion_smoke.py -k itinerari:` (4 checks) | ✅ | ⬜ pending |
+| 07-03-T3 | D-13/D-14/D-07/D-04/D-05 | Stops light up, first stop, whole sequence ≤ 617 ms (600 ms + 1 frame; 558 ms nominal), no re-animate, reduced/blocked | e2e smoke | `motion_smoke.py -k itinerari:` (9 checks) + full suite (21) | ✅ | ⬜ pending |
 | all | D-15 | Existing reduced-motion guards untouched | structural | static check `d15-guards` | ✅ | ⬜ pending |
 | 07-01-T5, 07-02-T3, 07-03-T4 | D-07/D-09/D-13/D-16 | Visual feel, Safari/Firefox, deploy approval | manual (blocking-human) | — | — | ⬜ pending |
 
