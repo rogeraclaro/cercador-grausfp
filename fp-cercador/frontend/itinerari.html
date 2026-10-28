@@ -951,6 +951,9 @@
     let cyFor = 0;                    // _seq de les dades amb què s'ha construït el graf
     let cyLoading = null;
     let cyFitted = false;             // encara no s'ha pogut encaixar (contenidor amagat en construir-lo)
+    // Animació de la línia de temps (fase 07): _seq de la càrrega de dades animada i instant del seu primer dibuix.
+    // Fora d'Alpine, com `cy`: no s'ha de fer reactiu.
+    let linesSeq = -1, linesT0 = 0;
 
     function loadCytoscape() {
       if (window.cytoscape) return Promise.resolve();
@@ -965,6 +968,37 @@
     }
 
     function reducedMotion() { return window.matchMedia('(prefers-reduced-motion: reduce)').matches; }
+
+    // Línia de temps (fase 07): els trams es dibuixen d'A cap a E amb pathLength=1 + stroke-dashoffset (només el core de GSAP).
+    // Mai transform ni opacity sobre .node ni sobre els paths: drawLines() mesura .node amb getBoundingClientRect.
+    function animateTimeline(vm) {
+      // Una càrrega de dades fa unes quatre crides a drawLines() en ~60 ms ($nextTick, ResizeObserver x2, fonts.ready):
+      // la guarda va lligada a la càrrega (_seq), no a cada crida. Els redibuixos tardans (resize, «mostra'n més»,
+      // canvi de vista passats 800 ms) no tornen a animar.
+      const now = performance.now();
+      if (linesSeq !== vm._seq) { linesSeq = vm._seq; linesT0 = now; }
+      else if (now - linesT0 > 800) return;
+      window.GFPMotion?.play('timeline', g => {
+        const paths = [...vm.$refs.lines.querySelectorAll('path')];
+        if (!paths.length) return;
+        const STEP = 0.09, DUR = 0.18;
+        const col = k => GRADES.indexOf(k);
+        // Neteja en completar i en revertir (nova càrrega, reduced motion, reconstrucció).
+        const cleanup = () => paths.forEach(p => p.removeAttribute('pathLength'));
+        const tl = g.timeline({ onComplete: cleanup });
+        for (const p of paths) {
+          if (p.classList.contains('t-part') || p.classList.contains('t-old')) continue;
+          const at = Math.max(col((vm.byKey[p.dataset.from] || {}).grado), 0) * STEP;
+          p.setAttribute('pathLength', '1');
+          tl.fromTo(p, { strokeDasharray: 1, strokeDashoffset: 1 },
+            { strokeDashoffset: 0, duration: DUR, ease: 'power2.out', clearProps: 'strokeDasharray,strokeDashoffset' }, at);
+        }
+        // Un redibuix primerenc substitueix els paths: la seqüència nova continua l'original (D-07, topall de 600 ms)
+        // en comptes de reiniciar-se. Ha de ser l'últim pas del constructor.
+        tl.time(Math.min((performance.now() - linesT0) / 1000, tl.duration()));
+        return cleanup;
+      });
+    }
 
     function edgeId(e) { return e.from + '>' + e.to; }
 
@@ -1395,6 +1429,7 @@
             svg.appendChild(path);
           }
           this.paintLines();
+          animateTimeline(this);
         },
 
         paintLines() {
@@ -1570,6 +1605,11 @@
       return e;
     }
   </script>
+  <!-- GSAP 3.14.2 core (llicència «Standard no-charge», https://gsap.com/standard-license, vigent 2025-04-30 / modificada 2025-05-30,
+       revisada 2026-10-28), vendoritzat de npm gsap@3.14.2 dist/gsap.min.js — sha256
+       c174bfce53a729418d57a8ad8625e7247c793a22fef8e2851e3cfa3de9cd8280. No retallar la capçalera. -->
+  <script defer src="vendor/gsap-3.14.2.min.js"></script>
+  <script defer src="motion.js?v=1"></script>
   <script defer src="vendor/alpinejs-3.15.11.min.js"></script>
 </head>
 

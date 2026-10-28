@@ -468,6 +468,96 @@ def obs_gsap_blocked(browser, base):
     assert not errors, "errors de pàgina: %r" % errors
 
 
+# --- Itinerari (07-03) ---
+def _itin_node(grado, n, familia="Informática y Comunicaciones", **extra):
+    ref = "%s%d" % (grado, n)
+    node = {"key": "%s:%s" % (grado, ref), "ref": ref, "grado": grado, "codigo": ref, "id": None,
+            "denominacion": "Títol de prova %s" % ref, "familia": familia, "nivel": 1,
+            "plan_antiguo": False, "ficha": None}
+    node.update(extra)
+    return node
+
+
+# Mateixa forma que /api/itinerari/complet: from = grau inferior; kind ab|bc|cd|de; cd porta shared/total (LOMLOE).
+ITIN_FIXTURE = {
+    "focus": "C:C1",
+    "nodes": [_itin_node("A", 1), _itin_node("B", 1), _itin_node("C", 1),
+              _itin_node("D", 1), _itin_node("D", 2), _itin_node("D", 3, plan_antiguo=True),
+              _itin_node("E", 1)],
+    "edges": [
+        {"from": "A:A1", "to": "B:B1", "kind": "ab"},
+        {"from": "B:B1", "to": "C:C1", "kind": "bc"},
+        {"from": "C:C1", "to": "D:D1", "kind": "cd", "shared": 3, "total": 3},   # t-full
+        {"from": "C:C1", "to": "D:D2", "kind": "cd", "shared": 1, "total": 3},   # t-part
+        {"from": "C:C1", "to": "D:D3", "kind": "cd"},                            # t-old
+        {"from": "D:D1", "to": "E:E1", "kind": "de"},
+    ],
+    "warnings": [],
+}
+ITIN_API = {"/api/itinerari/complet": ITIN_FIXTURE}
+ITIN_URL = "/itinerari.html?grado=C&ref=C1"
+PATHS_SEL = ".tl-lines path"
+ITIN_SAMPLE_MS = 3000
+ITIN_SPAN_BUDGET_MS = 617  # topall de 600 ms (D-07) + un frame a 60 Hz
+ITIN_VM_JS = "Alpine.$data(document.querySelector('[x-data=\"itinerari\"]'))"
+
+
+def open_itinerari(page, base):
+    page.goto(base + ITIN_URL)
+    page.wait_for_selector(PATHS_SEL, state="attached", timeout=10000)
+
+
+def wait_sampler_done(page, key, ms):
+    page.wait_for_function(
+        "(function () { var s = window.__samples[%s]; return !!s && s.length > 1 && s[s.length - 1].t - s[0].t >= %d; })()"
+        % (json.dumps(key), ms - 30), timeout=ms + 8000)
+
+
+def path_animated(sample):
+    return any("stroke-dashoffset" in st for st in sample["styles"])
+
+
+def assert_itin_idle(page):
+    """Estat final del SVG: sis trams, cap pathLength/màscara/defs i cap estil de traç en línia."""
+    state = page.evaluate("""(function () {
+      var ps = Array.from(document.querySelectorAll('.tl-lines path'));
+      return { n: ps.length,
+        pathLength: ps.filter(function (p) { return p.hasAttribute('pathLength'); }).length,
+        dash: ps.filter(function (p) { return /stroke-dash/.test(p.getAttribute('style') || ''); }).length }; })()""")
+    assert state["n"] == 6, "trams dibuixats: %d" % state["n"]
+    assert state["pathLength"] == 0, "queden %d paths amb pathLength" % state["pathLength"]
+    assert state["dash"] == 0, "queden %d paths amb stroke-dash* en línia" % state["dash"]
+
+
+def assert_sequence_span(page, errors):
+    samples = read_samples(page, "paths")
+    anim = [s for s in samples if path_animated(s)]
+    assert anim, "el dibuix no s'ha executat (cap path amb stroke-dashoffset)"
+    span = anim[-1]["t"] - anim[0]["t"]
+    assert span <= ITIN_SPAN_BUDGET_MS, "la seqüència dura %.0f ms (> %d)" % (span, ITIN_SPAN_BUDGET_MS)
+    assert_itin_idle(page)
+    assert not errors, "errors de pàgina: %r" % errors
+
+
+@check("itinerari:solid-draw")
+def itin_solid_draw(browser, base):
+    page, errors = new_page(browser, base, api=ITIN_API, sample=("paths", PATHS_SEL, ITIN_SAMPLE_MS, 12))
+    open_itinerari(page, base)
+    wait_sampler_done(page, "paths", ITIN_SAMPLE_MS)
+    assert_sequence_span(page, errors)
+
+
+@check("itinerari:restart-keeps-t0")
+def itin_restart_keeps_t0(browser, base):
+    page, errors = new_page(browser, base, api=ITIN_API, sample=("paths", PATHS_SEL, ITIN_SAMPLE_MS, 12))
+    open_itinerari(page, base)
+    page.wait_for_function("document.querySelector('.tl-lines path[style*=\"stroke-dashoffset\"]') !== null", timeout=10000)
+    page.wait_for_timeout(100)
+    page.set_viewport_size({"width": 1200, "height": 900})  # > 759 px: segueix en línia de temps i força un redibuix
+    wait_sampler_done(page, "paths", ITIN_SAMPLE_MS)
+    assert_sequence_span(page, errors)
+
+
 # --- Execució ---
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)

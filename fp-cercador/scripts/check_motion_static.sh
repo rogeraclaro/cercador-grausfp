@@ -6,7 +6,7 @@
 set -u
 
 # Pàgines que carreguen GSAP (07-02 i 07-03 hi afegeixen la seva)
-LOADED_PAGES="index observatori"
+LOADED_PAGES="index observatori itinerari"
 
 GSAP_SHA="c174bfce53a729418d57a8ad8625e7247c793a22fef8e2851e3cfa3de9cd8280"
 ALLOWED_PAGES="index.html observatori.html itinerari.html"
