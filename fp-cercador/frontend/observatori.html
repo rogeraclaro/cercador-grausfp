@@ -159,6 +159,7 @@
       color: var(--warm);
       text-align: right;
       font-family: 'Geist Mono', monospace;
+      position: relative; /* àncora de la còpia aria-hidden que compta (animateBars) */
     }
 
     /* Llista novetats */
@@ -359,22 +360,45 @@
         return `<div class="bar-row">
           <span class="bar-label">Grau ${g}</span>
           <div class="bar-track"><div class="bar-fill" style="width:${pct}%"></div></div>
-          <span class="bar-value">${val.toLocaleString(getLang() === 'ca' ? 'ca-ES' : 'es-ES')} (${pct}%)</span>
+          <span class="bar-value" data-n="${val}" data-suffix=" (${pct}%)">${val.toLocaleString(getLang() === 'ca' ? 'ca-ES' : 'es-ES')} (${pct}%)</span>
         </div>`;
       }).join('');
       container.innerHTML = html;
     }
 
-    // Constructor per a GFPMotion: les barres de «Distribució per grau» creixen des de l'esquerra.
-    // Només scaleX (mai width): el CSS té transition: width i lluitaria amb el tween. L'amplada final és al markup.
+    // Constructor per a GFPMotion: les barres de «Distribució per grau» creixen des de l'esquerra
+    // i els valors compten fins al total. Només scaleX (mai width): el CSS té transition: width i lluitaria
+    // amb el tween. L'amplada i el text finals són al markup, així que sense GSAP tot queda correcte.
     function animateBars(g) {
       const rows = document.querySelectorAll('#chart-grados .bar-row');
-      const tl = g.timeline();
+      const locale = getLang() === 'ca' ? 'ca-ES' : 'es-ES';
+      const undo = [];
+      const tl = g.timeline({ onComplete: () => undo.forEach(f => f()) });
       rows.forEach((row, i) => {
+        const at = i * 0.04;
         const fill = row.querySelector('.bar-fill');
+        const val = row.querySelector('.bar-value');
         tl.fromTo(fill, { scaleX: 0, transformOrigin: '0 50%' },
-          { scaleX: 1, duration: 0.25, ease: 'expo.out', clearProps: 'transform,transformOrigin' }, i * 0.04);
+          { scaleX: 1, duration: 0.25, ease: 'expo.out', clearProps: 'transform,transformOrigin' }, at);
+
+        // El text real queda al DOM i a l'arbre d'accessibilitat (color transparent, no opacity/visibility);
+        // la còpia visible que compta és aria-hidden i s'escriu només amb textContent.
+        const color = getComputedStyle(val).color;
+        const ghost = document.createElement('span');
+        ghost.setAttribute('aria-hidden', 'true');
+        ghost.style.cssText = 'position:absolute;inset:0;text-align:right;color:' + color;
+        val.style.color = 'transparent';
+        val.appendChild(ghost);
+        undo.push(() => { ghost.remove(); val.style.color = ''; });
+
+        const p = { n: 0 };
+        tl.fromTo(p, { n: 0 }, {
+          n: +val.dataset.n, duration: 0.25, ease: 'expo.out',
+          onUpdate: () => { ghost.textContent = Math.round(p.n).toLocaleString(locale) + val.dataset.suffix; }
+        }, at);
       });
+      // En revertir (reduced-motion a mitja animació, substitució del slot) s'eliminen les còpies
+      return () => undo.forEach(f => f());
     }
 
     function esc(s) {

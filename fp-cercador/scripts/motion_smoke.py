@@ -29,13 +29,22 @@ CASCADE_BUDGET_MS = 650  # 600 ms de pressupost (D-07) + un frame
 # --- Sampler: es injecta a cada document; mostreja l'atribut style amb requestAnimationFrame ---
 SAMPLER_JS = """
 window.__samples = {};
-window.__startSampler = function (key, selector, ms, limit) {
+window.__startSampler = function (key, selector, ms, limit, mode) {
   window.__samples[key] = [];
   var t0 = performance.now();
   (function tick() {
     var els = Array.prototype.slice.call(document.querySelectorAll(selector), 0, limit);
-    window.__samples[key].push({ t: performance.now(),
-      styles: els.map(function (e) { return e.getAttribute('style') || ''; }) });
+    var sample = { t: performance.now(),
+      styles: els.map(function (e) { return e.getAttribute('style') || ''; }) };
+    if (mode === 'text') {
+      // own: primer node de text de l'element; ghost: text del fill aria-hidden (còpia que compta) o null
+      sample.texts = els.map(function (e) {
+        var first = e.firstChild, ghost = e.querySelector('[aria-hidden="true"]');
+        return { own: first && first.nodeType === 3 ? first.textContent.trim() : null,
+                 ghost: ghost ? ghost.textContent : null, style: e.getAttribute('style') || '' };
+      });
+    }
+    window.__samples[key].push(sample);
     if (performance.now() - t0 < ms) requestAnimationFrame(tick);
   })();
 };
@@ -374,6 +383,88 @@ def obs_bars_grow(browser, base):
     assert_final_bars(page)
     total = page.evaluate("document.getElementById('stat-total').textContent")
     assert total == page.evaluate("(12894).toLocaleString('ca-ES')"), "#stat-total: %r" % total
+    assert not errors, "errors de pàgina: %r" % errors
+
+
+VALUES_SEL = "#chart-grados .bar-value"
+FINAL_TEXTS_JS = """(function () {
+  var c = %s, total = c.total;
+  return ['A', 'B', 'C', 'D', 'E'].map(function (g) {
+    return c[g].toLocaleString('ca-ES') + ' (' + ((c[g] / total) * 100).toFixed(1) + '%%)'; });
+})()""" % json.dumps(OBS_FIXTURE["current"])
+
+
+def assert_final_values(page, samples):
+    """Cap mostreig pot mostrar un text propi diferent del final; retorna els textos finals."""
+    finals = page.evaluate(FINAL_TEXTS_JS)
+    seen = [s for s in samples if s.get("texts")]
+    assert seen, "el sampler no ha vist cap .bar-value"
+    for s in seen:
+        assert [t["own"] for t in s["texts"]] == finals, "text propi no final: %r" % [t["own"] for t in s["texts"]]
+    return finals
+
+
+def assert_idle_values(page):
+    state = page.evaluate("""Array.from(document.querySelectorAll('%s')).map(function (e) {
+      return { style: e.getAttribute('style') || '', n: e.dataset.n, ghosts: e.querySelectorAll('[aria-hidden]').length }; })""" % VALUES_SEL)
+    want = [str(OBS_FIXTURE["current"][g]) for g in "ABCDE"]
+    assert [s["n"] for s in state] == want, "data-n: %r" % [s["n"] for s in state]
+    assert all(not s["style"].strip() and s["ghosts"] == 0 for s in state), "estat residual a .bar-value: %r" % state
+    assert page.evaluate("document.querySelectorAll('#chart-grados [aria-hidden=\"true\"]').length") == 0, \
+        "queden elements aria-hidden al gràfic"
+
+
+@check("observatori:final-text")
+def obs_final_text(browser, base):
+    page, errors = new_page(browser, base, api=OBS_API, sample=("vals", VALUES_SEL, 1500, 5, "text"))
+    page.goto(base + "/observatori.html")
+    page.wait_for_selector("#chart-grados .bar-row", timeout=10000)
+    tree = page.locator("#chart-grados").aria_snapshot()  # just after the first .bar-row appears
+    finals = page.evaluate(FINAL_TEXTS_JS)
+    missing = [f for f in finals if f not in tree]
+    assert not missing, "l'arbre d'accessibilitat no conté els valors finals %r: %s" % (missing, tree)
+    page.wait_for_timeout(1500)
+    samples = read_samples(page, "vals")
+    assert_final_values(page, samples)
+    counted = [s for s in samples for t in s.get("texts", []) if t["ghost"] is not None and t["ghost"] not in finals]
+    assert counted, "cap mostreig amb una còpia que compta (aria-hidden) diferent del valor final"
+    assert_idle_values(page)
+    assert not errors, "errors de pàgina: %r" % errors
+
+
+def assert_no_motion(page, samples):
+    assert not [s for s in samples if any(re.search(r"transform", st) for st in s["styles"])], "barres amb transform"
+    assert not [s for s in samples for t in s.get("texts", []) if t["ghost"] is not None or t["style"].strip()], \
+        "còpia que compta o estil a .bar-value"
+
+
+def run_static_obs(browser, base, **flags):
+    page, errors = new_page(browser, base, api=OBS_API, **flags)
+    page.add_init_script("window.__startSampler('fills', %s, 1500, 5); window.__startSampler('vals', %s, 1500, 5, 'text');"
+                         % (json.dumps(BARS_SEL), json.dumps(VALUES_SEL)))
+    open_observatori(page, base)
+    page.wait_for_timeout(1200)
+    fills, vals = read_samples(page, "fills"), read_samples(page, "vals")
+    assert_no_motion(page, fills)
+    assert_no_motion(page, vals)
+    assert_final_values(page, vals)
+    assert_final_bars(page)
+    assert_idle_values(page)
+    return page, errors
+
+
+@check("observatori:reduced-motion")
+def obs_reduced_motion(browser, base):
+    page, errors = run_static_obs(browser, base, reduced=True)
+    assert page.evaluate("window.GFPMotion.play('probe', function () {})") is False, "GFPMotion.play no retorna false"
+    assert not errors, "errors de pàgina: %r" % errors
+
+
+@check("observatori:gsap-blocked")
+def obs_gsap_blocked(browser, base):
+    page, errors = run_static_obs(browser, base, block_gsap=True)
+    assert page.evaluate("typeof gsap") == "undefined", "gsap s'ha carregat tot i el bloqueig"
+    assert page.evaluate("window.GFPMotion.play('probe', function () {})") is False, "GFPMotion.play no retorna false"
     assert not errors, "errors de pàgina: %r" % errors
 
 
