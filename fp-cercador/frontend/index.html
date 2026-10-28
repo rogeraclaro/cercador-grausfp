@@ -2231,6 +2231,23 @@
         async init() {
           // Pla 067: qualsevol canvi de filtre del mode FPO torna a la pàgina 1.
           this.$watch('fpoFilters', () => { this.fpoPage = 1; });
+          // Fase 07: cascada de les primeres files en cercar o filtrar (no en paginar, ordenar, expandir ni en la càrrega).
+          // El $watch s'executa després que x-for hagi pintat les files i abans del primer frame: cap $nextTick.
+          let rowsKey = '';
+          this.$watch(
+            () => [this.search, this.filterGrado, this.filterFamilia, this.filterNivel, this.filterOld, this.filterFavs].join('\u0001'),
+            () => {
+              if (this.searchMode !== 'nom') return;   // en mode ocupació filteredRecords és un getter amb efectes
+              const key = this.filteredCount + ':' + this.pagedRecords.slice(0, 10).map(r => r.id).join(',');
+              if (key === rowsKey) return;             // el resultat visible no ha canviat: no tornar a parpellejar
+              rowsKey = key;
+              window.GFPMotion?.play('rows', g => {
+                const rows = [...document.querySelectorAll('#results-table tr[data-row-id]')].slice(0, 10);
+                if (!rows.length) return;
+                g.fromTo(rows, { opacity: 0.4, y: 8 },
+                  { opacity: 1, y: 0, duration: 0.18, ease: 'expo.out', stagger: 0.02, clearProps: 'opacity,transform' });
+              });
+            });
           // La petició del catàleg s'inicia en paral·lel amb l'autenticació, com abans amb Promise.all.
           const catalogRequest = fetch(API_BASE + '/api/ofertes');
           this.loadCaEs();
@@ -3248,6 +3265,11 @@
       }));
     });
   </script>
+  <!-- GSAP 3.14.2 core (llicència «Standard no-charge», https://gsap.com/standard-license, vigent 2025-04-30 / modificada 2025-05-30,
+       revisada 2026-10-28), vendoritzat de npm gsap@3.14.2 dist/gsap.min.js — sha256
+       c174bfce53a729418d57a8ad8625e7247c793a22fef8e2851e3cfa3de9cd8280. No retallar la capçalera. -->
+  <script defer src="vendor/gsap-3.14.2.min.js"></script>
+  <script defer src="motion.js?v=1"></script>
   <script defer src="vendor/alpinejs-3.15.11.min.js"></script>
   <link rel="alternate" type="application/rss+xml" title="GrausFP — Novetats" href="/api/feed.rss">
   <script defer src="https://analytics.masellas.info/script.js" data-exclude-search="true" data-exclude-hash="true" data-website-id="ddb6c664-550b-4e2d-848f-796a676e4036"></script>
