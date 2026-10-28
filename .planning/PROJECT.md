@@ -60,6 +60,7 @@ Un únic cercador que consolida tota l'oferta FP espanyola (Grados A–E) en tem
 | Thread separat per al refresh | No bloquejar l'API durant scraping (pot trigar 45s+) | — Pending |
 | Frontend vanilla sense frameworks | Zero dependències, màxima portabilitat, requisit explícit | — Pending |
 | Nivell deduït del sufix del codi (PDFs) | El PDF no té columna nivell explícita; el sufix és l'única font | — Pending |
+| GSAP 3.14.2 core vendoritzat (index, observatori, itinerari) | Microanimacions sense CDN; sempre darrere de `gsap.matchMedia()` i amb la pàgina funcional sense GSAP; sha256 verificat per `check_motion_static.sh` | ✓ Good — Phase 07 (UAT 3/3, desplegat) |
 
 ## Evolution
 
@@ -79,4 +80,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-04-18 after Phase 03 completion*
+*Last updated: 2026-10-28 after Phase 07 completion*

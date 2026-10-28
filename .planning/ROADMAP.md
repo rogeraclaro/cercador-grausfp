@@ -135,7 +135,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
 **Goal:** GSAP-driven micro-animations (vendored core, reduced-motion aware, no-GSAP fallback) on index.html, observatori.html and itinerari.html that never delay results or interaction
 **Requirements**: none assigned (plans trace to CONTEXT decisions D-01..D-16)
 **Depends on:** Phase 6
-**Plans:** 3/3 plans executed
+**Plans:** 3/3 plans complete
 
 Plans:
 - [x] 07-01-PLAN.md — Wave 1: license decision, vendor GSAP 3.14.2, motion.js guard, CLAUDE.md exception, smoke/static scripts, index.html rows cascade + alert modal pop, deploy checkpoint
