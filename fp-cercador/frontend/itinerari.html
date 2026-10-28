@@ -979,20 +979,47 @@
       if (linesSeq !== vm._seq) { linesSeq = vm._seq; linesT0 = now; }
       else if (now - linesT0 > 800) return;
       window.GFPMotion?.play('timeline', g => {
-        const paths = [...vm.$refs.lines.querySelectorAll('path')];
+        const svg = vm.$refs.lines;
+        const paths = [...svg.querySelectorAll('path')];
         if (!paths.length) return;
+        const NS = 'http://www.w3.org/2000/svg';
         const STEP = 0.09, DUR = 0.18;
         const col = k => GRADES.indexOf(k);
+        let defs = null;
         // Neteja en completar i en revertir (nova càrrega, reduced motion, reconstrucció).
-        const cleanup = () => paths.forEach(p => p.removeAttribute('pathLength'));
+        const cleanup = () => {
+          paths.forEach(p => { p.removeAttribute('pathLength'); p.removeAttribute('mask'); });
+          if (defs) { defs.remove(); defs = null; }
+        };
         const tl = g.timeline({ onComplete: cleanup });
-        for (const p of paths) {
-          if (p.classList.contains('t-part') || p.classList.contains('t-old')) continue;
+        paths.forEach((p, i) => {
           const at = Math.max(col((vm.byKey[p.dataset.from] || {}).grado), 0) * STEP;
+          if (p.classList.contains('t-part') || p.classList.contains('t-old')) {
+            // Tram discontinu: pathLength reescalaria el seu patró CSS i un dasharray en línia el trepitjaria.
+            // Es destapa amb una màscara (clon blanc amb pathLength=1 + dashoffset). userSpaceOnUse és obligatori:
+            // amb objectBoundingBox, un tram horitzontal (caixa d'alçada 0) quedaria totalment emmascarat.
+            if (!defs) { defs = document.createElementNS(NS, 'defs'); svg.insertBefore(defs, svg.firstChild); }
+            const mask = document.createElementNS(NS, 'mask');
+            mask.setAttribute('id', 'tlm' + i);
+            mask.setAttribute('maskUnits', 'userSpaceOnUse');
+            mask.setAttribute('x', '0');
+            mask.setAttribute('y', '0');
+            mask.setAttribute('width', svg.getAttribute('width'));
+            mask.setAttribute('height', svg.getAttribute('height'));
+            const reveal = document.createElementNS(NS, 'path');
+            reveal.setAttribute('d', p.getAttribute('d'));
+            reveal.setAttribute('pathLength', '1');
+            reveal.setAttribute('style', 'fill:none;stroke:#fff;stroke-width:6;stroke-dasharray:1;stroke-dashoffset:1');
+            mask.appendChild(reveal);
+            defs.appendChild(mask);
+            p.setAttribute('mask', 'url(#tlm' + i + ')');
+            tl.to(reveal, { strokeDashoffset: 0, duration: DUR, ease: 'power2.out' }, at);
+            return;
+          }
           p.setAttribute('pathLength', '1');
           tl.fromTo(p, { strokeDasharray: 1, strokeDashoffset: 1 },
             { strokeDashoffset: 0, duration: DUR, ease: 'power2.out', clearProps: 'strokeDasharray,strokeDashoffset' }, at);
-        }
+        });
         // Un redibuix primerenc substitueix els paths: la seqüència nova continua l'original (D-07, topall de 600 ms)
         // en comptes de reiniciar-se. Ha de ser l'últim pas del constructor.
         tl.time(Math.min((performance.now() - linesT0) / 1000, tl.duration()));

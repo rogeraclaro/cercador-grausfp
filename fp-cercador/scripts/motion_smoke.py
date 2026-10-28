@@ -558,6 +558,72 @@ def itin_restart_keeps_t0(browser, base):
     assert_sequence_span(page, errors)
 
 
+# Mostreja per frame les màscares i l'estat dels trams discontinus (t-part / t-old) des de l'inici del document.
+DASH_SAMPLER_JS = """
+window.__dash = [];
+(function () {
+  var t0 = performance.now();
+  (function tick() {
+    var svg = document.querySelector('.tl-lines');
+    var masks = svg ? Array.prototype.slice.call(svg.querySelectorAll('mask')) : [];
+    var dashed = svg ? Array.prototype.slice.call(svg.querySelectorAll('path.t-part, path.t-old')) : [];
+    window.__dash.push({
+      masks: masks.length,
+      units: masks.map(function (m) { return m.getAttribute('maskUnits'); }),
+      bad: dashed.filter(function (p) {
+        return p.hasAttribute('pathLength') || /stroke-dasharray/.test(p.getAttribute('style') || ''); }).length });
+    if (performance.now() - t0 < %d) requestAnimationFrame(tick);
+  })();
+})();
+""" % ITIN_SAMPLE_MS
+
+
+@check("itinerari:dashed-preserved")
+def itin_dashed_preserved(browser, base):
+    page, errors = new_page(browser, base, api=ITIN_API)
+    page.add_init_script(DASH_SAMPLER_JS)
+    open_itinerari(page, base)
+    page.wait_for_timeout(ITIN_SAMPLE_MS + 200)
+    frames = page.evaluate("window.__dash")
+    assert any(f["masks"] > 0 for f in frames), "cap màscara durant el dibuix dels trams discontinus"
+    units = {u for f in frames for u in f["units"]}
+    assert units == {"userSpaceOnUse"}, "maskUnits inesperats: %r" % units
+    assert not any(f["bad"] for f in frames), "un tram discontinu ha tingut pathLength o stroke-dasharray en línia"
+    final = page.evaluate("""(function () {
+      function dash(sel) { return getComputedStyle(document.querySelector(sel)).strokeDasharray; }
+      var q = function (sel) { return document.querySelectorAll(sel).length; };
+      return { part: dash('.tl-lines path.t-part'), old: dash('.tl-lines path.t-old'),
+        left: q('.tl-lines mask') + q('.tl-lines defs') + q('.tl-lines path[mask]') + q('.tl-lines path[pathLength]') }; })()""")
+    assert final["part"] == "7px, 4px", "patró de t-part: %r" % final["part"]
+    assert final["old"] == "1.5px, 4px", "patró de t-old: %r" % final["old"]
+    assert final["left"] == 0, "queden %d màscares/defs/pathLength al SVG" % final["left"]
+    assert_itin_idle(page)
+    assert not errors, "errors de pàgina: %r" % errors
+
+
+@check("itinerari:endpoints-aligned")
+def itin_endpoints_aligned(browser, base):
+    page, errors = new_page(browser, base, api=ITIN_API)
+    open_itinerari(page, base)
+    page.wait_for_timeout(2000)
+    rows = page.evaluate("""(function () {
+      var box = document.querySelector('.tl').getBoundingClientRect();
+      function rect(key) { return document.querySelector('.node[data-key="' + key + '"]').getBoundingClientRect(); }
+      return Array.from(document.querySelectorAll('.tl-lines path')).map(function (p) {
+        var n = (p.getAttribute('d').match(/-?\\d+(?:\\.\\d+)?/g) || []).map(Number);   // M x1,y1 C c1x,c1y c2x,c2y x2,y2
+        var a = rect(p.dataset.from), b = rect(p.dataset.to);
+        return { pair: p.dataset.from + '>' + p.dataset.to, n: n.length,
+          dx1: n[0] - (a.right - box.left), dy1: n[1] - (a.top - box.top + a.height / 2),
+          dx2: n[6] - (b.left - box.left), dy2: n[7] - (b.top - box.top + b.height / 2) }; });
+    })()""")
+    assert len(rows) == 6, "trams dibuixats: %d" % len(rows)
+    for r in rows:
+        assert r["n"] == 8, "format de d inesperat a %s" % r["pair"]
+        off = max(abs(r[k]) for k in ("dx1", "dy1", "dx2", "dy2"))
+        assert off < 1, "el tram %s s'allunya %.2f px dels nodes" % (r["pair"], off)
+    assert not errors, "errors de pàgina: %r" % errors
+
+
 # --- Execució ---
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
