@@ -129,3 +129,13 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
 | 4. Flask API | 0/3 | Planned | - |
 | 5. Frontend — Cercador | 2/2 | Complete | 2026-04-19 |
 | 6. Frontend — Admin Panel | 0/? | Not started | - |
+
+### Phase 7: Microanimacions GSAP
+
+**Goal:** GSAP-driven micro-animations (vendored core, reduced-motion aware, no-GSAP fallback) on index.html, observatori.html and itinerari.html that never delay results or interaction
+**Requirements**: TBD
+**Depends on:** Phase 6
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (run /gsd-plan-phase 7 to break down)
