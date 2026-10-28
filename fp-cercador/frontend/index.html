@@ -346,6 +346,29 @@
       text-underline-offset: 3px;
     }
 
+    .start-reopen {
+      display: block;
+      margin: 0 0 16px;
+      padding: 4px 0;
+      border: none;
+      background: none;
+      font: inherit;
+      font-size: var(--fs-small);
+      color: var(--warm);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      cursor: pointer;
+    }
+
+    .start-reopen:hover {
+      color: var(--dark);
+    }
+
+    .start-reopen:focus-visible {
+      outline: 2px solid var(--dark);
+      outline-offset: 2px;
+    }
+
     .start-hint {
       max-width: 640px;
       margin: 10px 0 0;
@@ -2874,6 +2897,11 @@
           try { localStorage.setItem('startHidden', '1'); } catch (e) { /* sense memòria: tornarà a sortir */ }
         },
 
+        showStart() {
+          this.startHidden = false;
+          try { localStorage.removeItem('startHidden'); } catch (e) { /* res a esborrar */ }
+        },
+
         // Canvia de mode i posa el cursor al cercador (els inputs són dins x-if: cal esperar el render).
         _startFocus(mode) {
           this.setSearchMode(mode);
@@ -3290,6 +3318,7 @@
           <p class="g-foot"><span x-text="t('start.graus.foot')"></span> <a href="per-que-grausfp.html" x-text="t('start.graus.more')"></a></p>
         </div>
       </section>
+      <button type="button" class="start-reopen" x-show="startHidden" x-cloak @click="showStart()" x-text="t('start.title')"></button>
       <div class="mode-toggle" role="tablist">
         <button :class="{ active: searchMode === 'nom' }" @click="setSearchMode('nom')"
           x-text="t('index.mode.nom')"></button>
