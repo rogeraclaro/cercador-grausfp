@@ -241,6 +241,98 @@ def modal_error_untouched(browser, base):
     assert not errors, "errors de pàgina: %r" % errors
 
 
+@check("index:no-cascade-on-load")
+def no_cascade_on_load(browser, base):
+    page, errors = new_page(browser, base, sample=("rows", ROWS_SEL, 3000, 12))
+    open_index(page, base)
+    page.wait_for_timeout(3000)
+    samples = read_samples(page, "rows")
+    assert any(len(s["styles"]) > 0 for s in samples), "no s'han renderitzat files durant el mostreig"
+    assert not any(re.search(r"opacity", st) for s in samples for st in s["styles"]), \
+        "la càrrega inicial ha animat files"
+    assert not errors, "errors de pàgina: %r" % errors
+
+
+@check("index:no-cascade-on-pagination")
+def no_cascade_on_pagination(browser, base):
+    page, errors = new_page(browser, base)
+    open_index(page, base)
+    page.fill("#search", "cocina")
+    page.wait_for_timeout(1000)
+    first_before = page.evaluate("document.querySelector('%s').dataset.rowId" % ROWS_SEL)
+    start_sampler(page, "rows", ROWS_SEL, 800, 12)
+    btn = page.locator("nav.pagination").first.locator(".pagination-item button", has_text="2")
+    if btn.count() == 1:
+        btn.click()
+    else:  # el control no és seleccionable de manera única: fa el mateix que el clic
+        page.evaluate("%s.goToPage(2); 0" % VM_JS)
+    page.wait_for_timeout(1000)
+    first_after = page.evaluate("document.querySelector('%s').dataset.rowId" % ROWS_SEL)
+    assert first_before != first_after, "la pàgina no ha canviat"
+    samples = read_samples(page, "rows")
+    assert not any(re.search(r"opacity", st) for s in samples for st in s["styles"]), "paginar ha animat files"
+    assert not errors, "errors de pàgina: %r" % errors
+
+
+@check("index:restart-clean")
+def restart_clean(browser, base):
+    page, errors = new_page(browser, base)
+    open_index(page, base)
+    start_sampler(page, "rows", ROWS_SEL, 1700, 12)
+    page.select_option("#filter-familia", "Hostelería y Turismo")
+    page.wait_for_timeout(40)
+    t_second = page.evaluate("(function () { var t = performance.now(); return t; })()")
+    page.select_option("#filter-familia", "Electricidad y Electrónica")
+    page.wait_for_timeout(1400)
+    samples = [s for s in read_samples(page, "rows") if s["t"] >= t_second]
+    anim = [s for s in samples if animated(s)]
+    assert anim, "cap cascada després del segon canvi"
+    span = anim[-1]["t"] - t_second
+    assert span <= CASCADE_BUDGET_MS, "la cascada reiniciada acaba %.0f ms després (> %d)" % (span, CASCADE_BUDGET_MS)
+    assert_clean_rows(page)
+    assert not errors, "errors de pàgina: %r" % errors
+
+
+@check("index:reduced-motion")
+def reduced_motion(browser, base):
+    page, errors = new_page(browser, base, reduced=True)
+    open_index(page, base)
+    start_sampler(page, "rows", ROWS_SEL, 800, 12)
+    page.fill("#search", "cocina")
+    page.wait_for_timeout(1000)
+    samples = read_samples(page, "rows")
+    assert not any(re.search(r"opacity|transform", st) for s in samples for st in s["styles"]), \
+        "amb reduced motion hi ha estils d'animació en línia a les files"
+    start_modal_samplers(page, 400)
+    open_alert_modal(page)
+    page.wait_for_timeout(500)
+    assert not transform_samples(read_samples(page, "box")), "el box del modal s'ha animat amb reduced motion"
+    assert page.evaluate("window.GFPMotion.play('probe', function () {})") is False, "GFPMotion.play no retorna false"
+    assert not errors, "errors de pàgina: %r" % errors
+
+
+@check("index:gsap-blocked")
+def gsap_blocked(browser, base):
+    page, errors = new_page(browser, base, block_gsap=True)
+    open_index(page, base)
+    assert page.evaluate("typeof gsap") == "undefined", "gsap s'ha carregat tot i el bloqueig"
+    assert page.evaluate("window.GFPMotion.play('probe', function () {})") is False, "GFPMotion.play no retorna false"
+    page.fill("#search", "cocina")
+    page.wait_for_timeout(800)
+    state = page.evaluate("""(function () {
+      var rows = Array.from(document.querySelectorAll('%s'));
+      return { n: rows.length, first: rows[0].textContent, op: getComputedStyle(rows[0]).opacity,
+        styled: rows.filter(function (r) { return (r.getAttribute('style') || '').trim(); }).length }; })()""" % ROWS_SEL)
+    assert state["n"] > 0 and "Cocina" in state["first"], "la cerca no filtra les files: %r" % state["first"][:60]
+    assert state["op"] == "1" and state["styled"] == 0, "files amb estil en línia: %r" % state
+    start_modal_samplers(page, 300)
+    open_alert_modal(page)
+    page.wait_for_timeout(150)
+    focused = page.evaluate("document.activeElement && document.activeElement.className || ''")
+    assert "centres-modal-close" in focused, "el focus no és al botó de tancar: %r" % focused
+    assert not errors, "errors de pàgina: %r" % errors
+
+
 # --- Execució ---
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
