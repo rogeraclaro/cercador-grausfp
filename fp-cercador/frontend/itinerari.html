@@ -1020,6 +1020,21 @@
           tl.fromTo(p, { strokeDasharray: 1, strokeDashoffset: 1 },
             { strokeDashoffset: 0, duration: DUR, ease: 'power2.out', clearProps: 'strokeDasharray,strokeDashoffset' }, at);
         });
+        // Parades: s'il·luminen en verd quan hi arriba el seu tram (la columna k, quan el tram de k-1 va pel 60 %)
+        // i tornen als seus colors. Només colors a .node (no són a la seva transició CSS); mai transform ni opacity.
+        const rootStyle = getComputedStyle(document.documentElement);
+        const pathInk = rootStyle.getPropertyValue('--path-ink').trim();
+        const pathBg = rootStyle.getPropertyValue('--path-bg').trim();
+        vm.$refs.tl.querySelectorAll('.node[data-key]').forEach(n => {
+          const c = col((vm.byKey[n.dataset.key] || {}).grado);
+          const at = c <= 0 ? 0 : (c - 1) * STEP + DUR * 0.6;
+          tl.from(n, { backgroundColor: pathBg, borderLeftColor: pathInk, duration: 0.18, ease: 'power2.out',
+            immediateRender: false, clearProps: 'backgroundColor,borderLeftColor' }, at);
+        });
+        // «Primera parada» (D-14): només visual, sense text nou. Vocabulari de #a5-stop amb sòl d'opacitat 0,4 (D-06).
+        // És el fill .node-main: el rect de .node que mesura drawLines() no canvia.
+        const first = vm.$refs.tl.querySelector('.node.is-focus .node-main');
+        if (first) tl.from(first, { opacity: 0.4, y: 10, duration: 0.2, ease: 'expo.out', clearProps: 'opacity,transform' }, 0);
         // Un redibuix primerenc substitueix els paths: la seqüència nova continua l'original (D-07, topall de 600 ms)
         // en comptes de reiniciar-se. Ha de ser l'últim pas del constructor.
         tl.time(Math.min((performance.now() - linesT0) / 1000, tl.duration()));

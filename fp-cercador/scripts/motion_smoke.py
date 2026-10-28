@@ -624,6 +624,141 @@ def itin_endpoints_aligned(browser, base):
     assert not errors, "errors de pàgina: %r" % errors
 
 
+# Mostrejador de tota la línia de temps: trams, màscares, parades (.node) i el seu .node-main.
+# window.__startItin(ms) reinicia window.__itin i mostreja amb requestAnimationFrame.
+ITIN_SAMPLER_JS = """
+window.__itin = [];
+window.__startItin = function (ms) {
+  window.__itin = [];
+  var t0 = performance.now();
+  (function tick() {
+    var svg = document.querySelector('.tl-lines');
+    var paths = svg ? Array.prototype.slice.call(svg.querySelectorAll('path')) : [];
+    var nodes = Array.prototype.slice.call(document.querySelectorAll('.node[data-key]'));
+    var focus = document.querySelector('.node.is-focus .node-main');
+    var styleOf = function (e) { return e.getAttribute('style') || ''; };
+    window.__itin.push({
+      t: performance.now(),
+      pathDash: paths.some(function (p) { return /stroke-dash/.test(styleOf(p)); }),
+      pathLength: paths.some(function (p) { return p.hasAttribute('pathLength'); }),
+      masks: svg ? svg.querySelectorAll('mask').length : 0,
+      nodeStyles: nodes.map(styleOf),
+      mainStyles: Array.prototype.slice.call(document.querySelectorAll('.node .node-main')).map(styleOf),
+      focusStyle: focus ? styleOf(focus) : null });
+    if (performance.now() - t0 < ms) requestAnimationFrame(tick);
+  })();
+};
+"""
+
+
+def itin_page(browser, base, sample_ms=ITIN_SAMPLE_MS, **flags):
+    """Pàgina d'itinerari amb el mostrejador de la línia de temps actiu des de l'inici del document."""
+    page, errors = new_page(browser, base, api=ITIN_API, **flags)
+    page.add_init_script(ITIN_SAMPLER_JS)
+    if sample_ms:
+        page.add_init_script("window.__startItin(%d);" % sample_ms)
+    return page, errors
+
+
+def itin_samples(page):
+    return page.evaluate("JSON.parse(JSON.stringify(window.__itin))")
+
+
+def itin_animated(s):
+    """Mostreig amb qualsevol estil d'animació de la línia de temps."""
+    return (s["pathDash"] or s["masks"] > 0 or any(s["nodeStyles"]) or any(s["mainStyles"]))
+
+
+def wait_itin_done(page, ms):
+    page.wait_for_function("(function () { var s = window.__itin; return s.length > 1 && s[s.length - 1].t - s[0].t >= %d; })()"
+                           % (ms - 30), timeout=ms + 8000)
+
+
+@check("itinerari:stops-light")
+def itin_stops_light(browser, base):
+    page, errors = itin_page(browser, base)
+    open_itinerari(page, base)
+    wait_itin_done(page, ITIN_SAMPLE_MS)
+    samples = itin_samples(page)
+    assert any("background-color" in st for s in samples for st in s["nodeStyles"]), "cap parada s'ha il·luminat"
+    assert not any(re.search(r"transform|opacity", st) for s in samples for st in s["nodeStyles"]), \
+        "un .node ha tingut transform o opacity en línia"
+    left = page.evaluate("Array.from(document.querySelectorAll('.node')).filter(function (n) { return (n.getAttribute('style') || '').trim(); }).length")
+    assert left == 0, "queden %d .node amb estil en línia" % left
+    anim = [s for s in samples if itin_animated(s)]
+    span = anim[-1]["t"] - anim[0]["t"]
+    assert span <= ITIN_SPAN_BUDGET_MS, "la seqüència dura %.0f ms (> %d)" % (span, ITIN_SPAN_BUDGET_MS)
+    assert not errors, "errors de pàgina: %r" % errors
+
+
+@check("itinerari:first-stop")
+def itin_first_stop(browser, base):
+    page, errors = itin_page(browser, base)
+    open_itinerari(page, base)
+    wait_itin_done(page, ITIN_SAMPLE_MS)
+    samples = itin_samples(page)
+    rises = [s for s in samples if s["focusStyle"] and "transform" in s["focusStyle"]
+             and 0.4 - 1e-6 <= (opacity_of(s["focusStyle"]) or 9) < 1]
+    assert rises, "el .node-main del focus no mostra opacity 0.4..1 amb transform"
+    floor = [opacity_of(s["focusStyle"]) for s in samples if opacity_of(s["focusStyle"] or "") is not None]
+    assert min(floor) >= 0.4 - 1e-6, "el focus baixa de 0.4 d'opacitat (%s)" % min(floor)
+    assert not (samples[-1]["focusStyle"] or "").strip(), "el .node-main del focus conserva estil: %r" % samples[-1]["focusStyle"]
+    text = page.evaluate("document.querySelector('.node.is-focus').textContent.replace(/\\s+/g, ' ').trim()")
+    plain, plain_errors = itin_page(browser, base, sample_ms=0, block_gsap=True)
+    open_itinerari(plain, base)
+    plain.wait_for_timeout(500)
+    plain_text = plain.evaluate("document.querySelector('.node.is-focus').textContent.replace(/\\s+/g, ' ').trim()")
+    assert text == plain_text, "el focus té text nou: %r != %r" % (text, plain_text)
+    assert not errors and not plain_errors, "errors de pàgina: %r" % (errors + plain_errors)
+
+
+@check("itinerari:no-reanimate")
+def itin_no_reanimate(browser, base):
+    page, errors = itin_page(browser, base, sample_ms=0)
+    open_itinerari(page, base)
+    page.wait_for_timeout(2000)
+    page.evaluate("window.__startItin(1800)")
+    page.set_viewport_size({"width": 1100, "height": 900})  # > 759 px: redibuix, no arbre
+    page.wait_for_timeout(600)
+    page.evaluate("var vm = %s; vm.setView('tree'); 0" % ITIN_VM_JS)
+    page.wait_for_timeout(300)
+    page.evaluate("var vm = %s; vm.setView('timeline'); 0" % ITIN_VM_JS)
+    page.wait_for_timeout(600)
+    wait_itin_done(page, 1800)
+    samples = itin_samples(page)
+    assert samples, "el mostrejador no ha vist res"
+    assert not [s for s in samples if itin_animated(s) or s["pathLength"]], "un redibuix tardà ha tornat a animar"
+    assert page.evaluate("document.querySelectorAll('.tl-lines path').length") == 6, "no hi ha 6 trams després de tornar a la línia de temps"
+    assert not errors, "errors de pàgina: %r" % errors
+
+
+def assert_itin_static(page, samples):
+    assert samples, "el mostrejador no ha vist res"
+    assert not [s for s in samples if itin_animated(s) or s["pathLength"]], "hi ha estils d'animació a la línia de temps"
+    assert not [s for s in samples if s["focusStyle"]], "el .node-main del focus s'ha animat"
+    assert page.evaluate("document.querySelectorAll('.tl-lines path').length") == 6, "no hi ha 6 trams dibuixats"
+    assert page.evaluate("window.GFPMotion.play('probe', function () {})") is False, "GFPMotion.play no retorna false"
+
+
+@check("itinerari:reduced-motion")
+def itin_reduced_motion(browser, base):
+    page, errors = itin_page(browser, base, reduced=True)
+    open_itinerari(page, base)
+    wait_itin_done(page, ITIN_SAMPLE_MS)
+    assert_itin_static(page, itin_samples(page))
+    assert not errors, "errors de pàgina: %r" % errors
+
+
+@check("itinerari:gsap-blocked")
+def itin_gsap_blocked(browser, base):
+    page, errors = itin_page(browser, base, block_gsap=True)
+    open_itinerari(page, base)
+    wait_itin_done(page, ITIN_SAMPLE_MS)
+    assert page.evaluate("typeof gsap") == "undefined", "gsap s'ha carregat tot i el bloqueig"
+    assert_itin_static(page, itin_samples(page))
+    assert not errors, "errors de pàgina: %r" % errors
+
+
 # --- Execució ---
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
