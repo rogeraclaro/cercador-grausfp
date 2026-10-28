@@ -187,7 +187,7 @@
       'pagination.page': 'Pàgina {n}',
 
       /* ── index.html — modals ── */
-      'modal.alert.ok': '✓ Alerta desada correctament',
+      'modal.alert.ok': 'Alerta desada correctament',
       'modal.alert.sub': "Rebràs un email quan hi hagi nous ensenyaments que encaixin amb els teus filtres.",
       'modal.alert.view': 'Veure les meves alertes',
       'modal.alert.continue': 'Continuar cercant',
@@ -895,7 +895,7 @@
       'pagination.page': 'Página {n}',
 
       /* ── index.html — modals ── */
-      'modal.alert.ok': '✓ Alerta guardada correctamente',
+      'modal.alert.ok': 'Alerta guardada correctamente',
       'modal.alert.sub': 'Recibirás un email cuando haya nuevas enseñanzas que coincidan con tus filtros.',
       'modal.alert.view': 'Ver mis alertas',
       'modal.alert.continue': 'Continuar buscando',

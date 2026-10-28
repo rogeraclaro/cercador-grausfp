@@ -174,6 +174,73 @@ def rows_cascade(browser, base):
     assert not errors, "errors de pàgina: %r" % errors
 
 
+VM_JS = "Alpine.$data(document.querySelector('[x-data=\"cercador\"]'))"
+BOX_SEL = '[x-ref="alertBox"]'
+
+
+def open_alert_modal(page, error=""):
+    """Obre el modal d'alerta via l'estat d'Alpine; retorna performance.now() del moment d'obrir."""
+    return page.evaluate("""(function () {
+      var vm = %s; vm.alertSaveError = %s;
+      var t = performance.now(); vm.alertModalVisible = true; return t; })()""" % (VM_JS, json.dumps(error)))
+
+
+def transform_samples(samples, t_set=None, within=None):
+    out = [s for s in samples if any("transform" in st for st in s["styles"])]
+    if within is not None:
+        out = [s for s in out if s["t"] - t_set <= within]
+    return out
+
+
+def start_modal_samplers(page, ms):
+    start_sampler(page, "box", BOX_SEL, ms, 1)
+    start_sampler(page, "tick", ".ok-tick", ms, 1)
+
+
+@check("index:modal-pop")
+def modal_pop(browser, base):
+    page, errors = new_page(browser, base)
+    open_index(page, base)
+    start_modal_samplers(page, 900)
+    t_set = open_alert_modal(page)
+    page.wait_for_timeout(150)
+    box_early = transform_samples(read_samples(page, "box"), t_set, 150)
+    tick_early = transform_samples(read_samples(page, "tick"), t_set, 150)
+    assert box_early, "el box no té transform en línia en els primers 150 ms"
+    assert tick_early, "el .ok-tick no té transform en línia en els primers 150 ms"
+    focused = page.evaluate("document.activeElement && document.activeElement.className || ''")
+    assert "centres-modal-close" in focused, "el focus no és al botó de tancar: %r" % focused
+    page.wait_for_timeout(750)
+    samples = read_samples(page, "box") + read_samples(page, "tick")
+    anim = sorted(transform_samples(samples), key=lambda s: s["t"])
+    span = anim[-1]["t"] - anim[0]["t"]
+    assert span <= CASCADE_BUDGET_MS, "l'animació dura %.0f ms (> %d)" % (span, CASCADE_BUDGET_MS)
+    final = page.evaluate("""(function () {
+      var box = document.querySelector('%s'), tick = document.querySelector('.ok-tick');
+      var label = document.querySelector('[data-i18n="modal.alert.ok"]');
+      return { boxStyle: box.getAttribute('style') || '', boxTf: getComputedStyle(box).transform,
+        tickDisplay: getComputedStyle(tick).display, tickAria: tick.getAttribute('aria-hidden'),
+        tickText: tick.textContent, label: label.textContent.trim() }; })()""" % BOX_SEL)
+    assert "transform" not in final["boxStyle"] and final["boxTf"] == "none", "el box conserva transform: %r" % final
+    assert final["tickDisplay"] == "inline-block", "el .ok-tick no és inline-block: %r" % final["tickDisplay"]
+    assert final["tickAria"] == "true", "el .ok-tick no té aria-hidden"
+    assert final["tickText"] == "✓", "text del .ok-tick: %r" % final["tickText"]
+    assert final["label"] == "Alerta desada correctament", "text de l'etiqueta: %r" % final["label"]
+    assert not errors, "errors de pàgina: %r" % errors
+
+
+@check("index:modal-error-untouched")
+def modal_error_untouched(browser, base):
+    page, errors = new_page(browser, base)
+    open_index(page, base)
+    start_modal_samplers(page, 400)
+    open_alert_modal(page, "Error de prova")
+    page.wait_for_timeout(500)
+    assert not transform_samples(read_samples(page, "box")), "el box de l'error té transform en línia"
+    assert page.evaluate("document.querySelectorAll('.ok-tick').length") == 0, "hi ha un .ok-tick a la variant d'error"
+    assert not errors, "errors de pàgina: %r" % errors
+
+
 # --- Execució ---
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
