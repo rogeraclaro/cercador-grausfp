@@ -133,9 +133,11 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
 ### Phase 7: Microanimacions GSAP
 
 **Goal:** GSAP-driven micro-animations (vendored core, reduced-motion aware, no-GSAP fallback) on index.html, observatori.html and itinerari.html that never delay results or interaction
-**Requirements**: TBD
+**Requirements**: none assigned (plans trace to CONTEXT decisions D-01..D-16)
 **Depends on:** Phase 6
-**Plans:** 0 plans
+**Plans:** 3 plans
 
 Plans:
-- [ ] TBD (run /gsd-plan-phase 7 to break down)
+- [ ] 07-01-PLAN.md — Wave 1: license decision, vendor GSAP 3.14.2, motion.js guard, CLAUDE.md exception, smoke/static scripts, index.html rows cascade + alert modal pop, deploy checkpoint
+- [ ] 07-02-PLAN.md — Wave 2: observatori.html bars grow (scaleX) + aria-hidden count-up, deploy checkpoint
+- [ ] 07-03-PLAN.md — Wave 3: itinerari.html timeline segment draw (dashoffset + userSpaceOnUse mask), green stops, first-stop highlight, deploy checkpoint
