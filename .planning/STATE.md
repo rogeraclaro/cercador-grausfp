@@ -4,16 +4,16 @@ milestone: v1.0
 current_phase: 07
 current_phase_name: Microanimacions GSAP
 status: executing
-stopped_at: Completed 07-01-PLAN.md
-last_updated: "2026-10-28T18:08:05.569Z"
+stopped_at: Completed 07-02-PLAN.md
+last_updated: "2026-10-28T18:13:40.735Z"
 last_activity: 2026-10-28
 last_activity_desc: Phase 07 execution started
-state_head: 5e234e890f86db899596ba8bb2e663e862ba0662
+state_head: a628023d286665e78d47750ffa61ac62e2498b7d
 progress:
   total_phases: 7
   completed_phases: 5
   total_plans: 19
-  completed_plans: 16
+  completed_plans: 17
 milestone_name: milestone
 ---
 
@@ -29,7 +29,7 @@ See: .planning/PROJECT.md (updated 2026-04-16)
 ## Current Position
 
 Phase: 07 (Microanimacions GSAP) — EXECUTING
-Plan: 2 of 3
+Plan: 3 of 3
 Status: Ready to execute
 Last activity: 2026-10-28 — Phase 07 execution started
 
@@ -63,6 +63,7 @@ Progress: [█████████░] 94% (Fases 01, 02, 03, 04, 05 complet
 | Plan | Duration | Tasks | Files |
 |------|----------|-------|-------|
 | Phase 07 P01 | multi-session | 5 tasks | 7 files |
+| Phase 07 P02 | multi-session | 3 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -91,6 +92,7 @@ Recent decisions affecting current work:
 - [Phase 03-03]: DATA-04 actualitzat: 12.374 registres reals (A:8537, B:2786, C:820, D:195, E:36)
 - [Phase 03-03]: _build_fam_map accepta alt sense prefix "Logotipo " per Grado E (Inteligencia Artificial y Data)
 - [Phase 07]: GSAP license: owner chose vendor-3142 (vendored GSAP 3.14.2 core, no CDN, no plugins) on 2026-10-28
+- [Phase 07]: 07-02: observatori bars animate with scaleX in 410 ms; count-up goes through an aria-hidden copy so accessible text stays final; hero total untouched
 
 ### Pending Todos
 
@@ -126,8 +128,8 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-10-28T18:08:05.329Z
-Stopped at: Completed 07-01-PLAN.md
+Last session: 2026-10-28T18:13:40.304Z
+Stopped at: Completed 07-02-PLAN.md
 Resume file: None
 
 **Planned Phase:** 06 (Frontend — Admin Panel) — 3 plans — 2026-04-25T22:25:59.909Z
