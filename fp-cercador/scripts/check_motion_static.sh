@@ -6,7 +6,7 @@
 set -u
 
 # Pàgines que carreguen GSAP (07-02 i 07-03 hi afegeixen la seva)
-LOADED_PAGES="index"
+LOADED_PAGES="index observatori"
 
 GSAP_SHA="c174bfce53a729418d57a8ad8625e7247c793a22fef8e2851e3cfa3de9cd8280"
 ALLOWED_PAGES="index.html observatori.html itinerari.html"
@@ -64,6 +64,16 @@ for page in $LOADED_PAGES; do
     fail "load-order:$page" "gsap (línia $g) no precedeix motion.js (línia $m)"
   elif [ -n "$a" ] && [ "$m" -ge "$a" ]; then
     fail "load-order:$page" "motion.js (línia $m) no precedeix Alpine (línia $a)"
+  elif [ -z "$a" ]; then
+    # Pàgina sense Alpine: etiquetes planes (sense defer) abans de l'script inline que crida load()
+    api=$(rg -n 'const API_BASE' "$f" 2>/dev/null | head -1 | cut -d: -f1)
+    if awk -v a="$g" -v b="$m" 'NR==a || NR==b' "$f" | rg -q defer; then
+      fail "load-order:$page" "gsap o motion.js porten defer en una pàgina sense Alpine"
+    elif [ -z "$api" ] || [ "$m" -ge "$api" ]; then
+      fail "load-order:$page" "motion.js (línia $m) no precedeix l'script inline (const API_BASE, línia ${api:-?})"
+    else
+      ok "load-order:$page"
+    fi
   else
     ok "load-order:$page"
   fi

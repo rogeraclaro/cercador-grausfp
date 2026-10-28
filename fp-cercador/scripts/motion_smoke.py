@@ -333,6 +333,50 @@ def gsap_blocked(browser, base):
     assert not errors, "errors de pàgina: %r" % errors
 
 
+# --- Observatori (07-02) ---
+OBS_FIXTURE = {
+    "current": {"ts": "2026-10-25T03:00:00Z", "total": 12894, "A": 8537, "B": 2786, "C": 820, "D": 600, "E": 151},
+    "series": [],  # sèrie buida: renderLineChart queda a la branca «poques dades»
+    "recent_changes": [],
+}
+OBS_API = {"/api/observatory": OBS_FIXTURE}
+BARS_SEL = "#chart-grados .bar-fill"
+
+
+def open_observatori(page, base):
+    page.goto(base + "/observatori.html")
+    page.wait_for_selector("#chart-grados .bar-row", timeout=10000)
+
+
+def expected_widths():
+    total = OBS_FIXTURE["current"]["total"]
+    return ["%.1f%%" % (OBS_FIXTURE["current"][g] / total * 100) for g in "ABCDE"]
+
+
+def assert_final_bars(page):
+    state = page.evaluate("""Array.from(document.querySelectorAll('%s')).map(function (e) {
+      return { style: e.getAttribute('style') || '', width: e.style.width, tf: getComputedStyle(e).transform }; })""" % BARS_SEL)
+    assert len(state) == 5, "barres renderitzades: %d" % len(state)
+    assert all("transform" not in s["style"] and s["tf"] == "none" for s in state), "barres amb transform residual: %r" % state
+    assert [s["width"] for s in state] == expected_widths(), "amplades finals: %r" % [s["width"] for s in state]
+
+
+@check("observatori:bars-grow")
+def obs_bars_grow(browser, base):
+    page, errors = new_page(browser, base, api=OBS_API, sample=("fills", BARS_SEL, 1500, 5))
+    open_observatori(page, base)
+    page.wait_for_timeout(1500)
+    samples = read_samples(page, "fills")
+    anim = [s for s in samples if any("transform" in st for st in s["styles"])]
+    assert anim, "les barres no s'han animat (cap transform en línia)"
+    span = anim[-1]["t"] - anim[0]["t"]
+    assert span <= CASCADE_BUDGET_MS, "l'animació de les barres dura %.0f ms (> %d)" % (span, CASCADE_BUDGET_MS)
+    assert_final_bars(page)
+    total = page.evaluate("document.getElementById('stat-total').textContent")
+    assert total == page.evaluate("(12894).toLocaleString('ca-ES')"), "#stat-total: %r" % total
+    assert not errors, "errors de pàgina: %r" % errors
+
+
 # --- Execució ---
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
