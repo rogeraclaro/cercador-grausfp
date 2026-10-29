@@ -29,6 +29,22 @@ Executable per un agent sense context. TDD estricte al backend.
   `total = len(bc_lomloe[c])`, és a dir, sense els mòduls que no tenen B. Per tant:
   - "Complet · n de m" diu `m` = 6 quan el certificat en té 8;
   - un mòdul de cicle sense B que sí és al D (p. ex. `0413`) no compta com a compartit.
+- **Base legal: per què 1786 i 1782 no tenen Grau B** (verificat al BOE el 2026-10-29):
+  - RD 86/2026 (BOE-A-2026-3210), que estableix `SSC_C_017_5B`:
+    - l'art. 8 i l'annex III llisten 8 mòduls (510 h);
+    - l'**annex I, "Oferta de Grado B"**, n'ofereix només 6 (`SSC_B_1705`…`SSC_B_1785`);
+    - l'**annex VI A** associa cadascun d'aquests 6 a un estàndard ECP. 1786 i 1782
+      no tenen cap ECP associat.
+  - RD 659/2023, **art. 58.1**: el Grau B "siempre estará asociada a uno o varios
+    estándares de competencia profesional". **Art. 58.3**: "No serán constitutivos de
+    certificados de competencia los módulos no asociados al Catálogo de Estándares
+    de Competencias Profesionales".
+  - RD 659/2023, **art. 12.2**: els mòduls no associats a estàndars (digitalització,
+    PRL, etc.) són "imprescindibles" per al títol. Formen part del Grau C, però
+    no es poden cursar soltes com a Grau B.
+  - **NO verificat:** si `0413`, `0533`, `0277` i `1282` també són "no associats",
+    o si és una mancança del catàleg del ministeri. Cal mirar-ho al decret de cada
+    C abans de posar-los la mateixa nota.
 - Els `ficha_id` caduquen a cada refresc. Per resoldre l'id viu:
   `app._resolve_ficha_id(codigo)`.
 
@@ -50,7 +66,10 @@ Executable per un agent sense context. TDD estricte al backend.
    n'hi ha. Els mòduls amb `b` es mostren com ara (enllaç a la fitxa B).
    Els que no en tenen surten **com a text sense enllaç**, amb el número, i amb
    la nota final `index.itinerari.modul_sense_b`:
-   "Aquest mòdul forma part del certificat però no s'ofereix com a Grau B propi."
+   "Mòdul no associat a cap estàndard de competència: forma part del certificat,
+   però no es pot cursar sol com a Grau B (RD 659/2023, art. 58.3)."
+   No s'ha d'afirmar "no associat" sense comprovar-ho. Si la Fase 1 no pot saber
+   si un mòdul està associat, la nota es limita a dir que no hi ha Grau B al catàleg.
    Títol nou de la secció: "Mòduls professionals d'aquest certificat:"
    (CA/ES a `i18n.js`). Cal pujar el `?v=` de `i18n.js`.
 5. C→D (`cd_lomloe.py`): **decisió pendent del propietari, vegeu la Fase 4.**
