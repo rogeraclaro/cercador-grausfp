@@ -80,6 +80,12 @@ Executable per un agent sense context. TDD estricte al backend.
    la nota final `index.itinerari.modul_sense_b`:
    "Mòdul no associat a cap estàndard de competència: forma part del certificat,
    però no es pot cursar sol com a Grau B (RD 659/2023, art. 58.3)."
+   **Aprovat pel propietari (2026-10-29).** "RD 659/2023, art. 58.3" ha de ser un
+   enllaç (`target="_blank" rel="noopener"`) a la font:
+   `https://www.boe.es/buscar/act.php?id=BOE-A-2023-16889#a5-10` (bloc de l'art. 58 al
+   text consolidat). En castellà: "Módulo no asociado a ningún estándar de competencia:
+   forma parte del certificado, pero no puede cursarse por separado como Grado B
+   (RD 659/2023, art. 58.3)."
    Aquesta redacció està verificada en 5 de 5 decrets (vegeu la Diagnosi). Com a
    salvaguarda, es mostra només per als mòduls que surten a la fitxa del C i que
    no tenen B al catàleg.
@@ -111,6 +117,30 @@ Fixture: copiar l'estructura HTML real de la fitxa (`Módulos Profesionales` …
   `_resolve_ficha_id` (~400 fitxes, 1 req/s, ~15 min) i reescriu també
   `bc_lomloe.json` perquè quedin coherents.
   **No executar-lo al VPS diumenge de 11:10 a 11:45** (refresc programat).
+
+## Fase 2b — Auditoria de TOTS els C LOMLOE contra el BOE (abans de desplegar la UI)
+
+Objectiu: comprovar, per a cadascun dels ~400 C LOMLOE, que els mòduls sense Grau B
+al catàleg són exactament els que el seu decret no inclou a l'"Oferta de Grado B".
+Així la nota de la UI no és una extrapolació de 5 casos.
+
+- Script `backend/scripts/audit_c_modulos_boe.py`, d'un sol ús i fora del refresc:
+  1. Llista de decrets: els RD de famílies de 2025 (207/2025, 208/2025, 211/2025 i
+     germans: buscar "por el que se regulan aspectos específicos de los grados A, B y C")
+     més els RD d'un sol certificat (p. ex. 86/2026). Es descarrega el text de
+     `https://www.boe.es/diario_boe/txt.php?id=<BOE-A-…>`.
+  2. Per a cada decret, parsejar: la llista "7. Módulos profesionales" de cada C
+     (annex I) i els `FAM_B_NNNN` de l'annex II ("Oferta de Grado B"). En decrets d'un
+     sol certificat, la secció és l'annex I. Normalitzar espais (`\s+`): el BOE fa
+     servir em-space U+2003 entre "i)" i el codi.
+  3. Creuar amb `c_modulos.json` i amb el catàleg B. Informe a
+     `plans/outputs/audit_c_modulos_boe.md` amb quatre comptadors: OK; el decret ofereix B
+     però el catàleg no el té (forat del catàleg); el catàleg té B que el decret no
+     ofereix; C sense decret trobat.
+- Criteri: si hi ha forats del catàleg, aquells mòduls NO porten la nota de l'art. 58.3.
+  Porten una variant neutra ("No consta com a Grau B al catàleg del ministeri") i es
+  reporten al propietari.
+- Els C sense decret localitzat es llisten a part, per revisar-los a mà. No bloquegen.
 
 ## Fase 3 — API + UI (TDD a l'API)
 
