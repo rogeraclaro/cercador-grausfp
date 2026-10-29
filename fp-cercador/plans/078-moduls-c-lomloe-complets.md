@@ -153,7 +153,27 @@ Així la nota de la UI no és una extrapolació de 5 casos.
   distingeix `bmod.b` (enllaç) de `!bmod.b` (text + `*`).
 - Verificar al navegador `SSC_C_017_5B`: 8 mòduls, 1786 i 1782 sense enllaç.
 
-## Fase 4 — C→D: recomptar amb tots els mòduls (DECISIÓ PENDENT)
+## Fase 4 — C→D: recomptar amb tots els mòduls — DECIDIT: opció A (propietari, 2026-10-29)
+
+Especificació (TDD a `backend/tests/test_cd_lomloe.py`):
+- `build_c_lomloe_to_d(records, c_modulos, d_modulos)` passa a rebre `c_modulos` (no
+  `bc_lomloe`). Si no hi ha `c_modulos` per a un C, fa servir `bc_lomloe` com ara (fail-soft).
+- Mòduls del C: `c_modulos[c]` **menys els de PRL**. Un mòdul és PRL si i només si
+  **no té Grau B al catàleg** i el seu número és `1782`, `1724` o `1732`, o el nom conté
+  "riesgos laborales" o "riesgos profesionales".
+  ⚠ La condició "sense B" és obligatòria. `0165 Gestión de la calidad, prevención de
+  riesgos laborales y protección ambiental` (TCP_C_002_5B) té Grau B i NO s'ha d'excloure.
+- `total` = mòduls del C després d'excloure els de PRL.
+- `shared` = mòduls del C presents al D de la mateixa família (es manté la restricció
+  del 058). Coincidència pel número (`num` del D), o pel nom normalitzat
+  (`normalize_module_name`) si el mòdul del D no porta número.
+- Tests mínims: SSC_C_017_5B → total 7 (8 − 1782); un C amb 0413 sense B que és al D
+  compta com a compartit; TCP_C_002_5B → 0165 compta al total; sense `c_modulos` →
+  mateix resultat que abans.
+- Desplegament: cal reiniciar el backend (canvi a Python). **No fer-ho diumenge de
+  11:10 a 11:45.**
+
+Opcions que es van valorar (per a l'històric):
 
 Problema: avui `total` exclou els mòduls sense B. Opcions:
 - **A (recomanada):** el matching C↔D passa a fer-se per número de mòdul

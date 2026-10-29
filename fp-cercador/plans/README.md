@@ -91,7 +91,7 @@ amb quins prerequisits i quins passos manuals calen al servidor.
 | 075 | Cercador: millores UX/a11y d'una revisió externa (etiquetes de filtres traduïdes, `aria-pressed` CA/ES, Favorits amb teclat, "Suggeriments", 100 files + primera/última, "Sense centres registrats", cor visible, un sol botó d'alertes) | P2 | S–M | — | DONE (50 files: STOP de rendiment) |
 | 076 | Identificadors estables (`ref`) per a favorits, enllaços compartits, avisos i fitxers de centres: els `id` es reassignen a cada refresc | P1 | M–L | — | DONE (2026-10-26) |
 | 077 | Una pàgina pública per grau (`/grau/<ref>`), pàgines de família, `sitemap.xml` i `robots.txt` (SEO) | P1 | M–L | 076 | DONE (2026-10-26; falta nginx al VPS) |
-| 078 | C LOMLOE: mostrar tots els mòduls del certificat (ara s'amaguen els que no tenen Grau B: PRL 1782, 1786…; 14/15 C afectats) + `c_modulos.json`; C→D pendent de decisió | P1 | M | 057, 058 DONE | TODO |
+| 078 | C LOMLOE: mostrar tots els mòduls del certificat (ara s'amaguen els que no tenen Grau B: PRL 1782, 1786…; 14/15 C afectats) + `c_modulos.json`; C→D opció A \| P1 | M | 057, 058 DONE | TODO |
 
 Valors de Status: `TODO` | `IN PROGRESS` | `DONE` | `BLOCKED (motiu en una línia)` | `REJECTED (motiu en una línia)`
 
