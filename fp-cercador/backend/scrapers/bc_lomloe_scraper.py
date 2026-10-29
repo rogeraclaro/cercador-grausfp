@@ -74,12 +74,16 @@ def _fetch_with_retry(session, ficha_id: int) -> str:
     raise RuntimeError('unreachable')
 
 
-def build_bc_lomloe(records: list[dict], session=None, on_progress=None) -> dict[str, list[str]]:
+def build_bc_lomloe(records: list[dict], session=None, on_progress=None,
+                    modulos_out: dict | None = None) -> dict[str, list[str]]:
     """
     Retorna {codigo_c: [codigo_b, ...]} per als C LOMLOE amb ficha_id.
-    Els mòduls sense B (transversals, ex. PRL) s'ignoren. Una fitxa el
+    Els mòduls sense B (transversals, ex. PRL) no hi surten. Una fitxa el
     "Código:" de la qual no coincideix amb l'esperat (ficha_id obsolet) es
     salta amb WARNING.
+
+    Pla 078: si es passa modulos_out, s'hi afegeix {codigo_c: [{num, name}, ...]}
+    amb TOTS els mòduls de la fitxa (també els sense B), en l'ordre de la fitxa.
     """
     c_lomloe = [r for r in records
                 if r.get('grado') == 'C' and not r.get('plan_antiguo') and r.get('ficha_id')]
@@ -109,15 +113,23 @@ def build_bc_lomloe(records: list[dict], session=None, on_progress=None) -> dict
             time.sleep(RATE_LIMIT_SEC)
             continue
         fam = codigo[:3]
-        b_codes = [b_by_fam_num[(fam, num)] for num, _ in parse_modulos(html)
+        modulos = parse_modulos(html)
+        b_codes = [b_by_fam_num[(fam, num)] for num, _ in modulos
                    if (fam, num) in b_by_fam_num]
         result[codigo] = sorted(set(b_codes))
+        if modulos_out is not None:
+            modulos_out[codigo] = [{'num': num, 'name': name} for num, name in modulos]
         time.sleep(RATE_LIMIT_SEC)
 
     if on_progress:
         on_progress('B→C LOMLOE', total, total)
     logger.info('bc_lomloe: %d/%d certificats C resolts', len(result), total)
     return result
+
+
+def write_c_modulos(index: dict, output_path: str) -> None:
+    """Pla 078: escriu c_modulos.json ({codigo_c: [{num, name}]}) de forma atòmica."""
+    write_bc_lomloe(index, output_path)
 
 
 def write_bc_lomloe(index: dict, output_path: str) -> None:

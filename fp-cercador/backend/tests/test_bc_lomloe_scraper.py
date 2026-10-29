@@ -3,6 +3,7 @@ test_bc_lomloe_scraper.py — Relació C LOMLOE → [B LOMLOE] via fitxa todofp 
 
 Sense xarxa: _fetch_ficha_html i time.sleep mockejats.
 """
+import json
 import logging
 
 import pytest
@@ -58,12 +59,41 @@ def test_build_bc_lomloe_salta_fitxa_amb_codi_diferent(monkeypatch, caplog):
     altra = FICHA_HTML.replace('HOT_C_005_5B', 'ADG_C_001_3B')
     monkeypatch.setattr(bcs, '_fetch_with_retry', lambda session, fid: altra)
     monkeypatch.setattr(bcs.time, 'sleep', lambda s: None)
+    modulos = {}
 
     with caplog.at_level(logging.WARNING):
-        result = bcs.build_bc_lomloe(RECORDS, session=object())
+        result = bcs.build_bc_lomloe(RECORDS, session=object(), modulos_out=modulos)
 
     assert result == {}
+    assert modulos == {}
     assert 'HOT_C_005_5B' in caplog.text
+
+
+# Pla 078: la fitxa llista també els mòduls sense Grau B (PRL, 1786…); es desen
+# tots, en l'ordre de la fitxa, a part de bc_lomloe (que només té els B existents).
+def test_build_bc_lomloe_desa_tots_els_moduls_a_modulos_out(monkeypatch):
+    monkeypatch.setattr(bcs, '_fetch_with_retry', lambda session, fid: FICHA_HTML)
+    monkeypatch.setattr(bcs.time, 'sleep', lambda s: None)
+    modulos = {}
+
+    result = bcs.build_bc_lomloe(RECORDS, session=object(), modulos_out=modulos)
+
+    assert result == {'HOT_C_005_5B': ['HOT_B_0171']}
+    assert modulos == {'HOT_C_005_5B': [
+        {'num': '0171', 'name': 'Estructura del mercado turístico'},
+        {'num': '1782', 'name': 'Prevención de riesgos laborales'},
+    ]}
+
+
+def test_write_c_modulos_es_atomic_i_utf8(tmp_path):
+    out = tmp_path / 'data' / 'c_modulos.json'
+    index = {'SSC_C_017_5B': [{'num': '1786', 'name': 'Competencia digital para la práctica docente'}]}
+
+    bcs.write_c_modulos(index, str(out))
+
+    assert json.loads(out.read_text(encoding='utf-8')) == index
+    assert 'práctica' in out.read_text(encoding='utf-8')
+    assert [p.name for p in out.parent.iterdir()] == ['c_modulos.json']
 
 
 def test_fetch_reintenta_amb_backoff(monkeypatch):
