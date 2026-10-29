@@ -42,9 +42,21 @@ Executable per un agent sense context. TDD estricte al backend.
   - RD 659/2023, **art. 12.2**: els mòduls no associats a estàndars (digitalització,
     PRL, etc.) són "imprescindibles" per al títol. Formen part del Grau C, però
     no es poden cursar soltes com a Grau B.
-  - **NO verificat:** si `0413`, `0533`, `0277` i `1282` també són "no associats",
-    o si és una mancança del catàleg del ministeri. Cal mirar-ho al decret de cada
-    C abans de posar-los la mateixa nota.
+  - **Mòduls de cicle verificats (2026-10-29): el cas és el mateix, no és una mancança
+    del catàleg.** Per a cada C, l'annex II ("Oferta de Grado B") del seu decret no
+    inclou el mòdul. Tampoc l'associa a cap unitat de competència l'annex V A del
+    títol associat, que és on remet l'art. 34 del decret dels C:
+
+    | C | Decret del C (annex II) | Mòdul sense B | Títol associat (annex V A) |
+    |---|---|---|---|
+    | AGA_C_002_4B Ganadería ecológica | RD 207/2025 (BOE-A-2025-6797): B = 0405, 0407, 0408, 0411 | 0413, 1782 | RD 1633/2009 (BOE-A-2009-18476): 0413 no hi és |
+    | AGA_C_009_5B Sanidad animal y asistencia veterinaria | RD 207/2025: B = 1279, 1280, 1281 | 1282, 1782 | RD 1585/2012 (BOE-A-2013-155): 1282 no hi és |
+    | FME_C_008_5B Programación de la producción en moldeo cerrado | RD 208/2025 (BOE-A-2025-7040): B = 0162, 0163, 0531 | 0533, 1782 | RD 882/2011 (BOE-A-2011-12723): 0533 només surt en una NOTA (es convalida si s'acrediten TOTES les UC del títol) |
+    | TCP_C_002_5B Gestión en la industria de la confección | RD 211/2025 (BOE-A-2025-7096): B = 0165, 0276, 0278, 0280 | 0277 | RD 954/2008 (BOE-A-2008-10619): 0277 no hi és |
+
+    Conclusió: als 5 decrets revisats, els mòduls que el catàleg no té com a Grau B
+    són exactament els que el decret no ofereix com a Grau B. Cap d'ells està associat
+    a un estàndard o unitat de competència concrets.
 - Els `ficha_id` caduquen a cada refresc. Per resoldre l'id viu:
   `app._resolve_ficha_id(codigo)`.
 
@@ -68,8 +80,9 @@ Executable per un agent sense context. TDD estricte al backend.
    la nota final `index.itinerari.modul_sense_b`:
    "Mòdul no associat a cap estàndard de competència: forma part del certificat,
    però no es pot cursar sol com a Grau B (RD 659/2023, art. 58.3)."
-   No s'ha d'afirmar "no associat" sense comprovar-ho. Si la Fase 1 no pot saber
-   si un mòdul està associat, la nota es limita a dir que no hi ha Grau B al catàleg.
+   Aquesta redacció està verificada en 5 de 5 decrets (vegeu la Diagnosi). Com a
+   salvaguarda, es mostra només per als mòduls que surten a la fitxa del C i que
+   no tenen B al catàleg.
    Títol nou de la secció: "Mòduls professionals d'aquest certificat:"
    (CA/ES a `i18n.js`). Cal pujar el `?v=` de `i18n.js`.
 5. C→D (`cd_lomloe.py`): **decisió pendent del propietari, vegeu la Fase 4.**
