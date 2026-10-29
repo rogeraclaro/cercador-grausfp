@@ -3798,6 +3798,14 @@
                       x-text="t(centres_count(row) === 1 ? 'index.centres.count_one' : 'index.centres.count', {n: centres_count(row)})">
                     </span>
                   </template>
+                  <template x-if="parentBOf(row)">
+                    <span>
+                      <span x-text="t('index.itinerari.parent_b_prefix')" class="textpetit"></span><span
+                        class="badge-itinerari-b"
+                        :title="t('index.itinerari.parent_b_title') + parentsBOf(row).map(b => b.codigo + ' — ' + b.denominacion).join('; ')"
+                        x-text="'→ ' + ((parentBOf(row)||{}).codigo || '') + (parentsBOf(row).length > 1 ? ' +' + (parentsBOf(row).length - 1) : '')"></span>
+                    </span>
+                  </template>
                   <template x-if="row.ref && (expandedRows[row.id] || childrenCLoeVisible[row.id])">
                     <span class="row-share" @click.stop @keydown.stop
                       @click.outside="if (shareRowId === row.id) shareRowId = null" @keydown.escape="shareRowId = null">
@@ -3811,14 +3819,6 @@
                         <a role="menuitem" :href="'mailto:?subject=' + encodeURIComponent(rowShareText(row)) + '&body=' + encodeURIComponent(rowShareText(row) + '\n' + rowShareUrl(row))" @click="shareRowId = null"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg><span x-text="t('itin.share.email')"></span></a>
                       </span>
                       <span class="sr-only" aria-live="polite" x-text="shareRowId === row.id && shareCopied ? t('itin.share.copied') : ''"></span>
-                    </span>
-                  </template>
-                  <template x-if="parentBOf(row)">
-                    <span>
-                      <span x-text="t('index.itinerari.parent_b_prefix')" class="textpetit"></span><span
-                        class="badge-itinerari-b"
-                        :title="t('index.itinerari.parent_b_title') + parentsBOf(row).map(b => b.codigo + ' — ' + b.denominacion).join('; ')"
-                        x-text="'→ ' + ((parentBOf(row)||{}).codigo || '') + (parentsBOf(row).length > 1 ? ' +' + (parentsBOf(row).length - 1) : '')"></span>
                     </span>
                   </template>
                 </td>
