@@ -93,7 +93,7 @@ amb quins prerequisits i quins passos manuals calen al servidor.
 | 077 | Una pàgina pública per grau (`/grau/<ref>`), pàgines de família, `sitemap.xml` i `robots.txt` (SEO) | P1 | M–L | 076 | DONE (2026-10-26; falta nginx al VPS) |
 | 078 | C LOMLOE: mostrar tots els mòduls del certificat (ara s'amaguen els que no tenen Grau B: PRL 1782, 1786…; 14/15 C afectats) + `c_modulos.json`; C→D opció A \| P1 | M | 057, 058 DONE | DONE |
 | 079 | C LOMLOE: completar amb el BOE els 11 mòduls que 10 fitxes todofp ometen (constant a l'API, nota amb enllaç al RD) \| P2 | S | 078 DONE | DONE |
-| 080 | Auditar contra el BOE els 32 C LOMLOE sense decret (RD individuals; descoberta via sumari diari del BOE) \| P2 | M | 079 DONE | TODO |
+| 080 | Auditar contra el BOE els 32 C LOMLOE sense decret (RD individuals; descoberta via sumari diari del BOE) \| P2 | M | 079 DONE | DONE |
 
 Valors de Status: `TODO` | `IN PROGRESS` | `DONE` | `BLOCKED (motiu en una línia)` | `REJECTED (motiu en una línia)`
 
