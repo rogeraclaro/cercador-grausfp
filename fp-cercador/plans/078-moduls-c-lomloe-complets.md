@@ -142,6 +142,19 @@ Així la nota de la UI no és una extrapolació de 5 casos.
   reporten al propietari.
 - Els C sense decret localitzat es llisten a part, per revisar-los a mà. No bloquegen.
 
+### Resultat de la fase 2b (2026-10-30)
+
+`scripts/audit_c_modulos_boe.py` (a `scripts/`, no a `backend/scripts/`) → `plans/outputs/audit_c_modulos_boe.md`.
+Decrets: RD 207–213/2025 (18-3-2025, un per grup de famílies) i RD 86/2026. Cobreixen 368+1 dels 400 C.
+
+- Per certificat: 331 OK; 1 forat real del catàleg (HOT_C_003_5B → HOT_B_0178, al decret i no al catàleg);
+  35 "catàleg de més" (el catàleg enllaça un B de la mateixa família que el decret no ofereix per a aquell C; inofensiu).
+- Per mòdul sense B al catàleg (514): 467 cap decret l'ofereix com a B (nota art. 58.3); 1 forat (0178, nota neutra);
+  13 només són B d'una altra família (0156, 0179, 0165, 0538, 0020, 0017, 0116, 0790); 33 de C sense decret
+  localitzat (32 són PRL 1782/1732/1724; 1 és el 1800).
+- Troballa a part: 11 C on la fitxa todofp omet mòduls que el decret (també el text consolidat) sí que té
+  (p. ex. COM_C_001_4B sense 1233; IMA_C_002_4B sense 0310 i 0266). L'app hereta l'error de la fitxa.
+
 ## Fase 3 — API + UI (TDD a l'API)
 
 - `backend/tests/test_itinerari*.py`: per a un C amb `c_modulos` sintètic,
