@@ -5,3 +5,6 @@
 # Tool caches (skill registry, GSD runtime)
 .atl/
 .gsd/
+
+# Independent project with its own git repo
+/fp-centres-cercador/
