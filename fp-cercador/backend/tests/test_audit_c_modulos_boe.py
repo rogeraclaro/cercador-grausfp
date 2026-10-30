@@ -71,3 +71,91 @@ def test_aparellar_per_denominacio():
     troballes = {'BOE-A-2025-25701': {'rd': 'RD 1128/2025', 'tipus': 'establece',
                                       'denominacion': 'enoturismo', 'data': '20251216'}}
     assert a.aparellar(cs, troballes) == ({'HOT_C_015_5B': 'BOE-A-2025-25701'}, ['XXX_C_001_4B'])
+
+
+# --- Fase 2: lectors del RD individual i del RD de títol (fragments reals del BOE) ---
+
+# BOE-A-2025-25701 (RD 1128/2025, Enoturismo): article de mòduls i annex I.
+RD_INDIVIDUAL = (
+    'Artículo 2. Identificación. b) Código: HOT_C_015_5B. '
+    'Artículo 8. Módulos profesionales. Los módulos profesionales de este certificado profesional quedan '
+    'desarrollados en el anexo III. Dichos módulos son los que a continuación se relacionan: '
+    'a) 1737. Experiencias enoturísticas. b) 1738. Análisis sensorial de productos selectos propios de '
+    'sumillería y diseño de sus ofertas. c) 1232. Procesos de venta. d) 0020. Primeros auxilios. '
+    'e) 0179. Inglés Profesional (GS). f) 1782. Prevención de riesgos laborales. Este certificado '
+    'profesional incorpora un periodo de formación en empresa. '
+    'ANEXO I Oferta de grado B: Certificados de competencia Formación a cursar Certificado de competencia '
+    'Duración 1737. Experiencias enoturísticas. HOT_B_1737. Experiencias enoturísticas. 200 '
+    '1232. Procesos de venta. HOT_B_1232. Procesos de venta. 160 0020. Primeros auxilios. HOT_B_0020. '
+    'Primeros auxilios. 60 ANEXO II Oferta de grado A: Acreditaciones parciales de competencia '
+    'a) HOT_B_9999. Fora del bloc.')
+
+# BOE-A-2024-24102 (RD 1157/2024, Sanidad ambiental aplicada): annex V (C) i annex VI (B).
+RD_TITOL = (
+    'ANEXO V Oferta de Grado C: certificados profesionales a) CERTIFICADO PROFESIONAL: SERVICIOS DE CONTROL '
+    'DE PLAGAS/ORGANISMOS NOCIVOS. 1. Identificación b) Código: SEA_C_001_4B. c) Nivel: 2. '
+    '7. Módulos profesionales del Certificado Profesional Módulos Profesionales 1697. Preparación y traslado '
+    'de materiales. 1698. Control de organismos nocivos, artrópodos y roedores. 1732. Nivel básico de '
+    'Prevención de riesgos laborales. b) CERTIFICADO PROFESIONAL: MANTENIMIENTO HIGIÉNICO-SANITARIO DE '
+    'INSTALACIONES SUSCEPTIBLES DE PROLIFERACIÓN DE LEGIONELLA. 1. Identificación b) Código: SEA_C_002_4B. '
+    '7. Módulos profesionales del Certificado Profesional Módulos Profesionales 1697. Preparación. '
+    '1700. Control de Legionella. 1732. Nivel básico de Prevención de riesgos laborales. '
+    'ANEXO VI Oferta de Grado B: certificados de competencia a) Certificados de competencia incluidos en el '
+    'Certificado profesional Servicios de control de plagas/organismos nocivos: Formación a cursar '
+    'Certificado de competencia Duración 1697. Preparación. SEA_B_1697. Preparación. 90 1698. Control. '
+    'SEA_B_1698. Control. 310 b) Certificados de competencia incluidos en el Certificado profesional '
+    'Mantenimiento higiénico-sanitario de instalaciones susceptibles de proliferación de Legionella : '
+    'Formación a cursar 1697. Preparación. SEA_B_1697. Preparación. 90 1700. Control de Legionella. '
+    'SEA_B_1700. Control de Legionella. 230 ANEXO VII Oferta de Grado A')
+
+
+def test_parse_rd_individual():
+    assert a.parse_rd(RD_INDIVIDUAL, 'HOT_C_015_5B', 'Enoturismo', 'establece') == (
+        ['1737', '1738', '1232', '0020', '0179', '1782'], ['0020', '1232', '1737'])
+
+
+def test_parse_rd_individual_amb_codi_amb_marcadors():
+    # BOE-A-2025-25699: "Código: EOC_C_00X_4B." — l'únic C del RD, el codi no cal.
+    text = RD_INDIVIDUAL.replace('HOT_C_015_5B', 'EOC_C_00X_4B')
+    assert a.parse_rd(text, 'EOC_C_012_4B', 'X', 'establece')[0][0] == '1737'
+
+
+def test_parse_rd_titol():
+    assert a.parse_rd(RD_TITOL, 'SEA_C_001_4B', 'Servicios de control de plagas/organismos nocivos',
+                      'titol') == (['1697', '1698', '1732'], ['1697', '1698'])
+    assert a.parse_rd(RD_TITOL, 'SEA_C_002_4B',
+                      'Mantenimiento higiénico-sanitario de instalaciones susceptibles de proliferación de legionella',
+                      'titol') == (['1697', '1700', '1732'], ['1697', '1700'])
+
+
+def test_parse_rd_no_trobat_retorna_none():
+    assert a.parse_rd(RD_TITOL, 'SEA_C_009_4B', 'No hi és', 'titol') == (None, None)
+
+
+def test_parse_rd_individual_ignora_mencions_de_l_oferta_b_fora_de_l_annex():
+    # BOE-A-2026-13294 (RD 488/2026): l'articulat parla de l'"Oferta de grado B" i modifica
+    # l'annex d'un altre RD (ART_B_1771) abans de l'ANEXO I. Només compta l'ANEXO I.
+    text = ('Oferta de grado B: ver anexo. Se modifica la letra g) ART_B_1771. Construcción, de la Oferta '
+            'de Grado A del RD 300/2026. ANEXO II del RD 300/2026. ' + RD_INDIVIDUAL)
+    assert a.parse_rd(text, 'HOT_C_015_5B', 'Enoturismo', 'establece')[1] == ['0020', '1232', '1737']
+
+
+def test_parse_rd_titol_capcalera_acabada_en_punt_i_bloc_en_minuscules():
+    # BOE-A-2026-8022 (RD 300/2026, ART): "Certificado profesional: …" en minúscules acaba el bloc
+    # del C anterior, i el nom de l'oferta de B acaba en punt, no en dos punts.
+    text = ('ANEXO VI Oferta de Grado C a) Certificado profesional: Guitarras. b) Código: ART_C_001_5B. '
+            '7. Módulos profesionales del certificado profesional. Módulos profesionales 1750. Taller. '
+            '1769. Guitarras. 1732. Nivel básico. b) Certificado profesional: Arco. b) Código: ART_C_002_5B. '
+            '7. Módulos profesionales 1771. Arco. ANEXO VII Oferta de Grado B: Certificados de competencia '
+            'a) Certificados de competencia incluidos en el Certificado profesional Guitarras, bandurrias y '
+            'laúdes españoles. Formación a cursar 1750. Taller. ART_B_1750. Taller. 90 1769. Guitarras. '
+            'ART_B_1769. Guitarras. 300 b) Certificados de competencia incluidos en el Certificado profesional '
+            'Arco: Formación a cursar 1771. Arco. ART_B_1771. Arco. 200 ANEXO VIII')
+    assert a.parse_rd(text, 'ART_C_001_5B', 'Guitarras, bandurrias y laúdes españoles', 'titol') == (
+        ['1750', '1769', '1732'], ['1750', '1769'])
+
+
+def test_parse_rd_individual_annex_sense_de():
+    # BOE-A-2025-25704 (RD 1131/2025, MAM_C_007_4B): "ANEXO I Oferta grado B:".
+    text = RD_INDIVIDUAL.replace('ANEXO I Oferta de grado B', 'ANEXO I Oferta grado B')
+    assert a.parse_rd(text, 'HOT_C_015_5B', 'Enoturismo', 'establece')[1] == ['0020', '1232', '1737']

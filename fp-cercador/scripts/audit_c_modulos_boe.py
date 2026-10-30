@@ -178,7 +178,8 @@ def parse_modulos_annex_i(text: str, codigo: str) -> list[str] | None:
     m = re.search(rf'Código: {codigo}\.', text)
     if not m:
         return None
-    end = re.search(r'CERTIFICADO PROFESIONAL:|ANEXO', text[m.end():])
+    # Pla 080: als RD de títol el C següent pot començar "Certificado profesional:" (minúscules).
+    end = re.search(r'CERTIFICADO PROFESIONAL:|Certificado profesional:|ANEXO', text[m.end():])
     block = text[m.end(): m.end() + end.start()] if end else text[m.end():]
     i = block.find('7. Módulos profesionales')
     if i < 0:
@@ -195,6 +196,46 @@ def parse_oferta_b_annex_ii(text: str, codigo: str) -> list[str] | None:
     end = re.search(rf'\b[a-zñ]{{1,3}}\) [A-Z]{{3}}_[BC]_\w+[.:] |CERTIFICADOS DE COMPETENCIA|ANEXO III', text[m.end():])
     block = text[m.end(): m.end() + end.start()] if end else text[m.end():]
     return sorted(set(re.findall(r'\b[A-Z]{3}_B_(\d{4})\b', block)))
+
+
+# --- Pla 080, fase 2: lectors del RD individual i del RD de títol ---
+
+_MODUL_RE = re.compile(r'\b(\d{4})\. ?(?=[A-ZÁÉÍÓÚÑ])')
+_TITOL_B_HEAD_RE = re.compile(
+    r'\b[a-zñ]{1,3}\) Certificados de competencia incluidos en el Certificado profesional (.+?) ?[:.] '
+    r'(?=Formación a cursar)')
+
+
+def _block(text: str, start: str, end_re: str) -> str | None:
+    i = text.find(start)
+    if i < 0:
+        return None
+    rest = text[i + len(start):]
+    end = re.search(end_re, rest)
+    return rest[:end.start()] if end else rest
+
+
+def parse_rd(text: str, codigo: str, denominacion: str, tipus: str) -> tuple[list | None, list | None]:
+    """([mòduls del C], [números dels FAM_B oferts]) d'un RD individual ('establece') o d'un RD
+    de títol ('titol'). (None, None) si el C no hi és."""
+    if tipus == 'titol':
+        # Annex de Grau C igual que l'annex I dels decrets de grup; l'oferta de B, per nom del C.
+        modulos = parse_modulos_annex_i(text, codigo)
+        heads = list(_TITOL_B_HEAD_RE.finditer(text))
+        oferta = None
+        for k, h in enumerate(heads):
+            if norm(h.group(1)) == norm(denominacion):
+                stop = heads[k + 1].start() if k + 1 < len(heads) else len(text)
+                block = text[h.end():stop].split('ANEXO')[0]
+                oferta = sorted(set(re.findall(r'\b[A-Z]{3}_B_(\d{4})\b', block)))
+        return modulos, oferta
+    # RD individual: un sol C, i per això no cal el codi (el BOE el publica de vegades amb marcadors).
+    sec = _block(text, 'Dichos módulos son los que a continuación se relacionan:',
+                 r'Este certificado profesional incorpora|Artículo \d')
+    # Només l'annex: l'articulat també parla de l'oferta de B (i pot modificar altres RD).
+    oferta = re.search(r'ANEXO I Oferta (?:de )?[Gg]rado B(.*?)ANEXO II', text, re.S)
+    return (list(dict.fromkeys(_MODUL_RE.findall(sec))) if sec else None,
+            sorted(set(re.findall(r'\b[A-Z]{3}_B_(\d{4})\b', oferta.group(1)))) if oferta else None)
 
 
 def audit(c_modulos: dict, bc_lomloe: dict, texts: dict) -> dict:

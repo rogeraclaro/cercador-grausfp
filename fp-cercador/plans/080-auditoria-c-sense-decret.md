@@ -69,6 +69,33 @@ el text consolidat. Abans d'escriure el parser, mirar l'estructura del RD 1157/2
   BOE-A-2026-676 (Pirotecnia) a `backend/tests/` (o a `scripts/tests/` si l'script ja en
   té). Cal cobrir els números enganxats ("3051.Operaciones"), com ja passava al 078.
 
+### Resultat de la fase 2 (2026-10-30)
+
+`parse_rd(text, codigo, denominacion, tipus)` a `scripts/audit_c_modulos_boe.py`; 8 tests nous a
+`backend/tests/test_audit_c_modulos_boe.py`, amb fragments reals.
+- **RD individual:** mòduls de "Dichos módulos son los que a continuación se relacionan:"; oferta de B
+  d'"ANEXO I Oferta (de) grado B" fins a "ANEXO II". Cal l'annex, perquè l'articulat també en parla i
+  el RD 488/2026 hi modifica el RD 300/2026.
+- **RD de títol:** els mòduls, amb el lector dels decrets de grup (`parse_modulos_annex_i`, que ara també
+  acaba el bloc a "Certificado profesional:" en minúscules). L'oferta de B surt del bloc "Certificados de
+  competencia incluidos en el Certificado profesional <nom>[:.]", buscat pel nom normalitzat.
+- **Modificacions posteriors:** no toquen ni la llista de mòduls ni l'oferta de B, així que n'hi ha prou
+  amb el text original (fitxa d'anàlisi `act.php`, "Referencias posteriores"):
+  - RD 489/2026 → annex V (professorat) del RD 404/2025;
+  - RD 488/2026 → annex VIII (Grau A) del RD 300/2026;
+  - RD 490/2026 → durada i hores de l'annex III del RD 1127/2025 (mateixa llista de mòduls).
+  La correcció d'errors del RD 1157/2024 afegeix a l'annex IV A/B la correspondència
+  **UC2519_2 ↔ 1732 Nivel básico de PRL** (vegeu la fase 3).
+- **Sense regressions:** l'auditoria dels decrets de grup surt idèntica (`audit_c_modulos_boe.md` sense diff).
+- **Prova amb els 31 C i les dades de producció:** 30/31 coincideixen del tot (mòduls de la fitxa =
+  mòduls del RD; B del catàleg = oferta de B del RD). Únic cas: `HOT_C_016_5B`, catàleg de més. El
+  catàleg enllaça HOT_B_0171, però el RD 1127/2025 no l'ofereix com a B d'aquest C. És inofensiu i
+  en la mateixa categoria que els 35 del 078.
+- **Primeres conseqüències per a la fase 4**, per confirmar a la fase 3:
+  - **ARG_C_008_5B 1800:** el RD 87/2026 no l'ofereix com a B → hauria de passar de nota neutra a art. 58.3.
+  - **1732 als SEA:** és associat a UC2519_2 per la correcció d'errors. Cal decidir si la nota de
+    l'art. 58.3 ("mòdul no associat a cap estàndard de competència") hi és correcta.
+
 ## Fase 3 — Auditoria ampliada
 
 - `audit()` i `audit_modulos()` també fan servir els RD individuals. Mateixes categories
