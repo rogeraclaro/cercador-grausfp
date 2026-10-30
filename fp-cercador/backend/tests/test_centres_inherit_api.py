@@ -20,6 +20,7 @@ OFERTES = [
     {'id': 60, 'codigo': 'HOT_C_005_5B', 'grado': 'C', 'plan_antiguo': False, 'denominacion': 'C nou', 'familia': 'H', 'nivel': 3},
     {'id': 50, 'codigo': 'HOT_B_0171', 'grado': 'B', 'plan_antiguo': False, 'denominacion': 'B nou', 'familia': 'H', 'nivel': 3},
     {'id': 51, 'codigo': 'HOT_A_0171_01', 'grado': 'A', 'plan_antiguo': False, 'denominacion': 'A nou', 'familia': 'H', 'nivel': 3},
+    {'id': 53, 'codigo': 'ADG_B_0156', 'grado': 'B', 'plan_antiguo': False, 'denominacion': 'Inglés profesional', 'familia': 'A', 'nivel': 3},
     {'id': 52, 'codigo': 'HOT_B_9999', 'grado': 'B', 'plan_antiguo': False, 'denominacion': 'B nou orfe', 'familia': 'H', 'nivel': 3},
     # Pla 058: un cicle D de la mateixa família que HOT_C_005_5B
     {'id': 700, 'codigo': None, 'grado': 'D', 'plan_antiguo': False, 'denominacion': 'T.S. Prova',
@@ -33,6 +34,13 @@ CENTRES = [
 OFERTA_CENTRES = {'ADGG0408': ['M1', 'M2'], 'HOT_C_005_5B': ['M3']}  # per ref (Pla 076)
 BC_LOE = {'ADGG0408': ['UC0969_1']}
 BC_LOMLOE = {'HOT_C_005_5B': ['HOT_B_0171']}
+# Pla 078: tots els mòduls de la fitxa, també els sense Grau B a la mateixa família.
+C_MODULOS = {'HOT_C_005_5B': [
+    {'num': '0171', 'name': 'Estructura del mercado turístico'},
+    {'num': '1782', 'name': 'Prevención de riesgos laborales'},
+    {'num': '0156', 'name': 'Inglés profesional'},
+    {'num': '0178', 'name': 'Comercialización de eventos'},
+]}
 # Pla 058: el mòdul del D 700 coincideix amb la denominació del B id 50 ('B nou').
 D_MODULOS = {'700': {'modulos': [{'num': None, 'name': 'B nou'}], 'ensenanzaFP': None}}
 # Ampliació 068: pare real de l'A LOE (fitxa de l'A); aquí coincideix amb el número.
@@ -48,6 +56,7 @@ def data_dir(tmp_path, monkeypatch):
         'oferta_centres': tmp_path / 'oferta_centres.json',
         'bc_loe': tmp_path / 'bc_loe.json',
         'bc_lomloe': tmp_path / 'bc_lomloe.json',
+        'c_modulos': tmp_path / 'c_modulos.json',
         'd_modulos': tmp_path / 'd_modulos.json',
         'ciclos': tmp_path / 'ciclos_fp.json',
         'a_loe_pares': tmp_path / 'a_loe_pares.json',
@@ -58,6 +67,7 @@ def data_dir(tmp_path, monkeypatch):
     paths['oferta_centres'].write_text(json.dumps(OFERTA_CENTRES), encoding='utf-8')
     paths['bc_loe'].write_text(json.dumps(BC_LOE), encoding='utf-8')
     paths['bc_lomloe'].write_text(json.dumps(BC_LOMLOE), encoding='utf-8')
+    paths['c_modulos'].write_text(json.dumps(C_MODULOS), encoding='utf-8')
     paths['d_modulos'].write_text(json.dumps(D_MODULOS), encoding='utf-8')
     paths['ciclos'].write_text(json.dumps(CICLOS_FP), encoding='utf-8')
 
@@ -71,6 +81,8 @@ def data_dir(tmp_path, monkeypatch):
     monkeypatch.setattr(app_module, 'BC_LOE_PATH', str(paths['bc_loe']))
     monkeypatch.setattr(app_module, 'BC_LOMLOE_PATH', str(paths['bc_lomloe']))
     monkeypatch.setattr(app_module, '_bc_lomloe_cache', {'mtime': None, 'index': None})
+    monkeypatch.setattr(app_module, 'C_MODULOS_PATH', str(paths['c_modulos']))
+    monkeypatch.setattr(app_module, '_c_modulos_cache', {'mtime': None, 'index': None})
     monkeypatch.setattr(app_module, 'A_LOE_PARES_PATH', str(paths['a_loe_pares']))
     monkeypatch.setattr(app_module, '_a_loe_pares_cache', {'mtime': None, 'index': None})
     monkeypatch.setattr(app_module, '_centres_index', None)
@@ -178,6 +190,27 @@ def test_itinerari_b_loe_children_c_es_alies(client):
 
 def test_itinerari_c_lomloe_retorna_parent_b_lomloe(client):
     d = client.get('/api/itinerari?grado=C&codigo=HOT_C_005_5B').get_json()
+    assert [b['codigo'] for b in d['parent_b_lomloe']] == ['HOT_B_0171']
+
+
+def test_itinerari_c_lomloe_retorna_tots_els_modulos_c(client, monkeypatch):
+    # 0178 és el forat del catàleg trobat a l'auditoria (fase 2b): nota neutra.
+    monkeypatch.setattr(app_module, '_C_MODULOS_NOTA_NEUTRA', {('HOT_C_005_5B', '0178')})
+    d = client.get('/api/itinerari?grado=C&codigo=HOT_C_005_5B').get_json()
+    got = [(m['num'], m['b']['codigo'] if m['b'] else None, m['nota']) for m in d['modulos_c']]
+    assert got == [
+        ('0171', 'HOT_B_0171', None),
+        ('1782', None, 'art583'),
+        ('0156', 'ADG_B_0156', 'altra_familia'),
+        ('0178', None, 'neutra'),
+    ]
+    assert d['modulos_c'][1]['name'] == 'Prevención de riesgos laborales'
+
+
+def test_itinerari_c_lomloe_sense_c_modulos_retorna_llista_buida(client, data_dir):
+    data_dir['c_modulos'].unlink()
+    d = client.get('/api/itinerari?grado=C&codigo=HOT_C_005_5B').get_json()
+    assert d['modulos_c'] == []
     assert [b['codigo'] for b in d['parent_b_lomloe']] == ['HOT_B_0171']
 
 

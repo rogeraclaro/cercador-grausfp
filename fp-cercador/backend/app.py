@@ -93,6 +93,7 @@ _DATA_DIR = os.path.join(os.path.dirname(__file__), "data")
 CICLOS_PATH = os.path.join(_DATA_DIR, "ciclos_fp.json")
 BC_LOE_PATH = os.path.join(_DATA_DIR, "bc_loe.json")
 BC_LOMLOE_PATH = os.path.join(_DATA_DIR, "bc_lomloe.json")  # Pla 057: {codigo_c: [codigo_b]}
+C_MODULOS_PATH = os.path.join(_DATA_DIR, "c_modulos.json")  # Pla 078: {codigo_c: [{num, name}]}
 D_MODULOS_PATH = os.path.join(_DATA_DIR, "d_modulos.json")  # Pla 058: {str(id_d): {modulos, ensenanzaFP}}
 B_CONTINGUT_PATH = os.path.join(_DATA_DIR, "b_contingut.json")  # Pla 068: {codigo_b: {ecp, ra}}
 A_LOE_PARES_PATH = os.path.join(_DATA_DIR, "a_loe_pares.json")  # Pla 068: {codigo_uf: [codigo_mf]}
@@ -1304,6 +1305,57 @@ def _get_bc_lomloe() -> dict:
         return {}
 
 
+_c_modulos_cache: dict = {"mtime": None, "index": None}
+
+# Pla 078: mòduls sense Grau B al catàleg que el decret sí que ofereix com a Grau B
+# (forat del catàleg) o el C dels quals no té decret localitzat. Porten una nota
+# neutra en lloc de la de l'art. 58.3. Font: plans/outputs/audit_c_modulos_boe.md.
+_C_MODULOS_NOTA_NEUTRA = {('HOT_C_003_5B', '0178'), ('ARG_C_008_5B', '1800')}
+
+
+def _get_c_modulos() -> dict:
+    """Pla 078: {codigo_c: [{num, name}]} de c_modulos.json. {} si no existeix o és corrupte."""
+    if not os.path.exists(C_MODULOS_PATH):
+        return {}
+    mtime = os.path.getmtime(C_MODULOS_PATH)
+    if _c_modulos_cache["mtime"] == mtime and _c_modulos_cache["index"] is not None:
+        return _c_modulos_cache["index"]
+    try:
+        with open(C_MODULOS_PATH, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+        if not isinstance(data, dict):
+            logger.warning("_get_c_modulos: c_modulos.json no és un objecte — s'ignora")
+            return {}
+        _c_modulos_cache.update(mtime=mtime, index=data)
+        return data
+    except (OSError, json.JSONDecodeError) as exc:
+        logger.warning("_get_c_modulos: error llegint c_modulos.json: %s", exc)
+        return {}
+
+
+def _build_modulos_c(codigo: str, b_by_code: dict) -> list[tuple[dict, dict | None, str | None]]:
+    """
+    Pla 078: [(mòdul, registre B o None, nota)] per a tots els mòduls de la fitxa del C.
+    nota: None (B de la família, via bc_lomloe), 'altra_familia' (només hi ha B d'una
+    altra família), 'neutra' (_C_MODULOS_NOTA_NEUTRA) o 'art583' (RD 659/2023, art. 58.3).
+    """
+    linked = {b.rsplit('_', 1)[1]: b for b in _get_bc_lomloe().get(codigo, []) if b in b_by_code}
+    result = []
+    for m in _get_c_modulos().get(codigo, []):
+        num = m.get('num')
+        if num in linked:
+            result.append((m, b_by_code[linked[num]], None))
+            continue
+        others = sorted(c for c in b_by_code if re.fullmatch(rf'[A-Z]{{3}}_B_{num}', c))
+        if others:
+            result.append((m, b_by_code[others[0]], 'altra_familia'))
+        elif (codigo, num) in _C_MODULOS_NOTA_NEUTRA:
+            result.append((m, None, 'neutra'))
+        else:
+            result.append((m, None, 'art583'))
+    return result
+
+
 def _get_bc_lomloe_inverse() -> dict:
     """{codigo_b: [codigo_c, ...]} derivat de _get_bc_lomloe()."""
     inverse: dict = {}
@@ -1872,6 +1924,9 @@ def api_itinerari():
         _b_by_code = _idx_c.get('b_by_code', {}) if _idx_c else {}
         parent_b_lomloe = [_serialize(_b_by_code[b]) for b in _get_bc_lomloe().get(codigo, [])
                            if b in _b_by_code]
+        modulos_c = [{'num': m.get('num'), 'name': m.get('name'),
+                      'b': _serialize(b) if b else None, 'nota': nota}
+                     for m, b, nota in _build_modulos_c(codigo, _b_by_code)]
 
         # Pla 058: C LOMLOE → cicles D via mòduls compartits (no passa per ciclos_fp.json).
         if re.match(r'^[A-Z]{3}_C_\d+_\w+$', codigo):
@@ -1892,7 +1947,7 @@ def api_itinerari():
                     'total': e['total'],
                 })
             return jsonify({'ciclos_d': ciclos_lomloe, 'parent_b_loe': [],
-                            'parent_b_lomloe': parent_b_lomloe})
+                            'parent_b_lomloe': parent_b_lomloe, 'modulos_c': modulos_c})
 
         if not os.path.exists(CICLOS_PATH):
             return jsonify({'ciclos_d': [], 'parent_b_loe': [],
