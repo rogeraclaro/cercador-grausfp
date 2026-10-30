@@ -355,14 +355,19 @@ def run(on_progress=None) -> dict:
     # ofertes ja són fresques encara que això falli o s'aturi.
     _report('Relació B→C LOMLOE (fitxes todofp)')
     try:
-        from scrapers.bc_lomloe_scraper import build_bc_lomloe, write_bc_lomloe
+        from scrapers.bc_lomloe_scraper import build_bc_lomloe, write_bc_lomloe, write_c_modulos
+        c_modulos: dict = {}
         bc_lomloe = build_bc_lomloe(
             all_records,
             on_progress=lambda phase, i, n: _report(f'{phase} {i}/{n}'),
+            modulos_out=c_modulos,
         )
         bc_lomloe_path = os.path.join(os.path.dirname(DATA_PATH), 'bc_lomloe.json')
         write_bc_lomloe(bc_lomloe, bc_lomloe_path)
         logger.info("pipeline: bc_lomloe.json escrit (%d certificats C)", len(bc_lomloe))
+        # Pla 078: tots els mòduls de cada C (també els sense Grau B), mateixa passada.
+        write_c_modulos(c_modulos, os.path.join(os.path.dirname(DATA_PATH), 'c_modulos.json'))
+        logger.info("pipeline: c_modulos.json escrit (%d certificats C)", len(c_modulos))
     except Exception as exc:
         logger.warning("pipeline: build_bc_lomloe ha fallat (no fatal): %s", exc)
 

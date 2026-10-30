@@ -95,6 +95,10 @@ def isolate_data_path(tmp_path, monkeypatch):
     # Pla 074: el bloc ce_acces faria xarxa (fitxes E) — desactivat per defecte.
     import scrapers.ce_acces_scraper as ces
     monkeypatch.setattr(ces, 'build_ce_acces', lambda records, **kw: {})
+    # L'enriquiment C LOE i les fonts FPO externes també fan xarxa — desactivats.
+    import scrapers.certificados_scraper as cert
+    monkeypatch.setattr(cert, 'fetch_all', lambda *a, **kw: {})
+    monkeypatch.setattr(pl, 'refresh_ext_cursos', lambda data_dir: {})
 
 
 def _run_with_mocks(buscador_data, d_basico=None, d_medio=None, d_superior=None, e=None):
@@ -270,6 +274,20 @@ def test_run_escriu_bc_lomloe_json(tmp_path):
     assert m.called
     out = tmp_path / 'bc_lomloe.json'
     assert json.loads(out.read_text(encoding='utf-8')) == {'HOT_C_005_5B': ['HOT_B_0171']}
+
+
+def test_run_escriu_c_modulos_json(tmp_path):
+    # Pla 078: la mateixa passada desa tots els mòduls de cada C (també els sense B).
+    def fake_build(records, modulos_out=None, **kw):
+        modulos_out['HOT_C_005_5B'] = [{'num': '0171', 'name': 'Estructura'},
+                                       {'num': '1782', 'name': 'PRL'}]
+        return {'HOT_C_005_5B': ['HOT_B_0171']}
+
+    with mock.patch(PATCH_BUILD_BC_LOMLOE, side_effect=fake_build):
+        _run_with_mocks(buscador_data={'A': [], 'B': [], 'C': [_rec_c_lomloe()]})
+    out = tmp_path / 'c_modulos.json'
+    assert json.loads(out.read_text(encoding='utf-8')) == {'HOT_C_005_5B': [
+        {'num': '0171', 'name': 'Estructura'}, {'num': '1782', 'name': 'PRL'}]}
 
 
 def test_run_no_falla_si_bc_lomloe_peta(tmp_path):
