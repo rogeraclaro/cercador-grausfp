@@ -1310,7 +1310,30 @@ _c_modulos_cache: dict = {"mtime": None, "index": None}
 # Pla 078: mòduls sense Grau B al catàleg que el decret sí que ofereix com a Grau B
 # (forat del catàleg) o el C dels quals no té decret localitzat. Porten una nota
 # neutra en lloc de la de l'art. 58.3. Font: plans/outputs/audit_c_modulos_boe.md.
-_C_MODULOS_NOTA_NEUTRA = {('HOT_C_003_5B', '0178'), ('ARG_C_008_5B', '1800')}
+# Pla 080: ARG_C_008_5B 1800 en va sortir (el RD 87/2026 no l'ofereix com a B ni l'associa a cap UC).
+_C_MODULOS_NOTA_NEUTRA = {('HOT_C_003_5B', '0178')}
+
+# Pla 080: mòduls que el decret associa a un estàndard de competència (taules de correspondència)
+# però no ofereix com a Grau B: la nota de l'art. 58.3 ("no associat a cap estàndard") hi seria falsa.
+# {(codigo_c, num): (uc, rd, boe_id)}. Font: plans/080 (fase 3).
+_UC_PRL_CONSTRUCCIO = 'UC2327_2'
+_UC_PRL_BASIC = 'UC2519_2'
+_RD_1157_CORR = ('RD 1157/2024, corrección de errores', 'BOE-A-2025-10206')
+_C_MODULOS_UC_SENSE_B = {
+    ('EOC_C_009_4B', '1724'): (_UC_PRL_CONSTRUCCIO, 'RD 405/2025', 'BOE-A-2025-11811'),
+    ('EOC_C_010_4B', '1724'): (_UC_PRL_CONSTRUCCIO, 'RD 406/2025', 'BOE-A-2025-11812'),
+    ('EOC_C_011_4B', '1724'): (_UC_PRL_CONSTRUCCIO, 'RD 404/2025', 'BOE-A-2025-11810'),
+    ('SSC_C_002_4B', '1732'): (_UC_PRL_BASIC, 'RD 533/2025', 'BOE-A-2025-14086'),
+    **{(f'SEA_C_00{i}_4B', '1732'): (_UC_PRL_BASIC, *_RD_1157_CORR) for i in range(1, 7)},
+}
+
+
+def _uc_sense_b(codigo: str, num: str) -> dict | None:
+    src = _C_MODULOS_UC_SENSE_B.get((codigo, num))
+    if not src:
+        return None
+    uc, rd, boe_id = src
+    return {'codi': uc, 'rd': rd, 'url': f'https://www.boe.es/buscar/act.php?id={boe_id}'}
 
 # Pla 079: mòduls de l'annex I del decret que la fitxa de todofp omet (verificat amb el
 # text del BOE, plans/079). {codigo_c: [(num, nom, rd, boe_id)]}. S'afegeixen només si
@@ -1381,7 +1404,8 @@ def _build_modulos_c(codigo: str, b_by_code: dict) -> list[tuple[dict, dict | No
     """
     Pla 078: [(mòdul, registre B o None, nota)] per a tots els mòduls de la fitxa del C.
     nota: None (B de la família, via bc_lomloe), 'altra_familia' (només hi ha B d'una
-    altra família), 'neutra' (_C_MODULOS_NOTA_NEUTRA) o 'art583' (RD 659/2023, art. 58.3).
+    altra família), 'neutra' (_C_MODULOS_NOTA_NEUTRA), 'uc_sense_b' (_C_MODULOS_UC_SENSE_B, pla 080)
+    o 'art583' (RD 659/2023, art. 58.3).
     """
     linked = {b.rsplit('_', 1)[1]: b for b in _get_bc_lomloe().get(codigo, []) if b in b_by_code}
     result = []
@@ -1395,6 +1419,8 @@ def _build_modulos_c(codigo: str, b_by_code: dict) -> list[tuple[dict, dict | No
             result.append((m, b_by_code[others[0]], 'altra_familia'))
         elif (codigo, num) in _C_MODULOS_NOTA_NEUTRA:
             result.append((m, None, 'neutra'))
+        elif (codigo, num) in _C_MODULOS_UC_SENSE_B:
+            result.append((m, None, 'uc_sense_b'))
         else:
             result.append((m, None, 'art583'))
     return result
@@ -1969,7 +1995,8 @@ def api_itinerari():
         parent_b_lomloe = [_serialize(_b_by_code[b]) for b in _get_bc_lomloe().get(codigo, [])
                            if b in _b_by_code]
         modulos_c = [{'num': m.get('num'), 'name': m.get('name'),
-                      'b': _serialize(b) if b else None, 'nota': nota, 'font': m.get('font')}
+                      'b': _serialize(b) if b else None, 'nota': nota, 'font': m.get('font'),
+                      'uc': _uc_sense_b(codigo, m.get('num')) if nota == 'uc_sense_b' else None}
                      for m, b, nota in _build_modulos_c(codigo, _b_by_code)]
 
         # Pla 058: C LOMLOE → cicles D via mòduls compartits (no passa per ciclos_fp.json).

@@ -146,6 +146,15 @@ amb les constants que ja existeixen a `backend/app.py`:
 Si la fase 3 no troba cap discrepància, la fase 4 no canvia res de codi. Només s'anota
 el resultat.
 
+### Resultat de la fase 4 (2026-10-30) — decisió del propietari: nota nova amb enllaç
+
+- `app.py`: `_C_MODULOS_UC_SENSE_B` (10 parells de la fase 3) → `nota: 'uc_sense_b'` i camp
+  `uc: {codi, rd, url}`. ARG_C_008_5B 1800 surt de `_C_MODULOS_NOTA_NEUTRA` → art. 58.3.
+- UI: "Associat a l'estàndard de competència {uc}, però el decret no l'ofereix com a Grau B (RD …)",
+  amb enllaç al BOE (per als SEA, a la correcció d'errors BOE-A-2025-10206). `i18n.js?v=20261030c`.
+- SEA_C_004_5B / SEA_C_006_5B (1782, probable UC1970_2): sense canvis fins tenir-ne prova.
+- 2 tests nous; suite 547 verds. Verificat en local: SEA_C_001_4B (1732) i ARG_C_008_5B (1800).
+
 ## Fora d'abast
 
 - Executar la descoberta automàticament quan aparegui un C nou al catàleg (es pot

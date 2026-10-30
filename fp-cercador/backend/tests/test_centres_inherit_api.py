@@ -247,6 +247,24 @@ def test_itinerari_c_lomloe_modul_afegit_compta_al_total_c_d(client, monkeypatch
     assert d['ciclos_d'][0]['total'] == 4
 
 
+def test_itinerari_c_lomloe_modul_associat_a_uc_sense_grau_b(client, monkeypatch):
+    # Pla 080: el decret associa el mòdul a un estàndard (UC) però no l'ofereix com a Grau B.
+    # La nota de l'art. 58.3 ("no associat a cap estàndard") hi seria falsa.
+    monkeypatch.setattr(app_module, '_C_MODULOS_UC_SENSE_B', {
+        ('HOT_C_005_5B', '1782'): ('UC2519_2', 'RD 533/2025', 'BOE-A-2025-14086')})
+    d = client.get('/api/itinerari?grado=C&codigo=HOT_C_005_5B').get_json()
+    prl = d['modulos_c'][1]
+    assert (prl['num'], prl['b'], prl['nota']) == ('1782', None, 'uc_sense_b')
+    assert prl['uc'] == {'codi': 'UC2519_2', 'rd': 'RD 533/2025',
+                         'url': 'https://www.boe.es/buscar/act.php?id=BOE-A-2025-14086'}
+    assert [m['uc'] for m in d['modulos_c'] if m['num'] != '1782'] == [None] * 3
+
+
+def test_arg_c_008_1800_ja_no_porta_nota_neutra():
+    # Pla 080: el RD 87/2026 no ofereix el 1800 com a B ni l'associa a cap UC → art. 58.3.
+    assert ('ARG_C_008_5B', '1800') not in app_module._C_MODULOS_NOTA_NEUTRA
+
+
 def test_itinerari_c_lomloe_sense_c_modulos_retorna_llista_buida(client, data_dir):
     data_dir['c_modulos'].unlink()
     d = client.get('/api/itinerari?grado=C&codigo=HOT_C_005_5B').get_json()
