@@ -69,7 +69,11 @@ Implementació: constant + fusió a `_get_c_modulos()` + `font` a la serialitzac
 Comprovar també si `/grau/<ref>` (pla 077, `test_grau_page.py`) llista mòduls de C.
 Si ho fa, ha de rebre el mateix canvi. Si no, no tocar-lo.
 
-## Fase 2 — UI
+## Fase 2 — UI — FET 2026-10-30
+
+Claus `modul_boe_afegit` / `modul_boe_no_al_decret` (text + enllaç amb el RD). `i18n.js?v=20261030b`.
+Verificat en local: COM_C_001_4B (1233 amb les dues notes) i IMA_C_001_4B (0266 "no consta").
+
 
 - `frontend/index.html`: dins la plantilla del pla 078 (`modulosCData`), si
   `mod.font`, una segona `span.modul-nota` amb el text i l'enllaç (`target="_blank"
