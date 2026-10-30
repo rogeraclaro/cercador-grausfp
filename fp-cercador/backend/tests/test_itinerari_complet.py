@@ -88,8 +88,9 @@ def data_dir(tmp_path, monkeypatch):
         monkeypatch.setattr(app_module, attr, str(p))
         paths[name] = p
     monkeypatch.setattr(app_module, 'CE_ACCES_PATH', str(tmp_path / 'ce_acces.json'))
+    monkeypatch.setattr(app_module, 'C_MODULOS_PATH', str(tmp_path / 'c_modulos.json'))  # absent
     for cache in ('_itinerary_index_cache', '_a_loe_pares_cache', '_bc_lomloe_cache',
-                  '_d_modulos_cache'):
+                  '_d_modulos_cache', '_c_modulos_cache'):
         monkeypatch.setattr(app_module, cache, {'mtime': None, 'index': None})
     monkeypatch.setattr(app_module, '_cd_lomloe_cache', {'key': None, 'data': None})
     monkeypatch.setattr(app_module, '_itinerary_graph_cache', {'key': None, 'data': None})

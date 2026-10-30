@@ -168,6 +168,10 @@ Decrets: RD 207–213/2025 (18-3-2025, un per grup de famílies) i RD 86/2026. C
 
 ## Fase 4 — C→D: recomptar amb tots els mòduls — DECIDIT: opció A (propietari, 2026-10-29)
 
+Fet 2026-10-30. Desviació: la signatura és `build_c_lomloe_to_d(records, bc_lomloe, d_modulos,
+c_modulos=None)` (es manté `bc_lomloe` per al fail-soft per C). Amb les dades de producció:
+C amb D 381 → 382; enllaços 792 → 810; complets 374 → 377 (p. ex. AGA_C_002_4B 4/4 → 5/5).
+
 Especificació (TDD a `backend/tests/test_cd_lomloe.py`):
 - `build_c_lomloe_to_d(records, c_modulos, d_modulos)` passa a rebre `c_modulos` (no
   `bc_lomloe`). Si no hi ha `c_modulos` per a un C, fa servir `bc_lomloe` com ara (fail-soft).

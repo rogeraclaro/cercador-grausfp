@@ -1424,12 +1424,12 @@ def _get_c_lomloe_to_d() -> dict:
     """
     Pla 058: derivació C LOMLOE → [cicles D] via mòduls compartits.
     Retorna {'index': {codigo_c: [{id, shared, total}]}, 'd_by_id': {str(id): rec_d}}.
-    Cache invalidada per mtimes d'ofertes.json, bc_lomloe.json i d_modulos.json.
+    Cache invalidada per mtimes d'ofertes.json, bc_lomloe.json, d_modulos.json i c_modulos.json.
     """
     def _mt(path):
         return os.path.getmtime(path) if os.path.exists(path) else None
 
-    key = (_mt(DATA_PATH), _mt(BC_LOMLOE_PATH), _mt(D_MODULOS_PATH))
+    key = (_mt(DATA_PATH), _mt(BC_LOMLOE_PATH), _mt(D_MODULOS_PATH), _mt(C_MODULOS_PATH))
     if _cd_lomloe_cache["key"] == key and _cd_lomloe_cache["data"] is not None:
         return _cd_lomloe_cache["data"]
     try:
@@ -1438,7 +1438,7 @@ def _get_c_lomloe_to_d() -> dict:
     except (OSError, json.JSONDecodeError) as exc:
         logger.warning("_get_c_lomloe_to_d: error llegint ofertes.json: %s", exc)
         records = []
-    index = cd_lomloe.build_c_lomloe_to_d(records, _get_bc_lomloe(), _get_d_modulos())
+    index = cd_lomloe.build_c_lomloe_to_d(records, _get_bc_lomloe(), _get_d_modulos(), _get_c_modulos())
     d_by_id = {str(r['id']): r for r in records if r.get('grado') == 'D'}
     try:
         oferta_ref.ensure_refs(records)  # 'ref' als cicles D retornats (Pla 076)

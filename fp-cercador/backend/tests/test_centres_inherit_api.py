@@ -218,7 +218,8 @@ def test_itinerari_c_lomloe_ciclos_d(client):
     d = client.get('/api/itinerari?grado=C&codigo=HOT_C_005_5B').get_json()
     assert d['ciclos_d'] == [{
         'id': 700, 'ref': 'h~y', 'denominacion': 'T.S. Prova', 'familia': 'H',
-        'ficha_url': 'https://x/h/y.html', 'shared': 1, 'total': 1,
+        # Pla 078: total = 0171, 0156, 0178 de C_MODULOS (el 1782, PRL sense B, no compta).
+        'ficha_url': 'https://x/h/y.html', 'shared': 1, 'total': 3,
     }]
 
 
