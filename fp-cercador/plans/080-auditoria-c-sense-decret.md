@@ -106,6 +106,30 @@ el text consolidat. Abans d'escriure el parser, mirar l'estructura del RD 1157/2
 - Fer servir les dades de producció (copiar del VPS `ofertes.json`, `c_modulos.json` i
   `bc_lomloe.json`; les locals poden ser antigues).
 
+### Resultat de la fase 3 (2026-10-30)
+
+`audit()` / `audit_modulos()` accepten `individuals` (llegits de `boe_certificados_individuales.json`).
+`te_codi()` accepta també "– Código: X –" (RD 209/2025, IMP_C_006_4B). 3 tests nous. Auditoria regenerada
+amb les dades de producció:
+- Per certificat: **OK 331 → 362**; forat del catàleg 1 (igual); catàleg de més 35 → 36 (+HOT_C_016_5B,
+  HOT_B_0171); no parsejat 1 (SSC_C_017_5B, verificat a mà); **sense decret 32 → 0**.
+- "Fitxa ≠ decret": cap C nou. Els 31 C tenen fitxes completes; continuen sortint només els 11 del 079.
+- Per mòdul: art. 58.3 467 → 500; neutre 1; altra família 13; sense decret 33 → 0.
+
+**Verificació de la nota de l'art. 58.3 ("mòdul no associat a cap estàndard de competència").**
+Es buscaren les files de taula de correspondència "UCxxxx_x: … NNNN." / "NNNN. … UCxxxx_x" dins el decret
+de cada C, per als 500 mòduls:
+- **10 parells SÍ estan associats a un UC**. Per tant la nota hi és FALSA (encara que no siguin Grau B):
+  - 1724 ↔ UC2327_2 ("funciones de nivel básico para la prevención de riesgos en construcción"):
+    EOC_C_009_4B (RD 405/2025), EOC_C_010_4B (RD 406/2025), EOC_C_011_4B (RD 404/2025).
+  - 1732 ↔ UC2519_2 ("… prevención de riesgos laborales"): SSC_C_002_4B (RD 533/2025, annex IV) i
+    SEA_C_001…006_4B (RD 1157/2024, afegit per la correcció d'errors BOE-A-2025-10206).
+- **1782 no s'associa a cap UC en cap taula.** La nota hi és correcta.
+- **Probable, però no verificable.** Els decrets de grup no tenen taules mòdul ↔ UC, només la llista
+  d'UC de cada C. SEA_C_004_5B i SEA_C_006_5B (RD 211/2025) inclouen UC1970_2 (PRL en incendis
+  forestals), i el seu únic mòdul de PRL és el 1782.
+- **ARG_C_008_5B 1800:** el RD 87/2026 no l'ofereix com a B i no l'associa a cap UC → art. 58.3.
+
 ## Fase 4 — Aplicar a l'app (només el que surti a la fase 3)
 
 Abans de tocar res, cal portar els resultats al propietari. Correccions previstes, totes

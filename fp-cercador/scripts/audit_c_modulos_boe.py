@@ -173,9 +173,18 @@ def aparellar(c_denoms: dict, troballes: dict) -> tuple[dict, list]:
     return matched, unmatched
 
 
+def _codi_re(codigo: str) -> str:
+    # "Código: X." o, al RD 209/2025, "– Código: X –".
+    return rf'Código: {codigo}(?:\.| –)'
+
+
+def te_codi(text: str, codigo: str) -> bool:
+    return re.search(_codi_re(codigo), text) is not None
+
+
 def parse_modulos_annex_i(text: str, codigo: str) -> list[str] | None:
     """Números de mòdul de l'apartat 7 del certificat a l'annex I."""
-    m = re.search(rf'Código: {codigo}\.', text)
+    m = re.search(_codi_re(codigo), text)
     if not m:
         return None
     # Pla 080: als RD de títol el C següent pot començar "Certificado profesional:" (minúscules).
@@ -238,16 +247,22 @@ def parse_rd(text: str, codigo: str, denominacion: str, tipus: str) -> tuple[lis
             sorted(set(re.findall(r'\b[A-Z]{3}_B_(\d{4})\b', oferta.group(1)))) if oferta else None)
 
 
-def audit(c_modulos: dict, bc_lomloe: dict, texts: dict) -> dict:
+def audit(c_modulos: dict, bc_lomloe: dict, texts: dict, individuals: dict | None = None) -> dict:
+    """individuals (pla 080): {codigo_c: (rd, text, denominacion, tipus)} dels C sense decret de grup."""
+    individuals = individuals or {}
     rows = {}
     for codigo in sorted(c_modulos):
-        decret = next((rd for rd, t in texts.items() if f'Código: {codigo}.' in t), None)
+        decret = next((rd for rd, t in texts.items() if te_codi(t, codigo)), None)
         ficha = [m['num'] for m in c_modulos[codigo]]
         cat_b = sorted({b.rsplit('_', 1)[1] for b in bc_lomloe.get(codigo, [])})
         row = {'decret': decret, 'ficha': ficha, 'cataleg_b': cat_b}
         if decret:
             row['boe_moduls'] = parse_modulos_annex_i(texts[decret], codigo)
             row['boe_b'] = parse_oferta_b_annex_ii(texts[decret], codigo)
+        elif codigo in individuals:
+            rd, text, denominacion, tipus = individuals[codigo]
+            row['decret'] = rd
+            row['boe_moduls'], row['boe_b'] = parse_rd(text, codigo, denominacion, tipus)
         rows[codigo] = row
     return rows
 
@@ -265,7 +280,8 @@ def classify(row: dict) -> str:
     return 'ok'
 
 
-def audit_modulos(c_modulos: dict, bc_lomloe: dict, texts: dict, cataleg_b: set) -> dict:
+def audit_modulos(c_modulos: dict, bc_lomloe: dict, texts: dict, cataleg_b: set,
+                  individuals: dict | None = None) -> dict:
     """
     Per a cada mòdul de fitxa sense Grau B al catàleg (el que la UI mostrarà sense
     enllaç), mira si algun decret l'ofereix com a Grau B (FAM_B_NNNN, qualsevol annex).
@@ -274,11 +290,13 @@ def audit_modulos(c_modulos: dict, bc_lomloe: dict, texts: dict, cataleg_b: set)
       - 'altra_familia': només existeix com a B d'una altra família;
       - 'sense_decret': cap decret l'ofereix, però el decret del C no s'ha localitzat.
     """
-    boe_b = {code for t in texts.values() for code in re.findall(r'\b[A-Z]{3}_B_\d{4}\b', t)}
+    individuals = individuals or {}
+    all_texts = list(texts.values()) + [v[1] for v in individuals.values()]
+    boe_b = {code for t in all_texts for code in re.findall(r'\b[A-Z]{3}_B_\d{4}\b', t)}
     result = {'cap_decret': [], 'forat_cataleg': [], 'altra_familia': [], 'sense_decret': []}
     for codigo, mods in sorted(c_modulos.items()):
         fam = codigo[:3]
-        has_decret = any(f'Código: {codigo}.' in t for t in texts.values())
+        has_decret = codigo in individuals or any(te_codi(t, codigo) for t in texts.values())
         linked = {b.rsplit('_', 1)[1] for b in bc_lomloe.get(codigo, [])}
         for m in mods:
             if m['num'] in linked:
@@ -336,6 +354,8 @@ def render(rows: dict) -> str:
         '- **OK**: els Graus B del catàleg són exactament l\'oferta de Grau B del decret (annex II).',
         '- **Forat del catàleg**: el decret ofereix un Grau B que el catàleg no té.',
         '- **Catàleg de més**: el catàleg té un Grau B que el decret no ofereix.',
+        '- Pla 080: els C sense decret de grup s\'auditen amb el seu RD individual o de títol',
+        '  (`plans/outputs/boe_certificados_individuales.json`, generat amb `--discover`).',
         '- SSC_C_017_5B (RD 86/2026) té una altra estructura i surt com a no parsejat: es va',
         '  verificar a mà (annex I: només 1705, 1706, 1707, 1783, 1784, 1785 com a Grau B).',
         '',
@@ -437,8 +457,18 @@ def main() -> int:
         cataleg_b = {r['codigo'] for r in json.load(f)
                      if r.get('grado') == 'B' and re.match(r'^[A-Z]{3}_B_\d{4}$', r.get('codigo') or '')}
     texts = {rd: fetch_text(boe_id, args.cache) for rd, boe_id in DECRETS.items()}
-    rows = audit(c_modulos, bc_lomloe, texts)
-    mods = audit_modulos(c_modulos, bc_lomloe, texts, cataleg_b)
+    with open(os.path.join(DATA_DIR, 'ofertes.json'), encoding='utf-8') as f:
+        c_denoms = {r['codigo']: r['denominacion'] for r in json.load(f) if r.get('grado') == 'C'}
+    # Pla 080: RD individuals i de títol trobats amb --discover.
+    individuals = {}
+    if os.path.exists(DISCOVER_PATH):
+        with open(DISCOVER_PATH, encoding='utf-8') as f:
+            disc = json.load(f)
+        for codigo, v in disc['aparellats'].items():
+            individuals[codigo] = (v['rd'], fetch_text(v['boe_id'], args.cache), c_denoms.get(codigo, ''),
+                                   disc['troballes'][v['boe_id']]['tipus'])
+    rows = audit(c_modulos, bc_lomloe, texts, individuals)
+    mods = audit_modulos(c_modulos, bc_lomloe, texts, cataleg_b, individuals)
     head, _, tail = render(rows).partition('\n## ')
     report = head + '\n' + '\n'.join(render_modulos(mods)) + '\n## ' + tail
     os.makedirs(os.path.dirname(OUT_PATH), exist_ok=True)

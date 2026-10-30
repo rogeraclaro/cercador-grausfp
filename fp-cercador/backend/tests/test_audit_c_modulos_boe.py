@@ -159,3 +159,29 @@ def test_parse_rd_individual_annex_sense_de():
     # BOE-A-2025-25704 (RD 1131/2025, MAM_C_007_4B): "ANEXO I Oferta grado B:".
     text = RD_INDIVIDUAL.replace('ANEXO I Oferta de grado B', 'ANEXO I Oferta grado B')
     assert a.parse_rd(text, 'HOT_C_015_5B', 'Enoturismo', 'establece')[1] == ['0020', '1232', '1737']
+
+
+# --- Fase 3: auditoria amb els RD individuals i de títol ---
+
+def test_audit_fa_servir_el_rd_individual():
+    c_modulos = {'HOT_C_015_5B': [{'num': n, 'name': 'x'} for n in ('1737', '1232', '0020', '1782')]}
+    bc = {'HOT_C_015_5B': ['HOT_B_0020', 'HOT_B_1232', 'HOT_B_1737']}
+    ind = {'HOT_C_015_5B': ('RD 1128/2025', RD_INDIVIDUAL, 'Enoturismo', 'establece')}
+    row = a.audit(c_modulos, bc, {}, ind)['HOT_C_015_5B']
+    assert row['decret'] == 'RD 1128/2025'
+    assert row['boe_b'] == ['0020', '1232', '1737'] and a.classify(row) == 'ok'
+
+
+def test_audit_modulos_c_amb_rd_individual_no_queda_sense_decret():
+    c_modulos = {'SEA_C_001_4B': [{'num': '1732', 'name': 'PRL'}]}
+    ind = {'SEA_C_001_4B': ('RD 1157/2024', RD_TITOL, 'Servicios de control de plagas/organismos nocivos', 'titol')}
+    mods = a.audit_modulos(c_modulos, {}, {}, set(), ind)
+    assert [m[:2] for m in mods['cap_decret']] == [('SEA_C_001_4B', '1732')] and not mods['sense_decret']
+
+
+def test_codi_entre_guions_al_decret_de_grup():
+    # BOE-A-2025-6699 (RD 209/2025): "– Código: IMP_C_006_4B – Título de Formación Profesional…".
+    text = ('– Código: IMP_C_006_4B – Título asociado. 7. Módulos profesionales 0842. Peinados. '
+            '0843. Coloración capilar. 1782. Prevención de riesgos laborales. ANEXO II')
+    assert a.parse_modulos_annex_i(text, 'IMP_C_006_4B') == ['0842', '0843', '1782']
+    assert a.te_codi(text, 'IMP_C_006_4B') and not a.te_codi(text, 'IMP_C_006_5B')
