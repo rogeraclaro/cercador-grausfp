@@ -207,6 +207,46 @@ def test_itinerari_c_lomloe_retorna_tots_els_modulos_c(client, monkeypatch):
     assert d['modulos_c'][1]['name'] == 'Prevención de riesgos laborales'
 
 
+_BOE_URL = 'https://www.boe.es/buscar/act.php?id=BOE-A-2025-6699'
+
+
+def test_itinerari_c_lomloe_afegeix_modul_del_boe_que_la_fitxa_omet(client, monkeypatch):
+    # Pla 079: la fitxa todofp omet un mòdul que l'annex I del decret sí que té.
+    monkeypatch.setattr(app_module, '_C_MODULOS_BOE_AFEGITS', {
+        'HOT_C_005_5B': [('0999', 'Mòdul del BOE', 'RD 209/2025', 'BOE-A-2025-6699')]})
+    d = client.get('/api/itinerari?grado=C&codigo=HOT_C_005_5B').get_json()
+    afegit = d['modulos_c'][-1]
+    assert (afegit['num'], afegit['name'], afegit['b'], afegit['nota']) == \
+        ('0999', 'Mòdul del BOE', None, 'art583')
+    assert afegit['font'] == {'tipus': 'afegit', 'rd': 'RD 209/2025', 'url': _BOE_URL}
+    assert [m['font'] for m in d['modulos_c'][:-1]] == [None] * 4
+
+
+def test_itinerari_c_lomloe_no_duplica_si_la_fitxa_ja_te_el_modul(client, monkeypatch):
+    # Pla 079: quan todofp corregeixi la fitxa, la correcció deixa d'actuar sola.
+    monkeypatch.setattr(app_module, '_C_MODULOS_BOE_AFEGITS', {
+        'HOT_C_005_5B': [('0178', 'Comercialización de eventos', 'RD 209/2025', 'BOE-A-2025-6699')]})
+    d = client.get('/api/itinerari?grado=C&codigo=HOT_C_005_5B').get_json()
+    assert [m['num'] for m in d['modulos_c']] == ['0171', '1782', '0156', '0178']
+    assert all(m['font'] is None for m in d['modulos_c'])
+
+
+def test_itinerari_c_lomloe_marca_modul_de_fitxa_absent_del_decret(client, monkeypatch):
+    # Pla 079: IMA_C_001_4B 0266 és a la fitxa però no a l'annex I; es manté amb nota.
+    monkeypatch.setattr(app_module, '_C_MODULOS_NO_AL_DECRET', {
+        ('HOT_C_005_5B', '0178'): ('RD 209/2025', 'BOE-A-2025-6699')})
+    d = client.get('/api/itinerari?grado=C&codigo=HOT_C_005_5B').get_json()
+    assert d['modulos_c'][3]['font'] == {'tipus': 'no_al_decret', 'rd': 'RD 209/2025', 'url': _BOE_URL}
+    assert len(d['modulos_c']) == 4
+
+
+def test_itinerari_c_lomloe_modul_afegit_compta_al_total_c_d(client, monkeypatch):
+    monkeypatch.setattr(app_module, '_C_MODULOS_BOE_AFEGITS', {
+        'HOT_C_005_5B': [('0999', 'Mòdul del BOE', 'RD 209/2025', 'BOE-A-2025-6699')]})
+    d = client.get('/api/itinerari?grado=C&codigo=HOT_C_005_5B').get_json()
+    assert d['ciclos_d'][0]['total'] == 4
+
+
 def test_itinerari_c_lomloe_sense_c_modulos_retorna_llista_buida(client, data_dir):
     data_dir['c_modulos'].unlink()
     d = client.get('/api/itinerari?grado=C&codigo=HOT_C_005_5B').get_json()

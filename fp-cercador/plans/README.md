@@ -92,6 +92,7 @@ amb quins prerequisits i quins passos manuals calen al servidor.
 | 076 | Identificadors estables (`ref`) per a favorits, enllaços compartits, avisos i fitxers de centres: els `id` es reassignen a cada refresc | P1 | M–L | — | DONE (2026-10-26) |
 | 077 | Una pàgina pública per grau (`/grau/<ref>`), pàgines de família, `sitemap.xml` i `robots.txt` (SEO) | P1 | M–L | 076 | DONE (2026-10-26; falta nginx al VPS) |
 | 078 | C LOMLOE: mostrar tots els mòduls del certificat (ara s'amaguen els que no tenen Grau B: PRL 1782, 1786…; 14/15 C afectats) + `c_modulos.json`; C→D opció A \| P1 | M | 057, 058 DONE | DONE |
+| 079 | C LOMLOE: completar amb el BOE els 11 mòduls que 10 fitxes todofp ometen (constant a l'API, nota amb enllaç al RD) \| P2 | S | 078 DONE | TODO |
 
 Valors de Status: `TODO` | `IN PROGRESS` | `DONE` | `BLOCKED (motiu en una línia)` | `REJECTED (motiu en una línia)`
 

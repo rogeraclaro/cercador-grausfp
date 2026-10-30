@@ -1312,9 +1312,52 @@ _c_modulos_cache: dict = {"mtime": None, "index": None}
 # neutra en lloc de la de l'art. 58.3. Font: plans/outputs/audit_c_modulos_boe.md.
 _C_MODULOS_NOTA_NEUTRA = {('HOT_C_003_5B', '0178'), ('ARG_C_008_5B', '1800')}
 
+# Pla 079: mòduls de l'annex I del decret que la fitxa de todofp omet (verificat amb el
+# text del BOE, plans/079). {codigo_c: [(num, nom, rd, boe_id)]}. S'afegeixen només si
+# la fitxa encara no els té, i per això la correcció s'apaga sola si todofp l'arregla.
+_RD_208, _RD_209, _RD_212 = ('RD 208/2025', 'BOE-A-2025-7040'), ('RD 209/2025', 'BOE-A-2025-6699'), \
+    ('RD 212/2025', 'BOE-A-2025-7193')
+_C_MODULOS_BOE_AFEGITS = {
+    'COM_C_001_4B': [('1233', 'Aplicaciones informáticas para el comercio', *_RD_212)],
+    'COM_C_002_4B': [('1233', 'Aplicaciones informáticas para el comercio', *_RD_212)],
+    'COM_C_003_4B': [('1233', 'Aplicaciones informáticas para el comercio', *_RD_212)],
+    'COM_C_004_4B': [('1614', 'Ofimática aplicada al comercio alimentario', *_RD_212)],
+    'IMA_C_002_4B': [('0310', 'Montaje y mantenimiento de instalaciones de agua', *_RD_209),
+                     ('0266', 'Configuración de instalaciones caloríficas', *_RD_209)],
+    'IMA_C_006_5B': [('0944', 'Simulación de sistemas mecatrónicos', *_RD_209)],
+    'IMP_C_003_4B': [('0640', 'Imagen corporal y hábitos saludables', *_RD_209)],
+    'IMP_C_009_5B': [('1268', 'Diseño gráfico aplicado', *_RD_209)],
+    'SSC_C_002_3B': [('3146', 'Seguridad en el ámbito doméstico', *_RD_208)],
+    'SSC_C_012_5B': [('1117', 'Intervención con personas con dificultades de comunicación', *_RD_208)],
+}
+# Pla 079: mòduls de la fitxa que l'annex I del decret no té. Es mantenen, amb nota.
+_C_MODULOS_NO_AL_DECRET = {('IMA_C_001_4B', '0266'): _RD_209}
+
+
+def _boe_font(tipus: str, rd: str, boe_id: str) -> dict:
+    return {'tipus': tipus, 'rd': rd, 'url': f'https://www.boe.es/buscar/act.php?id={boe_id}'}
+
+
+def _apply_c_modulos_boe(data: dict) -> dict:
+    """Pla 079: aplica _C_MODULOS_BOE_AFEGITS i _C_MODULOS_NO_AL_DECRET (camp 'font')."""
+    for codigo, mods in data.items():
+        for m in mods:
+            src = _C_MODULOS_NO_AL_DECRET.get((codigo, m.get('num')))
+            if src:
+                m['font'] = _boe_font('no_al_decret', *src)
+    for codigo, afegits in _C_MODULOS_BOE_AFEGITS.items():
+        mods = data.get(codigo)
+        if mods is None:  # C sense fitxa llegida: no inventar-ne la llista
+            continue
+        nums = {m.get('num') for m in mods}
+        mods.extend({'num': num, 'name': name, 'font': _boe_font('afegit', rd, boe_id)}
+                    for num, name, rd, boe_id in afegits if num not in nums)
+    return data
+
 
 def _get_c_modulos() -> dict:
-    """Pla 078: {codigo_c: [{num, name}]} de c_modulos.json. {} si no existeix o és corrupte."""
+    """Pla 078: {codigo_c: [{num, name}]} de c_modulos.json. {} si no existeix o és corrupte.
+    Pla 079: corregit amb el BOE (_apply_c_modulos_boe)."""
     if not os.path.exists(C_MODULOS_PATH):
         return {}
     mtime = os.path.getmtime(C_MODULOS_PATH)
@@ -1326,6 +1369,7 @@ def _get_c_modulos() -> dict:
         if not isinstance(data, dict):
             logger.warning("_get_c_modulos: c_modulos.json no és un objecte — s'ignora")
             return {}
+        data = _apply_c_modulos_boe(data)
         _c_modulos_cache.update(mtime=mtime, index=data)
         return data
     except (OSError, json.JSONDecodeError) as exc:
@@ -1925,7 +1969,7 @@ def api_itinerari():
         parent_b_lomloe = [_serialize(_b_by_code[b]) for b in _get_bc_lomloe().get(codigo, [])
                            if b in _b_by_code]
         modulos_c = [{'num': m.get('num'), 'name': m.get('name'),
-                      'b': _serialize(b) if b else None, 'nota': nota}
+                      'b': _serialize(b) if b else None, 'nota': nota, 'font': m.get('font')}
                      for m, b, nota in _build_modulos_c(codigo, _b_by_code)]
 
         # Pla 058: C LOMLOE → cicles D via mòduls compartits (no passa per ciclos_fp.json).
