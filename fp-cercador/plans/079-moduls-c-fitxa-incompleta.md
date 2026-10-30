@@ -84,7 +84,28 @@ Verificat en local: COM_C_001_4B (1233 amb les dues notes) i IMA_C_001_4B (0266 
 - Verificar al navegador `COM_C_001_4B` (6 mòduls; el 1233 amb les dues notes) i
   `IMA_C_002_4B` (6 mòduls).
 
-## Fase 3 — Verificació amb les dades de producció
+## Fase 3 — Verificació amb les dades de producció — FET 2026-10-30
+
+Dades copiades del VPS; `build_c_lomloe_to_d` sense i amb `_apply_c_modulos_boe` (D id: compartits/total):
+
+| C | Abans | Després |
+|---|---|---|
+| COM_C_001_4B | 12819 4/4 | 12819 5/5 |
+| COM_C_002_4B | 12819 4/4 | 12819 5/5 |
+| COM_C_003_4B | 12819 3/3, 12820 1/3 | 12819 4/4, 12820 1/4 |
+| COM_C_004_4B | 12820 3/3 | 12820 4/4 |
+| IMA_C_001_4B | 12844 4/4, 12843 2/4 | igual (el 0266 ja hi era) |
+| IMA_C_002_4B | 12844 3/3, 12843 1/3 | 12844 5/5, 12843 1/5 |
+| IMA_C_006_5B | 12929 4/4 | 12929 5/5 |
+| IMP_C_003_4B | 12834 2/2 | 12834 3/3, **12835 1/3 (enllaç nou)** |
+| IMP_C_009_5B | 12913 3/3 | 12913 4/4 |
+| SSC_C_002_3B | 12802 2/2 | 12802 3/3 |
+| SSC_C_012_5B | 12956 5/5 | 12956 6/6 |
+
+Global: C amb D 382 → 382; enllaços 810 → 811; complets 377 → 377. Tots els 11 mòduls afegits
+són també en algun D de la família. L'auditoria llegeix `c_modulos.json` cru (no l'API), i per
+tant continua detectant les 11 fitxes fins que todofp les corregeixi.
+
 
 - Copiar `c_modulos.json` i `d_modulos.json` del VPS (o fer-ho allà amb el python del
   venv). Calcular el recompte C→D abans/després per als 10 C i anotar-lo aquí.
