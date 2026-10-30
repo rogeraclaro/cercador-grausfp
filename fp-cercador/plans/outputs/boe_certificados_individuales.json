@@ -1,0 +1,408 @@
+{
+ "aparellats": {
+  "AGA_C_010_4B": {
+   "boe_id": "BOE-A-2025-11814",
+   "rd": "RD 408/2025",
+   "confirmat": "codi"
+  },
+  "AGA_C_010_5B": {
+   "boe_id": "BOE-A-2026-13295",
+   "rd": "RD 489/2026",
+   "confirmat": "codi"
+  },
+  "AGA_C_011_4B": {
+   "boe_id": "BOE-A-2026-13296",
+   "rd": "RD 490/2026",
+   "confirmat": "codi"
+  },
+  "ARG_C_008_5B": {
+   "boe_id": "BOE-A-2026-3211",
+   "rd": "RD 87/2026",
+   "confirmat": "codi"
+  },
+  "ENA_C_003_4B": {
+   "boe_id": "BOE-A-2026-675",
+   "rd": "RD 2/2026",
+   "confirmat": "moduls"
+  },
+  "ENA_C_009_5B": {
+   "boe_id": "BOE-A-2026-674",
+   "rd": "RD 1/2026",
+   "confirmat": "codi"
+  },
+  "EOC_C_009_4B": {
+   "boe_id": "BOE-A-2025-11811",
+   "rd": "RD 405/2025",
+   "confirmat": "codi"
+  },
+  "EOC_C_010_4B": {
+   "boe_id": "BOE-A-2025-11812",
+   "rd": "RD 406/2025",
+   "confirmat": "codi"
+  },
+  "EOC_C_011_4B": {
+   "boe_id": "BOE-A-2025-11810",
+   "rd": "RD 404/2025",
+   "confirmat": "codi"
+  },
+  "EOC_C_012_4B": {
+   "boe_id": "BOE-A-2025-25699",
+   "rd": "RD 1126/2025",
+   "confirmat": "moduls"
+  },
+  "HOT_C_015_5B": {
+   "boe_id": "BOE-A-2025-25701",
+   "rd": "RD 1128/2025",
+   "confirmat": "codi"
+  },
+  "HOT_C_016_5B": {
+   "boe_id": "BOE-A-2025-25700",
+   "rd": "RD 1127/2025",
+   "confirmat": "codi"
+  },
+  "IMA_C_007_4B": {
+   "boe_id": "BOE-A-2026-677",
+   "rd": "RD 4/2026",
+   "confirmat": "codi"
+  },
+  "IMA_C_008_4B": {
+   "boe_id": "BOE-A-2025-25703",
+   "rd": "RD 1130/2025",
+   "confirmat": "moduls"
+  },
+  "IMA_C_009_4B": {
+   "boe_id": "BOE-A-2025-25702",
+   "rd": "RD 1129/2025",
+   "confirmat": "moduls"
+  },
+  "IMA_C_010_4B": {
+   "boe_id": "BOE-A-2026-3209",
+   "rd": "RD 85/2026",
+   "confirmat": "codi"
+  },
+  "IMP_C_012_5B": {
+   "boe_id": "BOE-A-2026-13294",
+   "rd": "RD 488/2026",
+   "confirmat": "codi"
+  },
+  "MAM_C_007_4B": {
+   "boe_id": "BOE-A-2025-25704",
+   "rd": "RD 1131/2025",
+   "confirmat": "codi"
+  },
+  "QUI_C_006_4B": {
+   "boe_id": "BOE-A-2026-676",
+   "rd": "RD 3/2026",
+   "confirmat": "codi"
+  },
+  "TCP_C_008_4B": {
+   "boe_id": "BOE-A-2025-11813",
+   "rd": "RD 407/2025",
+   "confirmat": "codi"
+  },
+  "ART_C_001_5B": {
+   "boe_id": "BOE-A-2026-8022",
+   "rd": "RD 300/2026",
+   "confirmat": "codi"
+  },
+  "ART_C_002_5B": {
+   "boe_id": "BOE-A-2026-8022",
+   "rd": "RD 300/2026",
+   "confirmat": "codi"
+  },
+  "ART_C_003_5B": {
+   "boe_id": "BOE-A-2026-8022",
+   "rd": "RD 300/2026",
+   "confirmat": "codi"
+  },
+  "SEA_C_001_4B": {
+   "boe_id": "BOE-A-2024-24102",
+   "rd": "RD 1157/2024",
+   "confirmat": "codi"
+  },
+  "SEA_C_002_4B": {
+   "boe_id": "BOE-A-2024-24102",
+   "rd": "RD 1157/2024",
+   "confirmat": "codi"
+  },
+  "SEA_C_003_4B": {
+   "boe_id": "BOE-A-2024-24102",
+   "rd": "RD 1157/2024",
+   "confirmat": "codi"
+  },
+  "SEA_C_004_4B": {
+   "boe_id": "BOE-A-2024-24102",
+   "rd": "RD 1157/2024",
+   "confirmat": "codi"
+  },
+  "SEA_C_005_4B": {
+   "boe_id": "BOE-A-2024-24102",
+   "rd": "RD 1157/2024",
+   "confirmat": "codi"
+  },
+  "SEA_C_006_4B": {
+   "boe_id": "BOE-A-2024-24102",
+   "rd": "RD 1157/2024",
+   "confirmat": "codi"
+  },
+  "SSC_C_001_4B": {
+   "boe_id": "BOE-A-2025-14086",
+   "rd": "RD 533/2025",
+   "confirmat": "codi"
+  },
+  "SSC_C_002_4B": {
+   "boe_id": "BOE-A-2025-14086",
+   "rd": "RD 533/2025",
+   "confirmat": "codi"
+  }
+ },
+ "sense_rd": [],
+ "modificacions_i_correccions": {
+  "BOE-A-2025-10206": {
+   "rd": "RD 1157/2024",
+   "tipus": "correccion",
+   "denominacion": null,
+   "modifica_rd": [],
+   "data": "20250523",
+   "titulo": "Corrección de errores del Real Decreto 1157/2024, de 19 de noviembre, por el que se establece el título de Formación Profesional de Grado Medio de Técnico en Sanidad ambiental aplicada, se fijan los aspectos básicos del currículo y las ofertas de grados C, B y A incluidos en este título."
+  },
+  "BOE-A-2026-13294": {
+   "rd": "RD 488/2026",
+   "tipus": "establece",
+   "denominacion": "Procedimientos y técnicas de micropigmentación",
+   "modifica_rd": [
+    "RD 300/2026"
+   ],
+   "data": "20260619",
+   "titulo": "Real Decreto 488/2026, de 17 de junio, por el que se establece el Certificado profesional en Procedimientos y técnicas de micropigmentación, de la familia profesional Imagen Personal, se fija su currículo y las ofertas de grados B y A incluidas en este certificado profesional y se modifica el Real Decreto 300/2026, de 8 de abril, por el que se establece el título de Formación Profesional de Grado Superior de Técnico Superior en Diseño y construcción artesanal de instrumentos musicales de cuerda, se fijan los aspectos básicos del currículo y las ofertas de grados C, B y A incluidos en este título."
+  },
+  "BOE-A-2026-13295": {
+   "rd": "RD 489/2026",
+   "tipus": "establece",
+   "denominacion": "Asistencia clínica en centros veterinarios",
+   "modifica_rd": [
+    "RD 404/2025"
+   ],
+   "data": "20260619",
+   "titulo": "Real Decreto 489/2026, de 17 de junio, por el que se establece el Certificado profesional en Asistencia clínica en centros veterinarios, de la familia profesional Agraria, se fija su currículo y las ofertas de grados B y A incluidas en este certificado profesional y se modifica el Real Decreto 404/2025, de 27 de mayo, por el que se establece el Certificado profesional en Operaciones con maquinaria de transporte de tierras en construcción, de la familia profesional Edificación y Obra Civil, se fija su currículo y las ofertas de grados B y A incluidas en este certificado profesional."
+  },
+  "BOE-A-2026-13296": {
+   "rd": "RD 490/2026",
+   "tipus": "establece",
+   "denominacion": "Cultivo y trabajos en palmeras",
+   "modifica_rd": [
+    "RD 1127/2025"
+   ],
+   "data": "20260619",
+   "titulo": "Real Decreto 490/2026, de 17 de junio, por el que se establece el Certificado profesional en Cultivo y trabajos en palmeras, de la familia profesional Agraria, se fija su currículo y las ofertas de grados B y A incluidas en este certificado profesional y se modifica el Real Decreto 1127/2025, de 11 de diciembre, por el que se establece el Certificado profesional en Ecoturismo, de la familia profesional Hostelería y Turismo, se fija su currículo y las ofertas de grados B y A incluidas en este certificado profesional."
+  }
+ },
+ "troballes": {
+  "BOE-A-2024-24102": {
+   "rd": "RD 1157/2024",
+   "tipus": "titol",
+   "denominacion": null,
+   "modifica_rd": [],
+   "data": "20241120",
+   "titulo": "Real Decreto 1157/2024, de 19 de noviembre, por el que se establece el título de Formación Profesional de Grado Medio de Técnico en Sanidad ambiental aplicada, se fijan los aspectos básicos del currículo y las ofertas de grados C, B y A incluidos en este título."
+  },
+  "BOE-A-2025-10206": {
+   "rd": "RD 1157/2024",
+   "tipus": "correccion",
+   "denominacion": null,
+   "modifica_rd": [],
+   "data": "20250523",
+   "titulo": "Corrección de errores del Real Decreto 1157/2024, de 19 de noviembre, por el que se establece el título de Formación Profesional de Grado Medio de Técnico en Sanidad ambiental aplicada, se fijan los aspectos básicos del currículo y las ofertas de grados C, B y A incluidos en este título."
+  },
+  "BOE-A-2025-11810": {
+   "rd": "RD 404/2025",
+   "tipus": "establece",
+   "denominacion": "Operaciones con maquinaria de transporte de tierras en construcción",
+   "modifica_rd": [],
+   "data": "20250612",
+   "titulo": "Real Decreto 404/2025, de 27 de mayo, por el que se establece el Certificado profesional en Operaciones con maquinaria de transporte de tierras en construcción, de la familia profesional Edificación y Obra Civil, se fija su currículo y las ofertas de grados B y A incluidas en este certificado profesional."
+  },
+  "BOE-A-2025-11811": {
+   "rd": "RD 405/2025",
+   "tipus": "establece",
+   "denominacion": "Operaciones con maquinaria de arranque y carga de tierras en construcción",
+   "modifica_rd": [],
+   "data": "20250612",
+   "titulo": "Real Decreto 405/2025, de 27 de mayo, por el que se establece el Certificado profesional en Operaciones con maquinaria de arranque y carga de tierras en construcción, de la familia profesional Edificación y Obra Civil, se fija su currículo y las ofertas de grados B y A incluidas en este certificado profesional."
+  },
+  "BOE-A-2025-11812": {
+   "rd": "RD 406/2025",
+   "tipus": "establece",
+   "denominacion": "Operaciones con maquinaria de extendido y nivelado de tierras en construcción",
+   "modifica_rd": [],
+   "data": "20250612",
+   "titulo": "Real Decreto 406/2025, de 27 de mayo, por el que se establece el Certificado profesional en Operaciones con maquinaria de extendido y nivelado de tierras en construcción, de la familia profesional Edificación y Obra Civil, se fija su currículo y las ofertas de grados B y A incluidas en este certificado profesional."
+  },
+  "BOE-A-2025-11813": {
+   "rd": "RD 407/2025",
+   "tipus": "establece",
+   "denominacion": "Operaciones artesanales de bordado",
+   "modifica_rd": [],
+   "data": "20250612",
+   "titulo": "Real Decreto 407/2025, de 27 de mayo, por el que se establece el Certificado profesional en Operaciones artesanales de bordado, de la familia profesional Textil, Confección y Piel, se fija su currículo y las ofertas de grados B y A incluidas en este certificado profesional."
+  },
+  "BOE-A-2025-11814": {
+   "rd": "RD 408/2025",
+   "tipus": "establece",
+   "denominacion": "Cuidados higiénicos y estéticos de animales de compañía",
+   "modifica_rd": [],
+   "data": "20250612",
+   "titulo": "Real Decreto 408/2025, de 27 de mayo, por el que se establece el Certificado profesional en Cuidados higiénicos y estéticos de animales de compañía, de la familia profesional Agraria, se fija su currículo y las ofertas de grados B y A incluidas en este certificado profesional."
+  },
+  "BOE-A-2025-14086": {
+   "rd": "RD 533/2025",
+   "tipus": "titol",
+   "denominacion": null,
+   "modifica_rd": [],
+   "data": "20250709",
+   "titulo": "Real Decreto 533/2025, de 24 de junio, por el que se establece el título de Formación Profesional de Grado Medio de Técnico en Servicios funerarios, se fijan los aspectos básicos del currículo y las ofertas de grados C, B y A incluidos en este título."
+  },
+  "BOE-A-2025-25699": {
+   "rd": "RD 1126/2025",
+   "tipus": "establece",
+   "denominacion": "Construcción en piedra seca",
+   "modifica_rd": [],
+   "data": "20251216",
+   "titulo": "Real Decreto 1126/2025, de 11 de diciembre, por el que se establece el Certificado profesional en Construcción en piedra seca, de la familia profesional Edificación y Obra Civil, se fija su currículo y las ofertas de grados B y A incluidas en este certificado profesional."
+  },
+  "BOE-A-2025-25700": {
+   "rd": "RD 1127/2025",
+   "tipus": "establece",
+   "denominacion": "Ecoturismo",
+   "modifica_rd": [],
+   "data": "20251216",
+   "titulo": "Real Decreto 1127/2025, de 11 de diciembre, por el que se establece el Certificado profesional en Ecoturismo, de la familia profesional Hostelería y Turismo, se fija su currículo y las ofertas de grados B y A incluidas en este certificado profesional."
+  },
+  "BOE-A-2025-25701": {
+   "rd": "RD 1128/2025",
+   "tipus": "establece",
+   "denominacion": "Enoturismo",
+   "modifica_rd": [],
+   "data": "20251216",
+   "titulo": "Real Decreto 1128/2025, de 11 de diciembre, por el que se establece el Certificado profesional en Enoturismo, de la familia profesional Hostelería y Turismo, se fija su currículo y las ofertas de grados B y A incluidas en este certificado profesional."
+  },
+  "BOE-A-2025-25702": {
+   "rd": "RD 1129/2025",
+   "tipus": "establece",
+   "denominacion": "Instalaciones de suministro y evacuación de aguas en edificios",
+   "modifica_rd": [],
+   "data": "20251216",
+   "titulo": "Real Decreto 1129/2025, de 11 de diciembre, por el que se establece el Certificado profesional en Instalaciones de suministro y evacuación de aguas en edificios, de la familia profesional Instalación y Mantenimiento, se fija su currículo y las ofertas de grados B y A incluidas en este certificado profesional."
+  },
+  "BOE-A-2025-25703": {
+   "rd": "RD 1130/2025",
+   "tipus": "establece",
+   "denominacion": "Instalaciones de protección contra incendios",
+   "modifica_rd": [],
+   "data": "20251216",
+   "titulo": "Real Decreto 1130/2025, de 11 de diciembre, por el que se establece el Certificado profesional en Instalaciones de protección contra incendios, de la familia profesional Instalación y Mantenimiento, se fija su currículo y las ofertas de grados B y A incluidas en este certificado profesional."
+  },
+  "BOE-A-2025-25704": {
+   "rd": "RD 1131/2025",
+   "tipus": "establece",
+   "denominacion": "Mecanizado de piezas de madera y derivados con centros de control numérico (CNC)",
+   "modifica_rd": [],
+   "data": "20251216",
+   "titulo": "Real Decreto 1131/2025, de 11 de diciembre, por el que se establece el Certificado profesional en Mecanizado de piezas de madera y derivados con centros de control numérico (CNC), de la familia profesional Madera, Mueble y Corcho, se fija su currículo y las ofertas de grados B y A incluidas en este certificado profesional."
+  },
+  "BOE-A-2026-674": {
+   "rd": "RD 1/2026",
+   "tipus": "establece",
+   "denominacion": "Gestión de instalaciones de intercambio geotérmico en circuito cerrado",
+   "modifica_rd": [],
+   "data": "20260113",
+   "titulo": "Real Decreto 1/2026, de 8 de enero, por el que se establece el Certificado profesional en Gestión de instalaciones de intercambio geotérmico en circuito cerrado, de la familia profesional Energía y Agua, se fija su currículo y las ofertas de grados B y A incluidas en este certificado profesional."
+  },
+  "BOE-A-2026-675": {
+   "rd": "RD 2/2026",
+   "tipus": "establece",
+   "denominacion": "Instalación y mantenimiento de sistemas de intercambio geotérmico en circuito cerrado",
+   "modifica_rd": [],
+   "data": "20260113",
+   "titulo": "Real Decreto 2/2026, de 8 de enero, por el que se establece el Certificado profesional en Instalación y mantenimiento de sistemas de intercambio geotérmico en circuito cerrado, de la familia profesional Energía y Agua, se fija su currículo y las ofertas de grados B y A incluidas en este certificado profesional."
+  },
+  "BOE-A-2026-676": {
+   "rd": "RD 3/2026",
+   "tipus": "establece",
+   "denominacion": "Operaciones de fabricación de pirotecnia",
+   "modifica_rd": [],
+   "data": "20260113",
+   "titulo": "Real Decreto 3/2026, de 8 de enero, por el que se establece el Certificado profesional en Operaciones de fabricación de pirotecnia, de la familia profesional Química, se fija su currículo y las ofertas de grados B y A incluidas en este certificado profesional."
+  },
+  "BOE-A-2026-677": {
+   "rd": "RD 4/2026",
+   "tipus": "establece",
+   "denominacion": "Mantenimiento de instalaciones de transporte por cable",
+   "modifica_rd": [],
+   "data": "20260113",
+   "titulo": "Real Decreto 4/2026, de 8 de enero, por el que se establece el Certificado profesional en Mantenimiento de instalaciones de transporte por cable, de la familia profesional Instalación y Mantenimiento, se fija su currículo y las ofertas de grados B y A incluidas en este certificado profesional."
+  },
+  "BOE-A-2026-3209": {
+   "rd": "RD 85/2026",
+   "tipus": "establece",
+   "denominacion": "Instalación y mantenimiento de ascensores y otros equipos fijos de elevación y transporte",
+   "modifica_rd": [],
+   "data": "20260212",
+   "titulo": "Real Decreto 85/2026, de 11 de febrero, por el que se establece el Certificado profesional en Instalación y mantenimiento de ascensores y otros equipos fijos de elevación y transporte, de la familia profesional Instalación y Mantenimiento, se fija su currículo y las ofertas de grados B y A incluidas en este certificado profesional."
+  },
+  "BOE-A-2026-3210": {
+   "rd": "RD 86/2026",
+   "tipus": "establece",
+   "denominacion": "Habilitación para la docencia en grados A, B y C del Sistema de Formación Profesional",
+   "modifica_rd": [],
+   "data": "20260212",
+   "titulo": "Real Decreto 86/2026, de 11 de febrero, por el que se establece el Certificado profesional en Habilitación para la docencia en grados A, B y C del Sistema de Formación Profesional, de la familia profesional Servicios Socioculturales y a la Comunidad, se fija su currículo y las ofertas de grados B y A incluidas en este certificado profesional."
+  },
+  "BOE-A-2026-3211": {
+   "rd": "RD 87/2026",
+   "tipus": "establece",
+   "denominacion": "Ilustración técnica",
+   "modifica_rd": [],
+   "data": "20260212",
+   "titulo": "Real Decreto 87/2026, de 11 de febrero, por el que se establece el Certificado profesional en Ilustración técnica, de la familia profesional Artes Gráficas, se fija su currículo y las ofertas de grados B y A incluidas en este certificado profesional."
+  },
+  "BOE-A-2026-8022": {
+   "rd": "RD 300/2026",
+   "tipus": "titol",
+   "denominacion": null,
+   "modifica_rd": [],
+   "data": "20260410",
+   "titulo": "Real Decreto 300/2026, de 8 de abril, por el que se establece el título de Formación Profesional de Grado Superior de Técnico Superior en Diseño y construcción artesanal de instrumentos musicales de cuerda, se fijan los aspectos básicos del currículo y las ofertas de grados C, B y A incluidos en este título."
+  },
+  "BOE-A-2026-13294": {
+   "rd": "RD 488/2026",
+   "tipus": "establece",
+   "denominacion": "Procedimientos y técnicas de micropigmentación",
+   "modifica_rd": [
+    "RD 300/2026"
+   ],
+   "data": "20260619",
+   "titulo": "Real Decreto 488/2026, de 17 de junio, por el que se establece el Certificado profesional en Procedimientos y técnicas de micropigmentación, de la familia profesional Imagen Personal, se fija su currículo y las ofertas de grados B y A incluidas en este certificado profesional y se modifica el Real Decreto 300/2026, de 8 de abril, por el que se establece el título de Formación Profesional de Grado Superior de Técnico Superior en Diseño y construcción artesanal de instrumentos musicales de cuerda, se fijan los aspectos básicos del currículo y las ofertas de grados C, B y A incluidos en este título."
+  },
+  "BOE-A-2026-13295": {
+   "rd": "RD 489/2026",
+   "tipus": "establece",
+   "denominacion": "Asistencia clínica en centros veterinarios",
+   "modifica_rd": [
+    "RD 404/2025"
+   ],
+   "data": "20260619",
+   "titulo": "Real Decreto 489/2026, de 17 de junio, por el que se establece el Certificado profesional en Asistencia clínica en centros veterinarios, de la familia profesional Agraria, se fija su currículo y las ofertas de grados B y A incluidas en este certificado profesional y se modifica el Real Decreto 404/2025, de 27 de mayo, por el que se establece el Certificado profesional en Operaciones con maquinaria de transporte de tierras en construcción, de la familia profesional Edificación y Obra Civil, se fija su currículo y las ofertas de grados B y A incluidas en este certificado profesional."
+  },
+  "BOE-A-2026-13296": {
+   "rd": "RD 490/2026",
+   "tipus": "establece",
+   "denominacion": "Cultivo y trabajos en palmeras",
+   "modifica_rd": [
+    "RD 1127/2025"
+   ],
+   "data": "20260619",
+   "titulo": "Real Decreto 490/2026, de 17 de junio, por el que se establece el Certificado profesional en Cultivo y trabajos en palmeras, de la familia profesional Agraria, se fija su currículo y las ofertas de grados B y A incluidas en este certificado profesional y se modifica el Real Decreto 1127/2025, de 11 de diciembre, por el que se establece el Certificado profesional en Ecoturismo, de la familia profesional Hostelería y Turismo, se fija su currículo y las ofertas de grados B y A incluidas en este certificado profesional."
+  }
+ }
+}

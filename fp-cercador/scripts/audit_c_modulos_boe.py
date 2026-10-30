@@ -12,12 +12,14 @@ Escriu plans/outputs/audit_c_modulos_boe.md. Execució única, ~1 min (8 decrets
 Ús: python3 scripts/audit_c_modulos_boe.py [--cache DIR]
 """
 import argparse
+import datetime
 import html
 import json
 import os
 import re
 import sys
 import time
+import unicodedata
 
 import requests
 
@@ -55,6 +57,120 @@ def fetch_text(boe_id: str, cache_dir: str | None) -> str:
             f.write(text)
     time.sleep(1)
     return text
+
+
+# --- Pla 080: descoberta dels RD individuals (un certificat per RD i RD de títol amb Graus C) ---
+
+DISCOVER_FROM = datetime.date(2023, 7, 19)  # RD 659/2023: primers Graus C LOMLOE possibles
+DISCOVER_PATH = os.path.join(_REPO_ROOT, 'plans', 'outputs', 'boe_certificados_individuales.json')
+_TITOL_RD_RE = re.compile(r'Real Decreto (\d+/\d{4})')
+# Certificats individuals i RD de títol que fixen Graus C ("ofertas de grados C, B y A").
+_SUMARIO_RE = re.compile(r'certificados? profesional|grados C', re.I)
+_TITOL_VERB_RE = re.compile(r'por el que se (establece el Certificado profesional|establece el título|modifica)')
+_TITOL_MODIFICA_RE = re.compile(r'se modifica el Real Decreto (\d+/\d{4})')
+_TITOL_DENOM_RE = re.compile(r'Certificado profesional en (.+?), de la familia', re.I)
+
+
+def norm(s: str) -> str:
+    s = unicodedata.normalize('NFKD', s.lower())
+    s = ''.join(c for c in s if not unicodedata.combining(c))
+    return ' '.join(re.sub(r'[^a-z0-9]+', ' ', s).split())
+
+
+def parse_titol(titol: str) -> dict | None:
+    """{rd, tipus: establece|titol|modifica|correccion, denominacion, modifica_rd} o None."""
+    if not _SUMARIO_RE.search(titol):
+        return None
+    m = _TITOL_RD_RE.search(titol)
+    # El primer "por el que se …" decideix el tipus: un RD pot establir un certificat i, de
+    # passada, modificar-ne un altre (RD 488/2026 modifica el RD 300/2026).
+    verb = _TITOL_VERB_RE.search(titol)
+    if titol.startswith('Corrección de errores'):
+        tipus = 'correccion'
+    elif not verb:
+        return None
+    elif verb.group(1) == 'modifica':
+        tipus = 'modifica'
+    elif verb.group(1) == 'establece el título':
+        if 'grados C' not in titol:
+            return None
+        tipus = 'titol'  # RD de títol (Grau D) que també fixa Graus C
+    else:
+        tipus = 'establece'
+    d = _TITOL_DENOM_RE.search(titol)
+    return {'rd': f'RD {m.group(1)}' if m else None, 'tipus': tipus,
+            'denominacion': d.group(1).strip() if d and tipus == 'establece' else None,
+            'modifica_rd': [f'RD {n}' for n in _TITOL_MODIFICA_RE.findall(titol)]}
+
+
+def fetch_sumario(day: datetime.date, cache_dir: str | None) -> list[dict]:
+    """Títols de certificats professionals del sumari del BOE d'un dia ([] si no n'hi ha BOE)."""
+    key = day.strftime('%Y%m%d')
+    path = os.path.join(cache_dir, f'sumario2-{key}.json') if cache_dir else None
+    if path and os.path.exists(path):
+        with open(path, encoding='utf-8') as f:
+            return json.load(f)
+    resp = requests.get(f'https://www.boe.es/datosabiertos/api/boe/sumario/{key}',
+                        headers={'Accept': 'application/json'}, timeout=60)
+    items = []
+    if resp.status_code != 404:  # 404 = dia sense BOE (diumenges)
+        resp.raise_for_status()
+
+        def walk(o):
+            if isinstance(o, dict):
+                if _SUMARIO_RE.search(o.get('titulo') or ''):
+                    items.append({'id': o.get('identificador'), 'titulo': o['titulo'], 'data': key})
+                for v in o.values():
+                    walk(v)
+            elif isinstance(o, list):
+                for v in o:
+                    walk(v)
+        walk(resp.json())
+    if path:
+        os.makedirs(cache_dir, exist_ok=True)
+        with open(path, 'w', encoding='utf-8') as f:
+            json.dump(items, f, ensure_ascii=False)
+    time.sleep(1)
+    return items
+
+
+def discover(cache_dir: str | None, until: datetime.date) -> dict:
+    """{boe_id: {rd, tipus, denominacion, data, titulo}} de tots els sumaris des de DISCOVER_FROM."""
+    found = {}
+    day = DISCOVER_FROM
+    while day <= until:
+        for it in fetch_sumario(day, cache_dir):
+            parsed = parse_titol(it['titulo'])
+            if parsed:
+                found[it['id']] = {**parsed, 'data': it['data'], 'titulo': it['titulo']}
+        day += datetime.timedelta(days=1)
+    return found
+
+
+def confirmacio(codigo: str, nums: list[str], text: str) -> str | None:
+    """'codi' si el text del RD conté el codi del C; 'moduls' si conté tots els seus mòduls
+    ("NNNN.") — el BOE publica de vegades el codi amb marcadors (EOC_C_00X_4B); None si no."""
+    if codigo in text:
+        return 'codi'
+    if nums and all(f'{n}.' in text for n in nums):
+        return 'moduls'
+    return None
+
+
+def aparellar(c_denoms: dict, troballes: dict) -> tuple[dict, list]:
+    """({codigo_c: boe_id}, [codigo_c sense RD]) per denominació normalitzada (només 'establece')."""
+    by_denom = {}
+    for boe_id, t in sorted(troballes.items()):
+        if t['tipus'] == 'establece' and t.get('denominacion'):
+            by_denom.setdefault(norm(t['denominacion']), boe_id)
+    matched, unmatched = {}, []
+    for codigo, denom in sorted(c_denoms.items()):
+        boe_id = by_denom.get(norm(denom))
+        if boe_id:
+            matched[codigo] = boe_id
+        else:
+            unmatched.append(codigo)
+    return matched, unmatched
 
 
 def parse_modulos_annex_i(text: str, codigo: str) -> list[str] | None:
@@ -215,10 +331,63 @@ def render(rows: dict) -> str:
     return '\n'.join(lines)
 
 
+def main_discover(cache_dir: str | None) -> int:
+    """Pla 080, fase 1: aparella cada C LOMLOE amb el seu RD individual i ho confirma amb el
+    "Código:" del text. Escriu DISCOVER_PATH. ~1.200 sumaris a 1 req/s (~20 min) la primera vegada."""
+    with open(os.path.join(DATA_DIR, 'c_modulos.json'), encoding='utf-8') as f:
+        c_modulos = json.load(f)
+    with open(os.path.join(DATA_DIR, 'ofertes.json'), encoding='utf-8') as f:
+        c_denoms = {r['codigo']: r['denominacion'] for r in json.load(f)
+                    if r.get('grado') == 'C' and r.get('codigo') in c_modulos}
+    group_texts = [fetch_text(boe_id, cache_dir) for boe_id in DECRETS.values()]
+    sense_decret = sorted(c for c in c_denoms if not any(f'Código: {c}' in t for t in group_texts))
+    # PRL (1724/1732/1782) és comú a molts RD: no serveix per confirmar.
+    nums = {c: [m['num'] for m in c_modulos[c] if m['num'] not in ('1724', '1732', '1782')]
+            for c in sense_decret}
+
+    troballes = discover(cache_dir, datetime.date.today())
+    matched, unmatched = aparellar({c: c_denoms[c] for c in sense_decret}, troballes)
+    aparellats = {}
+    for codigo, boe_id in matched.items():
+        aparellats[codigo] = {'boe_id': boe_id, 'rd': troballes[boe_id]['rd'],
+                              'confirmat': confirmacio(codigo, nums[codigo], fetch_text(boe_id, cache_dir))}
+    # Els que no aparellen pel nom: buscar el codi dins dels RD de títol (Grau D).
+    titols = sorted(b for b, t in troballes.items() if t['tipus'] == 'titol')
+    for codigo in list(unmatched):
+        for boe_id in titols:
+            if codigo in fetch_text(boe_id, cache_dir):
+                aparellats[codigo] = {'boe_id': boe_id, 'rd': troballes[boe_id]['rd'], 'confirmat': 'codi'}
+                unmatched.remove(codigo)
+                break
+    rds = {t['rd'] for b, t in troballes.items() if b in {v['boe_id'] for v in aparellats.values()}}
+    canvis = {b: t for b, t in troballes.items()
+              if (t['tipus'] == 'correccion' and t['rd'] in rds) or set(t['modifica_rd']) & rds}
+    out = {'aparellats': aparellats, 'sense_rd': unmatched, 'modificacions_i_correccions': canvis,
+           'troballes': troballes}
+    os.makedirs(os.path.dirname(DISCOVER_PATH), exist_ok=True)
+    with open(DISCOVER_PATH, 'w', encoding='utf-8') as f:
+        json.dump(out, f, ensure_ascii=False, indent=1)
+    print(f'{len(sense_decret)} C sense decret de grup; {len(troballes)} disposicions de certificats trobades')
+    for codigo, v in aparellats.items():
+        print(f"  {codigo} → {v['rd']} ({v['boe_id']})  [{v['confirmat'] or '⚠ NO confirmat'}]")
+    for codigo in unmatched:
+        print(f'  {codigo} → SENSE RD ({c_denoms[codigo]})')
+    for b, t in canvis.items():
+        print(f"  canvi: {t['tipus']} {b} {t['titulo'][:100]}")
+    return 0
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument('--cache', metavar='DIR', help='Directori on desar/llegir els textos del BOE')
+    parser.add_argument('--data', metavar='DIR', help='Directori de dades (per defecte backend/data)')
+    parser.add_argument('--discover', action='store_true',
+                        help='Pla 080: busca als sumaris del BOE els RD individuals de cada C')
     args = parser.parse_args()
+    global DATA_DIR
+    DATA_DIR = args.data or DATA_DIR
+    if args.discover:
+        return main_discover(args.cache)
     with open(os.path.join(DATA_DIR, 'c_modulos.json'), encoding='utf-8') as f:
         c_modulos = json.load(f)
     with open(os.path.join(DATA_DIR, 'bc_lomloe.json'), encoding='utf-8') as f:
