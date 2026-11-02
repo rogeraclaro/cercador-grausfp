@@ -16,6 +16,7 @@
     'fb.tab.aria': "Envia'ns un suggeriment o avisa'ns d'un error",
     'fb.dialog.aria': 'Envia un comentari',
     'fb.title': 'Què vols dir-nos?',
+    'fb.note': 'GrausFP és un projecte personal sense ànim de lucre, fet per a qui li pugui ser útil. El que ens expliquis només serveix per millorar-lo per a tothom.',
     'fb.kinds.aria': 'Tipus de comentari',
     'fb.kind.error': 'Error',
     'fb.kind.idea': 'Idea',
@@ -70,6 +71,7 @@
   dialog.innerHTML =
     '<form class="fb-body" id="fb-form" novalidate>' +
       '<p class="fb-title">' + tr('fb.title') + '</p>' +
+      '<p class="fb-label">' + tr('fb.note') + '</p>' +
       '<div class="fb-kinds" role="group" aria-label="' + tr('fb.kinds.aria') + '">' +
         KINDS.map(function (k) {
           return '<button type="button" class="fb-kind" data-kind="' + k + '" aria-pressed="false">' +

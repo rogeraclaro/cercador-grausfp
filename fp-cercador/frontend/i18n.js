@@ -14,6 +14,7 @@
       'index.centres.none': 'Sense centres registrats',
       'fb.dialog.aria': 'Envia un comentari',
       'fb.title': 'Què vols dir-nos?',
+      'fb.note': 'GrausFP és un projecte personal sense ànim de lucre, fet per a qui li pugui ser útil. El que ens expliquis només serveix per millorar-lo per a tothom.',
       'fb.kinds.aria': 'Tipus de comentari',
       'fb.kind.error': 'Error',
       'fb.kind.idea': 'Idea',
@@ -575,6 +576,8 @@
       'perque.faq.4.a': 'Sí, la interfície és responsiva i funciona correctament en telèfons i tauletes.',
       'perque.faq.5.q': 'Quant costa?',
       'perque.faq.5.a': 'Res. Ni ara ni en el futur previsible. La plataforma és un projecte sense ànim de lucre orientat al servei públic educatiu.',
+      'perque.faq.6.q': 'Qui hi ha darrere i per què?',
+      'perque.faq.6.a': "GrausFP és un projecte personal, fet en benefici de la comunitat i de qui li pugui ser útil. No hi ha cap empresa al darrere ni cap negoci previst. Els suggeriments i avisos d'error que ens envieu serveixen només per millorar l'eina per a tothom: no és feina gratuïta per a un projecte comercial.",
       'perque.cta.p': 'La primera eina que dona una visió completa, instantània i personalitzable de tota l\'oferta de Formació Professional a Espanya.',
       'perque.cta.btn': 'Entra al cercador →',
 
@@ -731,6 +734,7 @@
       'index.centres.none': 'Sin centros registrados',
       'fb.dialog.aria': 'Envía un comentario',
       'fb.title': '¿Qué quieres decirnos?',
+      'fb.note': 'GrausFP es un proyecto personal sin ánimo de lucro, hecho para quien le pueda resultar útil. Lo que nos cuentes solo sirve para mejorarlo para todo el mundo.',
       'fb.kinds.aria': 'Tipo de comentario',
       'fb.kind.error': 'Error',
       'fb.kind.idea': 'Idea',
@@ -1292,6 +1296,8 @@
       'perque.faq.4.a': 'Sí, la interfaz es responsiva y funciona correctamente en teléfonos y tabletas.',
       'perque.faq.5.q': '¿Cuánto cuesta?',
       'perque.faq.5.a': 'Nada. Ni ahora ni en el futuro previsible. La plataforma es un proyecto sin ánimo de lucro orientado al servicio público educativo.',
+      'perque.faq.6.q': '¿Quién hay detrás y por qué?',
+      'perque.faq.6.a': 'GrausFP es un proyecto personal, hecho en beneficio de la comunidad y de quien le pueda resultar útil. No hay ninguna empresa detrás ni ningún negocio previsto. Las sugerencias y avisos de error que nos enviáis sirven solo para mejorar la herramienta para todo el mundo: no es trabajo gratuito para un proyecto comercial.',
       'perque.cta.p': 'La primera herramienta que da una visión completa, instantánea y personalizable de toda la oferta de Formación Profesional en España.',
       'perque.cta.btn': 'Entra al buscador →',
 
