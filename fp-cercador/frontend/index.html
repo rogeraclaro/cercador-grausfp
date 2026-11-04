@@ -4212,11 +4212,11 @@
                               :title="'Treu ' + sc(centre.nombre) + ' de la selecció'">
                             <div>
                               <div class="centre-nom">
-                                <template x-if="centre.url_web">
-                                  <a :href="centre.url_web" target="_blank" rel="noopener"
+                                <template x-if="safeHttpUrl(centre.url_web)">
+                                  <a :href="safeHttpUrl(centre.url_web)" target="_blank" rel="noopener"
                                     x-text="sc(centre.nombre)"></a>
                                 </template>
-                                <template x-if="!centre.url_web">
+                                <template x-if="!safeHttpUrl(centre.url_web)">
                                   <span x-text="sc(centre.nombre)"></span>
                                 </template>
                                 <span class="badge-nou" x-show="esCentreNou(row, centre.id)" x-text="t('index.centres.nou')"></span>
@@ -4246,11 +4246,11 @@
                               x-show="loggedIn">
                             <div>
                               <div class="centre-nom">
-                                <template x-if="centre.url_web">
-                                  <a :href="centre.url_web" target="_blank" rel="noopener"
+                                <template x-if="safeHttpUrl(centre.url_web)">
+                                  <a :href="safeHttpUrl(centre.url_web)" target="_blank" rel="noopener"
                                     x-text="sc(centre.nombre)"></a>
                                 </template>
-                                <template x-if="!centre.url_web">
+                                <template x-if="!safeHttpUrl(centre.url_web)">
                                   <span x-text="sc(centre.nombre)"></span>
                                 </template>
                                 <span class="badge-nou" x-show="esCentreNou(row, centre.id)" x-text="t('index.centres.nou')"></span>
