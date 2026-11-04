@@ -261,6 +261,14 @@ def test_centres_agregats_per_comunitat_sense_noms(client):
     assert 'href="/index.html?ref=ADG_C_001_3B"' in body
 
 
+def test_centres_sense_compte(client):
+    body = _page(client, 'ADG_C_001_3B')
+    m = re.search(r'<section data-centres-total="\d+">.*?</section>', body, re.DOTALL)
+    assert m
+    assert 'está en el buscador' in m.group(0)
+    assert 'cuenta' not in m.group(0)
+
+
 def test_centres_d_a_i_b_coincideixen_amb_el_cercador(client):
     counts = client.get('/api/centres/count').get_json()
     assert counts['ADG_A_3001_01'] == 3  # heretats del C via el B

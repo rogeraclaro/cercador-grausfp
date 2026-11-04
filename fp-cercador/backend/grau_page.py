@@ -10,8 +10,8 @@ i18n.js com a la resta del web.
 
 Seguretat: tot text que ve de les dades passa per _e() (html.escape) o, dins el
 JSON-LD, per _json_ld() (sense <, > ni & literals). Les adreces es construeixen
-amb quote() i també s'escapen. Mai s'hi posa el nom d'un centre ni l'enllaç
-directe a la fitxa oficial (tanca de login).
+amb quote() i també s'escapen. Mai s'hi posa el nom d'un centre (la llista viu al
+cercador) ni l'enllaç directe a la fitxa oficial (només aquest té tanca de login).
 """
 import html
 import json
@@ -360,8 +360,7 @@ def _centres_html(rec: dict, centres: dict) -> str:
         h += ('<table class="ccaa"><thead><tr><th scope="col">Comunidad autónoma</th>'
               f'<th scope="col">Centros</th></tr></thead><tbody>{rows}</tbody></table>')
     h += (f'<div class="btns"><a class="btn" href="/index.html?ref={_e(ref_q)}">Ver los centros</a></div>'
-          '<p class="note">La lista con el nombre y los datos de cada centro está disponible '
-          'con una cuenta gratuita.</p>')
+          '<p class="note">La lista con el nombre y los datos de cada centro está en el buscador.</p>')
     return h + '</section>'
 
 
