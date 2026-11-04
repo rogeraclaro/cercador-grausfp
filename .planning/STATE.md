@@ -121,6 +121,7 @@ None yet.
 | 260924-s3i | index.html usa site.css (renderitzat idèntic) | 2026-09-24 | 5a8faac | — | [260924-s3i-index-uses-site-css](./quick/260924-s3i-index-uses-site-css/) |
 | 13 | fix(i18n): graus i ensenyaments al català de per-que-grausfp | 2026-09-25 | 92afc11 | — | — |
 | 261104-prj | Open centres panel to everyone and link it to the centres finder | 2026-11-04 | 2b1a745 | — | [261104-prj-open-centres-panel-to-everyone-and-link-](./quick/261104-prj-open-centres-panel-to-everyone-and-link-/) |
+| fast | Translate centres panel search placeholder (inside x-if) | 2026-11-04 | 6bfd3d8 | — | — |
 
 ### Blockers/Concerns
 
