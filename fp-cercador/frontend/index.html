@@ -1893,6 +1893,7 @@
     }
 
     /* Auth widget al topbar */
+    .topbar-centres { margin-left: 16px; }
 
     /* ── Lang selector ── */
 
@@ -3430,6 +3431,8 @@
     <div class="topbar">
       <div class="topbar-inner">
         <a class="topbar-logo" href="index.html">GrausFP</a>
+        <a class="auth-btn topbar-centres" href="https://centres.grausfp.es/" :href="centresAppHref(getLang())"
+          target="_blank" rel="noopener" data-i18n="nav.centres">Centres</a>
         <div id="auth-widget"></div>
         <div class="lang-selector" aria-label="Language selector">
           <button class="lang-btn" data-lang="ca" onclick="setLang('ca')">CA</button>
@@ -4613,7 +4616,7 @@
         <h2 class="gate-modal-title" id="gate-modal-title" data-i18n="modal.gate.title">Registra't gratis i treu-li tot el suc</h2>
         <ul class="gate-modal-list">
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span data-i18n="modal.gate.b1">Obre la fitxa oficial de cada grau.</span></li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span data-i18n="modal.gate.b2">Consulta els centres on es fa cada formació.</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span data-i18n="modal.gate.b2">Marca els centres que t'interessen i troba'ls al teu perfil.</span></li>
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span data-i18n="modal.gate.b3">Desa els teus graus i cursos preferits.</span></li>
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span data-i18n="modal.gate.b4">Rep un avís quan hi hagi canvis o nous centres per als graus que segueixes.</span></li>
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span data-i18n="modal.gate.b5">Exporta els resultats a CSV.</span></li>
