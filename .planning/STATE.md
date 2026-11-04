@@ -5,10 +5,10 @@ current_phase: 2
 current_phase_name: PDF Scrapers (Grados A, B, C)
 status: verifying
 stopped_at: Phase 7 complete, ready to verify Phase 2
-last_updated: "2026-10-28T20:08:45.266Z"
+last_updated: "2026-11-04T17:45:19.933Z"
 last_activity: 2026-10-28
 last_activity_desc: Phase 7 complete, transitioned to Phase 2
-state_head: 00c4877097abc78a0d6361abb5ce84306e46823f
+state_head: 2b1a7455d6e49b9d385fced041402f326ffb6eea
 progress:
   total_phases: 7
   completed_phases: 5
@@ -32,7 +32,7 @@ See: .planning/PROJECT.md (updated 2026-04-16)
 Phase: 2 — PDF Scrapers (Grados A, B, C)
 Plan: 3
 Status: Phase complete — ready for verification
-Last activity: 2026-10-28 — Phase 7 complete, transitioned to Phase 2
+Last activity: 2026-11-04 - Completed quick task 261104-prj: Open centres panel to everyone and link it to the centres finder
 
 Progress: [███████░░░] 71% (Fases 01, 02, 03, 04, 05 completades; 06 pendent)
 
@@ -120,6 +120,7 @@ None yet.
 | 260924-s2p | Subpàgines: tabs perfil, gràfic Observatori, main, badge privacitat, colors missatge | 2026-09-24 | 96837fe | — | [260924-s2p-subpages-specific-fixes](./quick/260924-s2p-subpages-specific-fixes/) |
 | 260924-s3i | index.html usa site.css (renderitzat idèntic) | 2026-09-24 | 5a8faac | — | [260924-s3i-index-uses-site-css](./quick/260924-s3i-index-uses-site-css/) |
 | 13 | fix(i18n): graus i ensenyaments al català de per-que-grausfp | 2026-09-25 | 92afc11 | — | — |
+| 261104-prj | Open centres panel to everyone and link it to the centres finder | 2026-11-04 | 2b1a745 | — | [261104-prj-open-centres-panel-to-everyone-and-link-](./quick/261104-prj-open-centres-panel-to-everyone-and-link-/) |
 
 ### Blockers/Concerns
 
