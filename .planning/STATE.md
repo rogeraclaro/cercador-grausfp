@@ -5,10 +5,10 @@ current_phase: 2
 current_phase_name: PDF Scrapers (Grados A, B, C)
 status: verifying
 stopped_at: Phase 7 complete, ready to verify Phase 2
-last_updated: "2026-11-04T17:45:19.933Z"
-last_activity: 2026-10-28
+last_updated: "2026-11-04T20:47:32.820Z"
+last_activity: 2026-11-04
 last_activity_desc: Phase 7 complete, transitioned to Phase 2
-state_head: 2b1a7455d6e49b9d385fced041402f326ffb6eea
+state_head: 83843f1391a803dd7dc97b0859e904b21e10b95d
 progress:
   total_phases: 7
   completed_phases: 5
@@ -122,6 +122,7 @@ None yet.
 | 13 | fix(i18n): graus i ensenyaments al català de per-que-grausfp | 2026-09-25 | 92afc11 | — | — |
 | 261104-prj | Open centres panel to everyone and link it to the centres finder | 2026-11-04 | 2b1a745 | — | [261104-prj-open-centres-panel-to-everyone-and-link-](./quick/261104-prj-open-centres-panel-to-everyone-and-link-/) |
 | fast | Translate centres panel search placeholder (inside x-if) | 2026-11-04 | 6bfd3d8 | — | — |
+| 16 | Centres integration follow-ups: dead code, safeHttpUrl, topbar Centres on all pages | 2026-11-04 | 83843f1 | — | — |
 
 ### Blockers/Concerns
 
