@@ -4188,7 +4188,7 @@
                           </template>
                         </select>
                         <input type="search" x-model="centresSearch[row.id]"
-                          data-i18n-placeholder="index.centres.placeholder" placeholder="Cerca centre o població…"
+                          :placeholder="t('index.centres.placeholder')"
                           class="centres-search-input" @click.stop>
                         <template x-if="loggedIn">
                           <button class="watch-btn"
