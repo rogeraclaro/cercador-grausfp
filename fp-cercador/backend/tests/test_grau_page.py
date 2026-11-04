@@ -307,6 +307,15 @@ def test_ref_amb_titlla_i_enllacos_absoluts(client):
     assert '<base href="/">' in body  # footer.js i auth.js fan servir enllaços relatius
 
 
+def test_topbar_enllaca_al_cercador_de_centres(client):
+    body = _page(client, 'UF0620~IEX')
+    assert ('<a class="auth-btn topbar-centres" href="https://centres.grausfp.es/" '
+            'data-lang-href="https://centres.grausfp.es/" target="_blank" rel="noopener" '
+            'data-i18n="nav.centres">') in body
+    assert '/site.css?v=4"' in body
+    assert '/i18n.js?v=20261104b"' in body
+
+
 def test_falten_indexs_opcionals_i_la_pagina_surt_igual(tmp_path, monkeypatch):
     _setup(tmp_path, monkeypatch, skip=OPTIONAL)
     with app_module.app.test_client() as c:

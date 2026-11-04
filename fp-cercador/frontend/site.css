@@ -55,6 +55,10 @@
   text-decoration: none;
 }
 
+.topbar-centres {
+  margin-left: 16px;
+}
+
 #auth-widget {
   margin-left: auto;
   display: flex;

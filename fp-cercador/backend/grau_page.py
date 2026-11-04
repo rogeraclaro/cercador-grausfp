@@ -18,8 +18,8 @@ import json
 from urllib.parse import quote
 
 # Versions dels recursos compartits: les mateixes que a les subpàgines (fonts.html).
-I18N_VERSION = '20261026c'
-SITE_CSS_VERSION = '3'
+I18N_VERSION = '20261104b'
+SITE_CSS_VERSION = '4'
 FOOTER_VERSION = '2'
 FEEDBACK_VERSION = '3'
 
@@ -251,6 +251,7 @@ def _shell(*, title: str, description: str, canonical: str | None, body: str,
   <header class="topbar">
     <div class="topbar-inner">
       <a href="/index.html" class="topbar-logo">GrausFP</a>
+      <a class="auth-btn topbar-centres" href="https://centres.grausfp.es/" data-lang-href="https://centres.grausfp.es/" target="_blank" rel="noopener" data-i18n="nav.centres">Centros</a>
       <div id="auth-widget"></div>
       <div class="lang-selector" aria-label="Language selector">
         <button class="lang-btn" data-lang="ca" onclick="setLang('ca')">CA</button>

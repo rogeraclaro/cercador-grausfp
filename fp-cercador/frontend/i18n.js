@@ -1499,6 +1499,10 @@
     document.querySelectorAll('[data-i18n-title]').forEach(function (el) {
       el.title = _resolve(el.getAttribute('data-i18n-title'));
     });
+    /* Language-aware external links: base URL + current lang + '/' */
+    document.querySelectorAll('[data-lang-href]').forEach(function (el) {
+      el.href = el.getAttribute('data-lang-href') + _lang + '/';
+    });
 
     /* Actualitza lang selector visual */
     document.querySelectorAll('.lang-btn').forEach(function (btn) {
