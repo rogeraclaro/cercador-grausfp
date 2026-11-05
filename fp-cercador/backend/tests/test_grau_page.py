@@ -313,7 +313,37 @@ def test_topbar_enllaca_al_cercador_de_centres(client):
             'data-lang-href="https://centres.grausfp.es/" target="_blank" rel="noopener" '
             'data-i18n="nav.centres">') in body
     assert '/site.css?v=4"' in body
-    assert '/i18n.js?v=20261104b"' in body
+    assert '/i18n.js?v=20261105a"' in body
+
+
+CENTRES_SEARCH = 'centres.grausfp.es/es/search'
+
+
+def test_grau_c_enllaca_als_centres_acreditats(client):
+    body = _page(client, 'ADG_C_001_3B')
+    anchor = ('<a class="btn" href="https://centres.grausfp.es/es/search?cert=ADG_C_001_3B" '
+              'data-lang-href="https://centres.grausfp.es/" '
+              'data-lang-suffix="/search?cert=ADG_C_001_3B" target="_blank" rel="noopener">'
+              'Centros acreditados</a>')
+    assert body.count(anchor) == 1
+    assert body.count(CENTRES_SEARCH) == 1
+    assert 'href="/index.html?ref=ADG_C_001_3B">Ver los centros</a>' in body
+
+
+def test_altres_graus_no_enllacen_als_centres_acreditats(client):
+    for ref in ('ADG_A_3001_01', 'ADG_B_3001',
+                'administracion-gestion~servicios-administrativos'):
+        assert CENTRES_SEARCH not in _page(client, ref), ref
+    assert CENTRES_SEARCH not in grau_page._centres_html({'ref': 'X_C_1', 'grado': 'C'},
+                                                         {'total': 0})
+
+
+def test_enllac_centres_acreditats_escapa_la_ref():
+    h = grau_page._centres_html({'ref': 'X C&1', 'grado': 'C'}, {'total': 1})
+    assert 'href="https://centres.grausfp.es/es/search?cert=X%20C%261"' in h
+    assert 'data-lang-suffix="/search?cert=X%20C%261"' in h
+    attrs = re.findall(r'(?:href|data-lang-href|data-lang-suffix)="([^"]*)"', h)
+    assert attrs and all(' ' not in v and '&' not in v for v in attrs)
 
 
 def test_falten_indexs_opcionals_i_la_pagina_surt_igual(tmp_path, monkeypatch):

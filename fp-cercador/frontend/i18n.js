@@ -1499,9 +1499,11 @@
     document.querySelectorAll('[data-i18n-title]').forEach(function (el) {
       el.title = _resolve(el.getAttribute('data-i18n-title'));
     });
-    /* Language-aware external links: base URL + current lang + '/' */
+    /* Language-aware external links: base URL + current lang + suffix
+       (data-lang-suffix, e.g. '/search?cert=X'; '/' when absent, as in the topbar) */
     document.querySelectorAll('[data-lang-href]').forEach(function (el) {
-      el.href = el.getAttribute('data-lang-href') + _lang + '/';
+      el.href = el.getAttribute('data-lang-href') + _lang +
+        (el.getAttribute('data-lang-suffix') || '/');
     });
 
     /* Actualitza lang selector visual */

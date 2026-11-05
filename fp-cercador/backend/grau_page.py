@@ -18,10 +18,13 @@ import json
 from urllib.parse import quote
 
 # Versions dels recursos compartits: les mateixes que a les subpàgines (fonts.html).
-I18N_VERSION = '20261104b'
+I18N_VERSION = '20261105a'
 SITE_CSS_VERSION = '4'
 FOOTER_VERSION = '2'
 FEEDBACK_VERSION = '3'
+
+# Sister site with the accredited-centres search (same host as the topbar link).
+CENTRES_URL = 'https://centres.grausfp.es'
 
 STATIC_PAGES = ['/', '/per-que-grausfp.html', '/fonts.html', '/observatori.html',
                 '/historial.html', '/families']
@@ -360,7 +363,16 @@ def _centres_html(rec: dict, centres: dict) -> str:
     if rows:
         h += ('<table class="ccaa"><thead><tr><th scope="col">Comunidad autónoma</th>'
               f'<th scope="col">Centros</th></tr></thead><tbody>{rows}</tbody></table>')
-    h += (f'<div class="btns"><a class="btn" href="/index.html?ref={_e(ref_q)}">Ver los centros</a></div>'
+    h += f'<div class="btns"><a class="btn" href="/index.html?ref={_e(ref_q)}">Ver los centros</a>'
+    if rec.get('grado') == 'C':
+        # Accredited-centres search on the sister site (fp-centres-cercador, D-07).
+        # i18n.js rebuilds the href as data-lang-href + lang + data-lang-suffix.
+        suffix = '/search?cert=' + ref_q
+        h += ('<a class="btn" href="' + _e(CENTRES_URL + '/es' + suffix) + '" '
+              'data-lang-href="' + _e(CENTRES_URL + '/') + '" '
+              'data-lang-suffix="' + _e(suffix) + '" target="_blank" rel="noopener">'
+              'Centros acreditados</a>')
+    h += ('</div>'
           '<p class="note">La lista con el nombre y los datos de cada centro está en el buscador.</p>')
     return h + '</section>'
 
