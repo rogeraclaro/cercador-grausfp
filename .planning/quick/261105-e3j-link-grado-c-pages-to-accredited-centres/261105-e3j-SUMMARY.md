@@ -3,7 +3,7 @@ quick_id: 261105-e3j
 status: complete
 date: 2026-11-05
 commit: 4871115
-deployed: false
+deployed: 2026-11-05
 ---
 
 # Summary: Link Grado C pages to the accredited-centres search
