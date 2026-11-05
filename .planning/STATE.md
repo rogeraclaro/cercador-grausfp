@@ -32,7 +32,7 @@ See: .planning/PROJECT.md (updated 2026-04-16)
 Phase: 2 — PDF Scrapers (Grados A, B, C)
 Plan: 3
 Status: Phase complete — ready for verification
-Last activity: 2026-11-04 - Completed quick task 261104-prj: Open centres panel to everyone and link it to the centres finder
+Last activity: 2026-11-05 - Completed quick task 261105-e3j: Link Grado C pages to the accredited centres search
 
 Progress: [███████░░░] 71% (Fases 01, 02, 03, 04, 05 completades; 06 pendent)
 
@@ -123,6 +123,7 @@ None yet.
 | 261104-prj | Open centres panel to everyone and link it to the centres finder | 2026-11-04 | 2b1a745 | — | [261104-prj-open-centres-panel-to-everyone-and-link-](./quick/261104-prj-open-centres-panel-to-everyone-and-link-/) |
 | fast | Translate centres panel search placeholder (inside x-if) | 2026-11-04 | 6bfd3d8 | — | — |
 | 16 | Centres integration follow-ups: dead code, safeHttpUrl, topbar Centres on all pages | 2026-11-04 | 83843f1 | — | — |
+| 261105-e3j | Link Grado C pages to the accredited centres search | 2026-11-05 | 4871115 | — | [261105-e3j-link-grado-c-pages-to-accredited-centres](./quick/261105-e3j-link-grado-c-pages-to-accredited-centres/) |
 
 ### Blockers/Concerns
 
