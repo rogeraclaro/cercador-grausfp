@@ -101,6 +101,7 @@ CE_ACCES_PATH = os.path.join(_DATA_DIR, "ce_acces.json")  # Pla 074: {str(id_e):
 SOC_CURSOS_PATH = os.path.join(_DATA_DIR, "soc_cursos.json")    # Pla 059: cursos FPO (SOC)
 SOC_ESPECS_PATH = os.path.join(_DATA_DIR, "soc_especs.json")    # Pla 059: especialitats formatives (SOC)
 SOC_CENTRES_PATH = os.path.join(_DATA_DIR, "soc_centres.json")  # Pla 059: centres de formació (SOC)
+SEPE_ESPECS_PATH = os.path.join(_DATA_DIR, "sepe_especs.json")  # Pla 081: catàleg d'especialitats del SEPE
 EXT_CURSOS_PATH = os.path.join(_DATA_DIR, "ext_cursos.json")   # Pla 062: cursos FPO de PIMEC i Foment
 _SOC_STALE_DAYS = 7  # llindar per avisar de dades FPO velles
 OCUPACIONES_PATH = os.path.join(_DATA_DIR, "ocupaciones.json")
@@ -1527,6 +1528,8 @@ _soc_cursos_cache: dict = {"mtime": None, "index": None}
 _soc_especs_cache: dict = {"mtime": None, "index": None}
 _soc_centres_cache: dict = {"mtime": None, "index": None}
 _soc_espec_index_cache: dict = {"key": None, "data": None}
+_sepe_especs_cache: dict = {"mtime": None, "index": None}
+_sepe_index_cache: dict = {"key": None, "data": None}
 _ext_cursos_cache: dict = {"mtime": None, "index": None}
 _ext_index_cache: dict = {"key": None, "data": None}
 
@@ -1568,6 +1571,20 @@ def _get_soc_centres() -> list:
 
 def _get_ext_cursos() -> list:
     return _read_soc_list(EXT_CURSOS_PATH, _ext_cursos_cache)
+
+
+def _get_sepe_especs() -> list:
+    return _read_soc_list(SEPE_ESPECS_PATH, _sepe_especs_cache)
+
+
+def _sepe_index() -> dict:
+    """{codi: fila} del catàleg SEPE (Pla 081). {} si el fitxer falta. Cache per mtime."""
+    key = os.path.getmtime(SEPE_ESPECS_PATH) if os.path.exists(SEPE_ESPECS_PATH) else None
+    if _sepe_index_cache["key"] == key and _sepe_index_cache["data"] is not None:
+        return _sepe_index_cache["data"]
+    data = {r['codi']: r for r in _get_sepe_especs() if isinstance(r, dict) and r.get('codi')}
+    _sepe_index_cache.update(key=key, data=data)
+    return data
 
 
 def _fpo_today() -> str:
@@ -1633,7 +1650,7 @@ def _soc_espec_index() -> dict:
     def _mt(path):
         return os.path.getmtime(path) if os.path.exists(path) else None
 
-    key = (_mt(SOC_CURSOS_PATH), _mt(SOC_ESPECS_PATH))
+    key = (_mt(SOC_CURSOS_PATH), _mt(SOC_ESPECS_PATH), _mt(SEPE_ESPECS_PATH))
     if _soc_espec_index_cache["key"] == key and _soc_espec_index_cache["data"] is not None:
         return _soc_espec_index_cache["data"]
 
@@ -1643,12 +1660,22 @@ def _soc_espec_index() -> dict:
         if codi:
             cursos_by_espec.setdefault(codi, []).append(c)
 
+    sepe_idx = _sepe_index()
     llista = []
     for e in _get_soc_especs():
         codi = e.get('codi')
         cursos = cursos_by_espec.get(codi)
         if not codi or not cursos:
             continue
+        sepe = sepe_idx.get(codi)
+        if e.get('esCertProf'):
+            vinculacio = 'grauC'
+        elif sepe:
+            vinculacio = 'sepe'
+        elif sepe_idx:
+            vinculacio = 'propiaSoc'
+        else:
+            vinculacio = None  # sense catàleg SEPE no podem distingir 'sepe' de 'propiaSoc'
         llista.append({
             'codi': codi,
             'titol': e.get('titol', {'ca': '', 'es': ''}),
@@ -1664,6 +1691,10 @@ def _soc_espec_index() -> dict:
             'municipis': sorted({c.get('municipi', '') for c in cursos if c.get('municipi')}),
             'estats': sorted({c.get('estat', '') for c in cursos if c.get('estat')}),
             'modalitats': sorted({c.get('modalitat', '') for c in cursos if c.get('modalitat')}),
+            'vinculacio': vinculacio,
+            'vigenciaFi': (sepe or {}).get('vigenciaFi'),
+            'competenciaTransversal': (sepe or {}).get('competenciaTransversal'),
+            'modalitatOficial': (sepe or {}).get('modalitat'),
         })
     llista.sort(key=lambda x: (x['titol'].get('ca') or x['codi']).lower())
     data = {'list': llista, 'cursos_by_espec': cursos_by_espec}
@@ -1715,6 +1746,7 @@ def api_fpo_especialitat(codi):
     if not cursos:
         return jsonify({}), 404
     espec = next((e for e in _get_soc_especs() if e.get('codi') == codi), {})
+    sepe = _sepe_index().get(codi)
 
     def _first_nonempty(field):
         for c in cursos:
@@ -1731,6 +1763,8 @@ def api_fpo_especialitat(codi):
         'sortides': _first_nonempty('sortides'),
         'moduls': espec.get('moduls', []),
         'programaUrl': espec.get('programaUrl', ''),
+        'sepe': ({k: sepe.get(k) for k in ('idSepe', 'vigenciaInici', 'vigenciaFi', 'versio')}
+                 if sepe else None),
         'cursos': [_soc_curs_public(c) for c in cursos],
     })
 

@@ -211,6 +211,33 @@ def refresh_ext_cursos(data_dir: str) -> dict:
     return {f: sum(1 for c in cursos if c.get('font') == f) for f, _ in fonts}
 
 
+def refresh_sepe_especs(data_dir: str, *, max_age_days: int = 7) -> int | None:
+    """Catàleg d'especialitats del SEPE -> sepe_especs.json (Pla 081).
+
+    El catàleg canvia poc: només es refresca si el fitxer falta o té més de
+    `max_age_days` dies. No fatal: si falla, es conserva el JSON anterior (el
+    write valida abans de substituir) i s'avisa l'admin. Retorna el nombre
+    d'especialitats escrites, o None si s'ha saltat o ha fallat.
+    """
+    path = os.path.join(data_dir, 'sepe_especs.json')
+    try:
+        if time.time() - os.path.getmtime(path) < max_age_days * 86400:
+            return None
+    except OSError:
+        pass  # no existeix: toca refrescar
+    try:
+        from scrapers import sepe_scraper
+        rows = sepe_scraper.build_sepe_data()
+        sepe_scraper.write_sepe_data(rows, data_dir)
+        logger.info("pipeline: sepe_especs.json escrit (%d especialitats)", len(rows))
+        return len(rows)
+    except Exception as exc:
+        logger.warning("pipeline: refresc del catàleg SEPE ha fallat (no fatal): %s", exc)
+        _notify_admin_soc_failure(data_dir, exc, source='SEPE',
+                                  stamp_name='last_sepe_alert.json')
+        return None
+
+
 # ---------------------------------------------------------------------------
 # API pública
 # ---------------------------------------------------------------------------
@@ -450,6 +477,10 @@ def run(on_progress=None) -> dict:
         _soc_dir = os.path.dirname(DATA_PATH)
         _soc_history_append(_soc_dir, _soc_diff_entry([], [], ok=False, error=repr(exc)))
         _notify_admin_soc_failure(_soc_dir, exc)
+
+    # --- Pla 081: catàleg d'especialitats del SEPE (setmanal, no fatal) ---
+    _report("Catàleg d'especialitats (SEPE)")
+    refresh_sepe_especs(os.path.dirname(DATA_PATH))
 
     # --- Pla 062: cursos FPO de PIMEC i Foment (no fatal; cada font és independent) ---
     _report('Cursos FPO (PIMEC i Foment)')
