@@ -1,0 +1,215 @@
+"""
+test_sepe_scraper.py — Catàleg d'Especialitats Formatives del SEPE (Pla 081).
+
+Sense xarxa: la sessió HTTP és un fals que serveix la fixture Latin-1 de 3 files
+reals (ADGA12DCP, ADGD0073, FCOE001PO). El nom del fitxer coincideix amb
+`*scraper*` i queda fora de la suite rutinària: s'executa explícitament.
+"""
+import json
+import os
+
+import pytest
+
+from scrapers import sepe_scraper as sepe
+
+FIXTURE = os.path.join(os.path.dirname(__file__), 'fixtures', 'sepe_paginacion_3.latin1.json')
+
+
+def _fixture_bytes() -> bytes:
+    with open(FIXTURE, 'rb') as f:
+        return f.read()
+
+
+def _fixture_rows() -> list:
+    return json.loads(_fixture_bytes().decode('latin-1'))['data']
+
+
+class FakeResponse:
+    def __init__(self, content: bytes, status_code: int = 200):
+        self.content = content
+        self.status_code = status_code
+
+    def raise_for_status(self):
+        if self.status_code >= 400:
+            raise RuntimeError(f'HTTP {self.status_code}')
+
+
+class FakeSession:
+    """Serveix les files de la fixture paginant segons start/length del cos."""
+
+    def __init__(self, rows=None, post_content=None):
+        self.rows = rows if rows is not None else _fixture_rows()
+        self.post_content = post_content
+        self.calls = []  # (mètode, url, start)
+        self.headers = {}
+
+    def get(self, url, **kwargs):
+        self.calls.append(('GET', url, None))
+        return FakeResponse(b'<html>main</html>')
+
+    def post(self, url, json=None, **kwargs):  # noqa: A002 - mateix nom que requests
+        dt = {item['name']: item['value'] for item in json['dtInfo']}
+        self.calls.append(('POST', url, dt['start']))
+        if self.post_content is not None:
+            return FakeResponse(self.post_content)
+        start, length = dt['start'], dt['length']
+        page = self.rows[start:start + length]
+        body = {'draw': 1, 'recordsTotal': len(self.rows),
+                'recordsFiltered': len(self.rows), 'data': page}
+        return FakeResponse(sepe_dumps(body))
+
+
+def sepe_dumps(obj) -> bytes:
+    return json.dumps(obj, ensure_ascii=False).encode('latin-1')
+
+
+# --- Fixture i decode ---
+
+def test_fixture_is_not_utf8():
+    with pytest.raises(UnicodeDecodeError):
+        _fixture_bytes().decode('utf-8')
+
+
+def test_fetch_decodes_latin1_into_accented_text():
+    rows = sepe._fetch_raw_rows(FakeSession())
+    assert rows[0][4] == 'ADMINISTRACIÓN Y GESTIÓN'
+    assert rows[2][6] == 'Idiomas / Lingüísticas'
+
+
+# --- parse_row ---
+
+def test_parse_row_adga12dcp():
+    got = sepe.parse_row(_fixture_rows()[0])
+    assert got == {
+        'codi': 'ADGA12DCP', 'idSepe': 107,
+        'titol_es': 'AUXILIAR DE EMPLEADO DE OFICINA', 'versio': 1,
+        'familia_es': 'ADMINISTRACIÓN Y GESTIÓN', 'area_es': 'ADMINISTRACIÓN / GESTIÓN',
+        'familia_codi': 'ADG', 'area_codi': 'ADGA',
+        'competenciaTransversal': None, 'nivell': 1, 'modalitat': 'Presencial',
+        'hores': 410.0, 'vigenciaInici': '2004-05-24', 'vigenciaFi': '2029-12-31',
+    }
+
+
+def test_parse_row_fcoe001po_sense_nivell_ni_familia():
+    got = sepe.parse_row(_fixture_rows()[2])
+    assert got['codi'] == 'FCOE001PO'
+    assert got['competenciaTransversal'] == 'Idiomas / Lingüísticas'
+    assert got['nivell'] is None
+    assert got['familia_es'] is None
+    assert got['area_es'] is None
+    assert got['modalitat'] == 'Presencial y teleformación'
+    assert got['titol_es'] == 'ALEMÁN A1 (MARCO COMÚN EUROPEO)'
+
+
+def test_parse_row_adgd0073():
+    got = sepe.parse_row(_fixture_rows()[1])
+    assert got['nivell'] == 2
+    assert got['vigenciaInici'] == '2024-02-26'
+    assert got['vigenciaFi'] == '2031-12-31'
+    assert got['idSepe'] == 59414
+    # el títol no arrossega l'espai final ni cap tag
+    assert got['titol_es'] == 'PLANIFICADOR DE RECURSOS EMPRESARIALES (ERP)'
+
+
+def test_parse_row_wrong_cell_count_raises():
+    with pytest.raises(sepe.SepeDataError):
+        sepe.parse_row(_fixture_rows()[0][:10])
+
+
+def test_parse_row_comma_decimal_hours():
+    cells = list(_fixture_rows()[0])
+    cells[9] = '12,5'
+    assert sepe.parse_row(cells)['hores'] == 12.5
+
+
+# --- Paginació ---
+
+def test_pagination_bootstrap_then_two_posts(monkeypatch):
+    monkeypatch.setattr(sepe, 'PAGE_LENGTH', 2)
+    session = FakeSession()
+    rows = sepe._fetch_raw_rows(session)
+    assert len(rows) == 3
+    methods = [(m, s) for m, _u, s in session.calls]
+    assert methods == [('GET', None), ('POST', 0), ('POST', 2)]
+    assert session.calls[0][1].endswith('/flows/main')
+    assert session.calls[1][1].endswith('/rest/paginacionEspecialidades')
+
+
+def test_non_json_response_raises():
+    session = FakeSession(post_content=b'<html><body>Error</body></html>')
+    with pytest.raises(sepe.SepeDataError):
+        sepe._fetch_raw_rows(session)
+
+
+def test_json_without_data_list_raises():
+    session = FakeSession(post_content=b'{"draw": 1}')
+    with pytest.raises(sepe.SepeDataError):
+        sepe._fetch_raw_rows(session)
+
+
+def test_max_pages_guard(monkeypatch):
+    monkeypatch.setattr(sepe, 'PAGE_LENGTH', 1)
+    monkeypatch.setattr(sepe, 'MAX_PAGES', 2)
+    with pytest.raises(sepe.SepeDataError):
+        sepe._fetch_raw_rows(FakeSession())
+
+
+def test_request_body_shape():
+    body = sepe._request_body(2000, 2000)
+    dt = {item['name']: item['value'] for item in body['dtInfo']}
+    assert dt['start'] == 2000 and dt['length'] == 2000
+    assert len(dt['columns']) == 11
+    assert dt['columns'][0]['orderable'] is False and dt['columns'][10]['orderable'] is False
+    assert dt['columns'][1]['orderable'] is True
+    filtro = {item['name']: item['value'] for item in body['filtro']}
+    assert filtro['formulario:ultimaVersionCuadrado'] == 'true'
+    assert filtro['javax.faces.ViewState'] == 'e1s1'
+    assert filtro['formulario:acordeonPrincipal:tabOpcionesAvanzadas:vinculacionWrapper:vinculacion'] == '000'
+    assert body['tipoBuscador'] == 'buscadorEspecialidades'
+    assert body['enSEDE'] is True and body['enAltaIF'] is False
+
+
+# --- build_sepe_data / validació ---
+
+def test_build_with_default_min_rows_raises():
+    with pytest.raises(sepe.SepeDataError):
+        sepe.build_sepe_data(FakeSession())
+
+
+def test_build_with_patched_min_rows(monkeypatch):
+    monkeypatch.setattr(sepe, 'MIN_ROWS', 2)
+    got = sepe.build_sepe_data(FakeSession())
+    assert [r['codi'] for r in got] == ['ADGA12DCP', 'ADGD0073', 'FCOE001PO']
+
+
+def _rows(n: int) -> list:
+    return [{'codi': f'AAAA{i:04d}', 'idSepe': i} for i in range(n)]
+
+
+def test_write_too_few_rows_keeps_previous(tmp_path):
+    path = tmp_path / 'sepe_especs.json'
+    path.write_bytes(b'[{"codi": "OLD"}]')
+    with pytest.raises(sepe.SepeDataError):
+        sepe.write_sepe_data(_rows(10), str(tmp_path))
+    assert path.read_bytes() == b'[{"codi": "OLD"}]'
+    assert os.listdir(tmp_path) == ['sepe_especs.json']
+
+
+def test_write_duplicate_codi_keeps_previous(tmp_path, monkeypatch):
+    monkeypatch.setattr(sepe, 'MIN_ROWS', 2)
+    path = tmp_path / 'sepe_especs.json'
+    path.write_bytes(b'[{"codi": "OLD"}]')
+    rows = _rows(3) + [{'codi': 'AAAA0001', 'idSepe': 99}]
+    with pytest.raises(sepe.SepeDataError, match='AAAA0001'):
+        sepe.write_sepe_data(rows, str(tmp_path))
+    assert path.read_bytes() == b'[{"codi": "OLD"}]'
+
+
+def test_write_ok_valid_json_and_no_temp_files(tmp_path, monkeypatch):
+    monkeypatch.setattr(sepe, 'MIN_ROWS', 2)
+    rows = [dict(r, titol_es='AUXILIAR ÑÓ') for r in _rows(3)]
+    sepe.write_sepe_data(rows, str(tmp_path))
+    assert os.listdir(tmp_path) == ['sepe_especs.json']
+    text = (tmp_path / 'sepe_especs.json').read_text(encoding='utf-8')
+    assert 'AUXILIAR ÑÓ' in text  # ensure_ascii=False
+    assert json.loads(text) == rows
