@@ -5,10 +5,10 @@ current_phase: 2
 current_phase_name: PDF Scrapers (Grados A, B, C)
 status: verifying
 stopped_at: Phase 7 complete, ready to verify Phase 2
-last_updated: "2026-11-04T20:47:32.820Z"
-last_activity: 2026-11-04
+last_updated: "2026-11-08T19:44:38.648Z"
+last_activity: 2026-11-05
 last_activity_desc: Phase 7 complete, transitioned to Phase 2
-state_head: 83843f1391a803dd7dc97b0859e904b21e10b95d
+state_head: 7d46fee0c023167b4ff18e512fb7be3deccc4652
 progress:
   total_phases: 7
   completed_phases: 5
@@ -32,7 +32,7 @@ See: .planning/PROJECT.md (updated 2026-04-16)
 Phase: 2 — PDF Scrapers (Grados A, B, C)
 Plan: 3
 Status: Phase complete — ready for verification
-Last activity: 2026-11-05 - Completed quick task 261105-e3j: Link Grado C pages to the accredited centres search
+Last activity: 2026-11-08 - Completed quick task 261108-say: Pla 081: scraper catàleg SEPE + enriquiment FPO
 
 Progress: [███████░░░] 71% (Fases 01, 02, 03, 04, 05 completades; 06 pendent)
 
@@ -124,6 +124,7 @@ None yet.
 | fast | Translate centres panel search placeholder (inside x-if) | 2026-11-04 | 6bfd3d8 | — | — |
 | 16 | Centres integration follow-ups: dead code, safeHttpUrl, topbar Centres on all pages | 2026-11-04 | 83843f1 | — | — |
 | 261105-e3j | Link Grado C pages to the accredited centres search | 2026-11-05 | 4871115 | — | [261105-e3j-link-grado-c-pages-to-accredited-centres](./quick/261105-e3j-link-grado-c-pages-to-accredited-centres/) |
+| 261108-say | Pla 081: scraper catàleg SEPE + enriquiment FPO | 2026-11-08 | 7d46fee | — | [261108-say-pla-081-scraper-cat-leg-sepe-enriquiment](./quick/261108-say-pla-081-scraper-cat-leg-sepe-enriquiment/) |
 
 ### Blockers/Concerns
 

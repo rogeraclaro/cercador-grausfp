@@ -50,6 +50,11 @@ La primera vegada, `--discover` triga ~20 min; després va de la memòria cau.
 - **Tests:** `test_refs_api.py` i `test_grau_page.py` no aïllen `C_MODULOS_PATH` (passen igualment).
   `test_ce_acces_falla_conserva_fitxer_anterior` falla des d'abans del 078.
 
+### Catàleg d'Especialitats Formatives del SEPE (plans 081–082, TODO)
+- 081: scraper + `sepe_especs.json` + enriquiment de l'FPO (badges Grado C / Formació en el treball / Pròpia SOC).
+- 082: pàgina a part `cataleg-especialitats.html` + proxy del PDF del programa. Depèn de 081 f1–2.
+- Clau: el catàleg és formació en el treball (RD 438/2024 art. 24), no Grados A–E; els CP ja no hi són.
+
 ### Fora del git a la carpeta arrel (no pujat; cal decidir-ho)
 - `grausfp-launch/`: projecte de vídeo (128 MB, amb `.env` propi). No s'ha pujat perquè té un `.env` i
   pesa molt.
