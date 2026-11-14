@@ -653,6 +653,8 @@
       'login.link.register': "Sense compte? Registra't",
       'login.msg.verified': 'Compte verificat correctament. Ja pots entrar.',
       'login.err.default': 'Error en iniciar sessió.',
+      'login.resend.btn': 'Reenvia\'m el correu de verificació',
+      'login.resend.ok': 'Si el compte està pendent de verificar, t\'hem enviat un correu nou. L\'enllaç caduca en 24 hores.',
       'login.err.network': 'Error de connexió. Torna-ho a intentar.',
 
       /* ── register.html ── */
@@ -1386,6 +1388,8 @@
       'login.link.register': '¿Sin cuenta? Regístrate',
       'login.msg.verified': 'Cuenta verificada correctamente. Ya puedes entrar.',
       'login.err.default': 'Error al iniciar sesión.',
+      'login.resend.btn': 'Reenvíame el correo de verificación',
+      'login.resend.ok': 'Si la cuenta está pendiente de verificar, te hemos enviado un correo nuevo. El enlace caduca en 24 horas.',
       'login.err.network': 'Error de conexión. Inténtalo de nuevo.',
 
       /* ── register.html ── */

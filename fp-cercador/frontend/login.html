@@ -137,6 +137,22 @@
       color: var(--dark);
     }
 
+    /* Botó amb aspecte d'enllaç (reenviament de la verificació) */
+    .link-btn {
+      background: none;
+      border: 0;
+      padding: 8px 4px;
+      font: inherit;
+      color: var(--dark);
+      text-decoration: underline;
+      cursor: pointer;
+    }
+
+    .link-btn:disabled {
+      opacity: .6;
+      cursor: default;
+    }
+
     /* ── Lang selector ── */
     .lang-selector {
       display: flex;
@@ -186,7 +202,7 @@
       background: var(--border);
     }
   </style>
-  <script src="i18n.js?v=20261114a"></script>
+  <script src="i18n.js?v=20261114b"></script>
   <script defer src="https://analytics.masellas.info/script.js" data-exclude-search="true" data-exclude-hash="true" data-website-id="ddb6c664-550b-4e2d-848f-796a676e4036"></script>
 </head>
 
@@ -206,6 +222,9 @@
   <div class="auth-page">
     <h1 data-i18n="login.h1">Inicia sessió</h1>
     <p id="msg" class="msg" role="status" hidden></p>
+    <p id="resend-row" class="auth-links" hidden>
+      <button type="button" id="btn-resend" class="link-btn" data-i18n="login.resend.btn">Reenvia'm el correu de verificació</button>
+    </p>
 
     <a id="btn-google" href="/api/auth/google" class="google-btn">
       <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -251,6 +270,28 @@
     const msgEl = document.getElementById('msg');
     const btn = document.getElementById('btn-submit');
 
+    const resendRow = document.getElementById('resend-row');
+    const resendBtn = document.getElementById('btn-resend');
+
+    // Compte sense verificar: l'enllaç del correu caduca en 24 h i es pot tornar a demanar.
+    resendBtn.addEventListener('click', async () => {
+      resendBtn.disabled = true;
+      try {
+        const res = await fetch(API_BASE + '/api/auth/resend-verification', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: document.getElementById('email').value.trim() })
+        });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        showMsg(t('login.resend.ok'), 'ok');
+        resendRow.hidden = true;
+      } catch (_) {
+        showMsg(t('login.err.network'), 'error');
+      } finally {
+        resendBtn.disabled = false;
+      }
+    });
+
     function showMsg(text, type) {
       msgEl.textContent = text;
       msgEl.className = 'msg msg--' + type;
@@ -284,6 +325,7 @@
           window.location.href = nextPage || (data.user && data.user.is_admin ? 'admin.html' : 'index.html');
         } else {
           showMsg(data.error || t('login.err.default'), 'error');
+          resendRow.hidden = data.code !== 'unverified';
           btn.disabled = false;
           btn.textContent = t('login.btn.submit');
         }

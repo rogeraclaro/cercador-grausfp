@@ -2439,6 +2439,7 @@ def _get_session_user(req):
 _AUTH_EMAIL_IP_LIMIT = 20
 _AUTH_EMAIL_IP_WINDOW = 3600
 _AUTH_RESET_COOLDOWN_MINUTES = 15   # un sol email de reset per compte i finestra
+_AUTH_VERIFY_RESEND_COOLDOWN_MINUTES = 2  # curt: qui el demana sol acabar-se de registrar
 
 # En memòria, com _feedback_hits: gunicorn corre amb 1 worker.
 _auth_rate_hits: dict = {}
@@ -2500,6 +2501,59 @@ def auth_register():
     return jsonify({"message": "Compte creat. Revisa el teu email per verificar-lo."}), 201
 
 
+@app.route("/api/auth/resend-verification", methods=["POST"])
+def auth_resend_verification():
+    """Torna a enviar el correu de verificació d'un compte encara no verificat.
+
+    Sense això, un compte amb l'enllaç caducat (24 h) o el correu perdut quedava
+    bloquejat: registre 409 i login 403. La resposta no revela si el compte existeix.
+    """
+    import secrets as _secrets
+    import db as _db
+    from datetime import datetime, timezone, timedelta
+    response = jsonify({"message": "Si el compte està pendent de verificar, rebràs un correu."})
+    data = request.get_json(silent=True)
+    email = data.get("email") if isinstance(data, dict) else None
+    if not isinstance(email, str) or not email.strip():
+        return response, 200
+    email = email.strip().lower()
+    if not _auth_rate_ok("resend_verification", _client_ip(request)):
+        return jsonify({"error": "Massa intents. Torna-ho a provar més tard."}), 429
+    token = None
+    conn = _db.get_db()
+    try:
+        user = _db.query_one(
+            conn,
+            "SELECT id FROM users WHERE email = ? AND verified = 0 "
+            "AND deleted_at IS NULL AND is_active = 1",
+            (email,),
+        )
+        recent = user and _db.query_one(
+            conn,
+            "SELECT 1 FROM tokens WHERE user_id = ? AND type = 'email_verify' "
+            "AND created_at > datetime('now', ?)",
+            (user["id"], f"-{_AUTH_VERIFY_RESEND_COOLDOWN_MINUTES} minutes"),
+        )
+        if user and not recent:
+            token = _secrets.token_hex(32)
+            expires = (datetime.now(timezone.utc) + timedelta(hours=24)).strftime("%Y-%m-%d %H:%M:%S")
+            conn.execute("DELETE FROM tokens WHERE user_id = ? AND type = 'email_verify'", (user["id"],))
+            conn.execute(
+                "INSERT INTO tokens (user_id, token, type, expires_at) VALUES (?, ?, 'email_verify', ?)",
+                (user["id"], token, expires),
+            )
+            conn.commit()
+    finally:
+        conn.close()
+    if token:
+        try:
+            import email_service
+            email_service.send_verification_email(email, token, BASE_URL)
+        except Exception as exc:
+            logger.error("Error reenviant email de verificació: %s", exc)
+    return response, 200
+
+
 @app.route("/api/auth/verify", methods=["GET"])
 def auth_verify():
     import db as _db
@@ -2558,7 +2612,8 @@ def auth_login():
         if not ok:
             return jsonify({"error": "Email o contrasenya incorrectes"}), 401
         if not user["verified"]:
-            return jsonify({"error": "Compte no verificat. Revisa el teu email."}), 403
+            # "code" permet al login oferir el reenviament del correu de verificació.
+            return jsonify({"error": "Compte no verificat. Revisa el teu email.", "code": "unverified"}), 403
         session_token = _secrets.token_hex(32)
         expires = (datetime.now(timezone.utc) + timedelta(days=30)).strftime("%Y-%m-%d %H:%M:%S")
         conn.execute(

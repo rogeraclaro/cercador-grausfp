@@ -398,3 +398,51 @@ def test_reset_password_revoca_sessions_i_altres_tokens(client):
         assert reuse.status_code == 400
 
     assert client.get("/api/auth/me").status_code == 401
+
+
+# ---------------------------------------------------------------------------
+# Reenviament de la verificació
+# ---------------------------------------------------------------------------
+
+def _resend(client, email="user@test.com"):
+    return client.post("/api/auth/resend-verification", data=json.dumps({"email": email}),
+                       content_type="application/json")
+
+
+def _expire_verify_tokens():
+    conn = db.get_db()
+    conn.execute("UPDATE tokens SET created_at = '2000-01-01 00:00:00', expires_at = '2000-01-02 00:00:00' "
+                 "WHERE type = 'email_verify'")
+    conn.commit()
+    conn.close()
+
+
+def test_login_no_verificat_indica_que_es_pot_reenviar(client):
+    _register(client)
+    resp = _login(client)
+    assert resp.status_code == 403
+    assert resp.get_json()["code"] == "unverified"
+
+
+def test_reenviament_dona_un_enllac_nou_que_verifica_el_compte(client):
+    _register(client)
+    _expire_verify_tokens()
+    with patch("email_service.send_verification_email") as send:
+        resp = _resend(client)
+    assert resp.status_code == 200
+    assert send.call_count == 1
+    token = send.call_args[0][1]
+    assert client.get(f"/api/auth/verify?token={token}").status_code == 302
+    assert _login(client).status_code == 200
+
+
+def test_reenviament_no_revela_res_ni_envia_si_no_toca(client):
+    _register(client)                       # token acabat de crear: dins del marge de 2 minuts
+    _register(client, email="ok@test.com")
+    _verify_user("ok@test.com")
+    with patch("email_service.send_verification_email") as send:
+        responses = [_resend(client), _resend(client, "ok@test.com"), _resend(client, "ningu@test.com"),
+                     client.post("/api/auth/resend-verification", data="[1]", content_type="application/json")]
+    assert send.call_count == 0
+    assert {r.status_code for r in responses} == {200}
+    assert len({json.dumps(r.get_json(), sort_keys=True) for r in responses}) == 1

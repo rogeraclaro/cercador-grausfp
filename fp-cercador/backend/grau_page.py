@@ -18,7 +18,7 @@ import json
 from urllib.parse import quote
 
 # Versions dels recursos compartits: les mateixes que a les subpàgines (fonts.html).
-I18N_VERSION = '20261114a'
+I18N_VERSION = '20261114b'
 SITE_CSS_VERSION = '4'
 FOOTER_VERSION = '2'
 FEEDBACK_VERSION = '3'
