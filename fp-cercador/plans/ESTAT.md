@@ -1,7 +1,7 @@
 # Estat del projecte — per reprendre des d'un altre ordinador
 
-Última actualització: 2026-11-14. Producció: https://grausfp.es (VPS `contabo`); la branca
-`fix/audit-261114` (auditoria, vegeu més avall) **no és desplegada**.
+Última actualització: 2026-11-14. Producció: https://grausfp.es (VPS `contabo`) a `982503b`
+(auditoria i pla 081 desplegats el 2026-11-14; `sepe_especs.json` copiat des de local).
 
 ## Com reprendre
 
@@ -53,8 +53,8 @@ La primera vegada, `--discover` triga ~20 min; després va de la memòria cau.
 - **Tests:** `test_refs_api.py` i `test_grau_page.py` no aïllen `C_MODULOS_PATH` (passen igualment).
   `test_ce_acces_falla_conserva_fitxer_anterior` falla des d'abans del 078.
 
-### Auditoria 2026-11-14 (branca `fix/audit-261114`, pendent de revisar i desplegar)
-- Correccions aplicades i llista del que queda: `.planning/quick/261114-ekq-*/261114-ekq-SUMMARY.md`.
+### Auditoria 2026-11-14 (desplegada)
+- Correccions aplicades i llista del que queda per decidir: `.planning/quick/261114-ekq-*/261114-ekq-SUMMARY.md`.
 
 ### Catàleg d'Especialitats Formatives del SEPE (plans 081–082)
 - 081: **fet** (commits f0a99b0, a54b18c, 7d46fee): scraper + `sepe_especs.json` + badges i filtre a l'FPO.
