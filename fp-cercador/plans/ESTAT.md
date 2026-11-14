@@ -1,6 +1,6 @@
 # Estat del projecte — per reprendre des d'un altre ordinador
 
-Última actualització: 2026-11-14. Producció: https://grausfp.es (VPS `contabo`) a `d2b2469`
+Última actualització: 2026-11-14. Producció: https://grausfp.es (VPS `contabo`) a `8b4418a`
 (auditoria en dues passades i pla 081 desplegats el 2026-11-14; `sepe_especs.json` copiat des de local).
 
 ## Com reprendre
@@ -56,14 +56,13 @@ La primera vegada, `--discover` triga ~20 min; després va de la memòria cau.
 ### Auditoria 2026-11-14 (desplegada)
 - Correccions aplicades i llista del que queda per decidir: `.planning/quick/261114-ekq-*/261114-ekq-SUMMARY.md`.
 
-### Pla 083 «Què em falta?» — fet el 2026-11-14, **sense desplegar**
-- Codi a `master` local (no pujat): `backend/gap.py`, `POST /api/que-em-falta`, `GET/PUT /api/held`,
-  migració `013_user_held.sql`, `frontend/que-em-falta.html`, `frontend/held.js`, botó «Ja el tinc» al
-  cercador i a l'itinerari, enllaç a la barra i al peu. 623 tests verds.
-- **En desplegar:** cal reiniciar el backend (migració 013 i rutes noves) i, amb l'aprovació del propietari,
-  afegir `que-em-falta` a l'expressió regular de pàgines del vhost d'nginx (bloc `?lang=es`, línia ~80:
-  `^/(index|itinerari|per-que-grausfp|fonts|observatori|historial)\.html$`). Sense aquest canvi la pàgina
-  funciona igual; només les metadades `og:*` en castellà en compartir-la queden en català.
+### Pla 083 «Què em falta?» — fet i desplegat el 2026-11-14 (prod `8b4418a`)
+- `backend/gap.py`, `POST /api/que-em-falta`, `GET/PUT /api/held`, migració `013_user_held.sql`,
+  `frontend/que-em-falta.html`, `frontend/held.js`, botó «Ja el tinc» al cercador i a l'itinerari, enllaç a
+  la barra i al peu. 624 tests verds.
+- Vhost d'nginx: `que-em-falta` afegit a mà a l'expressió regular de pàgines del bloc `?lang=es` (línia 80).
+  Còpia d'abans a `/root/grausfp.masellas.info.conf.bak-20261114`. Si CloudPanel regenera el vhost, cal
+  tornar-lo a afegir.
 - Decisions preses en executar (revisables):
   - Un cicle D que ja es té també cobreix els Graus B dels seus mòduls (el pla només ho deia per als C).
   - Noms de mòdul que canvien amb el nivell («Inglés profesional» 0156/0179, «Maquillaje»…) només casen
