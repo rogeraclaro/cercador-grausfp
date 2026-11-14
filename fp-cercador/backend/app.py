@@ -55,6 +55,7 @@ from flask import Flask, jsonify, redirect, request
 from flask_cors import CORS
 
 import cd_lomloe
+import gap
 import fpo_ext
 import feed
 import og_page
@@ -266,7 +267,7 @@ def _set_auth_cors(response):
         response.headers["Access-Control-Allow-Origin"] = origin
         response.headers["Access-Control-Allow-Credentials"] = "true"
         response.headers["Access-Control-Allow-Headers"] = "Content-Type"
-        response.headers["Access-Control-Allow-Methods"] = "GET, POST, PATCH, DELETE, OPTIONS"
+        response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, PATCH, DELETE, OPTIONS"
         response.headers["Vary"] = "Origin"
     return response
 
@@ -275,7 +276,8 @@ def _needs_auth_cors(path):
     return (path.startswith("/api/auth/") or path.startswith("/api/favorites")
             or path.startswith("/api/fpo/favorites")
             or path.startswith("/api/alerts") or path.startswith("/api/centres-watch")
-            or path.startswith("/api/feedback") or path.startswith("/api/admin/feedback"))
+            or path.startswith("/api/feedback") or path.startswith("/api/admin/feedback")
+            or path.startswith("/api/held"))
 
 
 @app.before_request
@@ -2892,6 +2894,92 @@ def auth_reset_password():
 # ---------------------------------------------------------------------------
 # Favorits — /api/favorites
 # ---------------------------------------------------------------------------
+
+
+# ---------------------------------------------------------------------------
+# Pla 083 — «Què em falta?»: graus que ja té l'usuari i objectius a prop
+# ---------------------------------------------------------------------------
+
+_GAP_MAX_REFS = 50
+_GAP_MAX_REF_LEN = 200
+_ciclos_fp_cache: dict = {"mtime": None, "index": None}
+
+
+def _get_ciclos_fp() -> dict:
+    """{codi_C_LOE: [{denominacion, familia, ficha_url}]} de ciclos_fp.json; {} si no hi és."""
+    try:
+        mtime = os.path.getmtime(CICLOS_PATH)
+    except OSError:
+        return {}
+    if _ciclos_fp_cache["mtime"] != mtime or _ciclos_fp_cache["index"] is None:
+        _ciclos_fp_cache.update(mtime=mtime, index=_load_json_dict(CICLOS_PATH) or {})
+    return _ciclos_fp_cache["index"]
+
+
+def _parse_held_refs(req) -> list | None:
+    """La llista `refs` del cos, sense repetits; None si no compleix els límits."""
+    data = req.get_json(silent=True)
+    refs = data.get("refs") if isinstance(data, dict) else None
+    if not isinstance(refs, list) or len(refs) > _GAP_MAX_REFS:
+        return None
+    if any(not isinstance(r, str) or not 0 < len(r) <= _GAP_MAX_REF_LEN for r in refs):
+        return None
+    return list(dict.fromkeys(refs))
+
+
+@app.route("/api/que-em-falta", methods=["POST"])
+def que_em_falta():
+    """Body: {refs: [...]} amb els graus B, C i D que la persona ja té. Pública."""
+    refs = _parse_held_refs(request)
+    if refs is None:
+        return jsonify({"error": f"refs ha de ser una llista de fins a {_GAP_MAX_REFS} referències"}), 400
+    catalog = _get_catalog()
+    if not catalog:
+        return jsonify({"error": "Data not available. Run /api/admin/refresh first."}), 503
+    return jsonify(gap.compute_gap(refs, catalog["records"], _get_bc_lomloe(), _get_c_modulos(),
+                                   _get_d_modulos(), _get_ciclos_fp())), 200
+
+
+@app.route("/api/held", methods=["GET"])
+def held_get():
+    """Graus que l'usuari autenticat ha marcat com a «ja el tinc»."""
+    import db as _db
+    user_id = _get_session_user(request)
+    if not user_id:
+        return jsonify({"error": "No autenticat"}), 401
+    conn = _db.get_db()
+    try:
+        rows = _db.query_all(
+            conn, "SELECT oferta_ref FROM user_held WHERE user_id = ? ORDER BY rowid", (user_id,))
+        return jsonify({"refs": [row["oferta_ref"] for row in rows]}), 200
+    finally:
+        conn.close()
+
+
+@app.route("/api/held", methods=["PUT"])
+def held_put():
+    """Substitueix la llista sencera. Només es desen graus B, C i D del catàleg vigent."""
+    import db as _db
+    user_id = _get_session_user(request)
+    if not user_id:
+        return jsonify({"error": "No autenticat"}), 401
+    refs = _parse_held_refs(request)
+    if refs is None:
+        return jsonify({"error": f"refs ha de ser una llista de fins a {_GAP_MAX_REFS} referències"}), 400
+    catalog = _get_catalog()
+    if not catalog:
+        return jsonify({"error": "Data not available. Run /api/admin/refresh first."}), 503
+    by_ref = catalog["by_ref"]
+    refs = [r for r in refs if by_ref.get(r, {}).get("grado") in ("B", "C", "D")]
+    conn = _db.get_db()
+    try:
+        conn.execute("DELETE FROM user_held WHERE user_id = ?", (user_id,))
+        conn.executemany("INSERT INTO user_held (user_id, oferta_ref) VALUES (?, ?)",
+                         [(user_id, r) for r in refs])
+        conn.commit()
+        return jsonify({"refs": refs}), 200
+    finally:
+        conn.close()
 
 
 def _get_or_create_favorites_list(conn, user_id):
