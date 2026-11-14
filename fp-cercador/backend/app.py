@@ -277,7 +277,7 @@ def _needs_auth_cors(path):
             or path.startswith("/api/fpo/favorites")
             or path.startswith("/api/alerts") or path.startswith("/api/centres-watch")
             or path.startswith("/api/feedback") or path.startswith("/api/admin/feedback")
-            or path.startswith("/api/held"))
+            or path.startswith("/api/held") or path.startswith("/api/lists"))
 
 
 @app.before_request
@@ -2468,6 +2468,14 @@ def _auth_rate_ok(bucket: str, ip: str) -> bool:
         return True
 
 
+def _auth_rate_blocked(bucket: str, ip: str) -> bool:
+    """Diu si `ip` ja ha gastat el límit de `bucket`, sense registrar cap petició."""
+    now = time.time()
+    with _auth_rate_lock:
+        recent = [t for t in _auth_rate_hits.get((bucket, ip), []) if now - t < _AUTH_EMAIL_IP_WINDOW]
+    return len(recent) >= _AUTH_EMAIL_IP_LIMIT
+
+
 @app.route("/api/auth/register", methods=["POST"])
 def auth_register():
     import secrets as _secrets
@@ -3159,6 +3167,333 @@ def favorites_remove_centre(key, centre_id):
         )
         conn.commit()
         return "", 204
+    finally:
+        conn.close()
+
+
+# ---------------------------------------------------------------------------
+# Llistes compartibles — /api/lists i /api/llista/<token>  (Pla 084)
+# ---------------------------------------------------------------------------
+
+_LISTS_MAX_PER_USER = 20
+_LISTS_MAX_ITEMS = 30
+_LISTS_NAME_MAX = 80
+_LISTS_MESSAGE_MAX = 500
+_LISTS_NOTES_MAX = 300
+_LISTS_INVALID = object()   # sentinella: None és un valor vàlid (camp buit)
+
+
+def _lists_text(value, max_len):
+    """Text opcional retallat: None si és buit, _LISTS_INVALID si no és text o és massa llarg."""
+    if value is None:
+        return None
+    if not isinstance(value, str):
+        return _LISTS_INVALID
+    value = value.strip()
+    return _LISTS_INVALID if len(value) > max_len else (value or None)
+
+
+def _lists_fields(data, required=()):
+    """Valida `name` i `message` del cos. Torna {camp: valor} dels presents, o None si no és vàlid."""
+    if not isinstance(data, dict):
+        return None
+    fields = {}
+    for key, max_len in (("name", _LISTS_NAME_MAX), ("message", _LISTS_MESSAGE_MAX)):
+        if key not in data:
+            if key in required:
+                return None
+            continue
+        value = _lists_text(data[key], max_len)
+        if value is _LISTS_INVALID or (key == "name" and value is None):
+            return None
+        fields[key] = value
+    return fields
+
+
+def _lists_owned(conn, user_id, list_id):
+    """La llista compartible `list_id` si és de l'usuari; None si no (mai la de favorits)."""
+    import db as _db
+    return _db.query_one(
+        conn,
+        "SELECT id, name, message, share_token, updated_at FROM lists "
+        "WHERE id = ? AND user_id = ? AND kind = 'shared'",
+        (list_id, user_id),
+    )
+
+
+def _lists_touch(conn, list_id):
+    conn.execute("UPDATE lists SET updated_at = datetime('now') WHERE id = ?", (list_id,))
+
+
+def _lists_items(conn, list_id):
+    """Graus de la llista amb les dades vigents del catàleg; els que ja no hi són, `disponible: false`."""
+    import db as _db
+    by_ref = (_get_catalog() or {}).get("by_ref", {})
+    try:
+        centres = _get_effective_oferta_centres()
+    except (OSError, ValueError):
+        centres = {}
+    items = []
+    for row in _db.query_all(
+            conn, "SELECT oferta_ref, notes FROM list_items WHERE list_id = ? ORDER BY id", (list_id,)):
+        rec = by_ref.get(row["oferta_ref"]) or {}
+        items.append({
+            "ref": row["oferta_ref"],
+            "notes": row["notes"],
+            "disponible": bool(rec),
+            **{k: rec.get(k) for k in ("grado", "codigo", "denominacion", "familia", "nivel")},
+            "n_centres": len(centres.get(row["oferta_ref"], [])) if rec else 0,
+        })
+    return items
+
+
+def _lists_session():
+    """(user_id, None) amb sessió; (None, resposta 401) sense."""
+    user_id = _get_session_user(request)
+    if not user_id:
+        return None, (jsonify({"error": "No autenticat"}), 401)
+    return user_id, None
+
+
+_LISTS_NOT_FOUND = ({"error": "Llista no trobada"}, 404)
+
+
+@app.route("/api/lists", methods=["GET"])
+def lists_index():
+    """Les llistes compartibles de l'usuari (la de favorits no hi surt)."""
+    import db as _db
+    user_id, err = _lists_session()
+    if err:
+        return err
+    conn = _db.get_db()
+    try:
+        rows = _db.query_all(
+            conn,
+            "SELECT l.id, l.name, l.message, l.share_token, l.updated_at, "
+            "(SELECT COUNT(*) FROM list_items i WHERE i.list_id = l.id) AS n_items "
+            "FROM lists l WHERE l.user_id = ? AND l.kind = 'shared' ORDER BY l.updated_at DESC, l.id DESC",
+            (user_id,),
+        )
+        return jsonify([{
+            "id": r["id"], "name": r["name"], "message": r["message"], "n_items": r["n_items"],
+            "shared": r["share_token"] is not None, "updated_at": r["updated_at"],
+        } for r in rows]), 200
+    finally:
+        conn.close()
+
+
+@app.route("/api/lists", methods=["POST"])
+def lists_create():
+    """Crea una llista. Cos: {name, message?}."""
+    import db as _db
+    user_id, err = _lists_session()
+    if err:
+        return err
+    fields = _lists_fields(request.get_json(silent=True), required=("name",))
+    if fields is None:
+        return jsonify({"error": f"name és obligatori (fins a {_LISTS_NAME_MAX} caràcters)"}), 400
+    conn = _db.get_db()
+    try:
+        n = conn.execute("SELECT COUNT(*) FROM lists WHERE user_id = ? AND kind = 'shared'",
+                         (user_id,)).fetchone()[0]
+        if n >= _LISTS_MAX_PER_USER:
+            return jsonify({"error": f"Límit de {_LISTS_MAX_PER_USER} llistes"}), 429
+        cur = conn.execute(
+            "INSERT INTO lists (user_id, name, message, kind, updated_at) "
+            "VALUES (?, ?, ?, 'shared', datetime('now'))",
+            (user_id, fields["name"], fields.get("message")),
+        )
+        conn.commit()
+        return jsonify({"id": cur.lastrowid, "name": fields["name"], "message": fields.get("message")}), 201
+    finally:
+        conn.close()
+
+
+@app.route("/api/lists/<int:list_id>", methods=["GET"])
+def lists_get(list_id):
+    """La llista sencera, amb els graus i, si està compartida, el seu token."""
+    import db as _db
+    user_id, err = _lists_session()
+    if err:
+        return err
+    conn = _db.get_db()
+    try:
+        row = _lists_owned(conn, user_id, list_id)
+        if not row:
+            return _LISTS_NOT_FOUND
+        return jsonify({
+            "id": row["id"], "name": row["name"], "message": row["message"],
+            "share_token": row["share_token"], "updated_at": row["updated_at"],
+            "items": _lists_items(conn, list_id),
+        }), 200
+    finally:
+        conn.close()
+
+
+@app.route("/api/lists/<int:list_id>", methods=["PATCH"])
+def lists_update(list_id):
+    """Canvia `name` i/o `message`."""
+    import db as _db
+    user_id, err = _lists_session()
+    if err:
+        return err
+    fields = _lists_fields(request.get_json(silent=True))
+    if not fields:
+        return jsonify({"error": "cal name i/o message vàlids"}), 400
+    conn = _db.get_db()
+    try:
+        if not _lists_owned(conn, user_id, list_id):
+            return _LISTS_NOT_FOUND
+        for column, value in fields.items():   # `column` només pot ser name o message
+            conn.execute(f"UPDATE lists SET {column} = ? WHERE id = ?", (value, list_id))
+        _lists_touch(conn, list_id)
+        conn.commit()
+        return jsonify({"status": "updated", **fields}), 200
+    finally:
+        conn.close()
+
+
+@app.route("/api/lists/<int:list_id>", methods=["DELETE"])
+def lists_delete(list_id):
+    """Esborra la llista (els seus graus cauen per ON DELETE CASCADE)."""
+    import db as _db
+    user_id, err = _lists_session()
+    if err:
+        return err
+    conn = _db.get_db()
+    try:
+        if not _lists_owned(conn, user_id, list_id):
+            return _LISTS_NOT_FOUND
+        conn.execute("DELETE FROM lists WHERE id = ?", (list_id,))
+        conn.commit()
+        return "", 204
+    finally:
+        conn.close()
+
+
+@app.route("/api/lists/<int:list_id>/items/<ref>", methods=["PUT"])
+def lists_put_item(list_id, ref):
+    """Afegeix el grau a la llista o en canvia la nota. Cos opcional: {notes?}."""
+    import db as _db
+    user_id, err = _lists_session()
+    if err:
+        return err
+    data = request.get_json(silent=True) if request.get_data() else {}
+    notes = _lists_text(data.get("notes"), _LISTS_NOTES_MAX) if isinstance(data, dict) else _LISTS_INVALID
+    if notes is _LISTS_INVALID:
+        return jsonify({"error": f"notes ha de ser text de fins a {_LISTS_NOTES_MAX} caràcters"}), 400
+    conn = _db.get_db()
+    try:
+        if not _lists_owned(conn, user_id, list_id):
+            return _LISTS_NOT_FOUND
+        rec = _resolve_oferta(ref=ref)
+        if not rec:
+            return jsonify({"error": "Grau desconegut"}), 400
+        existing = _db.query_one(
+            conn, "SELECT id FROM list_items WHERE list_id = ? AND oferta_ref = ?", (list_id, ref))
+        if existing:
+            if "notes" in data:
+                conn.execute("UPDATE list_items SET notes = ? WHERE id = ?", (notes, existing["id"]))
+                _lists_touch(conn, list_id)
+                conn.commit()
+            return jsonify({"status": "updated", "ref": ref}), 200
+        n = conn.execute("SELECT COUNT(*) FROM list_items WHERE list_id = ?", (list_id,)).fetchone()[0]
+        if n >= _LISTS_MAX_ITEMS:
+            return jsonify({"error": f"Límit de {_LISTS_MAX_ITEMS} graus per llista"}), 429
+        conn.execute(
+            "INSERT INTO list_items (list_id, oferta_id, oferta_codigo, oferta_ref, notes) VALUES (?, ?, ?, ?, ?)",
+            (list_id, rec["id"], rec.get("codigo"), ref, notes),
+        )
+        _lists_touch(conn, list_id)
+        conn.commit()
+        return jsonify({"status": "added", "ref": ref}), 201
+    finally:
+        conn.close()
+
+
+@app.route("/api/lists/<int:list_id>/items/<ref>", methods=["DELETE"])
+def lists_delete_item(list_id, ref):
+    """Treu el grau de la llista (també si ja no és al catàleg)."""
+    import db as _db
+    user_id, err = _lists_session()
+    if err:
+        return err
+    conn = _db.get_db()
+    try:
+        if not _lists_owned(conn, user_id, list_id):
+            return _LISTS_NOT_FOUND
+        conn.execute("DELETE FROM list_items WHERE list_id = ? AND oferta_ref = ?", (list_id, ref))
+        _lists_touch(conn, list_id)
+        conn.commit()
+        return "", 204
+    finally:
+        conn.close()
+
+
+@app.route("/api/lists/<int:list_id>/share", methods=["POST"])
+def lists_share(list_id):
+    """Activa l'enllaç públic. Si ja n'hi havia un, en fa un de nou i l'antic deixa de funcionar."""
+    import secrets as _secrets
+    import db as _db
+    user_id, err = _lists_session()
+    if err:
+        return err
+    conn = _db.get_db()
+    try:
+        if not _lists_owned(conn, user_id, list_id):
+            return _LISTS_NOT_FOUND
+        token = _secrets.token_urlsafe(24)
+        conn.execute("UPDATE lists SET share_token = ? WHERE id = ?", (token, list_id))
+        conn.commit()
+        return jsonify({"share_token": token}), 200
+    finally:
+        conn.close()
+
+
+@app.route("/api/lists/<int:list_id>/share", methods=["DELETE"])
+def lists_unshare(list_id):
+    """Revoca l'enllaç públic."""
+    import db as _db
+    user_id, err = _lists_session()
+    if err:
+        return err
+    conn = _db.get_db()
+    try:
+        if not _lists_owned(conn, user_id, list_id):
+            return _LISTS_NOT_FOUND
+        conn.execute("UPDATE lists SET share_token = NULL WHERE id = ?", (list_id,))
+        conn.commit()
+        return "", 204
+    finally:
+        conn.close()
+
+
+@app.route("/api/llista/<token>", methods=["GET"])
+def shared_list_public(token):
+    """
+    Vista pública, només lectura, d'una llista compartida. No porta cap dada de l'autor.
+    Només els tokens inexistents gasten el límit per IP: una classe sencera darrere la
+    IP d'una escola ha de poder obrir el mateix enllaç, i qui prova tokens queda aturat.
+    """
+    import db as _db
+    ip = _client_ip(request)
+
+    def _reply(body, status):
+        response = jsonify(body)
+        response.headers["X-Robots-Tag"] = "noindex"
+        return response, status
+
+    if _auth_rate_blocked("shared_list", ip):
+        return _reply({"error": "Massa peticions"}, 429)
+    conn = _db.get_db()
+    try:
+        row = _db.query_one(
+            conn, "SELECT id, name, message FROM lists WHERE share_token = ? AND kind = 'shared'", (token,))
+        if not row:
+            _auth_rate_ok("shared_list", ip)
+            return _reply({"error": "Llista no trobada"}, 404)
+        return _reply({"name": row["name"], "message": row["message"],
+                       "items": _lists_items(conn, row["id"])}, 200)
     finally:
         conn.close()
 
