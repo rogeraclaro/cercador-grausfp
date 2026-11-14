@@ -57,3 +57,16 @@ def test_scheduled_refresh_exposa_warnings_no_fatals():
     with mock.patch("scheduler_service.pipeline.run", return_value=result):
         scheduler_service._scheduled_refresh()
     assert refresh_state.get_state()["warnings"] == result["warnings"]
+
+
+def test_scheduled_refresh_sends_brevo_news_and_alerts_like_the_manual_one(monkeypatch):
+    """Abans només el refresc manual enviava la campanya de Brevo i passava BASE_URL."""
+    monkeypatch.setenv("BASE_URL", "https://base.example")
+    monkeypatch.setenv("SITE_URL", "https://site.example/")
+    with mock.patch("scheduler_service.pipeline.run", return_value=RESULT), \
+         mock.patch("notifier.notify_if_new") as notify, \
+         mock.patch("alerts_service.dispatch_alerts") as dispatch:
+        scheduler_service._scheduled_refresh()
+    notify.assert_called_once_with("https://site.example")
+    dispatch.assert_called_once_with(RESULT, base_url="https://base.example")
+    assert not refresh_state._lock.locked()

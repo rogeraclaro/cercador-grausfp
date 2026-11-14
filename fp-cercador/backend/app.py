@@ -63,7 +63,6 @@ import history
 import itinerary
 import itinerary_graph
 import centres_inherit
-import notifier
 import oferta_ref
 import refresh_state
 import scheduler_service
@@ -633,39 +632,8 @@ def admin_refresh():
         phase=None,
     )
 
-    def _run():
-        try:
-            result = pipeline.run(on_progress=lambda phase: refresh_state.set_state(phase=phase))
-            refresh_state.set_state(
-                status="done",
-                total=result["total"],
-                by_grado=result["by_grado"],
-                duration_seconds=result["duration_seconds"],
-                errors=result["errors"],
-                warnings=result.get("warnings", []),
-                phase=None,
-            )
-            try:
-                history.append(result)
-            except Exception as exc_h:
-                logger.error("Could not write refresh history: %s", exc_h)
-            try:
-                notifier.notify_if_new(SITE_URL)
-            except Exception as exc_n:
-                logger.error("Could not send Brevo notification: %s", exc_n)
-            try:
-                import alerts_service
-                alerts_service.dispatch_alerts(result, base_url=BASE_URL)
-            except Exception as exc_a:
-                logger.error("Could not dispatch alerts: %s", exc_a)
-        except Exception as exc:
-            logger.error("Pipeline refresh failed: %s", exc)
-            refresh_state.set_state(status="error", errors=[str(exc)], phase=None)
-        finally:
-            refresh_state._lock.release()
-
     try:
-        t = threading.Thread(target=_run, daemon=True)
+        t = threading.Thread(target=scheduler_service.run_refresh_job, daemon=True)
         t.start()
         logger.info("admin_refresh: thread started ident=%s", t.ident)
     except Exception as exc:

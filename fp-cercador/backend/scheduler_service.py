@@ -108,12 +108,19 @@ def _run_ocupaciones_job() -> None:
         logger.error("monthly_ocupaciones: error: %s", exc)
 
 
-def _scheduled_refresh() -> None:
-    """Funció invocada per APScheduler. Reutilitza el mateix lock que admin_refresh."""
-    acquired = refresh_state._lock.acquire(blocking=False)
-    if not acquired:
-        logger.info("scheduled_refresh: refresh ja en curs, omès")
-        return
+def run_refresh_job() -> None:
+    """
+    Refresc complet: pipeline + historial + novetats de Brevo + alertes + heartbeat.
+
+    L'únic camí per al refresc programat i per al manual del panell d'admin, perquè
+    facin exactament el mateix. Qui el crida ja té refresh_state._lock; aquí s'allibera.
+    """
+    import alerts_service
+    import notifier
+
+    # Mateixos valors per defecte que app.py (no es pot importar: seria circular).
+    base_url = os.environ.get("BASE_URL", "http://localhost:5001")
+    site_url = os.environ.get("SITE_URL", "https://grausfp.es").rstrip("/")
     refresh_state.set_state(
         status="running",
         last_run=datetime.now(timezone.utc).isoformat(),
@@ -122,9 +129,10 @@ def _scheduled_refresh() -> None:
         duration_seconds=None,
         errors=[],
         warnings=[],
+        phase=None,
     )
     try:
-        result = pipeline.run()
+        result = pipeline.run(on_progress=lambda phase: refresh_state.set_state(phase=phase))
         refresh_state.set_state(
             status="done",
             total=result["total"],
@@ -132,23 +140,36 @@ def _scheduled_refresh() -> None:
             duration_seconds=result["duration_seconds"],
             errors=result["errors"],
             warnings=result.get("warnings", []),
+            phase=None,
         )
+        # El heartbeat va abans dels correus: un SMTP lent no ha de fer saltar l'alarma.
+        heartbeat.report_refresh(result)
         try:
             history.append(result)
         except Exception as exc_h:
             logger.error("Could not write refresh history: %s", exc_h)
         try:
-            import alerts_service
-            alerts_service.dispatch_alerts(result)
+            notifier.notify_if_new(site_url)
+        except Exception as exc_n:
+            logger.error("Could not send Brevo notification: %s", exc_n)
+        try:
+            alerts_service.dispatch_alerts(result, base_url=base_url)
         except Exception as exc_a:
             logger.error("Could not dispatch alerts: %s", exc_a)
-        heartbeat.report_refresh(result)
     except Exception as exc:
-        logger.error("scheduled_refresh failed: %s", exc)
-        refresh_state.set_state(status="error", errors=[str(exc)])
+        logger.error("refresh failed: %s", exc)
+        refresh_state.set_state(status="error", errors=[str(exc)], phase=None)
         heartbeat.report_refresh(None, error=str(exc))
     finally:
         refresh_state._lock.release()
+
+
+def _scheduled_refresh() -> None:
+    """Funció invocada per APScheduler. Reutilitza el mateix lock que admin_refresh."""
+    if not refresh_state._lock.acquire(blocking=False):
+        logger.info("scheduled_refresh: refresh ja en curs, omès")
+        return
+    run_refresh_job()
 
 
 def apply_config(cfg: dict) -> None:
