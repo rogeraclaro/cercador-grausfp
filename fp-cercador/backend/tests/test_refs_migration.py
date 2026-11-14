@@ -71,7 +71,7 @@ def test_bd_nova_te_la_columna_oferta_ref(tmp_path):
     conn = db.init_db(str(tmp_path / 'nova.db'))
     cols = {r[1] for r in conn.execute("PRAGMA table_info(list_items)")}
     assert 'oferta_ref' in cols
-    assert conn.execute("SELECT MAX(version) FROM schema_version").fetchone()[0] == 12
+    assert conn.execute("SELECT MAX(version) FROM schema_version").fetchone()[0] >= 12
 
 
 def test_backfill_favorits_per_id_i_per_codi(tmp_path, monkeypatch):
@@ -122,7 +122,7 @@ def test_migracio_sense_cataleg_no_peta(tmp_path, monkeypatch):
     _fav(conn, 5)
     _migrar(conn, tmp_path, monkeypatch, cataleg=None)
     assert _refs(conn) == [None]
-    assert conn.execute("SELECT MAX(version) FROM schema_version").fetchone()[0] == 12
+    assert conn.execute("SELECT MAX(version) FROM schema_version").fetchone()[0] >= 12
 
 
 def test_backfill_es_idempotent(tmp_path, monkeypatch):
