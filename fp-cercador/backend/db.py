@@ -170,11 +170,13 @@ def query_observatory(conn, limit: int = 200):
     """Retorna les darreres `limit` files d'observatory_snapshots, ordre cronològic."""
     return conn.execute(
         """
-        SELECT ts, total, total_a, total_b, total_c, total_d, total_e,
-               n_altes, n_baixes, families_amb_altes
-        FROM observatory_snapshots
-        ORDER BY ts ASC
-        LIMIT ?
+        SELECT * FROM (
+            SELECT ts, total, total_a, total_b, total_c, total_d, total_e,
+                   n_altes, n_baixes, families_amb_altes
+            FROM observatory_snapshots
+            ORDER BY ts DESC
+            LIMIT ?
+        ) ORDER BY ts ASC
         """,
         (limit,),
     ).fetchall()

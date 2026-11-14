@@ -9,7 +9,6 @@ import json
 import logging
 import os
 import tempfile
-import threading
 from datetime import datetime, timezone
 from typing import Optional
 

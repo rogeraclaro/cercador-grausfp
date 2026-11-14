@@ -128,11 +128,17 @@ def _get_or_create_unsubscribe_token(conn, alert_id: int, user_id: int) -> str:
     row = _db.query_one(
         conn,
         "SELECT token FROM tokens WHERE user_id = ? AND type = 'alert_unsubscribe' "
-        "AND substr(token, 1, ?) = ?",
+        "AND substr(token, 1, ?) = ? AND expires_at > datetime('now')",
         (user_id, len(prefix), prefix),
     )
     if row:
         return row["token"].split("_", 2)[2]  # extreu el token real
+    # Caducat (o inexistent): l'endpoint de baixa el rebutjaria; se'n fa un de nou.
+    conn.execute(
+        "DELETE FROM tokens WHERE user_id = ? AND type = 'alert_unsubscribe' "
+        "AND substr(token, 1, ?) = ?",
+        (user_id, len(prefix), prefix),
+    )
 
     raw_token = secrets.token_hex(32)
     stored_token = f"alert_{alert_id}_{raw_token}"
@@ -186,7 +192,11 @@ def dispatch_alerts(result: dict, base_url: str = "https://grausfp.es") -> int:
                 logger.warning("alerts_service: filter_json invàlid per alert id=%s", alert["id"])
                 continue
 
-            matched = match_alert(filter_dict, changes)
+            try:
+                matched = match_alert(filter_dict, changes)
+            except Exception as exc:
+                logger.warning("alerts_service: filtre no avaluable per alert id=%s: %s", alert["id"], exc)
+                continue
 
             # Afegir baixes si l'usuari les vol
             if filter_dict.get("alertar_baixes"):

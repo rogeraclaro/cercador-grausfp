@@ -338,9 +338,7 @@ def run(on_progress=None) -> dict:
             from scrapers.certificados_scraper import build_ciclos_index
             ciclos_index = build_ciclos_index(cert_data, all_records=all_records)
             ciclos_path = os.path.join(os.path.dirname(DATA_PATH), 'ciclos_fp.json')
-            with open(ciclos_path, 'w', encoding='utf-8') as f:
-                import json as _json
-                _json.dump(ciclos_index, f, ensure_ascii=False)
+            _write_atomic(ciclos_index, ciclos_path)
             logger.info("pipeline: ciclos_fp.json escrit (%d entrades)", len(ciclos_index))
         except Exception as exc:
             logger.warning("pipeline: build_ciclos_index ha fallat (no fatal): %s", exc)

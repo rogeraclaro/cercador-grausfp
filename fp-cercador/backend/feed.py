@@ -5,7 +5,6 @@ Llegeix l'historial existent (history.HISTORY_PATH) i retorna només
 les entrades amb canvis reals (has_changes == True).
 """
 import html
-import json
 
 from history import HISTORY_PATH, _load_json
 

@@ -137,8 +137,17 @@ _centres_index: dict | None = None
 _oferta_centres: dict | None = None
 
 
-def _load_centres_data():
+def _load_centres_data(force: bool = False):
+    """force=True rellegeix els fitxers; cada global es reassigna d'un sol cop,
+    de manera que una petició concurrent no troba mai None a mig recarregar."""
     global _centres_index, _oferta_centres
+    if force:
+        with open(_CENTRES_PATH, encoding="utf-8") as f:
+            centres_index = {c["id"]: c for c in json.load(f)}
+        with open(_OFERTA_CENTRES_PATH, encoding="utf-8") as f:
+            oferta_centres = json.load(f)
+        _centres_index, _oferta_centres = centres_index, oferta_centres
+        return
     if _centres_index is None:
         with open(_CENTRES_PATH, encoding="utf-8") as f:
             centres_list = json.load(f)
@@ -990,7 +999,6 @@ def admin_refresh_centres():
                                   centres_nous=None, centres_eliminats=None)
 
     def _run():
-        global _centres_index, _oferta_centres
         _start_time = time.time()
 
         def _on_progress(phase, current, total, unique_centres):
@@ -1007,10 +1015,8 @@ def admin_refresh_centres():
 
             build_centres_data(on_progress=_on_progress)
             # Recarrega la cache en memòria perquè les noves dades siguin visibles
-            _centres_index = None
-            _oferta_centres = None
+            _load_centres_data(force=True)
             _effective_oc_cache.update(key=None, data=None)
-            _load_centres_data()
 
             ids_despres = _all_linked_centre_ids(_oferta_centres)
             centres_nous = ids_despres - ids_abans
@@ -1936,7 +1942,9 @@ def api_ocupaciones():
              "ocupaciones": ["Soldadores por TIG", ...]}, ...]}
     """
     q = request.args.get('q', '')
-    tokens = [t for t in _norm_ocup(q).split() if len(t) >= 2]
+    q = q[:200]
+    # Cada token compila regex i recorre tot l'índex: se'n limita el nombre.
+    tokens = [t for t in _norm_ocup(q).split() if len(t) >= 2][:8]
     if not tokens:
         return jsonify({'query': q, 'n': 0, 'resultados': []})
 
@@ -2734,7 +2742,6 @@ def auth_google_callback():
 
         conn.commit()
         uid      = user["id"]
-        is_admin = bool(user["is_admin"])
 
         # Crea sessió (idèntic al login normal)
         session_token = _secrets.token_hex(32)
@@ -3295,6 +3302,13 @@ def alerts_create():
         return jsonify({"error": "L'alerta ha de tenir almenys un criteri (grado, familia, nivel o texto)"}), 400
     if filter_dict.get("grado") and filter_dict["grado"] not in VALID_GRADOS:
         return jsonify({"error": "grado ha de ser A, B, C, D o E"}), 400
+    for key in ("familia", "texto"):
+        value = filter_dict.get(key)
+        if value is not None and (not isinstance(value, str) or len(value) > 200):
+            return jsonify({"error": f"{key} ha de ser un text de 200 caràcters com a màxim"}), 400
+    nivel = filter_dict.get("nivel")
+    if nivel is not None and nivel != "" and not str(nivel).isdigit():
+        return jsonify({"error": "nivel ha de ser un número"}), 400
     conn = _db.get_db()
     try:
         count = _db.query_one(

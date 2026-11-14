@@ -99,7 +99,7 @@ def _fetch(session: requests.Session, params: dict, timeout: int = 60) -> list:
             if attempt == 2:
                 raise
             time.sleep(5)
-    return []
+    raise requests.RequestException('429 persistent: consulta abandonada després de 3 intents')
 
 
 # ── parse ────────────────────────────────────────────────────────────────────
@@ -305,10 +305,21 @@ def scrape_centres(on_progress=None) -> tuple[dict, dict]:
 def _save(centres_by_id: dict, oferta_centres: dict):
     os.makedirs(_DATA_DIR, exist_ok=True)
     centres_list = sorted(centres_by_id.values(), key=lambda c: c['id'])
-    with open(_CENTRES_PATH, 'w', encoding='utf-8') as f:
-        json.dump(centres_list, f, ensure_ascii=False, indent=2)
-    with open(_OFERTA_CENTRES_PATH, 'w', encoding='utf-8') as f:
-        json.dump(oferta_centres, f, ensure_ascii=False, indent=2)
+    # Escriptura atòmica: l'app llegeix aquests fitxers mentre el scraper corre.
+    for path, payload in ((_CENTRES_PATH, centres_list), (_OFERTA_CENTRES_PATH, oferta_centres)):
+        tmp_path = path + '.tmp'
+        with open(tmp_path, 'w', encoding='utf-8') as f:
+            json.dump(payload, f, ensure_ascii=False, indent=2)
+        os.replace(tmp_path, path)
+
+
+def _load_previous_url_web() -> dict:
+    """url_web per id del centres.json actual: el registre no la porta i ve de l'enricher."""
+    try:
+        with open(_CENTRES_PATH, encoding='utf-8') as f:
+            return {c['id']: c['url_web'] for c in json.load(f) if c.get('url_web')}
+    except (OSError, ValueError, KeyError, TypeError):
+        return {}
 
 
 # ── entry point ──────────────────────────────────────────────────────────────
@@ -318,7 +329,13 @@ def build_centres_data(on_progress=None):
         level=logging.INFO,
         format='%(asctime)s %(levelname)s %(message)s',
     )
+    # Abans de raspar: els desats parcials de scrape_centres sobreescriuen el fitxer.
+    previous_url_web = _load_previous_url_web()
     centres_by_id, oferta_centres = scrape_centres(on_progress=on_progress)
+    for centre_id, url_web in previous_url_web.items():
+        centre = centres_by_id.get(centre_id)
+        if centre is not None and not centre.get('url_web'):
+            centre['url_web'] = url_web
     _save(centres_by_id, oferta_centres)
 
     total_c = len(centres_by_id)

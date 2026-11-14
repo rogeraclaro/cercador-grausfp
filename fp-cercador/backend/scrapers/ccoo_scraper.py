@@ -65,7 +65,7 @@ def parse_page(html: str) -> dict:
     m = re.search(r'Inici:\s*(\S+).*?Fi:\s*(\S+)', dates)
     if m:
         ini, fi = _iso(m[1]), _iso(m[2])
-    hm = re.search(r'[\d.,]+', meta('duration'))
+    hm = re.search(r'\d+(?:[.,]\d+)?', meta('duration'))
     h1 = soup.select_one('h1')
     desc = soup.select_one('.fpp-single-product-tab-information-wrapper')
     return {
