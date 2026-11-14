@@ -94,6 +94,9 @@ amb quins prerequisits i quins passos manuals calen al servidor.
 | 078 | C LOMLOE: mostrar tots els mòduls del certificat (ara s'amaguen els que no tenen Grau B: PRL 1782, 1786…; 14/15 C afectats) + `c_modulos.json`; C→D opció A \| P1 | M | 057, 058 DONE | DONE |
 | 079 | C LOMLOE: completar amb el BOE els 11 mòduls que 10 fitxes todofp ometen (constant a l'API, nota amb enllaç al RD) \| P2 | S | 078 DONE | DONE |
 | 080 | Auditar contra el BOE els 32 C LOMLOE sense decret (RD individuals; descoberta via sumari diari del BOE) \| P2 | M | 079 DONE | DONE |
+| 081 | Catàleg d'Especialitats Formatives del SEPE: dades + enriquiment de l'FPO | P2 | M | 059–061 DONE | DONE |
+| 082 | Catàleg estatal d'especialitats: pàgina a part | P3 | M | 081 | TODO |
+| 083 | «Què em falta?»: de què tens a què pots arribar (B, C, D) | P1 | L | 058, 076, 078 DONE | TODO |
 
 Valors de Status: `TODO` | `IN PROGRESS` | `DONE` | `BLOCKED (motiu en una línia)` | `REJECTED (motiu en una línia)`
 
