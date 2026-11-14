@@ -149,3 +149,19 @@ def test_mateix_nom_en_nivells_diferents_no_es_confon():
              '3': {'modulos': [{'num': None, 'name': 'Inglés profesional (GS)'}]}}
     assert [o['ref'] for o in compute_gap(['C_GM'], records, {}, c_mod, d_mod)['objectius']] == ['d~gm']
     assert [o['ref'] for o in compute_gap(['d~gs'], records, {}, c_mod, d_mod)['objectius']] == ['d~gs2']
+
+
+def test_la_nota_de_la_fitxa_no_es_un_modul_i_l_optatiu_no_casa_entre_cicles():
+    nota = 'Incluye una fase de formación en empresa u organismo equiparado como parte integrada del currículo'
+    optatiu = 'Módulo profesional optativo (competencia de cada Comunidad Autónoma)'
+    records = [_rec('D', 'd~1', 'Cicle 1', id=1), _rec('D', 'd~2', 'Cicle 2', id=2),
+               _rec('D', 'd~3', 'Cicle 3', id=3)]
+    d_mod = {'1': {'modulos': [{'num': None, 'name': 'Contabilidad'}, {'num': None, 'name': optatiu},
+                               {'num': None, 'name': nota}]},
+             '2': {'modulos': [{'num': None, 'name': 'Contabilidad'}, {'num': None, 'name': optatiu},
+                               {'num': None, 'name': nota + '*'}]},
+             '3': {'modulos': [{'num': None, 'name': 'Un altre mòdul'}, {'num': None, 'name': optatiu},
+                               {'num': None, 'name': nota}]}}
+    objectius = compute_gap(['d~1'], records, {}, {}, d_mod)['objectius']
+    assert [(o['ref'], o['tens'], o['total']) for o in objectius] == [('d~2', 1, 2)]
+    assert objectius[0]['falta'] == [{'tipus': 'modul', 'nom': optatiu}]

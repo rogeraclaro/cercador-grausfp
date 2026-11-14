@@ -9,6 +9,10 @@ de mòduls dels D no porten número, el creuament també va per nom normalitzat.
 from cd_lomloe import _B_NUM_RE, _is_prl, normalize_module_name
 
 _HELD_GRADOS = ('B', 'C', 'D')
+# Les fitxes dels cicles llisten com a mòdul una nota que no ho és (184 de 195 cicles).
+_NOTE_PREFIX = 'incluye una fase de formacion en empresa'
+# Cada cicle té el seu mòdul optatiu: compta al total, però no casa amb el d'un altre cicle.
+_OPTATIVE_PREFIX = 'modulo profesional optativo'
 
 
 def compute_gap(held_refs, records, bc_lomloe, c_modulos, d_modulos, ciclos_fp=None,
@@ -32,7 +36,9 @@ def compute_gap(held_refs, records, bc_lomloe, c_modulos, d_modulos, ciclos_fp=N
     d_mods = {}
     for r in records:
         if r.get('grado') == 'D':
-            d_mods[r['ref']] = (d_modulos.get(str(r.get('id'))) or {}).get('modulos', [])
+            d_mods[r['ref']] = [
+                mod for mod in (d_modulos.get(str(r.get('id'))) or {}).get('modulos', [])
+                if not normalize_module_name(mod.get('name') or '').startswith(_NOTE_PREFIX)]
             for mod in d_mods[r['ref']]:
                 _learn(mod.get('num'), mod.get('name'), r.get('nivel'))
     for code, r in b_by_code.items():
@@ -48,6 +54,8 @@ def compute_gap(held_refs, records, bc_lomloe, c_modulos, d_modulos, ciclos_fp=N
         """Claus amb què un mòdul casa amb un altre: el número i el nom normalitzat."""
         out = {('num', num)} if num else set()
         norm = normalize_module_name(name or '')
+        if norm.startswith(_OPTATIVE_PREFIX):
+            return out
         if norm in ambiguous:
             out.add(('nom', norm, num_level.get(num) or nivel))
         elif norm:
