@@ -30,7 +30,7 @@
   }
 
   async function logout() {
-    await fetch(API_BASE + '/api/auth/logout', { method: 'POST', credentials: 'include' });
+    await fetch(API_BASE + '/api/auth/logout', { method: 'POST', credentials: 'include' }).catch(function () { });
     window.location.reload();
   }
 
@@ -38,16 +38,24 @@
     return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
   }
 
-  function showVerifiedToast() {
-    var params = new URLSearchParams(window.location.search);
-    if (params.get('verified') !== '1') return;
-    history.replaceState(null, '', window.location.pathname);
+  // Avisos de tornada del backend: /?verified=1, /?unsubscribed=1, /?google_error=<codi>.
+  function showRedirectToast() {
+    var url = new URL(window.location.href);
+    var params = url.searchParams;
+    var key = params.get('verified') === '1' ? 'auth.verified.toast'
+      : params.get('unsubscribed') === '1' ? 'auth.unsubscribed.toast'
+      : params.get('google_error') ? 'auth.google_error.toast' : null;
+    if (!key) return;
+    var isError = key === 'auth.google_error.toast';
+    ['verified', 'unsubscribed', 'google_error'].forEach(function (k) { params.delete(k); });
+    history.replaceState(null, '', url);
     var toast = document.createElement('div');
-    toast.textContent = t('auth.verified.toast');
+    toast.setAttribute('role', isError ? 'alert' : 'status');
+    toast.textContent = t(key);
     Object.assign(toast.style, {
       position: 'fixed', top: '24px', left: '50%',
       transform: 'translateX(-50%)',
-      background: '#2e7d32', color: '#fff',
+      background: isError ? '#b3261e' : '#2e7d32', color: '#fff',
       padding: '12px 24px', borderRadius: '8px',
       fontSize: '15px', fontWeight: '500',
       boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
@@ -62,5 +70,5 @@
     }, 5000);
   }
 
-  document.addEventListener('DOMContentLoaded', function () { initAuth(); showVerifiedToast(); });
+  document.addEventListener('DOMContentLoaded', function () { initAuth(); showRedirectToast(); });
 })();

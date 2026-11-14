@@ -18,7 +18,7 @@ import json
 from urllib.parse import quote
 
 # Versions dels recursos compartits: les mateixes que a les subpàgines (fonts.html).
-I18N_VERSION = '20261108a'
+I18N_VERSION = '20261114a'
 SITE_CSS_VERSION = '4'
 FOOTER_VERSION = '2'
 FEEDBACK_VERSION = '3'
@@ -246,7 +246,7 @@ def _shell(*, title: str, description: str, canonical: str | None, body: str,
   <style>{_CSS}  </style>
   {head_extra}
   <script src="/i18n.js?v={I18N_VERSION}"></script>
-  <script src="/auth.js"></script>
+  <script src="/auth.js?v={I18N_VERSION}"></script>
 </head>
 
 <body>

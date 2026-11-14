@@ -186,7 +186,7 @@
       background: var(--border);
     }
   </style>
-  <script src="i18n.js?v=20261108a"></script>
+  <script src="i18n.js?v=20261114a"></script>
   <script defer src="https://analytics.masellas.info/script.js" data-exclude-search="true" data-exclude-hash="true" data-website-id="ddb6c664-550b-4e2d-848f-796a676e4036"></script>
 </head>
 
@@ -278,7 +278,10 @@
         });
         const data = await res.json();
         if (res.ok) {
-          window.location.href = data.user && data.user.is_admin ? 'admin.html' : 'index.html';
+          // Només pàgines pròpies del mateix directori: res d'URLs externes.
+          const next = new URLSearchParams(location.search).get('next') || '';
+          const nextPage = /^[a-z][a-z-]*\.html$/.test(next) ? next : null;
+          window.location.href = nextPage || (data.user && data.user.is_admin ? 'admin.html' : 'index.html');
         } else {
           showMsg(data.error || t('login.err.default'), 'error');
           btn.disabled = false;

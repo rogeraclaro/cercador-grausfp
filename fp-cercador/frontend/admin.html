@@ -527,7 +527,7 @@
         if (res.status === 401) { setSchedStatus('Token incorrecte.', 'error'); return; }
         if (res.status === 400) {
           const err = await res.json().catch(() => ({}));
-          setSchedStatus('Config invàlida: ' + (err.error || ''), 'error'); return;
+          setSchedStatus('Config invàlida: ' + escapeHtml(err.error || ''), 'error'); return;
         }
         if (!res.ok) { setSchedStatus('Error inesperat (HTTP ' + res.status + ')', 'error'); return; }
         const cfg = await res.json();
@@ -685,7 +685,7 @@
           method: 'POST', credentials: 'include',
         });
         if (res.status === 401) { setFpoStatus('Token incorrecte.', 'error'); fpoBtn.disabled = false; return; }
-        if (res.status === 409) { setFpoStatus('Ja hi ha una actualització en curs.', 'error'); return; }
+        if (res.status === 409) { setFpoStatus('Ja hi ha una actualització en curs.', 'error'); fpoBtn.disabled = false; return; }
         if (!res.ok) { setFpoStatus('Error inesperat (HTTP ' + res.status + ')', 'error'); fpoBtn.disabled = false; return; }
         pollFpoOnce();
         fpoPollTimer = setInterval(pollFpoOnce, 2000);

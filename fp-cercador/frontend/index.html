@@ -2133,8 +2133,8 @@
     }
   </style>
 
-  <script src="i18n.js?v=20261108a"></script>
-  <script src="auth.js"></script>
+  <script src="i18n.js?v=20261114a"></script>
+  <script src="auth.js?v=20261114a"></script>
   <script>
     const API_BASE = window.location.hostname === 'localhost'
       ? 'http://localhost:5001'
@@ -2209,6 +2209,7 @@
         centresData: {},
         centresCCAA: {},
         centresLoading: {},
+        centresError: {},
         centresSearch: {},
         selectedCentres: {},
 
@@ -2449,6 +2450,12 @@
               .catch(() => { });
             // Enllaç del perfil: ?ref=… obre els centres d'aquell grau (antic: ?oferta=<id>).
             const linkParams = new URLSearchParams(location.search);
+            const queryParam = (linkParams.get('q') || '').slice(0, 200);
+            if (queryParam) {
+              this.search = queryParam;
+              if (/^[A-E]$/.test(linkParams.get('grado') || '')) this.filterGrado = linkParams.get('grado');
+              this.resetPage();
+            }
             if (!linkParams.get('grado') && (linkParams.get('ref') || linkParams.get('oferta'))) {
               this.openOfertaFromLink(linkParams.get('ref'), linkParams.get('oferta'));
             }
@@ -2535,7 +2542,7 @@
           }
           // Llegir totes les entrades cada cop fa que Alpine en continuï seguint els canvis.
           const inputs = [this.allRecords, this.search, this.filterOld, this.filterGrado, this.filterFamilia,
-            this.filterNivel, this.filterFavs, this.favorites, this.sortCol, this.sortDir];
+            this.filterNivel, this.filterFavs, this.favorites, this.sortCol, this.sortDir, this.caEs];
           if (filteredMemo.inputs && sameInputs(filteredMemo.inputs, inputs)) return filteredMemo.result;
           const q = this.search.normalize('NFD')
             .replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
@@ -2740,11 +2747,17 @@
           this.centresVisible[row.id] = true;
           if (this.centresData[row.id]) return;
           this.centresLoading[row.id] = true;
+          this.centresError[row.id] = false;
           try {
             const resp = await fetch(this.centresUrl(row));
-            this.centresData[row.id] = await resp.json();
+            const centres = resp.ok ? await resp.json() : null;
+            if (!Array.isArray(centres)) throw new Error('centres unavailable');
+            this.centresData[row.id] = centres;
             this.centresCCAA[row.id] = '';
             this.centresSearch[row.id] = '';
+          } catch (e) {
+            // No es desa res: tornar a obrir el panell ho reintenta.
+            this.centresError[row.id] = true;
           } finally {
             this.centresLoading[row.id] = false;
           }
@@ -2805,23 +2818,22 @@
         async toggleFavorite(row) {
           if (!this.loggedIn) { this.showCentresModal(); return; }
           const ref = row.ref;
-          if (this.favorites.has(ref)) {
-            this.favorites.delete(ref);
+          const wasFavorite = this.favorites.has(ref);
+          const setFavorite = (on) => {
+            if (on) this.favorites.add(ref); else this.favorites.delete(ref);
             this.favorites = new Set(this.favorites);
-            fetch(API_BASE + '/api/favorites/' + encodeURIComponent(ref), { method: 'DELETE', credentials: 'include' }).catch(() => {
-              this.favorites.add(ref); this.favorites = new Set(this.favorites);
-            });
-          } else {
-            this.favorites.add(ref);
-            this.favorites = new Set(this.favorites);
-            fetch(API_BASE + '/api/favorites', {
+          };
+          setFavorite(!wasFavorite);
+          const request = wasFavorite
+            ? fetch(API_BASE + '/api/favorites/' + encodeURIComponent(ref), { method: 'DELETE', credentials: 'include' })
+            : fetch(API_BASE + '/api/favorites', {
               method: 'POST', credentials: 'include',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ ref })
-            }).catch(() => {
-              this.favorites.delete(ref); this.favorites = new Set(this.favorites);
             });
-          }
+          const saved = await request.then(res => res.ok, () => false);
+          if (!saved) setFavorite(wasFavorite);
+          return saved;
         },
 
         centresVisibles(row) {
@@ -2849,35 +2861,36 @@
           });
         },
 
-        toggleCentreSelect(row, centreId) {
+        async toggleCentreSelect(row, centreId) {
           const ref = row.ref;
-          const sel = new Set(this.selectedCentres[ref] || []);
-          const wasSelected = sel.has(centreId);
-          if (wasSelected) {
-            sel.delete(centreId);
-          } else {
-            sel.add(centreId);
-          }
-          this.selectedCentres = { ...this.selectedCentres, [ref]: sel };
+          const wasSelected = (this.selectedCentres[ref] || new Set()).has(centreId);
+          const setSelected = (on) => {
+            const sel = new Set(this.selectedCentres[ref] || []);
+            if (on) sel.add(centreId); else sel.delete(centreId);
+            this.selectedCentres = { ...this.selectedCentres, [ref]: sel };
+          };
+          setSelected(!wasSelected);
           if (!this.loggedIn) return;
 
           // Seleccionar un centre marca automàticament l'oferta com a favorit
           // si encara no ho era — no té sentit fer seguiment d'un centre
           // d'una oferta que no tens desada.
-          if (!wasSelected && !this.favorites.has(ref)) {
-            this.toggleFavorite(row);
+          // El favorit ha d'existir abans de desar-hi el centre (si no, 404).
+          if (!wasSelected && !this.favorites.has(ref) && !(await this.toggleFavorite(row))) {
+            setSelected(false);
+            return;
           }
 
-          if (wasSelected) {
-            fetch(API_BASE + '/api/favorites/' + encodeURIComponent(ref) + '/centres/' + encodeURIComponent(centreId),
-              { method: 'DELETE', credentials: 'include' }).catch(() => { });
-          } else {
-            fetch(API_BASE + '/api/favorites/' + encodeURIComponent(ref) + '/centres', {
+          const centresUrl = API_BASE + '/api/favorites/' + encodeURIComponent(ref) + '/centres';
+          const request = wasSelected
+            ? fetch(centresUrl + '/' + encodeURIComponent(centreId), { method: 'DELETE', credentials: 'include' })
+            : fetch(centresUrl, {
               method: 'POST', credentials: 'include',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ centre_id: centreId })
-            }).catch(() => { });
-          }
+            });
+          const saved = await request.then(res => res.ok, () => false);
+          if (!saved) setSelected(wasSelected);
         },
 
         centresSeleccionats(row) {
@@ -3083,6 +3096,7 @@
         // F8 — Mode toggle + cerca per ocupació
         setSearchMode(m) {
           this.searchMode = m;
+          this.currentPage = 1;
           if (m === 'ocupacio' && this.ocupQuery.trim()) this.runOcupSearch();
           if (m === 'fpo' && !this.fpoLoaded) this.fetchFpoEspecs();
         },
@@ -3111,6 +3125,7 @@
         async fetchFpoEspecs() {
           try {
             const r = await fetch(API_BASE + '/api/fpo/especialitats');
+            if (!r.ok) throw new Error('fpo unavailable');
             const data = await r.json();
             this.fpoEspecs = data.especialitats || [];
             this.fpoWarning = data.warning || null;
@@ -3340,22 +3355,25 @@
 
         setRepr(r) {
           this.reprOcup = r;
+          this.currentPage = 1;
           try { localStorage.setItem('reprOcup', r); } catch (e) { }
         },
 
         async runOcupSearch() {
           const q = this.ocupQuery.trim();
-          if (!q) { this.ocupResults = []; return; }
+          // Només compta l'última cerca: una resposta lenta d'una d'anterior es descarta.
+          const seq = this._ocupSeq = (this._ocupSeq || 0) + 1;
+          this.currentPage = 1;
+          if (!q) { this.ocupResults = []; this.ocupLoading = false; return; }
           this.ocupLoading = true;
+          let results = [];
           try {
             const r = await fetch(API_BASE + '/api/ocupaciones?q=' + encodeURIComponent(q));
-            const d = await r.json();
-            this.ocupResults = d.resultados || [];
-          } catch (e) {
-            this.ocupResults = [];
-          } finally {
-            this.ocupLoading = false;
-          }
+            if (r.ok) results = (await r.json()).resultados || [];
+          } catch (e) { }
+          if (seq !== this._ocupSeq) return;
+          this.ocupResults = results;
+          this.ocupLoading = false;
         },
 
         onOcupInput() {
@@ -4232,7 +4250,8 @@
                       </template>
                       <div x-show="centresLoading[row.id]" class="centres-loading" x-text="t('index.centres.loading')">
                       </div>
-                      <div x-show="!centresLoading[row.id]">
+                      <p x-show="centresError[row.id]" class="centres-buit" role="alert" x-text="t('index.a.error')"></p>
+                      <div x-show="!centresLoading[row.id] && !centresError[row.id]">
                         <!-- Centres seleccionats: sempre al capdamunt -->
                         <template x-for="centre in centresSeleccionats(row)" :key="'sel-'+centre.id">
                           <div class="centre-item">

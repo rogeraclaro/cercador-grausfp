@@ -84,6 +84,8 @@
 
       /* ── auth.js — toast ── */
       'auth.verified.toast': '✓ Compte verificat. Ja pots iniciar sessió.',
+      'auth.unsubscribed.toast': '✓ Baixa feta. No rebràs més correus d\'aquest avís.',
+      'auth.google_error.toast': 'No s\'ha pogut entrar amb Google. Torna-ho a provar.',
 
       /* ── index.html — hero ── */
       'index.hero.h1.line1': 'Formació',
@@ -615,6 +617,7 @@
       'alertes.col.state': 'Estat',
       'alertes.state.active': 'Activa',
       'alertes.state.inactive': 'Inactiva',
+      'alertes.filter.grau': 'Grau ',
       'alertes.filter.niv': 'Nivell ',
       'alertes.filter.text': 'Text: ',
       'alertes.filter.all': 'Tots els nous ensenyaments',
@@ -814,6 +817,8 @@
 
       /* ── auth.js — toast ── */
       'auth.verified.toast': '✓ Cuenta verificada. Ya puedes iniciar sesión.',
+      'auth.unsubscribed.toast': '✓ Baja realizada. No recibirás más correos de este aviso.',
+      'auth.google_error.toast': 'No se ha podido entrar con Google. Vuelve a intentarlo.',
 
       /* ── index.html — hero ── */
       'index.hero.h1.line1': 'Formación',
@@ -1345,6 +1350,7 @@
       'alertes.col.state': 'Estado',
       'alertes.state.active': 'Activa',
       'alertes.state.inactive': 'Inactiva',
+      'alertes.filter.grau': 'Grado ',
       'alertes.filter.niv': 'Nivel ',
       'alertes.filter.text': 'Texto: ',
       'alertes.filter.all': 'Todas las nuevas enseñanzas',

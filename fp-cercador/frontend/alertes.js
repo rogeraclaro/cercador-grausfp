@@ -12,10 +12,10 @@
 
   function buildFilterDescription(filter) {
     var parts = [];
-    if (filter.grado)           parts.push('Grado ' + filter.grado);
+    if (filter.grado)           parts.push(t('alertes.filter.grau') + filter.grado);
     if (filter.familia)         parts.push(filter.familia);
     if (filter.nivel != null)   parts.push(t('alertes.filter.niv') + filter.nivel);
-    if (filter.texto)           parts.push('Texto: «' + filter.texto + '»');
+    if (filter.texto)           parts.push(t('alertes.filter.text') + '«' + filter.texto + '»');
     return parts.length ? parts.join(' · ') : t('alertes.filter.all');
   }
 

@@ -450,8 +450,8 @@
       }
     }
   </style>
-  <script src="i18n.js?v=20261108a"></script>
-  <script src="auth.js"></script>
+  <script src="i18n.js?v=20261114a"></script>
+  <script src="auth.js?v=20261114a"></script>
   <script defer src="https://analytics.masellas.info/script.js" data-exclude-search="true" data-exclude-hash="true" data-website-id="ddb6c664-550b-4e2d-848f-796a676e4036"></script>
 </head>
 
@@ -567,7 +567,7 @@
         if (['A', 'B', 'C'].includes(row.grado) && row.ficha_id) {
           return API_BASE + '/api/ficha-redirect?grado=' + row.grado + '&codigo=' + encodeURIComponent(row.codigo);
         }
-        if (['D', 'E'].includes(row.grado) && row.ficha_url) return row.ficha_url;
+        if (['D', 'E'].includes(row.grado) && row.ficha_url) return safeHttpUrl(row.ficha_url);
         return null;
       }
 
@@ -579,6 +579,7 @@
             section.innerHTML = '<p class="empty-state">' + t('perfil.login.required') + '</p>';
             return;
           }
+          if (!favRes.ok) throw new Error('HTTP ' + favRes.status);
           var favs = await favRes.json();
           if (!favs.length) {
             section.innerHTML = '<p class="empty-state">' + t('perfil.favs.empty') + '</p>';
@@ -586,7 +587,9 @@
           }
 
           var ofertesRes = await fetch(API_BASE + '/api/ofertes');
-          var ofertes = ofertesRes.ok ? await ofertesRes.json() : [];
+          // Sense catàleg no es poden pintar: millor un error que «0 favorits».
+          if (!ofertesRes.ok) throw new Error('HTTP ' + ofertesRes.status);
+          var ofertes = await ofertesRes.json();
           // Pla 076: els favorits s'uneixen al catàleg per ref (els id canvien a cada refresc).
           var byRef = {};
           ofertes.forEach(function (r) { byRef[r.ref] = r; });

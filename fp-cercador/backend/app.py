@@ -255,7 +255,9 @@ def _ref_from_url_key(key: str) -> str | None:
 
 app = Flask(__name__)
 CORS(app)  # wildcard per a l'API pública
-_AUTH_ORIGINS = {"https://cercadorfp.com", "http://localhost:5001", "http://localhost:8080"}
+# localhost:8765 és el servidor estàtic de desenvolupament (plans/ESTAT.md).
+_AUTH_ORIGINS = {"https://grausfp.es", "https://cercadorfp.com", "http://localhost:5001",
+                 "http://localhost:8080", "http://localhost:8765"}
 
 
 def _set_auth_cors(response):
