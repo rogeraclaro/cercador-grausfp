@@ -2985,7 +2985,7 @@ def held_put():
 def _get_or_create_favorites_list(conn, user_id):
     """Retorna l'id de la llista 'Favorits' de l'usuari, creant-la si cal."""
     import db as _db
-    row = _db.query_one(conn, "SELECT id FROM lists WHERE user_id = ? LIMIT 1", (user_id,))
+    row = _db.query_one(conn, "SELECT id FROM lists WHERE user_id = ? AND kind = 'favorites' LIMIT 1", (user_id,))
     if row:
         return row["id"]
     conn.execute("INSERT INTO lists (user_id, name) VALUES (?, 'Favorits')", (user_id,))
@@ -3003,7 +3003,7 @@ def favorites_get():
         return jsonify({"error": "No autenticat"}), 401
     conn = _db.get_db()
     try:
-        list_id_row = _db.query_one(conn, "SELECT id FROM lists WHERE user_id = ? LIMIT 1", (user_id,))
+        list_id_row = _db.query_one(conn, "SELECT id FROM lists WHERE user_id = ? AND kind = 'favorites' LIMIT 1", (user_id,))
         if not list_id_row:
             return jsonify([]), 200
         items = _db.query_all(
@@ -3079,7 +3079,7 @@ def favorites_remove(key):
     ref = _ref_from_url_key(key)
     conn = _db.get_db()
     try:
-        list_id_row = _db.query_one(conn, "SELECT id FROM lists WHERE user_id = ? LIMIT 1", (user_id,))
+        list_id_row = _db.query_one(conn, "SELECT id FROM lists WHERE user_id = ? AND kind = 'favorites' LIMIT 1", (user_id,))
         if not list_id_row or not ref:
             return jsonify({"status": "not_found"}), 404
         conn.execute(
@@ -3103,7 +3103,7 @@ def _get_favorite_list_item(conn, user_id, key):
         conn,
         "SELECT list_items.id FROM list_items "
         "JOIN lists ON lists.id = list_items.list_id "
-        "WHERE lists.user_id = ? AND list_items.oferta_ref = ?",
+        "WHERE lists.user_id = ? AND lists.kind = 'favorites' AND list_items.oferta_ref = ?",
         (user_id, ref),
     )
 
