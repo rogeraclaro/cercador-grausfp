@@ -1,6 +1,6 @@
 # Estat del projecte — per reprendre des d'un altre ordinador
 
-Última actualització: 2026-11-14. Producció: https://grausfp.es (VPS `contabo`) a `8b4418a`
+Última actualització: 2026-11-14. Producció: https://grausfp.es (VPS `contabo`) a `d5cdca3`
 (auditoria en dues passades i pla 081 desplegats el 2026-11-14; `sepe_especs.json` copiat des de local).
 
 ## Com reprendre
@@ -75,14 +75,14 @@ La primera vegada, `--discover` triga ~20 min; després va de la memòria cau.
     (126.3); Itinerario personal I i II casen entre qualsevol oferta (126.5).
 - Sense verificar: «Tutoría» (grau bàsic) casa entre cicles pel nom; l'art. 126 no en diu res.
 
-### Pla 084 «Mode orientador: llistes compartibles» — fet el 2026-11-14, **sense desplegar**
+### Pla 084 «Mode orientador: llistes compartibles» — fet i desplegat el 2026-11-14
 - Commits `33f4f8a` (favorits a part, migració `014_shared_lists.sql`), `2355294` (API) i `79392a1` (pàgines).
 - `GET/POST /api/lists`, `GET/PATCH/DELETE /api/lists/<id>`, `PUT/DELETE /api/lists/<id>/items/<ref>`,
   `POST/DELETE /api/lists/<id>/share` i la pública `GET /api/llista/<token>`; `frontend/llistes.html`
   (editor), `frontend/llista.html?t=<token>` (vista de només lectura, impressió amb QR), botó «+ Llista» al
   cercador, enllaç al perfil, `frontend/vendor/qrcode-generator-2.0.4.js`. 668 tests verds.
-- Per desplegar: push, `git pull` i **reiniciar** `fp-cercador` (toca el backend i aplica la migració 014).
-  No cal tocar el vhost: les dues pàgines són `noindex` i no entren al sitemap ni al bloc `?lang=es`.
+- Desplegat amb la migració 014 aplicada; còpia de la BD d'abans a
+  `/root/fp_cercador.db.bak-20261114-pre084` (al VPS). No ha calgut tocar el vhost: les dues pàgines són `noindex` i no entren al sitemap ni al bloc `?lang=es`.
 - Decisions preses en executar (revisables):
   - **«+ Llista» és un botó propi** al costat de «Compartir», no una opció dins del seu menú: en pantalles
     tàctils «Compartir» obre el menú del sistema i el menú propi no surt mai, de manera que l'opció no s'hi
