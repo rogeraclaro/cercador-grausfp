@@ -1,7 +1,7 @@
 # Estat del projecte — per reprendre des d'un altre ordinador
 
-Última actualització: 2026-11-14. Producció: https://grausfp.es (VPS `contabo`) a `982503b`
-(auditoria i pla 081 desplegats el 2026-11-14; `sepe_especs.json` copiat des de local).
+Última actualització: 2026-11-14. Producció: https://grausfp.es (VPS `contabo`) a `d2b2469`
+(auditoria en dues passades i pla 081 desplegats el 2026-11-14; `sepe_especs.json` copiat des de local).
 
 ## Com reprendre
 
@@ -55,6 +55,16 @@ La primera vegada, `--discover` triga ~20 min; després va de la memòria cau.
 
 ### Auditoria 2026-11-14 (desplegada)
 - Correccions aplicades i llista del que queda per decidir: `.planning/quick/261114-ekq-*/261114-ekq-SUMMARY.md`.
+
+### Funcionalitats noves triades pel propietari el 2026-11-14 (plans 083–089, tots TODO)
+Un pla per sessió nova. Ordre de prioritat del propietari:
+- 083 «Què em falta?» · 084 mode orientador (llistes compartibles, QR) · 085 comparador ·
+  086 calendari FPO (agenda, `.ics`, alerta) · 088 pàgines de família enriquides ·
+  087 filtres a l'adreça i «Volies dir…» · 089 reporta un error a la fitxa.
+- 083–086 i 088 tenen el disseny validat pel propietari; a 087 i 089 les decisions tècniques
+  són del redactor i es poden revisar abans d'executar.
+- 083, 084, 086 i 089 afegeixen migracions: el número és «el següent lliure» en executar.
+- 084 afegeix la llibreria `qrcode-generator` (excepció acceptada pel propietari).
 
 ### Catàleg d'Especialitats Formatives del SEPE (plans 081–082)
 - 081: **fet** (commits f0a99b0, a54b18c, 7d46fee): scraper + `sepe_especs.json` + badges i filtre a l'FPO.
