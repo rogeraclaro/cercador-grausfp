@@ -74,6 +74,40 @@ def _write_atomic(data: list, output_path: str) -> None:
     os.replace(tmp_path, output_path)
 
 
+class ImplausibleCatalogError(RuntimeError):
+    """El catàleg nou ha perdut massa registres d'algun grau: no es publica."""
+
+
+MIN_GRADO_RATIO = 0.5  # un grau no pot quedar per sota de la meitat del refresc anterior
+
+
+def check_catalog_plausible(previous_records: list, new_records: list) -> None:
+    """
+    Atura el refresc si algun grau queda a 0 o perd més de la meitat dels registres.
+
+    Un canvi de marcatge a todofp fa que un scraper retorni [] sense cap error; sense
+    aquest control se sobreescriuria ofertes.json i sortirien correus de baixes.
+    Sense catàleg anterior (primer refresc) no hi ha res a comparar.
+    REFRESH_ALLOW_DROP=1 al .env el desactiva per a un canvi real del ministeri.
+    """
+    if os.environ.get('REFRESH_ALLOW_DROP') == '1':
+        return
+    before: dict = {}
+    after: dict = {}
+    for counts, records in ((before, previous_records), (after, new_records)):
+        for record in records:
+            counts[record.get('grado')] = counts.get(record.get('grado'), 0) + 1
+    dropped = [
+        f"{grado}: {n_before} → {after.get(grado, 0)}"
+        for grado, n_before in sorted(before.items(), key=lambda kv: str(kv[0]))
+        if after.get(grado, 0) < n_before * MIN_GRADO_RATIO
+    ]
+    if dropped:
+        raise ImplausibleCatalogError(
+            "Catàleg no plausible, es conserva l'anterior (" + "; ".join(dropped) + ")"
+        )
+
+
 # d_modulos.json i ce_acces.json van per id de registre, i els id es reassignen a cada refresc.
 # Si el seu scraper falla, el fitxer anterior es conserva traduint-ne els id per ficha_url
 # (única per a cada D i E); si no, els id vells apuntarien a uns altres cicles.
@@ -370,6 +404,7 @@ def run(on_progress=None) -> dict:
             previous_records = json.load(fh)
     except (OSError, ValueError):
         previous_records = []
+    check_catalog_plausible(previous_records, all_records)
     id_remap = id_remap_by_ficha(previous_records, all_records)
 
     _write_atomic(all_records, DATA_PATH)

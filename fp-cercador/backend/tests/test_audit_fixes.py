@@ -128,3 +128,28 @@ def test_persistent_429_raises_instead_of_reporting_no_centres(monkeypatch):
     monkeypatch.setattr(centres_scraper.time, "sleep", lambda s: None)
     with pytest.raises(centres_scraper.requests.RequestException):
         centres_scraper._fetch(_Session(), {})
+
+
+def _records(**counts):
+    return [{"grado": g} for g, n in counts.items() for _ in range(n)]
+
+
+@pytest.mark.parametrize("new", [
+    _records(A=100, D=0),      # un scraper ha tornat [] sense error
+    _records(A=100, D=9),      # menys de la meitat
+    _records(D=20),            # un grau sencer ha desaparegut
+])
+def test_implausible_catalog_is_rejected(new, monkeypatch):
+    from scrapers import pipeline
+    monkeypatch.delenv("REFRESH_ALLOW_DROP", raising=False)
+    with pytest.raises(pipeline.ImplausibleCatalogError):
+        pipeline.check_catalog_plausible(_records(A=100, D=20), new)
+
+
+def test_plausible_catalog_passes(monkeypatch):
+    from scrapers import pipeline
+    monkeypatch.delenv("REFRESH_ALLOW_DROP", raising=False)
+    pipeline.check_catalog_plausible(_records(A=100, D=20), _records(A=90, D=10, E=3))
+    pipeline.check_catalog_plausible([], _records(A=1))  # primer refresc
+    monkeypatch.setenv("REFRESH_ALLOW_DROP", "1")
+    pipeline.check_catalog_plausible(_records(A=100), [])
