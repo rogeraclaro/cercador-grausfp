@@ -11,9 +11,15 @@ from cd_lomloe import _B_NUM_RE, _is_prl, normalize_module_name
 _HELD_GRADOS = ('B', 'C', 'D')
 # Les fitxes dels cicles llisten com a mòdul una nota que no ho és (184 de 195 cicles).
 _NOTE_PREFIX = 'incluye una fase de formacion en empresa'
-# Cada cicle té el seu mòdul optatiu: compta al total, però no casa amb el d'un altre cicle.
-_OPTATIVE_PREFIX = 'modulo profesional optativo'
-
+# RD 659/2023, art. 126.4: el Proyecto intermodular i la formació en empresa no es
+# convaliden mai; el mòdul optatiu és diferent a cada cicle. Compten al total del cicle,
+# però no casen amb els d'un altre.
+_NEVER_MATCH_PREFIXES = ('proyecto intermodular', 'formacion en centros de trabajo',
+                         'modulo profesional optativo', 'modulo s profesional es optativo')
+# Art. 126.3: es convaliden entre cicles del mateix grau; Digitalización i Sostenibilidad,
+# a més, només dins la mateixa família professional.
+_SAME_LEVEL_PREFIXES = ('ingles profesional',)
+_SAME_LEVEL_AND_FAMILY_PREFIXES = ('digitalizacion aplicada', 'sostenibilidad aplicada')
 
 def compute_gap(held_refs, records, bc_lomloe, c_modulos, d_modulos, ciclos_fp=None,
                 limit=30) -> dict:
@@ -26,12 +32,13 @@ def compute_gap(held_refs, records, bc_lomloe, c_modulos, d_modulos, ciclos_fp=N
     # mitjà 0156 i de superior 0179, «Maquillaje» de bàsica i de mitjà): només casen
     # amb el nivell igual. La resta de noms casen sols.
     nums_by_name: dict[str, set[str]] = {}
-    num_level: dict[str, int] = {}
+    num_levels: dict[str, set] = {}   # un mateix número pot ser a cicles de dos nivells (1708)
 
     def _learn(num, name, nivel):
         if num:
             nums_by_name.setdefault(normalize_module_name(name or ''), set()).add(num)
-            num_level.setdefault(num, nivel)
+            if nivel is not None:
+                num_levels.setdefault(num, set()).add(nivel)
 
     d_mods = {}
     for r in records:
@@ -49,15 +56,21 @@ def compute_gap(held_refs, records, bc_lomloe, c_modulos, d_modulos, ciclos_fp=N
         for mod in mods:
             _learn(mod.get('num'), mod.get('name'), None)
     ambiguous = {name for name, nums in nums_by_name.items() if len(nums) > 1}
+    num_level = {num: next(iter(levels)) for num, levels in num_levels.items() if len(levels) == 1}
 
-    def keys(num, name, nivel):
+    def keys(num, name, nivel, familia):
         """Claus amb què un mòdul casa amb un altre: el número i el nom normalitzat."""
-        out = {('num', num)} if num else set()
         norm = normalize_module_name(name or '')
-        if norm.startswith(_OPTATIVE_PREFIX):
-            return out
+        if norm.startswith(_NEVER_MATCH_PREFIXES):
+            return set()
+        nivel = num_level.get(num) or nivel
+        if norm.startswith(_SAME_LEVEL_AND_FAMILY_PREFIXES):
+            return {('nom', norm, nivel, familia)}
+        if norm.startswith(_SAME_LEVEL_PREFIXES):
+            return {('nom', norm, nivel)}
+        out = {('num', num)} if num else set()
         if norm in ambiguous:
-            out.add(('nom', norm, num_level.get(num) or nivel))
+            out.add(('nom', norm, nivel))
         elif norm:
             out.add(('nom', norm))
         return out
@@ -65,7 +78,7 @@ def compute_gap(held_refs, records, bc_lomloe, c_modulos, d_modulos, ciclos_fp=N
     def b_keys(code):
         m = _B_NUM_RE.match(code)
         rec = b_by_code.get(code) or {}
-        return keys(m.group(1), rec.get('denominacion'), rec.get('nivel')) if m else set()
+        return keys(m.group(1), rec.get('denominacion'), rec.get('nivel'), rec.get('familia')) if m else set()
 
     held, ignorats, old_c = [], [], []
     have: set[tuple] = set()
@@ -84,7 +97,7 @@ def compute_gap(held_refs, records, bc_lomloe, c_modulos, d_modulos, ciclos_fp=N
         grado, code = rec['grado'], rec.get('codigo') or ''
         if grado == 'D':
             for mod in d_mods.get(ref, []):
-                have |= keys(mod.get('num'), mod.get('name'), rec.get('nivel'))
+                have |= keys(mod.get('num'), mod.get('name'), rec.get('nivel'), rec.get('familia'))
         elif rec.get('plan_antiguo'):
             if grado == 'C':
                 old_c.append(rec)
@@ -96,7 +109,7 @@ def compute_gap(held_refs, records, bc_lomloe, c_modulos, d_modulos, ciclos_fp=N
             for mod in c_modulos.get(code, []):
                 # El PRL d'un C no convalida el d'un cicle (mateix criteri que el Pla 078).
                 if not _is_prl(mod, b_nums):
-                    have |= keys(mod.get('num'), mod.get('name'), rec.get('nivel'))
+                    have |= keys(mod.get('num'), mod.get('name'), rec.get('nivel'), rec.get('familia'))
 
     def objectiu(rec, tens, falta):
         total = tens + len(falta)
@@ -120,7 +133,7 @@ def compute_gap(held_refs, records, bc_lomloe, c_modulos, d_modulos, ciclos_fp=N
             elif rec.get('grado') == 'D':
                 mods = d_mods.get(rec['ref'], [])
                 falta = [{'tipus': 'modul', 'nom': mod.get('name')} for mod in mods
-                         if not keys(mod.get('num'), mod.get('name'), rec.get('nivel')) & have]
+                         if not keys(mod.get('num'), mod.get('name'), rec.get('nivel'), rec.get('familia')) & have]
                 tens = len(mods) - len(falta)
             else:
                 continue

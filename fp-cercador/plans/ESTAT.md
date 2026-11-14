@@ -70,8 +70,11 @@ La primera vegada, `--discover` triga ~20 min; després va de la memòria cau.
     amb el mateix nivell.
   - La nota «Incluye una fase de formación en empresa…» de `d_modulos.json` (184 cicles) no es compta com a
     mòdul; el «Módulo profesional optativo» compta al total però no casa entre cicles.
-- Per decidir: «Formación en centros de trabajo» i «Proyecto intermodular» casen entre cicles pel nom, i
-  probablement no són convalidables d'un cicle a un altre.
+  - Convalidacions segons el RD 659/2023, art. 126 (verificat al text consolidat del BOE): el Proyecto
+    intermodular i la formació en empresa no casen mai entre cicles (126.4); Inglés profesional només entre
+    cicles del mateix grau; Digitalización i Sostenibilidad només dins el mateix grau i la mateixa família
+    (126.3); Itinerario personal I i II casen entre qualsevol oferta (126.5).
+- Sense verificar: «Tutoría» (grau bàsic) casa entre cicles pel nom; l'art. 126 no en diu res.
 
 ### Funcionalitats noves triades pel propietari el 2026-11-14 (plans 084–089, tots TODO)
 Un pla per sessió nova. Ordre de prioritat del propietari:

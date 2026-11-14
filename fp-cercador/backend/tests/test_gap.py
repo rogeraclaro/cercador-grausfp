@@ -165,3 +165,28 @@ def test_la_nota_de_la_fitxa_no_es_un_modul_i_l_optatiu_no_casa_entre_cicles():
     objectius = compute_gap(['d~1'], records, {}, {}, d_mod)['objectius']
     assert [(o['ref'], o['tens'], o['total']) for o in objectius] == [('d~2', 1, 2)]
     assert objectius[0]['falta'] == [{'tipus': 'modul', 'nom': optatiu}]
+
+
+def test_convalidacions_de_l_article_126_del_rd_659_2023():
+    """Proyecto intermodular i FCT no es convaliden; Digitalización i Sostenibilidad només
+    dins la mateixa família i grau; Inglés profesional entre cicles del mateix grau."""
+    comuns = [{'num': '1713', 'name': 'Proyecto intermodular'},
+              {'num': None, 'name': 'Formación en centros de trabajo'},
+              {'num': '1664', 'name': 'Digitalización aplicada a los sectores productivos (Grado Medio)'},
+              {'num': '1708', 'name': 'Sostenibilidad aplicada al sistema productivo'},
+              {'num': '0156', 'name': 'Inglés Profesional (Grado Medio)'},
+              {'num': '1709', 'name': 'Itinerario personal para la empleabilidad I'}]
+    records = [_rec('D', 'd~meu', 'El meu cicle', id=1, nivel=2),
+               _rec('D', 'd~familia', 'Mateixa família', id=2, nivel=2),
+               {**_rec('D', 'd~altra', 'Altra família', id=3, nivel=2), 'familia': 'Sanidad'},
+               _rec('D', 'd~superior', 'Mateixa família, grau superior', id=4, nivel=3)]
+    superior = [{'num': '1708', 'name': 'Sostenibilidad aplicada al sistema productivo'},
+                {'num': '1709', 'name': 'Itinerario personal para la empleabilidad I'}]
+    d_mod = {'1': {'modulos': comuns}, '2': {'modulos': comuns}, '3': {'modulos': comuns},
+             '4': {'modulos': superior}}
+    objectius = {o['ref']: o for o in compute_gap(['d~meu'], records, {}, {}, d_mod)['objectius']}
+    assert (objectius['d~familia']['tens'], objectius['d~familia']['total']) == (4, 6)
+    assert [f['nom'] for f in objectius['d~familia']['falta']] == [
+        'Proyecto intermodular', 'Formación en centros de trabajo']
+    assert objectius['d~altra']['tens'] == 2      # Inglés i Itinerario
+    assert objectius['d~superior']['tens'] == 1   # només Itinerario
