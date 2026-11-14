@@ -450,8 +450,8 @@
       }
     }
   </style>
-  <script src="i18n.js?v=20261114b"></script>
-  <script src="auth.js?v=20261114b"></script>
+  <script src="i18n.js?v=20261114c"></script>
+  <script src="auth.js?v=20261114c"></script>
   <script defer src="https://analytics.masellas.info/script.js" data-exclude-search="true" data-exclude-hash="true" data-website-id="ddb6c664-550b-4e2d-848f-796a676e4036"></script>
 </head>
 
@@ -675,7 +675,8 @@
 
             return '<tr>' +
               '<td class="col-nom">' +
-              '<button class="btn-fav-remove" data-oferta="' + esc(row.ref) + '" title="' + t('index.fav.remove') + '">' +
+              '<button class="btn-fav-remove" data-oferta="' + esc(row.ref) + '" title="' + t('index.fav.remove') +
+              '" aria-label="' + t('index.fav.remove') + ': ' + esc(row.denominacion) + '">' +
               '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16">' +
               '<path fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linejoin="round" ' +
               'd="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />' +
@@ -689,6 +690,18 @@
               '<td class="col-centres">' + centresHtml + '</td>' +
               '</tr>';
           }).join('');
+
+          // Favorits d'un ensenyament que ja no és al catàleg: abans desapareixien de la
+          // llista sense avís i no es podien esborrar mai.
+          trs += favs
+            .filter(function (f) { return f.ref && !byRef[f.ref]; })
+            .map(function (f) {
+              return '<tr><td class="col-nom">' +
+                '<button class="btn-fav-remove" data-oferta="' + esc(f.ref) + '" title="' + t('index.fav.remove') +
+                '" aria-label="' + t('index.fav.remove') + ': ' + esc(f.ref) + '">✕</button> ' +
+                '<span style="color:var(--warm)">' + t('perfil.favs.gone') + '</span></td>' +
+                '<td class="col-codi">' + esc(f.ref) + '</td><td colspan="4"></td></tr>';
+            }).join('');
 
           section.innerHTML =
             '<div class="favs-summary">' +

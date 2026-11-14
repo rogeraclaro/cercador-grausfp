@@ -22,7 +22,7 @@
 - Si toca el backend: `systemctl restart fp-cercador`. **Mai diumenge 11:10–11:45**, que és quan corre el
   refresc setmanal.
 - Si es canvien textos o `auth.js`/`alertes.js`: apujar la versió `?v=` a totes les pàgines i a
-  `I18N_VERSION` de `backend/grau_page.py` (ara `20261114b`).
+  `I18N_VERSION` de `backend/grau_page.py` (ara `20261114c`).
 - Commits: conventional commits, sense atribució d'IA.
 
 ## Fet els darrers dies (tot desplegat)

@@ -2133,8 +2133,8 @@
     }
   </style>
 
-  <script src="i18n.js?v=20261114b"></script>
-  <script src="auth.js?v=20261114b"></script>
+  <script src="i18n.js?v=20261114c"></script>
+  <script src="auth.js?v=20261114c"></script>
   <script>
     const API_BASE = window.location.hostname === 'localhost'
       ? 'http://localhost:5001'
@@ -3525,13 +3525,14 @@
         </div>
       </section>
       <button type="button" class="start-reopen" x-show="startHidden" x-cloak @click="showStart()" x-text="t('start.title')"></button>
-      <div class="mode-toggle" role="tablist">
+      <!-- No són pestanyes ARIA (no hi ha tabpanel): grup de botons amb estat premut. -->
+      <div class="mode-toggle" role="group" :aria-label="t('index.mode.aria')">
         <button :class="{ active: searchMode === 'nom' }" @click="setSearchMode('nom')"
-          x-text="t('index.mode.nom')"></button>
+          :aria-pressed="String(searchMode === 'nom')" x-text="t('index.mode.nom')"></button>
         <button :class="{ active: searchMode === 'ocupacio' }" @click="setSearchMode('ocupacio')"
-          x-text="t('index.mode.ocupacio')"></button>
+          :aria-pressed="String(searchMode === 'ocupacio')" x-text="t('index.mode.ocupacio')"></button>
         <button :class="{ active: searchMode === 'fpo' }" @click="setSearchMode('fpo')"
-          x-text="t('index.mode.fpo')"></button>
+          :aria-pressed="String(searchMode === 'fpo')" x-text="t('index.mode.fpo')"></button>
       </div>
       <p class="fpo-note" x-show="searchMode === 'fpo'" x-text="t('fpo.note')"></p>
       <div class="fpo-banner" x-show="searchMode === 'fpo' && fpoWarning" x-text="fpoWarning"></div>
@@ -3563,13 +3564,13 @@
     </div>
 
     <!-- Grau tabs (only in nom mode) -->
-    <div class="grau-tabs" role="tablist" data-i18n-aria="index.tabs.aria" aria-label="Filtre per grau"
+    <div class="grau-tabs" role="group" data-i18n-aria="index.tabs.aria" aria-label="Filtre per grau"
       x-show="searchMode === 'nom'">
       <button :class="{ active: filterGrado === '' }" @click="filterGrado=''; resetPage()"
-        x-text="t('index.tabs.all')"></button>
+        :aria-pressed="String(filterGrado === '')" x-text="t('index.tabs.all')"></button>
       <template x-for="g in ['A','B','C','D','E']" :key="g">
         <button :class="{ active: filterGrado === g }" @click="setGrado(g)"
-          x-text="t('index.tabs.grau') + ' ' + g"></button>
+          :aria-pressed="String(filterGrado === g)" x-text="t('index.tabs.grau') + ' ' + g"></button>
       </template>
     </div>
 
@@ -3785,35 +3786,40 @@
           <thead>
             <tr>
               <th scope="col" class="sortable col-nom" :class="{ 'sort-active': sortCol === 'denominacion' }"
-                @click="sortBy('denominacion')"
+                @click="sortBy('denominacion')" tabindex="0"
+                @keydown.enter.prevent="sortBy('denominacion')" @keydown.space.prevent="sortBy('denominacion')"
                 :aria-sort="sortCol === 'denominacion' ? (sortDir === 1 ? 'ascending' : 'descending') : 'none'">
                 <span data-i18n="index.col.nom">Denominació</span>
                 <span class="sort-indicator" aria-hidden="true"
                   x-text="sortCol === 'denominacion' ? (sortDir === 1 ? '▲' : '▼') : '▲'"></span>
               </th>
               <th scope="col" class="sortable col-codi" :class="{ 'sort-active': sortCol === 'codigo' }"
-                @click="sortBy('codigo')"
+                @click="sortBy('codigo')" tabindex="0"
+                @keydown.enter.prevent="sortBy('codigo')" @keydown.space.prevent="sortBy('codigo')"
                 :aria-sort="sortCol === 'codigo' ? (sortDir === 1 ? 'ascending' : 'descending') : 'none'">
                 <span data-i18n="index.col.codi">Codi</span>
                 <span class="sort-indicator" aria-hidden="true"
                   x-text="sortCol === 'codigo' ? (sortDir === 1 ? '▲' : '▼') : '▲'"></span>
               </th>
               <th scope="col" class="sortable col-fam" :class="{ 'sort-active': sortCol === 'familia' }"
-                @click="sortBy('familia')"
+                @click="sortBy('familia')" tabindex="0"
+                @keydown.enter.prevent="sortBy('familia')" @keydown.space.prevent="sortBy('familia')"
                 :aria-sort="sortCol === 'familia' ? (sortDir === 1 ? 'ascending' : 'descending') : 'none'">
                 <span data-i18n="index.col.fam">Família professional</span>
                 <span class="sort-indicator" aria-hidden="true"
                   x-text="sortCol === 'familia' ? (sortDir === 1 ? '▲' : '▼') : '▲'"></span>
               </th>
               <th scope="col" class="sortable col-grau" :class="{ 'sort-active': sortCol === 'grado' }"
-                @click="sortBy('grado')"
+                @click="sortBy('grado')" tabindex="0"
+                @keydown.enter.prevent="sortBy('grado')" @keydown.space.prevent="sortBy('grado')"
                 :aria-sort="sortCol === 'grado' ? (sortDir === 1 ? 'ascending' : 'descending') : 'none'">
                 <span data-i18n="index.col.grau">Grau</span>
                 <span class="sort-indicator" aria-hidden="true"
                   x-text="sortCol === 'grado' ? (sortDir === 1 ? '▲' : '▼') : '▲'"></span>
               </th>
               <th scope="col" class="sortable col-niv" :class="{ 'sort-active': sortCol === 'nivel' }"
-                @click="sortBy('nivel')"
+                @click="sortBy('nivel')" tabindex="0"
+                @keydown.enter.prevent="sortBy('nivel')" @keydown.space.prevent="sortBy('nivel')"
                 :aria-sort="sortCol === 'nivel' ? (sortDir === 1 ? 'ascending' : 'descending') : 'none'">
                 <span data-i18n="index.col.niv">Nivell</span>
                 <span class="sort-indicator" aria-hidden="true"
@@ -3842,7 +3848,7 @@
                   <button class="btn-fav" @click.stop="toggleFavorite(row)"
                     :class="{ 'btn-fav--active': favorites.has(row.ref) }"
                     :title="favorites.has(row.ref) ? t('index.fav.remove') : t('index.fav.add')"
-                    :aria-label="t('index.filter.favs')"
+                    :aria-label="(favorites.has(row.ref) ? t('index.fav.remove') : t('index.fav.add')) + ': ' + row.denominacion"
                     :aria-pressed="String(favorites.has(row.ref))">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16">
                       <path :fill="favorites.has(row.ref) ? 'currentColor' : 'none'" stroke="currentColor"
@@ -4393,7 +4399,8 @@
         </template>
         <!-- Mur per anònims -->
         <template x-if="ocupHasWall()">
-          <div class="ocup-wall" @click="showCentresModal()">
+          <div class="ocup-wall" role="button" tabindex="0" @click="showCentresModal()"
+            @keydown.enter.prevent="showCentresModal()" @keydown.space.prevent="showCentresModal()">
             <span x-text="t('ocup.wall.msg')"></span>
           </div>
         </template>
@@ -4434,7 +4441,7 @@
                   <button class="btn-fav" @click.stop="loggedIn ? toggleFpoFav(esp.codi) : showCentresModal()"
                     :class="{ 'btn-fav--active': fpoFavSet.has(esp.codi) }"
                     :title="fpoFavSet.has(esp.codi) ? t('index.fav.remove') : t('index.fav.add')"
-                    :aria-label="t('index.filter.favs')"
+                    :aria-label="(fpoFavSet.has(esp.codi) ? t('index.fav.remove') : t('index.fav.add')) + ': ' + ((esp.titol || {})[fpoLang()] || esp.codi)"
                     :aria-pressed="String(fpoFavSet.has(esp.codi))">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16">
                       <path :fill="fpoFavSet.has(esp.codi) ? 'currentColor' : 'none'" stroke="currentColor"

@@ -68,6 +68,7 @@
       'perfil.login.required': 'Cal <a href="login.html">iniciar sessió</a> per veure el teu perfil.',
       'perfil.loading': 'Carregant el teu perfil...',
       'perfil.error': 'Error carregant les dades del perfil.',
+      'perfil.favs.gone': 'Aquest ensenyament ja no és al catàleg oficial.',
 
       /* ── Topbar logos (per a <title> de pàgina) ── */
       'page.title.index': 'Cercador Graus FP',
@@ -150,6 +151,7 @@
       'index.table.empty': 'Cap resultat amb aquests filtres. Treu-ne algun per veure\'n més.',
       'index.table.empty.search': 'Cap resultat per a «{q}». Els noms del catàleg són en castellà: prova\'l en castellà o treu algun filtre.',
       'index.fav.add': 'Afegeix als favorits',
+      'index.mode.aria': 'Tipus de cerca',
       'index.fav.remove': 'Treu dels favorits',
       'index.badge.old': 'Pla antic',
       'index.centres.count': '{n} centres',
@@ -820,6 +822,7 @@
       'perfil.login.required': 'Es necesario <a href="login.html">iniciar sesión</a> para ver tu perfil.',
       'perfil.loading': 'Cargando tu perfil...',
       'perfil.error': 'Error al cargar los datos del perfil.',
+      'perfil.favs.gone': 'Esta enseñanza ya no está en el catálogo oficial.',
 
       /* ── Títols de pàgina ── */
       'page.title.index': 'Buscador Grados FP',
@@ -902,6 +905,7 @@
       'index.table.empty': 'Ningún resultado con estos filtros. Quita alguno para ver más.',
       'index.table.empty.search': 'Ningún resultado para «{q}». Prueba otro término o quita algún filtro.',
       'index.fav.add': 'Añadir a favoritos',
+      'index.mode.aria': 'Tipo de búsqueda',
       'index.fav.remove': 'Quitar de favoritos',
       'index.badge.old': 'Plan antiguo',
       'index.centres.count': '{n} centros',
