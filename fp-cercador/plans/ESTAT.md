@@ -1,6 +1,7 @@
 # Estat del projecte — per reprendre des d'un altre ordinador
 
-Última actualització: 2026-10-30. Producció: https://grausfp.es (VPS `contabo`) a `ebf76dc`.
+Última actualització: 2026-11-14. Producció: https://grausfp.es (VPS `contabo`); la branca
+`fix/audit-261114` (auditoria, vegeu més avall) **no és desplegada**.
 
 ## Com reprendre
 
@@ -10,7 +11,8 @@
    `scp contabo:/home/masellas-grausfp/htdocs/grausfp.masellas.info/fp-cercador/backend/data/{ofertes,c_modulos,d_modulos,bc_lomloe}.json fp-cercador/backend/data/`
 3. El `.env` tampoc no és al git (ADMIN_TOKEN, SMTP, Google OAuth…): copiar-lo a mà del VPS.
 4. Tests: `cd fp-cercador/backend && python3 -m pytest tests -q --deselect tests/test_pipeline.py::test_ce_acces_falla_conserva_fitxer_anterior`
-   (547 verds el 2026-10-30; aquest test ja fallava abans del pla 078).
+   (568 verds el 2026-11-14 amb `--ignore=tests/test_pipeline.py`, que fa peticions de xarxa i es penja
+   sense connexió).
 5. Local: `python3 app.py` (port 5001) i `python3 -m http.server 8765` dins `frontend/`.
 
 ## Deploy (sempre amb l'aprovació explícita del propietari)
@@ -19,7 +21,8 @@
 `ssh contabo 'cd /home/masellas-grausfp/htdocs/grausfp.masellas.info && git pull --ff-only'`.
 - Si toca el backend: `systemctl restart fp-cercador`. **Mai diumenge 11:10–11:45**, que és quan corre el
   refresc setmanal.
-- Si es canvien textos: apujar `i18n.js?v=` a `index.html` (ara `20261030c`).
+- Si es canvien textos o `auth.js`/`alertes.js`: apujar la versió `?v=` a totes les pàgines i a
+  `I18N_VERSION` de `backend/grau_page.py` (ara `20261114a`).
 - Commits: conventional commits, sense atribució d'IA.
 
 ## Fet els darrers dies (tot desplegat)
@@ -50,8 +53,11 @@ La primera vegada, `--discover` triga ~20 min; després va de la memòria cau.
 - **Tests:** `test_refs_api.py` i `test_grau_page.py` no aïllen `C_MODULOS_PATH` (passen igualment).
   `test_ce_acces_falla_conserva_fitxer_anterior` falla des d'abans del 078.
 
-### Catàleg d'Especialitats Formatives del SEPE (plans 081–082, TODO)
-- 081: scraper + `sepe_especs.json` + enriquiment de l'FPO (badges Grado C / Formació en el treball / Pròpia SOC).
+### Auditoria 2026-11-14 (branca `fix/audit-261114`, pendent de revisar i desplegar)
+- Correccions aplicades i llista del que queda: `.planning/quick/261114-ekq-*/261114-ekq-SUMMARY.md`.
+
+### Catàleg d'Especialitats Formatives del SEPE (plans 081–082)
+- 081: **fet** (commits f0a99b0, a54b18c, 7d46fee): scraper + `sepe_especs.json` + badges i filtre a l'FPO.
 - 082: pàgina a part `cataleg-especialitats.html` + proxy del PDF del programa. Depèn de 081 f1–2.
 - Clau: el catàleg és formació en el treball (RD 438/2024 art. 24), no Grados A–E; els CP ja no hi són.
 

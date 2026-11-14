@@ -125,6 +125,7 @@ None yet.
 | 16 | Centres integration follow-ups: dead code, safeHttpUrl, topbar Centres on all pages | 2026-11-04 | 83843f1 | — | — |
 | 261105-e3j | Link Grado C pages to the accredited centres search | 2026-11-05 | 4871115 | — | [261105-e3j-link-grado-c-pages-to-accredited-centres](./quick/261105-e3j-link-grado-c-pages-to-accredited-centres/) |
 | 261108-say | Pla 081: scraper catàleg SEPE + enriquiment FPO | 2026-11-08 | 7d46fee | — | [261108-say-pla-081-scraper-cat-leg-sepe-enriquiment](./quick/261108-say-pla-081-scraper-cat-leg-sepe-enriquiment/) |
+| 261114-ekq | Auditoria completa: correccions verificades (alertes, tokens de baixa, refresc de centres, observatori, errors del frontend) | 2026-11-14 | — | — | [261114-ekq-audit-fixes-verified-low-risk-defects-fr](./quick/261114-ekq-audit-fixes-verified-low-risk-defects-fr/) |
 
 ### Blockers/Concerns
 
