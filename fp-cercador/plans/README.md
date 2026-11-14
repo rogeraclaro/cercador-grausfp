@@ -98,6 +98,7 @@ amb quins prerequisits i quins passos manuals calen al servidor.
 | 082 | Catàleg estatal d'especialitats: pàgina a part | P3 | M | 081 | TODO |
 | 083 | «Què em falta?»: de què tens a què pots arribar (B, C, D) | P1 | L | 058, 076, 078 DONE | TODO |
 | 084 | Mode orientador: llistes de graus compartibles amb enllaç i QR | P1 | L | 023–026, 076 DONE | TODO |
+| 085 | Comparador de fins a 3 graus en columnes | P2 | M-L | 058, 076, 077, 078 DONE | TODO |
 
 Valors de Status: `TODO` | `IN PROGRESS` | `DONE` | `BLOCKED (motiu en una línia)` | `REJECTED (motiu en una línia)`
 
