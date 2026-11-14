@@ -406,6 +406,8 @@
       });
     }
 
+    function numLocale() { return getLang() === 'ca' ? 'ca-ES' : 'es-ES'; }
+
     const HIST_LIMIT = 20;
     const FONT_LABEL = { soc: 'SOC', pimec: 'PIMEC', foment: 'Foment', cecot: 'Cecot', ccoo: 'CCOO' };
 
@@ -414,9 +416,9 @@
       if (totalPages <= 1) return '';
       return `
         <div class="pagination" style="display:flex;gap:12px;align-items:center;justify-content:center;margin-top:16px;">
-          <button ${page <= 1 ? 'disabled' : ''} onclick="${onLoadFn}(${page - 1})">← Anterior</button>
-          <span>Pàgina ${page} de ${totalPages}</span>
-          <button ${page >= totalPages ? 'disabled' : ''} onclick="${onLoadFn}(${page + 1})">Següent →</button>
+          <button ${page <= 1 ? 'disabled' : ''} onclick="${onLoadFn}(${page - 1})">${t('hist.prev')}</button>
+          <span>${t('hist.page', { page: page, total: totalPages })}</span>
+          <button ${page >= totalPages ? 'disabled' : ''} onclick="${onLoadFn}(${page + 1})">${t('hist.next')}</button>
         </div>`;
     }
 
@@ -436,15 +438,15 @@
 
         const graus = ['A', 'B', 'C', 'D', 'E'];
         const gradoCols = graus.map(g =>
-          `<th class="col-grado" scope="col">Grau ${g}</th>`
+          `<th class="col-grado" scope="col">${t('hist.grau', { g: g })}</th>`
         ).join('');
 
         let _rowId = 0;
 
         function renderNovetats(entry, rowId) {
           const c = entry.changes;
-          if (c === null || c === undefined) return '<span class="first-entry">Primer registre</span>';
-          if (!c.has_changes && !(entry.unknown_families?.length)) return '<span class="no-changes">Sense canvis</span>';
+          if (c === null || c === undefined) return '<span class="first-entry">' + t('hist.changes.first') + '</span>';
+          if (!c.has_changes && !(entry.unknown_families?.length)) return '<span class="no-changes">' + t('hist.changes.none') + '</span>';
 
           // Entrada antiga: té grado_deltas però sense new_by_grado/removed_by_grado;
           // tots els chips obren un únic accordion compartit amb new/removed_denominacions.
@@ -456,13 +458,13 @@
             const sign = d > 0 ? '+' : '';
             const cls = d > 0 ? 'chip-new' : d < 0 ? 'chip-gone' : 'chip-neutral';
             if (isLegacy) {
-              chips.push(`<button class="chip ${cls} clickable" data-row="${rowId}" data-grado="shared" onclick="toggleSharedAcc(${rowId})">Grau ${g}: ${sign}${d}</button>`);
+              chips.push(`<button class="chip ${cls} clickable" data-row="${rowId}" data-grado="shared" onclick="toggleSharedAcc(${rowId})">${t('hist.grau', { g: g })}: ${sign}${d}</button>`);
             } else {
               const hasDetail = (c.new_by_grado?.[g]?.length || c.removed_by_grado?.[g]?.length);
               if (hasDetail) {
-                chips.push(`<button class="chip ${cls} clickable" data-row="${rowId}" data-grado="${g}" onclick="toggleGradoAcc(${rowId},'${g}')">Grau ${g}: ${sign}${d}</button>`);
+                chips.push(`<button class="chip ${cls} clickable" data-row="${rowId}" data-grado="${g}" onclick="toggleGradoAcc(${rowId},'${g}')">${t('hist.grau', { g: g })}: ${sign}${d}</button>`);
               } else {
-                chips.push(`<span class="chip ${cls}">Grau ${g}: ${sign}${d}</span>`);
+                chips.push(`<span class="chip ${cls}">${t('hist.grau', { g: g })}: ${sign}${d}</span>`);
               }
             }
           }
@@ -479,8 +481,8 @@
           if (isLegacy) {
             const added = c.new_denominacions || [];
             const removed = c.removed_denominacions || [];
-            const addedHtml = added.length ? `<ul><p class="acc-row-title">+ Nous (${added.length})</p>${added.map(d => `<li class="new">+ ${esc(d)}</li>`).join('')}</ul>` : '';
-            const removedHtml = removed.length ? `<ul><p class="acc-row-title">− Eliminats (${removed.length})</p>${removed.map(d => `<li class="gone">− ${esc(d)}</li>`).join('')}</ul>` : '';
+            const addedHtml = added.length ? `<ul><p class="acc-row-title">${t('hist.changes.added', { n: added.length })}</p>${added.map(d => `<li class="new">+ ${esc(d)}</li>`).join('')}</ul>` : '';
+            const removedHtml = removed.length ? `<ul><p class="acc-row-title">${t('hist.changes.removed', { n: removed.length })}</p>${removed.map(d => `<li class="gone">− ${esc(d)}</li>`).join('')}</ul>` : '';
             return `<tr class="acc-row" id="acc-${rowId}-shared" hidden>
               <td colspan="${colCount}"><div class="acc-row-inner">${addedHtml}${removedHtml}</div></td>
             </tr>`;
@@ -492,8 +494,8 @@
             const added = c.new_by_grado?.[g] || [];
             const removed = c.removed_by_grado?.[g] || [];
             if (!added.length && !removed.length) continue;
-            const addedHtml = added.length ? `<ul><p class="acc-row-title">+ Nous (${added.length})</p>${added.map(d => `<li class="new">+ ${esc(d)}</li>`).join('')}</ul>` : '';
-            const removedHtml = removed.length ? `<ul><p class="acc-row-title">− Eliminats (${removed.length})</p>${removed.map(d => `<li class="gone">− ${esc(d)}</li>`).join('')}</ul>` : '';
+            const addedHtml = added.length ? `<ul><p class="acc-row-title">${t('hist.changes.added', { n: added.length })}</p>${added.map(d => `<li class="new">+ ${esc(d)}</li>`).join('')}</ul>` : '';
+            const removedHtml = removed.length ? `<ul><p class="acc-row-title">${t('hist.changes.removed', { n: removed.length })}</p>${removed.map(d => `<li class="gone">− ${esc(d)}</li>`).join('')}</ul>` : '';
             rows.push(`<tr class="acc-row" id="acc-${rowId}-${g}" hidden>
               <td colspan="${colCount}"><div class="acc-row-inner">${addedHtml}${removedHtml}</div></td>
             </tr>`);
@@ -524,11 +526,11 @@
               <thead>
                 <tr>
                   <th class="col-num" scope="col">#</th>
-                  <th scope="col">Data</th>
-                  <th scope="col">Total</th>
+                  <th scope="col">${t('hist.col.date')}</th>
+                  <th scope="col">${t('hist.col.total')}</th>
                   ${gradoCols}
-                  <th class="col-dur" scope="col">Durada</th>
-                  <th class="col-changes" scope="col">Novetats</th>
+                  <th class="col-dur" scope="col">${t('hist.col.dur')}</th>
+                  <th class="col-changes" scope="col">${t('hist.col.news')}</th>
                 </tr>
               </thead>
               <tbody>${rows}</tbody>
@@ -536,7 +538,7 @@
           </div>
           ${renderPagination(resp.page, resp.limit, resp.total, 'load')}`;
       } catch (e) {
-        main.innerHTML = '<p class="empty-state" style="color:#991b1b;">Error carregant l\'historial.</p>';
+        main.innerHTML = '<p class="empty-state" style="color:#991b1b;">' + t('hist.error') + '</p>';
       }
     }
 
@@ -554,26 +556,26 @@
           <tr>
             <td class="col-num">${(resp.page - 1) * resp.limit + i + 1}</td>
             <td>${formatDate(e.ts)}</td>
-            <td>${(e.total_centres ?? 0).toLocaleString('ca-ES')}</td>
-            <td>${(e.total_ofertes ?? 0).toLocaleString('ca-ES')}</td>
-            <td>${(e.centres_nous ?? 0).toLocaleString('ca-ES')}</td>
-            <td>${(e.centres_eliminats ?? 0).toLocaleString('ca-ES')}</td>
+            <td>${(e.total_centres ?? 0).toLocaleString(numLocale())}</td>
+            <td>${(e.total_ofertes ?? 0).toLocaleString(numLocale())}</td>
+            <td>${(e.centres_nous ?? 0).toLocaleString(numLocale())}</td>
+            <td>${(e.centres_eliminats ?? 0).toLocaleString(numLocale())}</td>
             <td class="col-dur">${e.duration_seconds ?? '—'} s</td>
           </tr>`).join('');
 
         section.innerHTML = `
-          <h2 style="margin-bottom:12px;">Historial de scraping de centres</h2>
+          <h2 style="margin-bottom:12px;">${t('hist.centres.h2')}</h2>
           <div class="table-wrap">
             <table class="results-table">
               <thead>
                 <tr>
                   <th class="col-num" scope="col">#</th>
-                  <th scope="col">Data</th>
-                  <th scope="col">Centres únics</th>
-                  <th scope="col">Relacions oferta↔centres</th>
-                  <th scope="col">Nous</th>
-                  <th scope="col">Eliminats</th>
-                  <th class="col-dur" scope="col">Durada</th>
+                  <th scope="col">${t('hist.col.date')}</th>
+                  <th scope="col">${t('hist.centres.unique')}</th>
+                  <th scope="col">${t('hist.centres.links')}</th>
+                  <th scope="col">${t('hist.col.new')}</th>
+                  <th scope="col">${t('hist.col.removed')}</th>
+                  <th class="col-dur" scope="col">${t('hist.col.dur')}</th>
                 </tr>
               </thead>
               <tbody>${rows}</tbody>
@@ -600,25 +602,25 @@
             <td class="col-num">${(resp.page - 1) * resp.limit + i + 1}</td>
             <td>${formatDate(e.ts)}</td>
             <td>${FONT_LABEL[e.font] || 'SOC'}</td>
-            <td>${e.ok ? 'OK' : ('Error' + (e.error ? ': ' + esc(e.error) : ''))}</td>
-            <td>${(e.n_cursos ?? 0).toLocaleString('ca-ES')}</td>
-            <td>${(e.n_afegits ?? 0).toLocaleString('ca-ES')}</td>
-            <td>${(e.n_retirats ?? 0).toLocaleString('ca-ES')}</td>
+            <td>${e.ok ? 'OK' : 'Error'}</td>
+            <td>${(e.n_cursos ?? 0).toLocaleString(numLocale())}</td>
+            <td>${(e.n_afegits ?? 0).toLocaleString(numLocale())}</td>
+            <td>${(e.n_retirats ?? 0).toLocaleString(numLocale())}</td>
           </tr>`).join('');
 
         section.innerHTML = `
-          <h2 style="margin-bottom:12px;">Historial de cursos FPO</h2>
+          <h2 style="margin-bottom:12px;">${t('hist.fpo.h2')}</h2>
           <div class="table-wrap">
             <table class="results-table">
               <thead>
                 <tr>
                   <th class="col-num" scope="col">#</th>
-                  <th scope="col">Data</th>
-                  <th scope="col">Font</th>
-                  <th scope="col">Resultat</th>
-                  <th scope="col">Cursos</th>
-                  <th scope="col">Nous</th>
-                  <th scope="col">Retirats</th>
+                  <th scope="col">${t('hist.col.date')}</th>
+                  <th scope="col">${t('hist.fpo.source')}</th>
+                  <th scope="col">${t('hist.fpo.result')}</th>
+                  <th scope="col">${t('hist.fpo.courses')}</th>
+                  <th scope="col">${t('hist.col.new')}</th>
+                  <th scope="col">${t('hist.fpo.withdrawn')}</th>
                 </tr>
               </thead>
               <tbody>${rows}</tbody>
