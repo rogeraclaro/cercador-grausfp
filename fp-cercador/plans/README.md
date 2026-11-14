@@ -96,7 +96,7 @@ amb quins prerequisits i quins passos manuals calen al servidor.
 | 080 | Auditar contra el BOE els 32 C LOMLOE sense decret (RD individuals; descoberta via sumari diari del BOE) \| P2 | M | 079 DONE | DONE |
 | 081 | Catàleg d'Especialitats Formatives del SEPE: dades + enriquiment de l'FPO | P2 | M | 059–061 DONE | DONE |
 | 082 | Catàleg estatal d'especialitats: pàgina a part | P3 | M | 081 | TODO |
-| 083 | «Què em falta?»: de què tens a què pots arribar (B, C, D) | P1 | L | 058, 076, 078 DONE | TODO |
+| 083 | «Què em falta?»: de què tens a què pots arribar (B, C, D) | P1 | L | 058, 076, 078 DONE | DONE |
 | 084 | Mode orientador: llistes de graus compartibles amb enllaç i QR | P1 | L | 023–026, 076 DONE | TODO |
 | 085 | Comparador de fins a 3 graus en columnes | P2 | M-L | 058, 076, 077, 078 DONE | TODO |
 | 086 | Calendari FPO: agenda «Comencen aviat», `.ics` i alerta de cursos nous | P2 | L | 059–063, 028 DONE | TODO |
