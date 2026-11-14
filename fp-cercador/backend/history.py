@@ -83,6 +83,14 @@ def compute_changes(curr: dict, prev: dict) -> dict:
         added = [curr_by_d[d] for d in sorted(curr_by_d) if d not in prev_d_set]
         if added:
             new_by_grado_meta[g] = added
+    # Les baixes, amb família i nivell, perquè les alertes les filtrin com les altes.
+    removed_by_grado_meta = {}
+    for g, items in prev_meta.items():
+        prev_by_d = {item["denominacio"]: item for item in (items or [])}
+        curr_d_set = {item["denominacio"] for item in (curr_meta.get(g) or [])}
+        gone = [prev_by_d[d] for d in sorted(prev_by_d) if d not in curr_d_set]
+        if gone:
+            removed_by_grado_meta[g] = gone
 
     return {
         "new_families": new_families,
@@ -95,6 +103,7 @@ def compute_changes(curr: dict, prev: dict) -> dict:
         "removed_by_grado": removed_by_grado,
         "has_changes": bool(new_families or removed_families or grado_deltas or new_denominacions or removed_denominacions),
         "new_by_grado_meta": new_by_grado_meta,               # NOU
+        "removed_by_grado_meta": removed_by_grado_meta,
     }
 
 

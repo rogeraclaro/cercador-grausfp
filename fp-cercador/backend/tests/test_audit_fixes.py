@@ -153,3 +153,26 @@ def test_plausible_catalog_passes(monkeypatch):
     pipeline.check_catalog_plausible([], _records(A=1))  # primer refresc
     monkeypatch.setenv("REFRESH_ALLOW_DROP", "1")
     pipeline.check_catalog_plausible(_records(A=100), [])
+
+
+def test_removals_are_filtered_like_additions():
+    import history
+    prev = {"meta_by_grado": {"D": [
+        {"denominacio": "Técnico en Farmacia", "familia": "Sanidad", "nivel": 2},
+        {"denominacio": "Técnico en Soldadura", "familia": "Fabricación Mecánica", "nivel": 2},
+    ], "E": [{"denominacio": "Curso de Farmacia", "familia": "Sanidad", "nivel": 2}]}}
+    changes = history.compute_changes({"meta_by_grado": {}}, prev)
+
+    def names(filter_dict):
+        return [m["denominacio"] for m in alerts_service.match_removed(filter_dict, changes)]
+
+    assert names({"grado": "D", "familia": "Sanidad"}) == ["Técnico en Farmacia"]
+    assert names({"texto": "farmacia"}) == ["Técnico en Farmacia", "Curso de Farmacia"]
+    assert names({"grado": "D", "nivel": 3}) == []
+    assert len(names({"grado": "D"})) == 2
+
+
+def test_removals_from_old_history_entries_fall_back_to_grado_and_text():
+    changes = {"removed_by_grado": {"D": ["Técnico en Farmacia", "Técnico en Soldadura"]}}
+    assert [m["denominacio"] for m in alerts_service.match_removed({"grado": "D", "texto": "solda"}, changes)] \
+        == ["Técnico en Soldadura"]

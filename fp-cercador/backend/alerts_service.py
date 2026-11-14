@@ -45,8 +45,23 @@ def match_alert(filter_dict: dict, changes: dict) -> list:
     """
     if not changes:
         return []
+    return _filter_items(filter_dict, changes.get("new_by_grado_meta") or {})
 
-    new_by_grado_meta = changes.get("new_by_grado_meta") or {}
+
+def match_removed(filter_dict: dict, changes: dict) -> list:
+    """Baixes que encaixen amb el filtre, amb els mateixos criteris que les altes."""
+    removed_meta = (changes or {}).get("removed_by_grado_meta")
+    if removed_meta is None:
+        # Entrada d'historial anterior a removed_by_grado_meta: només se'n sap el grau i el nom.
+        removed_meta = {
+            g: [{"denominacio": d} for d in denoms]
+            for g, denoms in ((changes or {}).get("removed_by_grado") or {}).items()
+        }
+    return _filter_items(filter_dict, removed_meta)
+
+
+def _filter_items(filter_dict: dict, new_by_grado_meta: dict) -> list:
+    """Aplica grado/familia/nivel/texto a un dict {grado: [{denominacio, familia, nivel}]}."""
     if not new_by_grado_meta:
         return []
 
@@ -200,15 +215,13 @@ def dispatch_alerts(result: dict, base_url: str = "https://grausfp.es") -> int:
 
             # Afegir baixes si l'usuari les vol
             if filter_dict.get("alertar_baixes"):
-                removed_by_grado = changes.get("removed_by_grado") or {}
-                g_filter = filter_dict.get("grado")
-                if g_filter:
-                    for d in (removed_by_grado.get(g_filter) or []):
-                        matched.append({"denominacio": f"[BAIXA] {d}", "grado": g_filter})
-                else:
-                    for g, denoms in removed_by_grado.items():
-                        for d in denoms:
-                            matched.append({"denominacio": f"[BAIXA] {d}", "grado": g})
+                try:
+                    removed = match_removed(filter_dict, changes)
+                except Exception as exc:
+                    logger.warning("alerts_service: baixes no avaluables per alert id=%s: %s", alert["id"], exc)
+                    removed = []
+                for item in removed:
+                    matched.append(dict(item, denominacio=f"[BAIXA] {item['denominacio']}"))
 
             if not matched:
                 continue
