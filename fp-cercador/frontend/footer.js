@@ -9,6 +9,7 @@
     { href: 'fonts.html', key: 'footer.fonts', ca: 'Fonts de dades' },
     { href: 'historial.html', key: 'footer.historial', ca: "Historial d'actualitzacions" },
     { href: 'observatori.html', key: 'footer.obs', ca: 'Observatori' },
+    { href: 'que-em-falta.html', key: 'footer.gap', ca: 'Què em falta?' },
     { href: 'politica-privacitat.html', key: 'footer.priv', ca: 'Política de privacitat' },
     { href: 'avis-legal.html', key: 'footer.legal', ca: 'Avís legal' }
   ];

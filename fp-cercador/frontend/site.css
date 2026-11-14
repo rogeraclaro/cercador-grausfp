@@ -59,6 +59,10 @@
   margin-left: 16px;
 }
 
+.topbar-gap {
+  margin-left: 8px;
+}
+
 #auth-widget {
   margin-left: auto;
   display: flex;

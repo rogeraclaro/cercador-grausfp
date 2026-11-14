@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="ca">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title data-i18n="page.title.gap">Què em falta? — Cercador Graus FP</title>
+  <meta name="description"
+    content="Marca los Grados B, C y D de Formación Profesional que ya tienes y descubre qué certificados y ciclos tienes más cerca y qué te falta para completarlos.">
+
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="GrausFP">
+  <meta property="og:title" content="Què em falta? — GrausFP">
+  <meta property="og:image" content="https://grausfp.es/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="GrausFP: tota la Formació Professional, en un sol cercador">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=DM+Serif+Display:ital@0;1&family=Geist+Mono:wght@400;500&display=swap"
+    rel="stylesheet">
+
+  <link rel="stylesheet" href="site.css?v=5">
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: var(--fs-body);
+      color: var(--dark);
+      background: var(--bg);
+    }
+
+    [x-cloak] { display: none !important; }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+
+    .hero {
+      border-bottom: 2px solid var(--dark);
+      padding: 40px 48px 28px;
+    }
+
+    .hero h1 {
+      font-family: 'DM Serif Display', serif;
+      font-size: var(--fs-display);
+      font-weight: 400;
+      line-height: 1.05;
+      margin-bottom: 10px;
+    }
+
+    .hero-sub {
+      font-size: var(--fs-lead);
+      color: var(--warm);
+      max-width: 62ch;
+    }
+
+    .hero-note {
+      margin-top: 14px;
+      font-size: var(--fs-small);
+      color: var(--ink-soft);
+      border-left: 2px solid var(--dark);
+      padding-left: 10px;
+    }
+
+    .content {
+      display: grid;
+      grid-template-columns: minmax(280px, 380px) minmax(0, 1fr);
+      gap: 48px;
+      padding: 32px 48px 64px;
+      align-items: start;
+    }
+
+    .col h2 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 24px;
+      font-weight: 400;
+      margin-bottom: 14px;
+    }
+
+    .col-held {
+      position: sticky;
+      top: 16px;
+    }
+
+    /* Cercador de graus */
+    .held-search label {
+      display: block;
+      font-size: var(--fs-label);
+      font-weight: 600;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      color: var(--warm);
+      margin-bottom: 6px;
+    }
+
+    .held-search input {
+      width: 100%;
+      font-family: inherit;
+      font-size: var(--fs-input);
+      color: var(--dark);
+      background: var(--white);
+      border: 1px solid var(--dark);
+      border-radius: 2px;
+      padding: 10px 12px;
+    }
+
+    .suggestions {
+      list-style: none;
+      background: var(--white);
+      border: 1px solid var(--dark);
+      border-top: none;
+      max-height: 340px;
+      overflow-y: auto;
+    }
+
+    .suggestions button {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      width: 100%;
+      text-align: left;
+      font-family: inherit;
+      font-size: var(--fs-small);
+      color: var(--dark);
+      background: none;
+      border: none;
+      border-bottom: 1px solid var(--border);
+      padding: 9px 12px;
+      cursor: pointer;
+    }
+
+    .suggestions li:last-child button { border-bottom: none; }
+    .suggestions button:hover { background: var(--warm2); }
+
+    .suggestions .none,
+    .hint {
+      font-size: var(--fs-small);
+      color: var(--warm);
+      padding: 9px 0;
+    }
+
+    .suggestions .none { padding: 9px 12px; }
+
+    .grade {
+      flex-shrink: 0;
+      font-family: 'Geist Mono', monospace;
+      font-size: var(--fs-label);
+      font-weight: 500;
+      border: 1px solid var(--dark);
+      border-radius: 2px;
+      padding: 1px 5px;
+    }
+
+    .code {
+      font-family: 'Geist Mono', monospace;
+      font-size: var(--fs-label);
+      color: var(--warm);
+    }
+
+    .old {
+      font-size: var(--fs-label);
+      color: var(--amber-ink);
+      background: var(--amber-bg);
+      border-radius: 2px;
+      padding: 0 5px;
+      white-space: nowrap;
+    }
+
+    /* El que ja tinc */
+    .held-list {
+      list-style: none;
+      margin-top: 18px;
+      border-top: 1px solid var(--dark);
+    }
+
+    .held-list li {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .held-list .name { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+
+    .remove {
+      flex-shrink: 0;
+      align-self: center;
+      width: 28px;
+      height: 28px;
+      font-size: 14px;
+      line-height: 1;
+      color: var(--warm);
+      background: none;
+      border: 1px solid transparent;
+      border-radius: 2px;
+      cursor: pointer;
+    }
+
+    .remove:hover { color: var(--alert-ink); border-color: var(--alert-edge); background: var(--alert-bg); }
+
+    .held-foot {
+      margin-top: 12px;
+      font-size: var(--fs-mono);
+      color: var(--warm);
+    }
+
+    /* Estats */
+    .state {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      padding: 28px;
+      color: var(--ink-soft);
+      line-height: 1.55;
+    }
+
+    .state p + p { margin-top: 10px; }
+    .state.error { border-color: var(--alert-edge); background: var(--alert-bg); color: var(--alert-ink); }
+
+    .examples {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    .btn {
+      font-family: inherit;
+      font-size: var(--fs-small);
+      font-weight: 600;
+      color: var(--dark);
+      background: var(--white);
+      border: 1px solid var(--dark);
+      border-radius: 2px;
+      padding: 7px 12px;
+      cursor: pointer;
+      text-align: left;
+    }
+
+    .btn:hover { background: var(--dark); color: var(--white); }
+
+    /* Objectius */
+    .summary {
+      font-size: var(--fs-small);
+      color: var(--warm);
+      margin-bottom: 14px;
+    }
+
+    .goals { list-style: none; display: grid; gap: 14px; }
+
+    .goal {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      padding: 18px 20px;
+    }
+
+    .goal.complete { border-color: var(--ok-ink); }
+
+    .goal-head {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .goal h3 {
+      flex: 1;
+      min-width: 12ch;
+      font-size: var(--fs-lead);
+      font-weight: 600;
+      line-height: 1.3;
+      overflow-wrap: anywhere;
+    }
+
+    .goal-meta {
+      margin-top: 4px;
+      font-size: var(--fs-mono);
+      color: var(--warm);
+    }
+
+    .progress-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .progress {
+      flex: 1;
+      height: 8px;
+      background: var(--warm2);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .progress > span {
+      display: block;
+      height: 100%;
+      background: var(--dark);
+    }
+
+    .goal.complete .progress > span { background: var(--ok-ink); }
+
+    .progress-num {
+      font-family: 'Geist Mono', monospace;
+      font-size: var(--fs-mono);
+      white-space: nowrap;
+    }
+
+    .done-tag {
+      font-size: var(--fs-label);
+      font-weight: 600;
+      color: var(--ok-ink);
+      background: var(--ok-bg);
+      border-radius: 2px;
+      padding: 1px 6px;
+    }
+
+    .missing-title {
+      margin-top: 14px;
+      font-size: var(--fs-label);
+      font-weight: 600;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      color: var(--warm);
+    }
+
+    .missing {
+      list-style: none;
+      margin-top: 6px;
+    }
+
+    .missing li {
+      padding: 5px 0;
+      border-bottom: 1px dotted var(--border);
+      font-size: var(--fs-small);
+      overflow-wrap: anywhere;
+    }
+
+    .missing a,
+    .goal-links a,
+    .related a { color: var(--dark); }
+
+    .more {
+      margin-top: 8px;
+      font-family: inherit;
+      font-size: var(--fs-small);
+      color: var(--dark);
+      background: none;
+      border: none;
+      text-decoration: underline;
+      cursor: pointer;
+      padding: 4px 0;
+    }
+
+    .goal-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px 18px;
+      margin-top: 14px;
+      font-size: var(--fs-small);
+    }
+
+    .related { margin-top: 40px; }
+    .related ul { list-style: none; border-top: 1px solid var(--dark); }
+    .related li { padding: 10px 0; border-bottom: 1px solid var(--border); }
+    .related .via { display: block; font-size: var(--fs-mono); color: var(--warm); margin-top: 2px; }
+    .related-note { font-size: var(--fs-small); color: var(--warm); margin-bottom: 12px; }
+
+    input:focus-visible,
+    button:focus-visible,
+    a:focus-visible {
+      outline: 2px solid var(--dark);
+      outline-offset: 2px;
+    }
+
+    @media (max-width: 900px) {
+      .content {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 32px;
+      }
+
+      .col-held { position: static; }
+    }
+
+    @media (max-width: 768px) {
+      .hero { padding: 24px 16px 20px; }
+      .hero h1 { font-size: var(--fs-display-sm); }
+      .content { padding: 20px 16px 40px; }
+      .goal { padding: 16px; }
+    }
+
+    @media (pointer: coarse) {
+      .remove { width: 44px; height: 44px; }
+      .suggestions button, .btn, .more { min-height: 44px; }
+    }
+  </style>
+  <script src="i18n.js?v=20261114d"></script>
+  <script src="auth.js?v=20261114d"></script>
+  <script src="held.js?v=1"></script>
+  <script>
+    const API_BASE = window.location.hostname === 'localhost' ? 'http://localhost:5001' : '';
+    const GAP_EXAMPLES = ['ADG_C_001_3B', 'administracion-gestion~gestion-administrativa'];
+    const FOLD_AT = 5;        // «Et falta» es plega a partir de 5 elements
+    const MAX_SUGGESTIONS = 8;
+
+    // El catàleg (B, C i D) viu fora de l'estat d'Alpine: no cal fer reactius 4.000 registres.
+    let catalog = [];
+    let byRef = {};
+
+    function norm(s) {
+      return (s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+    }
+
+    document.addEventListener('alpine:init', () => {
+      Alpine.data('queEmFalta', () => ({
+        held: [],             // ref dels graus que ja té
+        catalogReady: false,
+        query: '',
+        caEs: null,           // taules CA→ES (/api/ca-es-terms); null = cerca literal
+        state: 'idle',        // idle | loading | error | data
+        result: null,
+        open: {},             // ref de l'objectiu → llista «Et falta» desplegada
+        maxed: false,
+
+        async init() {
+          this.held = GFPHeld.read();
+          fetch(API_BASE + '/api/ca-es-terms').then(r => r.ok ? r.json() : null).then(d => { this.caEs = d; }, () => {});
+          const account = fetch(API_BASE + '/api/auth/me', { credentials: 'include' })
+            .then(r => r.ok, () => false).then(ok => GFPHeld.init(ok));
+          this.loadCatalog();
+          this.compute();
+          const merged = await account;
+          if (merged.join('\n') !== this.held.join('\n')) { this.held = merged; this.compute(); }
+        },
+
+        async loadCatalog() {
+          try {
+            const res = await fetch(API_BASE + '/api/ofertes');
+            if (!res.ok) return;
+            catalog = (await res.json())
+              .filter(r => r.ref && (r.grado === 'B' || r.grado === 'C' || r.grado === 'D'))
+              .map(r => ({ ref: r.ref, grado: r.grado, codigo: r.codigo, denominacion: r.denominacion,
+                           old: !!r.plan_antiguo, _den: norm(r.denominacion), _cod: norm(r.codigo) }));
+            // Suggeriments: primer els graus vigents i, dins de cada grup, cicles, certificats i mòduls.
+            const rank = r => (r.old ? 3 : 0) + 'DCB'.indexOf(r.grado);
+            catalog.sort((x, y) => rank(x) - rank(y));
+            byRef = Object.fromEntries(catalog.map(r => [r.ref, r]));
+            this.catalogReady = true;
+          } catch (e) { /* sense catàleg no hi ha suggeriments; la llista desada es continua calculant */ }
+        },
+
+        // Mateixes regles que expandSearch d'index.html (variants CA→ES per token).
+        expandSearch(q) {
+          const ce = this.caEs;
+          if (!ce || !q) return null;
+          let expanded = false;
+          const groups = q.split(/\s+/).map(tok => {
+            let es = null;
+            if (Object.prototype.hasOwnProperty.call(ce.terms, tok)) {
+              es = ce.terms[tok];
+            } else {
+              for (const [ca, esSfx] of ce.suffixes) {
+                if (tok.endsWith(ca) && tok.length > ca.length + 2) { es = tok.slice(0, -ca.length) + esSfx; break; }
+              }
+            }
+            if (es && es !== tok) { expanded = true; return [tok, es]; }
+            return [tok];
+          });
+          return expanded ? groups : null;
+        },
+
+        get suggestions() {
+          const q = norm(this.query).trim();
+          if (!this.catalogReady || q.length < 2) return [];
+          const groups = this.expandSearch(q);
+          const out = [];
+          for (const r of catalog) {
+            if (this.held.includes(r.ref)) continue;
+            const hit = groups ? groups.every(g => g.some(v => r._den.includes(v))) : r._den.includes(q);
+            if (hit || r._cod.includes(q)) { out.push(r); if (out.length === MAX_SUGGESTIONS) break; }
+          }
+          return out;
+        },
+
+        get searching() { return this.catalogReady && norm(this.query).trim().length >= 2; },
+
+        // Un grau desat: el del catàleg o, mentre no arriba, el de la darrera resposta.
+        item(ref) {
+          const fromResult = this.result && this.result.held.find(h => h.ref === ref);
+          return (this.catalogReady && byRef[ref]) || fromResult || { ref, grado: '', denominacion: ref };
+        },
+
+        get examples() {
+          return this.catalogReady ? GAP_EXAMPLES.map(ref => byRef[ref]).filter(Boolean) : [];
+        },
+
+        add(ref) {
+          if (this.held.includes(ref)) return;
+          if (this.held.length >= GFPHeld.MAX) { this.maxed = true; return; }
+          this.held = GFPHeld.save([...this.held, ref]);
+          this.query = '';
+          this.compute();
+        },
+
+        remove(ref) {
+          this.maxed = false;
+          this.held = GFPHeld.save(this.held.filter(r => r !== ref));
+          this.compute();
+        },
+
+        addFirst() {
+          const first = this.suggestions[0];
+          if (first) this.add(first.ref);
+        },
+
+        async compute() {
+          // Comptador de seqüència: una resposta antiga no trepitja la nova (com runOcupSearch).
+          const seq = this._seq = (this._seq || 0) + 1;
+          if (!this.held.length) { this.result = null; this.state = 'idle'; return; }
+          this.state = 'loading';
+          try {
+            const res = await fetch(API_BASE + '/api/que-em-falta', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ refs: this.held })
+            });
+            if (seq !== this._seq) return;
+            if (!res.ok) throw new Error('HTTP ' + res.status);
+            const data = await res.json();
+            if (seq !== this._seq) return;
+            this.result = data;
+            this.state = 'data';
+            // Graus que ja no són al catàleg: fora de la llista desada.
+            if (data.ignorats.length) this.held = GFPHeld.save(this.held.filter(r => !data.ignorats.includes(r)));
+          } catch (e) {
+            if (seq === this._seq) this.state = 'error';
+          }
+        },
+
+        get goals() { return this.result ? this.result.objectius : []; },
+        get related() { return this.result ? this.result.relacionats : []; },
+
+        summary() {
+          if (this.state !== 'data') return '';
+          const n = this.goals.length;
+          return n ? t(n === 1 ? 'gap.summary_one' : 'gap.summary', { n }) : '';
+        },
+
+        progressLabel(goal) {
+          return t(goal.grado === 'C' ? 'gap.progress.b' : 'gap.progress.modules', { n: goal.tens, m: goal.total });
+        },
+
+        visibleMissing(goal) {
+          return this.open[goal.ref] || goal.falta.length <= FOLD_AT ? goal.falta : goal.falta.slice(0, FOLD_AT);
+        },
+
+        itinUrl(o) { return 'itinerari.html?grado=' + o.grado + '&ref=' + encodeURIComponent(o.ref); },
+        // Pàgina pública del grau (/grau/<ref>; en local, directament a Flask), com a index.html.
+        grauUrl(ref) { return (API_BASE ? API_BASE + '/api' : '') + '/grau/' + encodeURIComponent(ref); },
+      }));
+    });
+  </script>
+  <script defer src="vendor/alpinejs-3.15.11.min.js"></script>
+  <script defer src="https://analytics.masellas.info/script.js" data-exclude-search="true" data-exclude-hash="true" data-website-id="ddb6c664-550b-4e2d-848f-796a676e4036"></script>
+</head>
+
+<body>
+
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a href="index.html" class="topbar-logo">GrausFP</a>
+      <a class="auth-btn topbar-centres" href="https://centres.grausfp.es/" data-lang-href="https://centres.grausfp.es/" target="_blank" rel="noopener" data-i18n="nav.centres">Centres</a>
+      <a class="auth-btn topbar-gap" href="que-em-falta.html" aria-current="page" data-i18n="nav.gap">Què em falta?</a>
+      <div id="auth-widget"></div>
+      <div class="lang-selector" aria-label="Language selector">
+        <button class="lang-btn" data-lang="ca" onclick="setLang('ca')">CA</button>
+        <button class="lang-btn" data-lang="es" onclick="setLang('es')">ES</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="hero">
+    <h1 data-i18n="gap.h1">Què em falta?</h1>
+    <p class="hero-sub" data-i18n="gap.sub">Marca els Graus B, C i D que ja tens i mira quins certificats i cicles tens més a prop.</p>
+    <p class="hero-note" data-i18n="gap.disclaimer">Orientatiu: la convalidació la resol l'administració educativa.</p>
+  </div>
+
+  <main class="content" x-data="queEmFalta">
+
+    <section class="col col-held" aria-labelledby="held-title">
+      <h2 id="held-title" data-i18n="gap.held.title">El que ja tinc</h2>
+
+      <div class="held-search">
+        <label for="held-q" data-i18n="gap.search.label">Afegeix un grau</label>
+        <input id="held-q" type="search" autocomplete="off" x-model="query" @keydown.enter.prevent="addFirst()"
+          @keydown.escape="query = ''" data-i18n-placeholder="gap.search.placeholder"
+          placeholder="Nom o codi d'un Grau B, C o D">
+        <ul class="suggestions" x-show="searching" x-cloak :aria-label="t('gap.search.results')">
+          <template x-for="s in suggestions" :key="s.ref">
+            <li>
+              <button type="button" @click="add(s.ref)">
+                <span class="grade" x-text="s.grado"></span>
+                <span>
+                  <span x-text="s.denominacion"></span>
+                  <span class="code" x-show="s.codigo" x-text="s.codigo"></span>
+                  <span class="old" x-show="s.old" x-text="t('index.badge.old')"></span>
+                </span>
+              </button>
+            </li>
+          </template>
+          <li class="none" x-show="!suggestions.length" x-text="t('gap.search.none')"></li>
+        </ul>
+        <p class="hint" role="alert" x-show="maxed" x-cloak x-text="t('gap.held.max', {n: held.length})"></p>
+      </div>
+
+      <ul class="held-list" x-show="held.length" x-cloak>
+        <template x-for="ref in held" :key="ref">
+          <li>
+            <span class="grade" x-show="item(ref).grado" x-text="item(ref).grado"></span>
+            <span class="name">
+              <span x-text="item(ref).denominacion"></span>
+              <span class="code" x-show="item(ref).codigo" x-text="item(ref).codigo"></span>
+            </span>
+            <button type="button" class="remove" @click="remove(ref)"
+              :aria-label="t('gap.held.remove', {name: item(ref).denominacion})">✕</button>
+          </li>
+        </template>
+      </ul>
+      <p class="hint" x-show="!held.length" x-text="t('gap.held.empty')"></p>
+      <p class="held-foot" data-i18n="gap.held.storage">Es desa en aquest navegador i, si tens sessió, al teu compte.</p>
+    </section>
+
+    <section class="col" aria-labelledby="goals-title">
+      <h2 id="goals-title" data-i18n="gap.goals.title">A prop teu</h2>
+      <p class="summary" aria-live="polite" x-show="summary()" x-text="summary()"></p>
+
+      <div class="state" x-show="state === 'idle'">
+        <p x-text="t('gap.empty.p1')"></p>
+        <p x-text="t('gap.empty.p2')"></p>
+        <div class="examples" x-show="examples.length" x-cloak>
+          <template x-for="ex in examples" :key="ex.ref">
+            <button type="button" class="btn" @click="add(ex.ref)"
+              x-text="t('gap.empty.example', {g: ex.grado, name: ex.denominacion})"></button>
+          </template>
+        </div>
+      </div>
+
+      <div class="state" x-show="state === 'loading' && !result" x-cloak x-text="t('gap.loading')"></div>
+
+      <div class="state error" role="alert" x-show="state === 'error'" x-cloak>
+        <p x-text="t('gap.error')"></p>
+        <div class="examples"><button type="button" class="btn" @click="compute()" x-text="t('gap.retry')"></button></div>
+      </div>
+
+      <div class="state" x-show="state === 'data' && !goals.length && !related.length" x-cloak
+        x-text="t('gap.none')"></div>
+
+      <ul class="goals" x-show="state !== 'error' && goals.length" x-cloak :aria-busy="state === 'loading' ? 'true' : 'false'">
+        <template x-for="goal in goals" :key="goal.ref">
+          <li class="goal" :class="{ complete: goal.complet }">
+            <div class="goal-head">
+              <span class="grade" x-text="goal.grado"></span>
+              <h3 x-text="goal.denominacion"></h3>
+              <span class="done-tag" x-show="goal.complet" x-text="t('gap.complete')"></span>
+            </div>
+            <p class="goal-meta">
+              <span class="code" x-show="goal.codigo" x-text="goal.codigo + ' · '"></span><span x-text="goal.familia"></span>
+            </p>
+            <div class="progress-row">
+              <div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" :aria-valuenow="goal.percent"
+                :aria-label="t('gap.progress.aria', {name: goal.denominacion})" :aria-valuetext="progressLabel(goal)">
+                <span :style="'width:' + goal.percent + '%'"></span>
+              </div>
+              <span class="progress-num" x-text="goal.percent + ' % · ' + progressLabel(goal)"></span>
+            </div>
+            <template x-if="goal.falta.length">
+              <div>
+                <p class="missing-title" x-text="t('gap.missing', {n: goal.falta.length})"></p>
+                <ul class="missing">
+                  <template x-for="(piece, i) in visibleMissing(goal)" :key="i">
+                    <li>
+                      <template x-if="piece.tipus === 'B' && piece.ref">
+                        <a :href="grauUrl(piece.ref)"><span class="code" x-text="piece.codigo + ' '"></span><span x-text="piece.denominacion"></span></a>
+                      </template>
+                      <template x-if="!(piece.tipus === 'B' && piece.ref)">
+                        <span x-text="piece.nom || piece.denominacion"></span>
+                      </template>
+                    </li>
+                  </template>
+                </ul>
+                <button type="button" class="more" x-show="goal.falta.length > FOLD_AT"
+                  :aria-expanded="open[goal.ref] ? 'true' : 'false'" @click="open[goal.ref] = !open[goal.ref]"
+                  x-text="open[goal.ref] ? t('gap.less') : t('gap.more', {n: goal.falta.length - FOLD_AT})"></button>
+              </div>
+            </template>
+            <p class="goal-links">
+              <a :href="itinUrl(goal)" x-text="t('gap.link.itinerari')"></a>
+              <a :href="grauUrl(goal.ref)" x-text="t('grau.page_link')"></a>
+              <button type="button" class="more" style="margin:0;padding:0" @click="add(goal.ref)"
+                x-text="t('gap.have')"></button>
+            </p>
+          </li>
+        </template>
+      </ul>
+
+      <section class="related" x-show="state === 'data' && related.length" x-cloak aria-labelledby="related-title">
+        <h2 id="related-title" x-text="t('gap.related.title')"></h2>
+        <p class="related-note" x-text="t('gap.related.note')"></p>
+        <ul>
+          <template x-for="cicle in related" :key="cicle.via + cicle.denominacion">
+            <li>
+              <a :href="cicle.ficha_url" target="_blank" rel="noopener" x-show="cicle.ficha_url" x-text="cicle.denominacion"></a>
+              <span x-show="!cicle.ficha_url" x-text="cicle.denominacion"></span>
+              <span class="via" x-text="t('gap.related.via', {code: cicle.via}) + (cicle.familia ? ' · ' + cicle.familia : '')"></span>
+            </li>
+          </template>
+        </ul>
+      </section>
+    </section>
+
+  </main>
+
+  <footer class="site-footer" id="site-footer"></footer>
+  <script src="footer.js?v=3"></script>
+  <script src="feedback.js?v=4"></script>
+
+  <noscript>
+    <p>Què em falta? Activa JavaScript per marcar els graus que ja tens i veure què et falta.</p>
+  </noscript>
+</body>
+
+</html>

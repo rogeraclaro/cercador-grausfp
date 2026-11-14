@@ -18,16 +18,16 @@ import json
 from urllib.parse import quote
 
 # Versions dels recursos compartits: les mateixes que a les subpàgines (fonts.html).
-I18N_VERSION = '20261114c'
-SITE_CSS_VERSION = '4'
-FOOTER_VERSION = '2'
+I18N_VERSION = '20261114d'
+SITE_CSS_VERSION = '5'
+FOOTER_VERSION = '3'
 FEEDBACK_VERSION = '3'
 
 # Sister site with the accredited-centres search (same host as the topbar link).
 CENTRES_URL = 'https://centres.grausfp.es'
 
 STATIC_PAGES = ['/', '/per-que-grausfp.html', '/fonts.html', '/observatori.html',
-                '/historial.html', '/families']
+                '/historial.html', '/que-em-falta.html', '/families']
 
 GRADOS = ('A', 'B', 'C', 'D', 'E')
 
@@ -255,6 +255,7 @@ def _shell(*, title: str, description: str, canonical: str | None, body: str,
     <div class="topbar-inner">
       <a href="/index.html" class="topbar-logo">GrausFP</a>
       <a class="auth-btn topbar-centres" href="https://centres.grausfp.es/" data-lang-href="https://centres.grausfp.es/" target="_blank" rel="noopener" data-i18n="nav.centres">Centros</a>
+      <a class="auth-btn topbar-gap" href="/que-em-falta.html" data-i18n="nav.gap">¿Qué me falta?</a>
       <div id="auth-widget"></div>
       <div class="lang-selector" aria-label="Language selector">
         <button class="lang-btn" data-lang="ca" onclick="setLang('ca')">CA</button>

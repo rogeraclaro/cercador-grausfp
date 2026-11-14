@@ -28,6 +28,8 @@ PAGES_ES = {
               "De dónde salen los datos de GrausFP y cada cuánto se actualizan."),
     "observatori": ("Observatorio de la oferta FP — GrausFP",
                     "Evolución semanal de las titulaciones de Formación Profesional en España (Grados A–E). Estadísticas actualizadas automáticamente desde el Ministerio de Educación."),
+    "que-em-falta": ("¿Qué me falta? — GrausFP",
+                     "Marca los Grados B, C y D de Formación Profesional que ya tienes y descubre qué certificados y ciclos tienes más cerca y qué te falta para completarlos."),
     "historial": ("Historial de actualizaciones — GrausFP",
                   "Los cambios de cada actualización del catálogo de Formación Profesional."),
 }
