@@ -1389,6 +1389,62 @@
       outline-offset: -2px;
     }
 
+    /* Pla 084: «+ Llista» reutilitza el botó i el menú de compartir */
+    .row-list-msg,
+    .row-list-hint {
+      display: block;
+      padding: 10px 14px;
+      font-size: var(--fs-small);
+      color: var(--warm);
+    }
+
+    .row-list-msg { color: var(--dark); font-weight: 600; }
+
+    .row-list-body { display: block; }
+
+    .row-list-title {
+      display: block;
+      padding: 8px 14px 4px;
+      font-size: var(--fs-label);
+      font-weight: 600;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      color: var(--warm);
+    }
+
+    .row-list-new {
+      display: flex;
+      gap: 6px;
+      padding: 6px 10px 8px;
+    }
+
+    .row-list-new input {
+      flex: 1;
+      min-width: 0;
+      font: inherit;
+      font-size: var(--fs-input);
+      color: var(--dark);
+      border: 1px solid var(--dark);
+      border-radius: 2px;
+      padding: 6px 8px;
+    }
+
+    .row-share-menu .row-list-new button {
+      width: auto;
+      justify-content: center;
+      padding: 0 12px;
+      background: var(--dark);
+      color: var(--white);
+      border-radius: 2px;
+      font-weight: 600;
+    }
+
+    .row-share-menu .row-list-manage {
+      border-top: 1px solid var(--border);
+      font-size: var(--fs-small);
+      color: var(--warm);
+    }
+
     .badge-centres:focus-visible,
     .row-share-btn:focus-visible,
     .badge-itinerari-b[role="button"]:focus-visible {
@@ -2152,8 +2208,8 @@
     }
   </style>
 
-  <script src="i18n.js?v=20261114d"></script>
-  <script src="auth.js?v=20261114d"></script>
+  <script src="i18n.js?v=20261114e"></script>
+  <script src="auth.js?v=20261114e"></script>
   <script src="held.js?v=1"></script>
   <script>
     const API_BASE = window.location.hostname === 'localhost'
@@ -2219,6 +2275,11 @@
         expandedRows: {},
         shareRowId: null,       // fila amb el menú de compartir obert
         shareCopied: false,
+        listRowId: null,        // fila amb el menú «+ Llista» obert (Pla 084)
+        userLists: null,        // llistes de l'usuari; null = encara no demanades
+        listMsg: '',
+        listNewOpen: false,
+        listNewName: '',
         heldRefs: [],           // graus marcats «Ja el tinc» (held.js, Pla 083)
         droppedState: null,     // llista d'abans de l'itinerari, quan s'ha hagut de treure per mostrar el grau
 
@@ -3007,6 +3068,54 @@
           }
           this.shareCopied = false;
           this.shareRowId = this.shareRowId === row.id ? null : row.id;
+        },
+        // Pla 084: afegir el grau a una llista compartible. Les llistes només es demanen
+        // el primer cop que s'obre el menú.
+        async openListMenu(row, button) {
+          if (!this.loggedIn) { this.showCentresModal(); return; }
+          this.listMsg = '';
+          this.listNewOpen = false;
+          this.listNewName = '';
+          this.listRowId = this.listRowId === row.id ? null : row.id;
+          // En pantalles estretes el menú sortiria per la dreta: es desplaça el que calgui.
+          this.$nextTick(() => {
+            const menu = button.nextElementSibling;
+            menu.style.left = '0';
+            const over = menu.getBoundingClientRect().right - (document.documentElement.clientWidth - 8);
+            if (over > 0) menu.style.left = -over + 'px';
+          });
+          if (this.listRowId === null || this.userLists !== null) return;
+          try {
+            const res = await fetch(API_BASE + '/api/lists', { credentials: 'include' });
+            if (!res.ok) throw new Error('HTTP ' + res.status);
+            this.userLists = await res.json();
+          } catch (e) { this.listMsg = t('lists.error'); }
+        },
+        async addToList(row, list) {
+          try {
+            const res = await fetch(API_BASE + '/api/lists/' + list.id + '/items/' + encodeURIComponent(row.ref),
+              { method: 'PUT', credentials: 'include' });
+            this.listMsg = res.status === 201 ? t('lists.add.done', { name: list.name })
+              : res.status === 200 ? t('lists.add.already', { name: list.name })
+              : res.status === 429 ? t('lists.add.full') : t('lists.error');
+            if (res.ok) setTimeout(() => { if (this.listRowId === row.id) this.listRowId = null; }, 1500);
+          } catch (e) { this.listMsg = t('lists.error'); }
+        },
+        async addToNewList(row) {
+          const name = this.listNewName.trim();
+          if (!name) return;
+          try {
+            const res = await fetch(API_BASE + '/api/lists', {
+              method: 'POST', credentials: 'include',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ name })
+            });
+            if (res.status === 429) { this.listMsg = t('lists.max_lists'); return; }
+            if (!res.ok) throw new Error('HTTP ' + res.status);
+            const made = await res.json();
+            this.userLists = [{ id: made.id, name: made.name }, ...this.userLists];
+            await this.addToList(row, made);
+          } catch (e) { this.listMsg = t('lists.error'); }
         },
         copyRowLink(row) {
           navigator.clipboard.writeText(this.rowShareUrl(row)).then(() => {
@@ -3931,6 +4040,35 @@
                         <a role="menuitem" :href="'mailto:?subject=' + encodeURIComponent(rowShareText(row)) + '&body=' + encodeURIComponent(rowShareText(row) + '\n' + rowShareUrl(row))" @click="shareRowId = null"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg><span x-text="t('itin.share.email')"></span></a>
                       </span>
                       <span class="sr-only" aria-live="polite" x-text="shareRowId === row.id && shareCopied ? t('itin.share.copied') : ''"></span>
+                    </span>
+                  </template>
+                  <template x-if="row.ref && (expandedRows[row.id] || childrenCLoeVisible[row.id])">
+                    <span class="row-share" @click.stop @keydown.stop
+                      @click.outside="if (listRowId === row.id) listRowId = null" @keydown.escape="listRowId = null">
+                      <button type="button" class="row-share-btn" @click="openListMenu(row, $event.currentTarget)" :title="t('lists.add.title')"
+                        :aria-label="t('lists.add.title')" :aria-expanded="listRowId === row.id ? 'true' : 'false'"
+                        x-text="t('lists.add')"></button>
+                      <span class="row-share-menu" x-show="listRowId === row.id" x-cloak>
+                        <span class="row-list-msg" role="status" x-show="listMsg" x-text="listMsg"></span>
+                        <span class="row-list-body" x-show="!listMsg">
+                          <span class="row-list-title" x-text="t('lists.add.title')"></span>
+                          <span class="row-list-hint" x-show="userLists === null" x-text="t('lists.loading')"></span>
+                          <span class="row-list-hint" x-show="userLists && !userLists.length" x-text="t('lists.add.none')"></span>
+                          <template x-for="l in (userLists || [])" :key="l.id">
+                            <button type="button" @click="addToList(row, l)" x-text="l.name"></button>
+                          </template>
+                          <button type="button" x-show="userLists && !listNewOpen"
+                            @click="listNewOpen = true; $nextTick(() => $el.nextElementSibling.querySelector('input').focus())"
+                            x-text="t('lists.add.new')"></button>
+                          <span class="row-list-new" x-show="listNewOpen">
+                            <input type="text" maxlength="80" autocomplete="off" x-model="listNewName"
+                              :placeholder="t('lists.new.placeholder')" :aria-label="t('lists.new.placeholder')"
+                              @keydown.enter.prevent="addToNewList(row)">
+                            <button type="button" @click="addToNewList(row)" x-text="t('lists.new.submit')"></button>
+                          </span>
+                          <a class="row-list-manage" href="llistes.html" x-text="t('lists.add.manage')"></a>
+                        </span>
+                      </span>
                     </span>
                   </template>
                 </td>

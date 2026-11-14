@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="ca">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title data-i18n="page.title.shared_list">Llista compartida — Cercador Graus FP</title>
+  <meta name="robots" content="noindex">
+  <meta name="referrer" content="same-origin">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=DM+Serif+Display:ital@0;1&family=Geist+Mono:wght@400;500&display=swap"
+    rel="stylesheet">
+
+  <link rel="stylesheet" href="site.css?v=5">
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: var(--fs-body);
+      color: var(--dark);
+      background: var(--bg);
+    }
+
+    [x-cloak] { display: none !important; }
+
+    .page {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 40px 48px 64px;
+      min-height: 60vh;
+    }
+
+    .tag {
+      font-size: var(--fs-label);
+      font-weight: 600;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      color: var(--warm);
+      margin-bottom: 10px;
+    }
+
+    h1 {
+      font-family: 'DM Serif Display', serif;
+      font-size: var(--fs-display);
+      font-weight: 400;
+      line-height: 1.05;
+      overflow-wrap: anywhere;
+    }
+
+    .message {
+      margin-top: 18px;
+      font-family: 'DM Serif Display', serif;
+      font-style: italic;
+      font-size: var(--fs-title);
+      line-height: 1.4;
+      color: var(--ink-soft);
+      border-left: 2px solid var(--dark);
+      padding-left: 14px;
+      white-space: pre-line;
+      overflow-wrap: anywhere;
+    }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px 12px;
+      margin-top: 24px;
+    }
+
+    .btn {
+      font-family: inherit;
+      font-size: var(--fs-small);
+      font-weight: 600;
+      color: var(--dark);
+      background: var(--white);
+      border: 1px solid var(--dark);
+      border-radius: 2px;
+      padding: 8px 14px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .btn:hover { background: var(--dark); color: var(--white); }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn.primary { background: var(--dark); color: var(--white); }
+    .btn.primary:hover { background: var(--ink-soft); }
+
+    .result {
+      font-size: var(--fs-small);
+      color: var(--ok-ink);
+    }
+
+    .result.failed { color: var(--alert-ink); }
+    .result a { color: inherit; }
+
+    .items {
+      list-style: none;
+      margin-top: 28px;
+      border-top: 2px solid var(--dark);
+    }
+
+    .items li {
+      padding: 18px 0;
+      border-bottom: 1px solid var(--border);
+      break-inside: avoid;
+    }
+
+    .item-head {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+    }
+
+    .item-head h2 {
+      flex: 1;
+      min-width: 0;
+      font-size: var(--fs-lead);
+      font-weight: 600;
+      line-height: 1.3;
+      overflow-wrap: anywhere;
+    }
+
+    .grade {
+      flex-shrink: 0;
+      font-family: 'Geist Mono', monospace;
+      font-size: var(--fs-label);
+      font-weight: 500;
+      border: 1px solid var(--dark);
+      border-radius: 2px;
+      padding: 1px 5px;
+    }
+
+    .meta {
+      margin-top: 4px;
+      font-family: 'Geist Mono', monospace;
+      font-size: var(--fs-label);
+      color: var(--warm);
+    }
+
+    .note {
+      margin-top: 10px;
+      font-size: var(--fs-body);
+      line-height: 1.5;
+      color: var(--ink-soft);
+      background: var(--warm2);
+      border-radius: 2px;
+      padding: 10px 12px;
+      white-space: pre-line;
+      overflow-wrap: anywhere;
+    }
+
+    .gone {
+      margin-top: 6px;
+      font-size: var(--fs-small);
+      color: var(--amber-ink);
+    }
+
+    .links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px 18px;
+      margin-top: 10px;
+      font-size: var(--fs-small);
+    }
+
+    .links a { color: var(--dark); }
+
+    .state {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      padding: 28px;
+      color: var(--ink-soft);
+      line-height: 1.55;
+    }
+
+    .state h1 { font-size: var(--fs-display-sm); margin-bottom: 10px; }
+    .state .btn { margin-top: 16px; }
+
+    .print-foot { display: none; }
+
+    button:focus-visible,
+    a:focus-visible {
+      outline: 2px solid var(--dark);
+      outline-offset: 2px;
+    }
+
+    @media (max-width: 768px) {
+      .page { padding: 24px 16px 40px; }
+      h1 { font-size: var(--fs-display-sm); }
+    }
+
+    @media (pointer: coarse) {
+      .btn { min-height: 44px; display: inline-flex; align-items: center; }
+      .links a { min-height: 44px; display: inline-flex; align-items: center; }
+    }
+
+    @media print {
+      .topbar, .site-footer, .toolbar, .links, .fb-tab { display: none !important; }
+      body { background: #fff; }
+      .page { max-width: none; padding: 0; min-height: 0; }
+      .note { background: none; border-left: 2px solid #000; border-radius: 0; }
+
+      .print-foot {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        margin-top: 28px;
+        break-inside: avoid;
+        font-size: 11px;
+      }
+
+      .print-foot .qr { width: 110px; flex-shrink: 0; line-height: 0; }
+      .print-foot .qr svg { width: 100%; height: auto; }
+      .print-foot .url { font-family: 'Geist Mono', monospace; overflow-wrap: anywhere; }
+    }
+  </style>
+  <script src="i18n.js?v=20261114e"></script>
+  <script src="auth.js?v=20261114e"></script>
+  <script>
+    const API_BASE = window.location.hostname === 'localhost' ? 'http://localhost:5001' : '';
+    const TOKEN_KEY = 'gfpSharedListToken';   // el token viatja pel login sense passar per la URL de `next`
+    const TOKEN_RE = /^[A-Za-z0-9_-]{1,64}$/;
+
+    // QR de l'enllaç com a SVG en línia; '' si la llibreria no ha carregat (la pàgina funciona igual).
+    function qrSvg(text) {
+      if (typeof qrcode !== 'function') return '';
+      try {
+        const qr = qrcode(0, 'M');
+        qr.addData(text);
+        qr.make();
+        return qr.createSvgTag({ cellSize: 4, margin: 8, scalable: true });
+      } catch (e) { return ''; }
+    }
+
+    function readToken() {
+      let token = new URLSearchParams(location.search).get('t');
+      if (!token) {
+        try { token = sessionStorage.getItem(TOKEN_KEY); sessionStorage.removeItem(TOKEN_KEY); } catch (e) { /* mode privat */ }
+        if (token && TOKEN_RE.test(token)) history.replaceState(null, '', 'llista.html?t=' + token);
+      }
+      return token && TOKEN_RE.test(token) ? token : null;
+    }
+
+    document.addEventListener('alpine:init', () => {
+      Alpine.data('llista', () => ({
+        state: 'loading',     // loading | ready | missing | error
+        token: null,
+        list: null,
+        loggedIn: false,
+        saving: false,
+        saveResult: null,     // {ok, n, total} després de «Desa'ls als meus favorits»
+
+        async init() {
+          this.token = readToken();
+          if (!this.token) { this.state = 'missing'; return; }
+          fetch(API_BASE + '/api/auth/me', { credentials: 'include' }).then(r => { this.loggedIn = r.ok; }, () => {});
+          try {
+            const res = await fetch(API_BASE + '/api/llista/' + this.token);
+            if (res.status === 404) { this.state = 'missing'; return; }
+            if (!res.ok) throw new Error('HTTP ' + res.status);
+            this.list = await res.json();
+            document.title = this.list.name + ' — GrausFP';
+            this.state = 'ready';
+          } catch (e) { this.state = 'error'; }
+        },
+
+        get available() { return this.list ? this.list.items.filter(i => i.disponible) : []; },
+        get pageUrl() { return new URL('llista.html?t=' + this.token, location.href).toString(); },
+        get qr() { return this.state === 'ready' ? qrSvg(this.pageUrl) : ''; },
+
+        async saveAll() {
+          if (!this.loggedIn) {
+            try { sessionStorage.setItem(TOKEN_KEY, this.token); } catch (e) { /* mode privat: tornarà sense llista */ }
+            location.href = 'login.html?next=llista.html';
+            return;
+          }
+          this.saving = true;
+          this.saveResult = null;
+          let n = 0;
+          for (const item of this.available) {   // en sèrie: són poques peticions i no cal saturar el servidor
+            try {
+              const res = await fetch(API_BASE + '/api/favorites', {
+                method: 'POST', credentials: 'include',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ ref: item.ref })
+              });
+              if (res.ok) n += 1;
+            } catch (e) { /* es compta com a no desat */ }
+          }
+          this.saving = false;
+          this.saveResult = { ok: n === this.available.length, n, total: this.available.length };
+        },
+
+        saveText() {
+          const r = this.saveResult;
+          if (!r) return '';
+          return r.ok ? t(r.n === 1 ? 'lists.public.saved_one' : 'lists.public.saved', { n: r.n })
+            : t('lists.public.saved_partial', { n: r.n, total: r.total });
+        },
+
+        countLabel(n) { return t(n === 1 ? 'lists.count_one' : 'lists.count', { n }); },
+        itinUrl(i) { return 'itinerari.html?grado=' + i.grado + '&ref=' + encodeURIComponent(i.ref); },
+        centresUrl(i) { return 'index.html?ref=' + encodeURIComponent(i.ref); },
+        // Pàgina pública del grau (/grau/<ref>; en local, directament a Flask), com a index.html.
+        grauUrl(ref) { return (API_BASE ? API_BASE + '/api' : '') + '/grau/' + encodeURIComponent(ref); },
+      }));
+    });
+  </script>
+  <script defer src="vendor/qrcode-generator-2.0.4.js"></script>
+  <script defer src="vendor/alpinejs-3.15.11.min.js"></script>
+  <script defer src="https://analytics.masellas.info/script.js" data-exclude-search="true" data-exclude-hash="true" data-website-id="ddb6c664-550b-4e2d-848f-796a676e4036"></script>
+</head>
+
+<body>
+
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a href="index.html" class="topbar-logo">GrausFP</a>
+      <a class="auth-btn topbar-centres" href="https://centres.grausfp.es/" data-lang-href="https://centres.grausfp.es/" target="_blank" rel="noopener" data-i18n="nav.centres">Centres</a>
+      <a class="auth-btn topbar-gap" href="que-em-falta.html" data-i18n="nav.gap">Què em falta?</a>
+      <div id="auth-widget"></div>
+      <div class="lang-selector" aria-label="Language selector">
+        <button class="lang-btn" data-lang="ca" onclick="setLang('ca')">CA</button>
+        <button class="lang-btn" data-lang="es" onclick="setLang('es')">ES</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="page" x-data="llista">
+
+    <div class="state" x-show="state === 'loading'" x-text="t('lists.loading')"></div>
+
+    <div class="state" x-show="state === 'missing'" x-cloak>
+      <h1 x-text="t('lists.public.missing.title')"></h1>
+      <p x-text="t('lists.public.missing.text')"></p>
+      <a class="btn" href="index.html" x-text="t('lists.public.go_search')"></a>
+    </div>
+
+    <div class="state" role="alert" x-show="state === 'error'" x-cloak>
+      <p x-text="t('lists.public.error')"></p>
+      <button type="button" class="btn" @click="location.reload()" x-text="t('lists.public.retry')"></button>
+    </div>
+
+    <template x-if="state === 'ready'">
+      <article>
+        <p class="tag" x-text="t('lists.public.tag')"></p>
+        <h1 x-text="list.name"></h1>
+        <p class="message" x-show="list.message" x-text="'«' + list.message + '»'"></p>
+
+        <div class="toolbar">
+          <button type="button" class="btn" @click="window.print()" x-text="t('lists.public.print')"></button>
+          <button type="button" class="btn primary" x-show="available.length" :disabled="saving" @click="saveAll()"
+            x-text="saving ? t('lists.public.saving') : t('lists.public.save')"></button>
+          <span class="result" :class="{ failed: saveResult && !saveResult.ok }" role="status">
+            <span x-text="saveText()"></span>
+            <a href="perfil.html" x-show="saveResult && saveResult.n" x-text="t('lists.public.see_favs')"></a>
+          </span>
+        </div>
+
+        <p class="state" style="margin-top:28px" x-show="!list.items.length" x-text="t('lists.public.empty')"></p>
+
+        <ul class="items" x-show="list.items.length" :aria-label="countLabel(list.items.length)">
+          <template x-for="item in list.items" :key="item.ref">
+            <li>
+              <div class="item-head">
+                <span class="grade" x-show="item.grado" :title="t('lists.public.grade', {g: item.grado})" x-text="item.grado"></span>
+                <h2 x-text="item.disponible ? item.denominacion : item.ref"></h2>
+              </div>
+              <p class="meta" x-show="item.disponible"
+                x-text="[item.codigo, item.familia].filter(Boolean).join(' · ')"></p>
+              <p class="gone" x-show="!item.disponible" x-text="t('lists.item.gone')"></p>
+              <p class="note" x-show="item.notes" x-text="item.notes"></p>
+              <p class="links" x-show="item.disponible">
+                <a :href="grauUrl(item.ref)" x-text="t('lists.public.link.fitxa')"></a>
+                <a :href="itinUrl(item)" x-text="t('lists.public.link.itinerari')"></a>
+                <a :href="centresUrl(item)" x-show="item.n_centres" x-text="t('lists.public.link.centres', {n: item.n_centres})"></a>
+              </p>
+            </li>
+          </template>
+        </ul>
+
+        <div class="print-foot">
+          <div class="qr" x-show="qr" x-html="qr"></div>
+          <div>
+            <p x-text="t('lists.public.print_foot')"></p>
+            <p class="url" x-text="pageUrl"></p>
+          </div>
+        </div>
+      </article>
+    </template>
+
+  </main>
+
+  <footer class="site-footer" id="site-footer"></footer>
+  <script src="footer.js?v=3"></script>
+  <script src="feedback.js?v=4"></script>
+
+  <noscript>
+    <p>Llista compartida de graus de Formació Professional. Activa JavaScript per veure-la.</p>
+  </noscript>
+</body>
+
+</html>

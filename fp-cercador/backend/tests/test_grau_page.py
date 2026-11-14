@@ -313,7 +313,7 @@ def test_topbar_enllaca_al_cercador_de_centres(client):
             'data-lang-href="https://centres.grausfp.es/" target="_blank" rel="noopener" '
             'data-i18n="nav.centres">') in body
     assert '/site.css?v=5"' in body
-    assert '/i18n.js?v=20261114d"' in body
+    assert '/i18n.js?v=20261114e"' in body
 
 
 CENTRES_SEARCH = 'centres.grausfp.es/es/search'
