@@ -1048,6 +1048,7 @@ def admin_refresh_centres():
 _CERT_BASE = 'https://www.todofp.es/buscadorcertificados'
 _CODIGO_RE = re.compile(r'^[A-Z0-9_]{4,20}$')
 _BOE_HOSTS = {'boe.es', 'www.boe.es'}
+_cert_boe_cache: dict = {'key': None, 'urls': {}}  # url_boe per codi, vàlid per a un catàleg
 
 
 def _is_boe_url(href):
@@ -1070,15 +1071,19 @@ def get_certificado_detail(codigo):
     if not os.path.exists(DATA_PATH):
         return jsonify({'error': 'Data not available. Run /api/admin/refresh first.'}), 503
 
-    try:
-        with open(DATA_PATH, 'r', encoding='utf-8') as f:
-            ofertes = json.load(f)
-    except (OSError, json.JSONDecodeError) as exc:
-        logger.error("get_certificado_detail: no s'ha pogut llegir ofertes.json: %s", exc)
+    catalog = _get_catalog()
+    if catalog is None:
         return jsonify({'error': 'Data file is corrupt.'}), 503
 
+    # L'enllaç al BOE no canvia entre refrescos: una sola consulta a todofp per codi i
+    # catàleg. Sense això, cada visita feia dues peticions lentes dins d'un dels 4 fils.
+    if _cert_boe_cache['key'] != _catalog_cache['key']:
+        _cert_boe_cache.update(key=_catalog_cache['key'], urls={})
+    if codigo in _cert_boe_cache['urls']:
+        return jsonify({'codigo': codigo, 'url_boe': _cert_boe_cache['urls'][codigo]})
+
     record = next(
-        (r for r in ofertes if r.get('codigo') == codigo and r.get('plan_antiguo')),
+        (r for r in catalog['by_codigo'].get(codigo, []) if r.get('plan_antiguo')),
         None
     )
     if not record:
@@ -1109,11 +1114,12 @@ def get_certificado_detail(codigo):
         boe_link = soup.find('a', class_='enlace-ficha-boe', href=_is_boe_url)
         url_boe = boe_link['href'].strip() if boe_link else None
 
+        _cert_boe_cache['urls'][codigo] = url_boe
         return jsonify({'codigo': codigo, 'url_boe': url_boe})
 
     except Exception as exc:
         logger.error("get_certificado_detail: error cridant fichaCP per %s: %s", codigo, exc)
-        return jsonify({'error': str(exc)}), 502
+        return jsonify({'error': "No s'ha pogut consultar la fitxa oficial"}), 502
 
 
 # ---------------------------------------------------------------------------

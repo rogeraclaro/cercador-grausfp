@@ -21,7 +21,8 @@ def _fichacp_html(href):
 def client(tmp_path, monkeypatch):
     data = tmp_path / "ofertes.json"
     data.write_text(json.dumps([
-        {"codigo": CODIGO, "plan_antiguo": True, "cert_id_buscador": 123},
+        {"id": 1, "ref": "C-" + CODIGO, "grado": "C", "codigo": CODIGO, "plan_antiguo": True,
+         "cert_id_buscador": 123},
     ]), encoding="utf-8")
     monkeypatch.setattr("app.DATA_PATH", str(data))
     app.config["TESTING"] = True
@@ -56,3 +57,22 @@ def test_url_boe_valida_es_retorna(client, href):
 ])
 def test_url_boe_no_https_boe_es_es_descarta(client, href):
     assert _get_url_boe(client, href) is None
+
+
+def test_segona_consulta_no_torna_a_cridar_todofp(client):
+    session = mock.MagicMock()
+    session.post.return_value.text = _fichacp_html("https://www.boe.es/buscar/doc.php?id=BOE-A-2008-1234")
+    with mock.patch("app.requests.Session", return_value=session) as session_cls:
+        first = client.get(f"/api/certificado/{CODIGO}").get_json()
+        second = client.get(f"/api/certificado/{CODIGO}").get_json()
+    assert first == second
+    assert session_cls.call_count == 1
+
+
+def test_error_de_todofp_no_exposa_el_detall(client):
+    session = mock.MagicMock()
+    session.post.side_effect = RuntimeError("secret internal detail")
+    with mock.patch("app.requests.Session", return_value=session):
+        resp = client.get(f"/api/certificado/{CODIGO}")
+    assert resp.status_code == 502
+    assert "secret" not in resp.get_data(as_text=True)
