@@ -11,7 +11,7 @@
    `scp contabo:/home/masellas-grausfp/htdocs/grausfp.masellas.info/fp-cercador/backend/data/{ofertes,c_modulos,d_modulos,bc_lomloe}.json fp-cercador/backend/data/`
 3. El `.env` tampoc no és al git (ADMIN_TOKEN, SMTP, Google OAuth…): copiar-lo a mà del VPS.
 4. Tests: `cd fp-cercador/backend && python3 -m pytest tests -q --deselect tests/test_pipeline.py::test_ce_acces_falla_conserva_fitxer_anterior`
-   (568 verds el 2026-11-14 amb `--ignore=tests/test_pipeline.py`, que fa peticions de xarxa i es penja
+   (668 verds el 2026-11-14 amb `--ignore=tests/test_pipeline.py`, que fa peticions de xarxa i es penja
    sense connexió).
 5. Local: `python3 app.py` (port 5001) i `python3 -m http.server 8765` dins `frontend/`.
 
@@ -22,7 +22,7 @@
 - Si toca el backend: `systemctl restart fp-cercador`. **Mai diumenge 11:10–11:45**, que és quan corre el
   refresc setmanal.
 - Si es canvien textos o `auth.js`/`alertes.js`: apujar la versió `?v=` a totes les pàgines i a
-  `I18N_VERSION` de `backend/grau_page.py` (ara `20261114d`; `site.css?v=5`, `footer.js?v=3`).
+  `I18N_VERSION` de `backend/grau_page.py` (ara `20261114e`; `site.css?v=5`, `footer.js?v=3`).
 - Commits: conventional commits, sense atribució d'IA.
 
 ## Fet els darrers dies (tot desplegat)
@@ -75,15 +75,40 @@ La primera vegada, `--discover` triga ~20 min; després va de la memòria cau.
     (126.3); Itinerario personal I i II casen entre qualsevol oferta (126.5).
 - Sense verificar: «Tutoría» (grau bàsic) casa entre cicles pel nom; l'art. 126 no en diu res.
 
-### Funcionalitats noves triades pel propietari el 2026-11-14 (plans 084–089, tots TODO)
+### Pla 084 «Mode orientador: llistes compartibles» — fet el 2026-11-14, **sense desplegar**
+- Commits `33f4f8a` (favorits a part, migració `014_shared_lists.sql`), `2355294` (API) i `79392a1` (pàgines).
+- `GET/POST /api/lists`, `GET/PATCH/DELETE /api/lists/<id>`, `PUT/DELETE /api/lists/<id>/items/<ref>`,
+  `POST/DELETE /api/lists/<id>/share` i la pública `GET /api/llista/<token>`; `frontend/llistes.html`
+  (editor), `frontend/llista.html?t=<token>` (vista de només lectura, impressió amb QR), botó «+ Llista» al
+  cercador, enllaç al perfil, `frontend/vendor/qrcode-generator-2.0.4.js`. 668 tests verds.
+- Per desplegar: push, `git pull` i **reiniciar** `fp-cercador` (toca el backend i aplica la migració 014).
+  No cal tocar el vhost: les dues pàgines són `noindex` i no entren al sitemap ni al bloc `?lang=es`.
+- Decisions preses en executar (revisables):
+  - **«+ Llista» és un botó propi** al costat de «Compartir», no una opció dins del seu menú: en pantalles
+    tàctils «Compartir» obre el menú del sistema i el menú propi no surt mai, de manera que l'opció no s'hi
+    hauria pogut fer servir.
+  - **Límit per IP de la vista pública:** només compten els tokens que no existeixen (20 per hora); quan una
+    IP el gasta, rep 429 a tot fins que passa l'hora. Amb `_auth_rate_ok` tal qual, una classe de més de 20
+    alumnes darrere la IP de l'escola s'hauria quedat sense poder obrir l'enllaç.
+  - **Tornada del login a la llista:** el token es desa a `sessionStorage` i `next=llista.html`; no s'ha
+    tocat la validació de `next` de `login.html`. Després d'entrar cal tornar a prémer «Desa'ls».
+  - La llibreria es vendoritza **sense minificar** (57 kB): el paquet d'npm no porta `.min.js` ni fitxer de
+    llicència; la capçalera declara MIT i el text és a `qrcode-generator-2.0.4.LICENSE.txt`.
+  - `llista.html` porta `<meta name="referrer" content="same-origin">` perquè el token no surti cap a
+    altres webs; l'analítica ja exclou la cadena de cerca.
+  - Superar els 30 graus d'una llista torna 429, com el límit de llistes.
+- Verificat al navegador (ca i es, 1280 i 375 px): crear, afegir tres graus des del cercador, anotar,
+  compartir, obrir sense sessió, imprimir, QR descodificat, desar a favorits, regenerar i enllaç antic
+  caducat. Sense provar: el QR amb un mòbil de veritat i el diàleg d'impressió real (només `@media print`).
+
+### Funcionalitats noves triades pel propietari el 2026-11-14 (plans 085–089, tots TODO)
 Un pla per sessió nova. Ordre de prioritat del propietari:
-- 084 mode orientador (llistes compartibles, QR) · 085 comparador ·
+- 085 comparador ·
   086 calendari FPO (agenda, `.ics`, alerta) · 088 pàgines de família enriquides ·
   087 filtres a l'adreça i «Volies dir…» · 089 reporta un error a la fitxa.
 - 083–086 i 088 tenen el disseny validat pel propietari; a 087 i 089 les decisions tècniques
   són del redactor i es poden revisar abans d'executar.
-- 083, 084, 086 i 089 afegeixen migracions: el número és «el següent lliure» en executar.
-- 084 afegeix la llibreria `qrcode-generator` (excepció acceptada pel propietari).
+- 086 i 089 afegeixen migracions: el número és «el següent lliure» en executar (l'última és la 014).
 
 ### Catàleg d'Especialitats Formatives del SEPE (plans 081–082)
 - 081: **fet** (commits f0a99b0, a54b18c, 7d46fee): scraper + `sepe_especs.json` + badges i filtre a l'FPO.
