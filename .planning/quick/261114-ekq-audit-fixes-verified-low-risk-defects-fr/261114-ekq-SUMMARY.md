@@ -40,9 +40,28 @@ Frontend
   sanitises `ficha_url`; alertes.js no longer hard-codes Spanish.
 - Cache version `20261114a` for i18n.js, auth.js and alertes.js on every page.
 
-## Not fixed — needs a decision or a plan
+## Second pass (same day, decisions taken with the owner)
 
-See the session report; the same list is kept in `plans/ESTAT.md` terms: refresh plausibility
-checks, scheduled vs manual refresh divergence, account recovery (resend verification),
-privacy policy vs Google Fonts / analytics host, i18n of historial.html, accessibility items,
-orphan data files, declared dependencies.
+- Refresh aborts and keeps the previous catalogue if a grado loses over half its records
+  (`REFRESH_ALLOW_DROP=1` in `.env` overrides it for a real change).
+- Scheduled and manual refresh share `scheduler_service.run_refresh_job`: the Sunday run now
+  also sends the Brevo news campaign and uses `BASE_URL`.
+- `POST /api/auth/resend-verification` and a resend button on the login error.
+- Privacy policy declares Google Fonts (owner chose to declare, not self-host).
+- Removal alerts are filtered by familia/nivel/texto like additions (`removed_by_grado_meta`).
+- `/api/certificado/<codigo>` cached per catalogue, generic error.
+- historial.html fully translated; no raw scraper error on the public page.
+- Keyboard-sortable headers, pressed state on mode/grade buttons, named favourite buttons,
+  orphan favourites shown in the profile with a remove button.
+- nginx vhost checked: `/api/` sets `X-Real-IP $remote_addr`, nothing to do.
+- CLAUDE.md lists gunicorn and apscheduler; two orphan local data files deleted.
+
+## Still open
+
+- Modal focus trap; unlabeled controls in index.html (occupation search, FPO text filter,
+  centres CCAA select and search, close button).
+- Partial centre scrapes still checkpoint over the live file; other scrapers (d_modulos,
+  b_contingut, SOC, generate_ocupaciones) have no plausibility threshold.
+- No rate limit / purge for sessions and tokens tables; missing indexes (low impact today).
+- No canonical/hreflang on static pages; auth pages lack noindex.
+- test_pipeline.py is network-bound and was not run.
