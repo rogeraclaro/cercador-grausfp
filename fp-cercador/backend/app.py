@@ -57,6 +57,7 @@ from flask_cors import CORS
 import cd_lomloe
 import compare
 import gap
+import fpo_agenda
 import fpo_ext
 import feed
 import og_page
@@ -1752,6 +1753,35 @@ def api_fpo_especialitat(codi):
                  if sepe else None),
         'cursos': [_soc_curs_public(c) for c in cursos],
     })
+
+
+_fpo_agenda_cache: dict = {"key": None, "data": None}
+
+
+@app.route('/api/fpo/agenda')
+def api_fpo_agenda():
+    """Pla 086: cursos FPO (SOC i externs) que comencen d'avui a `dies` dies, per data d'inici."""
+    try:
+        dies = int(request.args.get('dies', fpo_agenda.DIES_DEFAULT))
+    except ValueError:
+        dies = fpo_agenda.DIES_DEFAULT
+    dies = max(1, min(dies, fpo_agenda.DIES_MAX))
+
+    def _mt(path):
+        return os.path.getmtime(path) if os.path.exists(path) else None
+
+    # La finestra es mou cada dia: la data forma part de la clau, a més dels fitxers.
+    avui = _fpo_today()
+    key = (_mt(SOC_CURSOS_PATH), _mt(EXT_CURSOS_PATH), _mt(SOC_ESPECS_PATH), avui, dies)
+    if _fpo_agenda_cache["key"] != key or _fpo_agenda_cache["data"] is None:
+        data = fpo_agenda.build_agenda(_get_soc_cursos() + _get_ext_cursos(), date.fromisoformat(avui), dies,
+                                       families=_fpo_families(), soc_fitxa_url=_soc_fitxa_url)
+        _fpo_agenda_cache.update(key=key, data=data)
+    resp = dict(_fpo_agenda_cache["data"])
+    w = _soc_warning()
+    if w:
+        resp['warning'] = w
+    return jsonify(resp)
 
 
 @app.route('/api/fpo/by-cert')
