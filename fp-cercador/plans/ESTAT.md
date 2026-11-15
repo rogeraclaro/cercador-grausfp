@@ -11,7 +11,7 @@
    `scp contabo:/home/masellas-grausfp/htdocs/grausfp.masellas.info/fp-cercador/backend/data/{ofertes,c_modulos,d_modulos,bc_lomloe}.json fp-cercador/backend/data/`
 3. El `.env` tampoc no és al git (ADMIN_TOKEN, SMTP, Google OAuth…): copiar-lo a mà del VPS.
 4. Tests: `cd fp-cercador/backend && python3 -m pytest tests -q --deselect tests/test_pipeline.py::test_ce_acces_falla_conserva_fitxer_anterior`
-   (749 verds el 2026-11-15 amb `--ignore=tests/test_pipeline.py`, que fa peticions de xarxa i es penja
+   (770 verds el 2026-11-15 amb `--ignore=tests/test_pipeline.py`, que fa peticions de xarxa i es penja
    sense connexió).
 5. Local: `python3 app.py` (port 5001) i `python3 -m http.server 8765` dins `frontend/`.
 
@@ -22,7 +22,7 @@
 - Si toca el backend: `systemctl restart fp-cercador`. **Mai diumenge 11:10–11:45**, que és quan corre el
   refresc setmanal.
 - Si es canvien textos o `auth.js`/`alertes.js`: apujar la versió `?v=` a totes les pàgines i a
-  `I18N_VERSION` de `backend/grau_page.py` (ara `20261115b`; `site.css?v=5`, `footer.js?v=3`).
+  `I18N_VERSION` de `backend/grau_page.py` (ara `20261115c`; `site.css?v=5`, `footer.js?v=3`).
 - Commits: conventional commits, sense atribució d'IA.
 
 ## Fet els darrers dies (tot desplegat)
@@ -154,10 +154,34 @@ La primera vegada, `--discover` triga ~20 min; després va de la memòria cau.
   1280 i 375 px. **Sense provar:** importar el `.ics` a un calendari de veritat (només n'he validat el format
   i el fitxer baixat) i l'enviament real d'un correu d'alerta (als tests, `send_email` sempre substituït).
 
-### Funcionalitats noves triades pel propietari el 2026-11-14 (plans 087–089, tots TODO)
+### Pla 088 «Pàgines de família enriquides» — fet el 2026-11-15, **sense desplegar**
+- `backend/familia_stats.py` (pur), integrat a `_get_seo_data` (`seo['familia_stats']`) i a `familia_publica`;
+  `grau_page.render_familia(..., stats=)` i `render_families(..., per_grado=)`. Sense migració ni JavaScript nou.
+  770 tests verds.
+- `/familia/<prefix>` ara porta, abans de la llista de graus: xifres per lletra, centres i comunitats, botó
+  «Buscar en esta familia», novetats, sortides professionals, centres per comunitat i cursos FPO que comencen
+  en 60 dies. Cada bloc només surt si té dades. `/families` porta el desglossament «A 12 · B 12 · C 3 · D 13».
+- Reconstrucció de `_get_seo_data` amb el catàleg sencer: 0,12 s (les xifres de les 28 famílies, 0,08 s).
+- Per desplegar: push, `git pull` i **reiniciar** `fp-cercador`. No cal tocar nginx.
+- Dependències toves resoltes aquí: `index.html` llegeix `?familia=<nom>` (validat contra les famílies del
+  catàleg) i `?mode=ocupacio&q=…` (fa la cerca directament). El pla 087 ja no ha d'afegir `?familia=`.
+- Decisions preses en executar (revisables):
+  - **Novetats:** només compten les altes i baixes que l'entrada de l'historial també llista per nom. L'entrada
+    del 2026-06-17 porta metadades de 12.296 graus però cap nom: és la càrrega inicial i no surt. Ara mateix
+    només 5 famílies tenen novetats (AGA, IMP, ELE, TMV, ART), les més recents del juliol.
+  - **Sortides professionals:** `ocupaciones.json` barreja oficis amb frases de les fitxes («Tu actividad está
+    regulada por…») i trossos mal tallats; es descarten els textos de més de 60 caràcters o 8 paraules i els
+    que no comencen per lletra. En queden alguns que no són oficis («Almacén de Medicamentos»). Si cap ocupació
+    es repeteix, el títol és «Salidas profesionales», no «…más frecuentes».
+  - El bloc FPO enllaça a l'agenda sencera (`?mode=fpo&vista=agenda`): l'agenda no té paràmetre de família.
+  - Les pàgines de família no tenen JSON-LD `ItemList`: no hi havia res on afegir `numberOfItems`.
+- Verificat al navegador: `/familia/SAN`, `/familia/AGA`, `/familia/MSP` (1 grau) i `/families`, a 1280 i
+  375 px. **Sense fer:** Lighthouse de SEO. En local Flask no serveix `site.css`; les captures s'han fet
+  injectant-lo, de manera que la barra superior i el peu reals només es veuran a producció.
+
+### Funcionalitats noves triades pel propietari el 2026-11-14 (plans 087 i 089, TODO)
 Un pla per sessió nova. Ordre de prioritat del propietari:
-- 088 pàgines de família enriquides ·
-  087 filtres a l'adreça i «Volies dir…» · 089 reporta un error a la fitxa.
+- 087 filtres a l'adreça i «Volies dir…» · 089 reporta un error a la fitxa.
 - 083–086 i 088 tenen el disseny validat pel propietari; a 087 i 089 les decisions tècniques
   són del redactor i es poden revisar abans d'executar.
 - 089 afegeix una migració: el número és «el següent lliure» en executar (l'última és la 015).
