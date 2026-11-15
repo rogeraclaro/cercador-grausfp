@@ -1,6 +1,6 @@
 # Estat del projecte — per reprendre des d'un altre ordinador
 
-Última actualització: 2026-11-14. Producció: https://grausfp.es (VPS `contabo`) a `3dfed87`
+Última actualització: 2026-11-14. Producció: https://grausfp.es (VPS `contabo`) a `efe966c`
 (auditoria en dues passades i pla 081 desplegats el 2026-11-14; `sepe_especs.json` copiat des de local).
 
 ## Com reprendre
@@ -179,7 +179,7 @@ La primera vegada, `--discover` triga ~20 min; després va de la memòria cau.
   375 px. **Sense fer:** Lighthouse de SEO. En local Flask no serveix `site.css`; les captures s'han fet
   injectant-lo, de manera que la barra superior i el peu reals només es veuran a producció.
 
-### Pla 087 «Cerca compartible i Volies dir…» — fet el 2026-11-15, **sense desplegar**
+### Pla 087 «Cerca compartible i Volies dir…» — fet i desplegat el 2026-11-15
 - Només frontend: `frontend/search-tools.js` (funcions pures), `index.html`, `i18n.js`. Proves:
   `node --test scripts/test_search_tools.js` (15).
 - La cerca per nom queda a l'adreça: `q`, `grado`, `familia`, `nivel`, `pla` (`hide`/`only`), `favs=1`,
@@ -188,7 +188,8 @@ La primera vegada, `--discover` triga ~20 min; després va de la memòria cau.
 - «Volies dir…»: fins a tres cerques semblants quan no hi ha cap resultat, la cerca té 4 lletres o més i no hi
   ha cap altre filtre. El vocabulari (5.211 paraules) es fa el primer cop que cal, en 21 ms; cada suggeriment
   triga 1–2 ms (el llindar del pla era 50 ms).
-- Per desplegar: push i `git pull`. **No cal reiniciar** (només frontend).
+- Desplegat sense reiniciar (només frontend). El servei encara té `I18N_VERSION` `20261115c` en memòria fins al
+  reinici següent; només afecta la clau de memòria cau d'`i18n.js` a les pàgines `/grau` i `/familia`.
 - Decisions preses en executar (revisables):
   - Les funcions pures són en un fitxer propi (`search-tools.js`), com `ics.js`, en lloc de dins del
     `<script>` d'`index.html`: així les proves les importen sense extreure codi amb expressions regulars.
