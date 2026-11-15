@@ -1,6 +1,6 @@
 # Estat del projecte — per reprendre des d'un altre ordinador
 
-Última actualització: 2026-11-14. Producció: https://grausfp.es (VPS `contabo`) a `79889dd`
+Última actualització: 2026-11-14. Producció: https://grausfp.es (VPS `contabo`) a `542aeaf`
 (auditoria en dues passades i pla 081 desplegats el 2026-11-14; `sepe_especs.json` copiat des de local).
 
 ## Com reprendre
@@ -124,7 +124,7 @@ La primera vegada, `--discover` triga ~20 min; després va de la memòria cau.
   Sense veure en dades reals: el ressaltat d'ocupacions i de «a què dona pas» comuns (cap parella provada
   en tenia); la lògica és als tests de `compare.py`.
 
-### Pla 086 «Calendari FPO» — fet el 2026-11-15, **sense desplegar**
+### Pla 086 «Calendari FPO» — fet i desplegat el 2026-11-15
 - Agenda: `backend/fpo_agenda.py`, `GET /api/fpo/agenda?dies=` i la vista «Comencen aviat» del mode FPO
   (`index.html?mode=fpo&vista=agenda`), amb filtres de comarca, modalitat, família i tipus.
 - Calendari: `frontend/ics.js` (botó «Afegeix al calendari» a l'agenda i al detall d'una especialitat).
@@ -132,7 +132,8 @@ La primera vegada, `--discover` triga ~20 min; després va de la memòria cau.
 - Alertes: migració `015_fpo_alerts.sql`, `/api/fpo/alerts` (CRUD i baixa per enllaç),
   `backend/fpo_alerts_service.py`, botó «Avisa'm de cursos nous» a l'agenda i llista a `perfil.html#fpo`.
   749 tests verds.
-- Per desplegar: push, `git pull` i **reiniciar** `fp-cercador` (aplica la migració 015). El primer correu
+- Desplegat amb la migració 015 aplicada; còpia de la BD d'abans a
+  `/root/fp_cercador.db.bak-20261115-pre086` (al VPS). El primer correu
   d'alerta sortirà amb el refresc següent en què aparegui un curs nou per a algú amb una alerta.
 - Els dos camins de refresc de l'FPO (setmanal a `pipeline.run` i manual a `app._run_fpo_refresh`) fan el
   mateix: `pipeline.fpo_snapshot` abans i `pipeline.notify_fpo_new_courses` després (55 línies noves a
