@@ -58,6 +58,11 @@ def build_comparison(contexts: list[dict]) -> dict:
         others = [{normalize_module_name(m) for m in mods} for mods in with_mods[1:]]
         comuns_moduls = _in_all(with_mods[0], others, key=normalize_module_name)
 
+    # Mòduls propis de cada grau: els que no són comuns (els noms poden estar escrits diferent).
+    comuns_norm = {normalize_module_name(m) for m in comuns_moduls}
+    for g in graus:
+        g['moduls_propis'] = [m for m in g['moduls'] if normalize_module_name(m) not in comuns_norm]
+
     return {
         'graus': graus,
         'comuns': {

@@ -18,7 +18,7 @@ import json
 from urllib.parse import quote
 
 # Versions dels recursos compartits: les mateixes que a les subpàgines (fonts.html).
-I18N_VERSION = '20261114e'
+I18N_VERSION = '20261115a'
 SITE_CSS_VERSION = '5'
 FOOTER_VERSION = '3'
 FEEDBACK_VERSION = '3'
@@ -444,6 +444,9 @@ def render_grau(rec: dict, ctx: dict, site_url: str) -> str:
     itin = _itinerari_html(rec, ctx)
     if itin:
         body += '\n    ' + itin
+    # Pla 085: el cercador llegeix ?compara=<ref> i deixa el grau triat per comparar.
+    body += ('\n    <div class="btns"><a class="btn" href="' + _e(f'/index.html?compara={_q(rec["ref"])}')
+             + '">Comparar con otro grado</a></div>')
     body += ('\n    <section><h2>Ficha oficial</h2><p><a href="/register.html">Ficha oficial disponible '
              'con una cuenta gratuita</a>. Si ya tienes cuenta, <a href="/login.html">inicia sesión</a> '
              'y ábrela desde el buscador.</p></section>')

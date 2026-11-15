@@ -30,6 +30,8 @@ def test_dos_d_amb_moduls_comuns_escrits_diferent():
     assert out['moduls_compartits'] == {'n': 3, 'de': 4}
     assert [g['ref'] for g in out['graus']] == ['a', 'b']
     assert out['graus'][1]['moduls'][3] == 'Protocolo empresarial'
+    assert out['graus'][0]['moduls_propis'] == ['Contabilidad y fiscalidad']
+    assert out['graus'][1]['moduls_propis'] == ['Protocolo empresarial']
 
 
 def test_un_modul_comu_a_dos_de_tres_no_es_comu():
@@ -97,7 +99,7 @@ def test_camps_de_cada_grau():
     out = build_comparison([c, e])
     g = out['graus'][0]
     assert set(g) == {'ref', 'grado', 'codigo', 'denominacion', 'familia', 'nivel', 'nivel_label', 'plan_antiguo',
-                      'duracion_horas', 'moduls', 'uc', 'ra', 'ecp', 'acces', 'ocupacions', 'centres',
+                      'duracion_horas', 'moduls', 'moduls_propis', 'uc', 'ra', 'ecp', 'acces', 'ocupacions', 'centres',
                       'previs', 'seguents'}
     assert (g['nivel_label'], g['plan_antiguo'], g['duracion_horas']) == ('Nivel 1', True, 430)
     assert g['uc'] == [{'codigo': 'UC0969_1', 'nombre': 'Realizar operaciones'}]

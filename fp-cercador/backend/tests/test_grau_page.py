@@ -281,6 +281,11 @@ def test_grau_sense_centres(client):
     assert 'data-centres-total="0"' in body
 
 
+def test_enllac_per_comparar_amb_un_altre_grau(client):
+    assert 'href="/index.html?compara=ADG_C_001_3B">Comparar con otro grado</a>' in _page(client, 'ADG_C_001_3B')
+    assert 'href="/index.html?compara=UF0620~IEX"' in _page(client, 'UF0620~IEX')
+
+
 def test_veins_de_l_itinerari_enllacen_a_les_seves_pagines(client):
     body = _page(client, 'ADG_C_001_3B')
     assert 'href="/grau/ADG_B_3001"' in body
@@ -313,7 +318,7 @@ def test_topbar_enllaca_al_cercador_de_centres(client):
             'data-lang-href="https://centres.grausfp.es/" target="_blank" rel="noopener" '
             'data-i18n="nav.centres">') in body
     assert '/site.css?v=5"' in body
-    assert '/i18n.js?v=20261114e"' in body
+    assert '/i18n.js?v=20261115a"' in body
 
 
 CENTRES_SEARCH = 'centres.grausfp.es/es/search'
