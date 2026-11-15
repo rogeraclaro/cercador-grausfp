@@ -22,7 +22,7 @@
 - Si toca el backend: `systemctl restart fp-cercador`. **Mai diumenge 11:10–11:45**, que és quan corre el
   refresc setmanal.
 - Si es canvien textos o `auth.js`/`alertes.js`: apujar la versió `?v=` a totes les pàgines i a
-  `I18N_VERSION` de `backend/grau_page.py` (ara `20261115c`; `site.css?v=5`, `footer.js?v=3`).
+  `I18N_VERSION` de `backend/grau_page.py` (ara `20261115d`; `site.css?v=5`, `footer.js?v=3`).
 - Commits: conventional commits, sense atribució d'IA.
 
 ## Fet els darrers dies (tot desplegat)
@@ -179,9 +179,31 @@ La primera vegada, `--discover` triga ~20 min; després va de la memòria cau.
   375 px. **Sense fer:** Lighthouse de SEO. En local Flask no serveix `site.css`; les captures s'han fet
   injectant-lo, de manera que la barra superior i el peu reals només es veuran a producció.
 
-### Funcionalitats noves triades pel propietari el 2026-11-14 (plans 087 i 089, TODO)
+### Pla 087 «Cerca compartible i Volies dir…» — fet el 2026-11-15, **sense desplegar**
+- Només frontend: `frontend/search-tools.js` (funcions pures), `index.html`, `i18n.js`. Proves:
+  `node --test scripts/test_search_tools.js` (15).
+- La cerca per nom queda a l'adreça: `q`, `grado`, `familia`, `nivel`, `pla` (`hide`/`only`), `favs=1`,
+  `ordre`, `dir=desc`, `p`. S'escriu amb `replaceState` 300 ms després de l'últim canvi (no omple l'historial
+  del navegador) i els valors per defecte no s'escriuen. En carregar, els valors invàlids s'ignoren.
+- «Volies dir…»: fins a tres cerques semblants quan no hi ha cap resultat, la cerca té 4 lletres o més i no hi
+  ha cap altre filtre. El vocabulari (5.211 paraules) es fa el primer cop que cal, en 21 ms; cada suggeriment
+  triga 1–2 ms (el llindar del pla era 50 ms).
+- Per desplegar: push i `git pull`. **No cal reiniciar** (només frontend).
+- Decisions preses en executar (revisables):
+  - Les funcions pures són en un fitxer propi (`search-tools.js`), com `ics.js`, en lloc de dins del
+    `<script>` d'`index.html`: així les proves les importen sense extreure codi amb expressions regulars.
+  - A la tornada de l'itinerari (`?grado=X&ref=…`) no es llegeix res de l'adreça: `grado` és el del grau que
+    s'obre i la llista ve de `sessionStorage`. Un cop restaurada, l'adreça passa a reflectir-la.
+  - Amb més d'una paraula mal escrita no es proposa res; un suggeriment només surt si dona resultats.
+  - En canviar al mode per nom, es treuen de l'adreça `mode`, `vista` i `esp`.
+  - L'enllaç del perfil (`?ref=X`) acaba amb `?ref=X&q=X`, perquè obrir els centres ja posava el codi a la cerca.
+- Verificat al navegador, ca i es: adreça amb tres filtres oberta en una finestra nova, ordre i pàgina, valors
+  invàlids, `favs=1` sense sessió, enllaç de l'observatori, enllaç del perfil, tornada de l'itinerari, mode FPO;
+  `soldadra` → `soldadura`, `infermeria` sense suggeriment, paraula sense res semblant, filtre actiu; 375 px.
+
+### Funcionalitat nova triada pel propietari el 2026-11-14 (pla 089, TODO)
 Un pla per sessió nova. Ordre de prioritat del propietari:
-- 087 filtres a l'adreça i «Volies dir…» · 089 reporta un error a la fitxa.
+- 089 reporta un error a la fitxa.
 - 083–086 i 088 tenen el disseny validat pel propietari; a 087 i 089 les decisions tècniques
   són del redactor i es poden revisar abans d'executar.
 - 089 afegeix una migració: el número és «el següent lliure» en executar (l'última és la 015).
