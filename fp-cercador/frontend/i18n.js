@@ -12,6 +12,10 @@
       'nav.gap': 'Què em falta?',
       'footer.gap': 'Què em falta?',
       'page.title.gap': 'Què em falta? — Cercador Graus FP',
+      /* Pla 089: reporta un error en una fitxa */
+      'fb.about': 'Sobre:',
+      'fb.about.remove': 'No és sobre aquest grau',
+      'index.report': 'Hi ha un error en aquesta fitxa?',
       /* Pla 087: «Volies dir…» */
       'index.didyoumean.lead': 'Volies dir',
       'index.didyoumean.aria': 'Cerca «{q}»',
@@ -977,6 +981,10 @@
       'nav.gap': '¿Qué me falta?',
       'footer.gap': '¿Qué me falta?',
       'page.title.gap': '¿Qué me falta? — Buscador Grados FP',
+      /* Pla 089: reporta un error en una fitxa */
+      'fb.about': 'Sobre:',
+      'fb.about.remove': 'No es sobre este grado',
+      'index.report': '¿Hay un error en esta ficha?',
       /* Pla 087: «Volies dir…» */
       'index.didyoumean.lead': '¿Querías decir',
       'index.didyoumean.aria': 'Buscar «{q}»',

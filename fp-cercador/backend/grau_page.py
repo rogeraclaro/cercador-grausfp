@@ -18,10 +18,10 @@ import json
 from urllib.parse import quote
 
 # Versions dels recursos compartits: les mateixes que a les subpàgines (fonts.html).
-I18N_VERSION = '20261115d'
-SITE_CSS_VERSION = '5'
+I18N_VERSION = '20261115e'
+SITE_CSS_VERSION = '6'
 FOOTER_VERSION = '3'
-FEEDBACK_VERSION = '3'
+FEEDBACK_VERSION = '5'
 
 # Sister site with the accredited-centres search (same host as the topbar link).
 CENTRES_URL = 'https://centres.grausfp.es'
@@ -452,7 +452,9 @@ def render_grau(rec: dict, ctx: dict, site_url: str) -> str:
     body = _crumbs(crumbs)
     body += (f'  <div class="hero">\n    <p class="eyebrow">Grado {_e(grado)} · {_e(GRADO_NOM.get(grado, ""))}</p>\n'
              f'    <h1>{_e(den)}</h1>\n    <div class="tags">{"".join(tags)}</div>\n  </div>\n\n')
-    body += '  <main class="content" lang="es">\n'
+    # Pla 089: feedback.js hi afegeix «¿Hay un error en esta ficha?» (sense JavaScript, no surt).
+    body += (f'  <main class="content" lang="es" data-report-ref="{_e(rec["ref"])}" '
+             f'data-report-label="{_e(den)}">\n')
     body += f'    <p class="lead">{_e(GRADO_TEXT.get(grado, ""))}</p>\n'
     if rec.get('plan_antiguo'):
         body += f'    <p>{_e(PLAN_ANTIGUO_TEXT_C if grado == "C" else PLAN_ANTIGUO_TEXT)}</p>\n'

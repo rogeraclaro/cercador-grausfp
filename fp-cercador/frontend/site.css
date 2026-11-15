@@ -312,6 +312,78 @@
   margin: 0;
 }
 
+/* Plan 089: the grado a comment is about, and the "report an error" link */
+.fb-about {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 8px 10px 8px 12px;
+  border-left: 2px solid var(--dark);
+  background: var(--warm2);
+  font-size: var(--fs-small);
+}
+
+.fb-about[hidden] {
+  display: none;
+}
+
+.fb-about span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.fb-about-remove {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border: 1px solid transparent;
+  border-radius: 2px;
+  background: none;
+  color: var(--warm);
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.fb-about-remove:hover {
+  border-color: var(--border);
+  background: var(--white);
+  color: var(--dark);
+}
+
+.fb-report-link {
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-size: var(--fs-small);
+  color: var(--warm);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.fb-report-link:hover {
+  color: var(--dark);
+}
+
+.fb-about-remove:focus-visible,
+.fb-report-link:focus-visible {
+  outline: 2px solid var(--warm);
+  outline-offset: 2px;
+}
+
+@media (pointer: coarse) {
+  .fb-about-remove {
+    width: 44px;
+    height: 44px;
+  }
+
+  .fb-report-link {
+    min-height: 44px;
+  }
+}
+
 .fb-kinds {
   display: flex;
   flex-wrap: wrap;

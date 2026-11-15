@@ -33,7 +33,10 @@
     'fb.err.empty': 'Escriu un comentari.',
     'fb.err.email': 'Cal un email vàlid perquè et puguem respondre.',
     'fb.err.rate': "Has enviat massa comentaris. Torna-ho a provar d'aquí a una estona.",
-    'fb.err.send': "No s'ha pogut enviar. Torna-ho a provar."
+    'fb.err.send': "No s'ha pogut enviar. Torna-ho a provar.",
+    'fb.about': 'Sobre:',
+    'fb.about.remove': 'No és sobre aquest grau',
+    'index.report': 'Hi ha un error en aquesta fitxa?'
   };
   var KINDS = ['error', 'idea', 'data', 'other'];
 
@@ -78,6 +81,11 @@
             tr('fb.kind.' + k) + '</button>';
         }).join('') +
       '</div>' +
+      /* Plan 089: the grado the comment is about (set by grausfpFeedback.open({ref, label})) */
+      '<p class="fb-about" id="fb-about" hidden>' +
+        '<span>' + tr('fb.about') + ' <em id="fb-about-label"></em></span>' +
+        '<button type="button" class="fb-about-remove" id="fb-about-remove" aria-label="' + tr('fb.about.remove') + '">✕</button>' +
+      '</p>' +
       '<label for="fb-text" class="fb-label">' + tr('fb.label') + '</label>' +
       '<textarea id="fb-text" class="fb-input fb-textarea" rows="5" maxlength="' + MAX_CHARS + '"></textarea>' +
       '<div class="fb-email-row" id="fb-email-row" hidden>' +
@@ -114,8 +122,17 @@
   var honeypot = dialog.querySelector('#fb-website');
   var errorEl = dialog.querySelector('#fb-error');
   var submitBtn = dialog.querySelector('#fb-submit');
+  var aboutEl = dialog.querySelector('#fb-about');
+  var aboutLabel = dialog.querySelector('#fb-about-label');
   var kind = 'other';
+  var about = null;    /* {ref, label} when the comment is about one grado (plan 089) */
   var signedIn = null; /* unknown until the first open */
+
+  function setAbout(next) {
+    about = next && next.ref ? { ref: String(next.ref), label: String(next.label || next.ref) } : null;
+    aboutLabel.textContent = about ? about.label : '';
+    aboutEl.hidden = !about;
+  }
 
   function setKind(next) {
     kind = next;
@@ -136,12 +153,16 @@
       .catch(function () { return false; });
   }
 
-  function open() {
+  /* opts (optional): {kind, ref, label}. With a ref, the comment is about that grado and
+     "Dades incorrectes" is preselected. */
+  function open(opts) {
+    opts = opts || {};
     form.hidden = false;
     sent.hidden = true;
     text.value = '';
     honeypot.value = '';
-    setKind('other');
+    setAbout(opts.ref ? opts : null);
+    setKind(KINDS.indexOf(opts.kind) >= 0 ? opts.kind : (about ? 'data' : 'other'));
     showError(null);
     submitBtn.disabled = false;
     submitBtn.textContent = tr('fb.send');
@@ -156,6 +177,7 @@
     var message = text.value.trim();
     if (!message) { showError('fb.err.empty'); text.focus(); return; }
     var body = { kind: kind, message: message, context: pageContext(), website: honeypot.value };
+    if (about) body.ref = about.ref;
     if (!emailRow.hidden) {
       var address = email.value.trim();
       if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(address)) { showError('fb.err.email'); email.focus(); return; }
@@ -186,11 +208,33 @@
     });
   }
 
-  tab.addEventListener('click', open);
+  tab.addEventListener('click', function () { open(); });
+  dialog.querySelector('#fb-about-remove').addEventListener('click', function () { setAbout(null); text.focus(); });
   form.addEventListener('submit', send);
   dialog.addEventListener('click', function (event) {
     var kindBtn = event.target.closest('.fb-kind');
     if (kindBtn) setKind(kindBtn.dataset.kind);
     if (event.target.closest('[data-fb-close]')) dialog.close();
   });
+
+  /* Plan 089: pages open the dialog about one grado with grausfpFeedback.open({ref, label}).
+     If this script has not loaded, their "report an error" links simply do not show. */
+  window.grausfpFeedback = { open: open };
+
+  /* Public grado pages (/grau/<ref>) work without JavaScript, so their link is added here,
+     at the end of the content, instead of living in the static HTML. */
+  var grauMain = document.querySelector('main[data-report-ref]');
+  if (grauMain) {
+    var reportLine = document.createElement('p');
+    reportLine.className = 'note';
+    var reportBtn = document.createElement('button');
+    reportBtn.type = 'button';
+    reportBtn.className = 'fb-report-link';
+    reportBtn.textContent = tr('index.report');
+    reportBtn.addEventListener('click', function () {
+      open({ ref: grauMain.dataset.reportRef, label: grauMain.dataset.reportLabel });
+    });
+    reportLine.appendChild(reportBtn);
+    grauMain.appendChild(reportLine);
+  }
 })();

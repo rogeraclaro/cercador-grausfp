@@ -326,8 +326,8 @@ def test_topbar_enllaca_al_cercador_de_centres(client):
     assert ('<a class="auth-btn topbar-centres" href="https://centres.grausfp.es/" '
             'data-lang-href="https://centres.grausfp.es/" target="_blank" rel="noopener" '
             'data-i18n="nav.centres">') in body
-    assert '/site.css?v=5"' in body
-    assert '/i18n.js?v=20261115d"' in body
+    assert '/site.css?v=6"' in body
+    assert '/i18n.js?v=20261115e"' in body
 
 
 CENTRES_SEARCH = 'centres.grausfp.es/es/search'
@@ -585,3 +585,13 @@ def test_render_pur_escapa_tot():
     body = grau_page.render_grau(rec, ctx, SITE)
     assert '<img' not in body
     assert body.count('&lt;img src=x onerror=alert(1)&gt;') >= 8
+
+
+def test_la_pagina_del_grau_porta_el_ref_per_reportar_un_error(client):
+    """Pla 089: feedback.js hi afegeix l'enllaç; a l'HTML estàtic només hi ha el ref i el nom, escapats."""
+    body = _page(client, 'ADG_B_3999')
+    assert 'data-report-ref="ADG_B_3999"' in body
+    assert 'data-report-label="&lt;script&gt;alert(1)&lt;/script&gt; &amp; &quot;cometes&quot;"' in body
+    assert '/feedback.js?v=5"' in body
+    assert 'error en esta ficha' not in body       # sense JavaScript, l'enllaç no surt
+    assert 'data-report-ref' not in client.get('/api/familia/ADG').get_data(as_text=True)

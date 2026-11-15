@@ -24,7 +24,7 @@
     href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Serif+Display:ital@0;1&family=Geist+Mono:wght@400&display=swap"
     rel="stylesheet">
 
-  <link rel="stylesheet" href="site.css?v=5">
+  <link rel="stylesheet" href="site.css?v=6">
   <style>
     *,
     *::before,
@@ -2470,8 +2470,8 @@
     }
   </style>
 
-  <script src="i18n.js?v=20261115d"></script>
-  <script src="auth.js?v=20261115d"></script>
+  <script src="i18n.js?v=20261115e"></script>
+  <script src="auth.js?v=20261115e"></script>
   <script src="held.js?v=1"></script>
   <script src="ics.js?v=1"></script>
   <script src="search-tools.js?v=1"></script>
@@ -2906,6 +2906,13 @@
         },
 
         applySuggestion(text) { this.search = text; this.resetPage(); },
+
+        // Pla 089: «Hi ha un error en aquesta fitxa?» obre el formulari de suggeriments sobre aquest grau.
+        // Si feedback.js no ha carregat, l'enllaç no surt.
+        hasFeedback() { return !!window.grausfpFeedback; },
+        reportRow(row) {
+          window.grausfpFeedback.open({ ref: row.ref, label: (row.codigo ? row.codigo + ' · ' : '') + row.denominacion });
+        },
 
         // Estat de la llista abans d'anar a l'itinerari (sessionStorage: només dura la pestanya).
         saveListState() {
@@ -4624,6 +4631,12 @@
                       </span>
                     </span>
                   </template>
+                  <template x-if="row.ref && hasFeedback() && (expandedRows[row.id] || childrenCLoeVisible[row.id])">
+                    <span class="row-held" @click.stop @keydown.stop>
+                      <button type="button" class="fb-report-link" @click="reportRow(row)"
+                        x-text="t('index.report')"></button>
+                    </span>
+                  </template>
                 </td>
                 <td class="col-codi" :class="{ 'cell-empty': row.codigo == null }" x-text="row.codigo ?? '—'"></td>
                 <td class="col-fam" x-text="row.familia"></td>
@@ -5517,7 +5530,7 @@
 
   <footer class="site-footer" id="site-footer"></footer>
   <script src="footer.js?v=3"></script>
-  <script src="feedback.js?v=4"></script>
+  <script src="feedback.js?v=5"></script>
 </body>
 
 </html>

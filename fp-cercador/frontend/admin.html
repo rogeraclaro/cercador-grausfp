@@ -12,7 +12,7 @@
     href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=DM+Serif+Display:ital@0;1&family=Geist+Mono:wght@400;500&display=swap"
     rel="stylesheet">
 
-  <link rel="stylesheet" href="site.css?v=5">
+  <link rel="stylesheet" href="site.css?v=6">
   <style>
     *,
     *::before,
@@ -814,7 +814,9 @@
         <tr>
           <td style="font-family:'Geist Mono',monospace;font-size:12px;white-space:nowrap;">${escapeHtml(f.created_at)}</td>
           <td>${escapeHtml(FEEDBACK_KINDS[f.kind] || f.kind)}</td>
-          <td class="feedback-msg">${escapeHtml(f.message)}</td>
+          <td class="feedback-msg">${f.oferta
+            ? `<a href="${escapeHtml(f.oferta.url)}" target="_blank" rel="noopener">Grau ${escapeHtml(f.oferta.grado)} · ${escapeHtml(f.oferta.denominacion)}</a><br>`
+            : (f.oferta_ref ? `<span style="color:var(--warm);font-size:12px;">Grau ${escapeHtml(f.oferta_ref)} (ja no és al catàleg)</span><br>` : '')}${escapeHtml(f.message)}</td>
           <td><a href="mailto:${encodeURIComponent(f.email)}">${escapeHtml(f.email)}</a>${f.user_id ? '' : ' <span style="color:var(--warm);font-size:12px;">(anònim)</span>'}</td>
           <td style="font-family:'Geist Mono',monospace;font-size:12px;">${escapeHtml(page)}${f.context.lang ? ' · ' + escapeHtml(f.context.lang) : ''}</td>
           <td>
@@ -882,7 +884,7 @@
   </script>
   <footer class="site-footer" id="site-footer"></footer>
   <script src="footer.js?v=3"></script>
-  <script src="feedback.js?v=4"></script>
+  <script src="feedback.js?v=5"></script>
 </body>
 
 </html>
