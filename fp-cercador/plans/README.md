@@ -31,7 +31,7 @@ amb quins prerequisits i quins passos manuals calen al servidor.
 | 016b | [OPCIONAL] URL web dels centres | P3 | S | 016 | DONE |
 | 017 | [SPIKE — F3] Alertes personalitzades de novetats | P2 | M | 016, 005, 006 | DONE |
 | 018 | [SPIKE — F7] Observatori públic de l'oferta FP | P2 | S-M | 005, 006 | DONE |
-| 019 | Migració a domini propi (checklist manual VPS) | P3 | S | — (quan hi hagi domini) | TODO |
+| 019 | Migració a domini propi (checklist manual VPS) | P3 | S | — (quan hi hagi domini) | DONE (opció A: grausfp.es afegit al site existent; verificat 2026-11-15) |
 | 020 | Enriquiment Grado C (LOE): durada, Annexe PDF, Europass, BOE | P2 | M | 001, 002, 006 | DONE |
 | 021 | Construir feed de novetats RSS 2.0 i JSON Feed | P2 | S | 005, 006, 014 | DONE |
 | 022 | API i frontend per a centres per oferta | P2 | M | 015, 016b | DONE |

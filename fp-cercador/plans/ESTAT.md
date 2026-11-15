@@ -241,7 +241,14 @@ La primera vegada, `--discover` triga ~20 min; després va de la memòria cau.
 
 ### Pendents anteriors (de la memòria de Claude; verificar-ne l'estat abans de fer-hi res)
 - Pla 033 (observatori), previst per a ~juliol.
-- Canvi de domini: `SITE_URL`, Search Console i Google OAuth.
+- Canvi de domini (pla 019): **fet**, per l'opció A (grausfp.es i www.grausfp.es afegits al site existent; el
+  directori del VPS conserva el nom `grausfp.masellas.info`). Verificat el 2026-11-15: `/health`,
+  `/api/next-refresh` i `/api/ofertes` responen a grausfp.es; `grausfp.masellas.info` i `www.grausfp.es` fan
+  301 cap a `https://grausfp.es` conservant el camí; el certificat cobreix els tres noms (caduca el
+  2027-01-26); `robots.txt`, `sitemap.xml`, `canonical` i `og:url` ja diuen grausfp.es (`SITE_URL` aplicat); el
+  `redirect_uri` de Google és `https://grausfp.es/api/auth/google/callback`. Sense poder comprovar des d'aquí:
+  Search Console i que Google Cloud tingui aquest `redirect_uri` autoritzat. `deploy/` fa servir `DOMINI_AQUI`
+  i les rutes de disc de sempre, que continuen sent vàlides.
 - Pla 053: preferències d'email (TODO).
 - Pla 064: UI de l'FPO extern (PIMEC/Foment). El 063 (backend) és fet.
 - Política de privacitat "provisional", lligada al registre GDPR.
