@@ -102,7 +102,7 @@ amb quins prerequisits i quins passos manuals calen al servidor.
 | 086 | Calendari FPO: agenda «Comencen aviat», `.ics` i alerta de cursos nous | P2 | L | 059–063, 028 DONE | DONE |
 | 087 | Cerca compartible (filtres a l'adreça) i «Volies dir…» | P2 | M | — | DONE |
 | 088 | Pàgines de família enriquides (xifres, novetats, sortides, centres, FPO) | P3 | M | 077 DONE (millor després de 087 i 086) | DONE |
-| 089 | «Reporta un error en aquesta fitxa» (suggeriments amb el grau identificat) | P3 | S | 069, 076 DONE | DONE (no desplegat) |
+| 089 | «Reporta un error en aquesta fitxa» (suggeriments amb el grau identificat) | P3 | S | 069, 076 DONE | DONE |
 
 Valors de Status: `TODO` | `IN PROGRESS` | `DONE` | `BLOCKED (motiu en una línia)` | `REJECTED (motiu en una línia)`
 

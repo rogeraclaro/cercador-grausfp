@@ -1,6 +1,6 @@
 # Estat del projecte — per reprendre des d'un altre ordinador
 
-Última actualització: 2026-11-14. Producció: https://grausfp.es (VPS `contabo`) a `efe966c`
+Última actualització: 2026-11-14. Producció: https://grausfp.es (VPS `contabo`) a `3f2c303`
 (auditoria en dues passades i pla 081 desplegats el 2026-11-14; `sepe_especs.json` copiat des de local).
 
 ## Com reprendre
@@ -202,7 +202,7 @@ La primera vegada, `--discover` triga ~20 min; després va de la memòria cau.
   invàlids, `favs=1` sense sessió, enllaç de l'observatori, enllaç del perfil, tornada de l'itinerari, mode FPO;
   `soldadra` → `soldadura`, `infermeria` sense suggeriment, paraula sense res semblant, filtre actiu; 375 px.
 
-### Pla 089 «Reporta un error en aquesta fitxa» — fet el 2026-11-15, **sense desplegar**
+### Pla 089 «Reporta un error en aquesta fitxa» — fet i desplegat el 2026-11-15
 - Migració `016_feedback_oferta_ref.sql` (`feedback.oferta_ref`); `POST /api/feedback` accepta `ref` (opcional;
   un `ref` invàlid o que no és al catàleg s'ignora, el comentari es desa igualment); l'avís per correu i
   `GET /api/admin/feedback` porten el grau (`oferta: {denominacion, grado, url}`). 785 tests verds.
@@ -211,8 +211,11 @@ La primera vegada, `--discover` triga ~20 min; després va de la memòria cau.
 - Enllaç «Hi ha un error en aquesta fitxa?» a la fila desplegada del cercador, a la capçalera de l'itinerari i
   al peu de `/grau/<ref>` (l'afegeix `feedback.js` a partir de `data-report-ref`; sense JavaScript no surt).
   A `admin.html`, el comentari porta l'enllaç al grau.
-- Per desplegar: push, `git pull` i **reiniciar** `fp-cercador` (migració 016, i de pas `I18N_VERSION`,
-  `SITE_CSS_VERSION` i `FEEDBACK_VERSION` nous a les pàgines públiques).
+- Desplegat amb la migració 016 aplicada; còpia de la BD d'abans a
+  `/root/fp_cercador.db.bak-20261115-pre089` (al VPS).
+- **Atenció:** el refresc setmanal del 2026-11-15 va acabar a les 12:37, no a les 11:45. La franja «mai
+  reiniciar diumenge 11:10–11:45» d'aquest document es queda curta; convé mirar l'hora dels fitxers de
+  `backend/data/` abans de reiniciar un diumenge al migdia.
 - Decisions preses en executar (revisables):
   - El `ref` s'envia com a camp propi del cos; el `context` no canvia (el backend ja el limita a `path`,
     `query` i `lang`).
