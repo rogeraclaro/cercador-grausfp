@@ -4370,14 +4370,28 @@ def _sanitize_feedback_context(raw) -> dict:
     return {k: raw[k][:500] for k in _FEEDBACK_CONTEXT_KEYS if isinstance(raw.get(k), str)}
 
 
-def _notify_feedback(email: str, kind: str, message: str, context: dict) -> None:
+def _feedback_oferta(ref) -> dict | None:
+    """Pla 089: el grau d'un comentari ({denominacion, grado, url}), o None si el ref no és
+    vàlid o ja no és al catàleg."""
+    if not isinstance(ref, str) or not oferta_ref.REF_RE.match(ref):
+        return None
+    rec = _resolve_oferta(ref=ref)
+    if not rec:
+        return None
+    return {"denominacion": rec.get("denominacion"), "grado": rec.get("grado"),
+            "url": grau_page.grau_path(rec["ref"])}
+
+
+def _notify_feedback(email: str, kind: str, message: str, context: dict, oferta: dict | None = None) -> None:
     """Avís opcional al propietari. Mai bloqueja ni fa fallar el comentari."""
     notify_to = os.environ.get("FEEDBACK_NOTIFY_EMAIL", "").strip()
     if not notify_to:
         return
     page = (context.get("path", "") + context.get("query", "")) or "—"
+    grau = (f"Grau: {oferta['denominacion']} (Grado {oferta['grado']})\n{SITE_URL}{oferta['url']}\n"
+            if oferta else "")
     body = (f"{email} ha deixat un comentari ({_FEEDBACK_KIND_LABELS.get(kind, kind)}).\n"
-            f"Pàgina: {page}\n\n{message}\n")
+            f"Pàgina: {page}\n{grau}\n{message}\n")
 
     def send():
         try:
@@ -4406,6 +4420,9 @@ def feedback_create():
     if len(message) > _FEEDBACK_MAX_CHARS:
         return jsonify({"error": f"El comentari és massa llarg (màxim {_FEEDBACK_MAX_CHARS} caràcters)"}), 400
     context = _sanitize_feedback_context(data.get("context"))
+    # Pla 089: grau sobre el qual es comenta. Un ref invàlid s'ignora; no és motiu per rebutjar res.
+    oferta = _feedback_oferta(data.get("ref"))
+    ref = data["ref"] if oferta else None
 
     user_id = _get_session_user(request)
     conn = _db.get_db()
@@ -4419,21 +4436,22 @@ def feedback_create():
             if not _feedback_rate_ok(_client_ip(request)):
                 return jsonify({"error": "Massa comentaris. Torna-ho a provar d'aquí a una estona."}), 429
         cur = conn.execute(
-            "INSERT INTO feedback (user_id, email, kind, message, context) VALUES (?, ?, ?, ?, ?)",
-            (user_id, email, kind, message, json.dumps(context, ensure_ascii=False)),
+            "INSERT INTO feedback (user_id, email, kind, message, context, oferta_ref) VALUES (?, ?, ?, ?, ?, ?)",
+            (user_id, email, kind, message, json.dumps(context, ensure_ascii=False), ref),
         )
         conn.commit()
         feedback_id = cur.lastrowid
     finally:
         conn.close()
 
-    _notify_feedback(email, kind, message, context)
+    _notify_feedback(email, kind, message, context, oferta)
     return jsonify({"id": feedback_id}), 201
 
 
 _FEEDBACK_STATUSES = {"new", "in_progress", "done", "discarded"}
 _FEEDBACK_NOTE_MAX_CHARS = 1000
-_FEEDBACK_ADMIN_COLUMNS = "id, user_id, email, kind, message, context, status, admin_note, created_at, updated_at"
+_FEEDBACK_ADMIN_COLUMNS = ("id, user_id, email, kind, message, context, status, admin_note, created_at, "
+                           "updated_at, oferta_ref")
 
 
 def _feedback_row(row) -> dict:
@@ -4442,6 +4460,7 @@ def _feedback_row(row) -> dict:
         item["context"] = json.loads(item["context"] or "{}")
     except ValueError:
         item["context"] = {}
+    item["oferta"] = _feedback_oferta(item.get("oferta_ref"))   # Pla 089: grau del comentari, si en té
     return item
 
 

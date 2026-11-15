@@ -76,7 +76,7 @@ def test_taula_feedback_te_les_columnes_i_estat_per_defecte():
     try:
         cols = {r["name"] for r in conn.execute("PRAGMA table_info(feedback)")}
         assert cols == {"id", "user_id", "email", "kind", "message", "context",
-                        "status", "admin_note", "created_at", "updated_at"}
+                        "status", "admin_note", "created_at", "updated_at", "oferta_ref"}
         conn.execute("INSERT INTO feedback (email, kind, message) VALUES ('a@b.cat', 'idea', 'Hola')")
         row = conn.execute("SELECT status, created_at, updated_at FROM feedback").fetchone()
         assert row["status"] == "new"
@@ -363,3 +363,89 @@ def test_preflight_patch_admin_feedback(client):
     })
     assert r.headers.get("Access-Control-Allow-Credentials") == "true"
     assert "PATCH" in r.headers.get("Access-Control-Allow-Methods", "")
+
+
+# --- Pla 089: comentari sobre un grau concret (ref) ---------------------------
+
+CATALEG = [{'id': 1, 'grado': 'B', 'codigo': 'ADG_B_3001', 'denominacion': 'Tratamiento informático de datos',
+            'familia': 'Administración y Gestión', 'nivel': 1, 'plan_antiguo': False}]
+
+
+@pytest.fixture
+def cataleg(feedback_env, monkeypatch):
+    path = feedback_env / 'ofertes.json'
+    path.write_text(json.dumps(CATALEG), encoding='utf-8')
+    monkeypatch.setattr(app_module, 'DATA_PATH', str(path))
+    monkeypatch.setattr(app_module, '_catalog_cache', {'key': None, 'data': None})
+    monkeypatch.setattr(app_module, 'SITE_URL', 'https://example.test')
+
+
+def _ref_desat(feedback_id):
+    conn = db.get_db()
+    try:
+        return conn.execute("SELECT oferta_ref FROM feedback WHERE id = ?", (feedback_id,)).fetchone()[0]
+    finally:
+        conn.close()
+
+
+def test_comentari_amb_ref_valid_el_desa(client, cataleg):
+    r = _post(client, {**VALID, "kind": "data", "email": "a@b.cat", "ref": "ADG_B_3001"})
+    assert r.status_code == 201
+    assert _ref_desat(r.get_json()["id"]) == "ADG_B_3001"
+
+
+@pytest.mark.parametrize("ref", ["NO_EXISTEIX", "<script>", "x" * 500, "", 7, None, ["ADG_B_3001"], {"a": 1}])
+def test_un_ref_invalid_o_inexistent_s_ignora_i_el_comentari_es_desa(client, cataleg, ref):
+    r = _post(client, {**VALID, "email": "a@b.cat", "ref": ref})
+    assert r.status_code == 201
+    assert _ref_desat(r.get_json()["id"]) is None
+
+
+def test_sense_ref_queda_null(client, cataleg):
+    r = _post(client, {**VALID, "email": "a@b.cat"})
+    assert _ref_desat(r.get_json()["id"]) is None
+
+
+def test_sense_cataleg_el_ref_s_ignora(client, feedback_env, monkeypatch):
+    monkeypatch.setattr(app_module, 'DATA_PATH', str(feedback_env / 'no-hi-es.json'))
+    monkeypatch.setattr(app_module, '_catalog_cache', {'key': None, 'data': None})
+    r = _post(client, {**VALID, "email": "a@b.cat", "ref": "ADG_B_3001"})
+    assert r.status_code == 201
+    assert _ref_desat(r.get_json()["id"]) is None
+
+
+def test_l_avis_al_propietari_porta_el_grau_i_l_enllac(client, cataleg, monkeypatch):
+    sent = []
+    monkeypatch.setenv("FEEDBACK_NOTIFY_EMAIL", "owner@test.cat")
+    monkeypatch.setattr("email_service.send_email", lambda *a: sent.append(a))
+    _post(client, {**VALID, "kind": "data", "email": "a@b.cat", "ref": "ADG_B_3001"})
+    _post(client, {**VALID, "email": "a@b.cat"})
+    amb, sense = sent[0][2], sent[1][2]
+    assert "Grau: Tratamiento informático de datos (Grado B)" in amb
+    assert "https://example.test/grau/ADG_B_3001" in amb
+    assert "Grau:" not in sense and "/grau/" not in sense
+
+
+def test_admin_veu_el_grau_del_comentari(admin_client, cataleg):
+    _post(admin_client, {**VALID, "kind": "data", "ref": "ADG_B_3001"})
+    _post(admin_client, VALID)
+    conn = db.get_db()
+    conn.execute("INSERT INTO feedback (email, kind, message, oferta_ref) VALUES ('x@y.cat', 'data', 'vell', 'JA_NO_HI_ES')")
+    conn.commit()
+    conn.close()
+    items = admin_client.get("/api/admin/feedback").get_json()
+    amb = next(i for i in items if i["oferta_ref"] == "ADG_B_3001")
+    assert amb["oferta"] == {"denominacion": "Tratamiento informático de datos", "grado": "B",
+                             "url": "/grau/ADG_B_3001"}
+    sense = next(i for i in items if i["oferta_ref"] is None)
+    assert sense["oferta"] is None
+    # un grau que ja no és al catàleg: es conserva el ref, sense enllaç
+    vell = next(i for i in items if i["message"] == "vell")
+    assert vell["oferta_ref"] == "JA_NO_HI_ES" and vell["oferta"] is None
+
+
+def test_admin_patch_torna_tambe_el_grau(admin_client, cataleg):
+    fid = _post(admin_client, {**VALID, "kind": "data", "ref": "ADG_B_3001"}).get_json()["id"]
+    r = admin_client.patch(f"/api/admin/feedback/{fid}", data=json.dumps({"status": "done"}),
+                           content_type="application/json")
+    assert r.get_json()["oferta"]["url"] == "/grau/ADG_B_3001"
