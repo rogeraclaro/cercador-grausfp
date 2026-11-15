@@ -22,7 +22,7 @@ def client(tmp_path, monkeypatch):
         monkeypatch.setattr(app_module, attr, str(tmp_path / name))
     for cache in ('_soc_cursos_cache', '_soc_especs_cache', '_ext_cursos_cache'):
         monkeypatch.setattr(app_module, cache, {'mtime': None, 'index': None})
-    monkeypatch.setattr(app_module, '_fpo_agenda_cache', {'key': None, 'data': None})
+    monkeypatch.setattr(app_module, '_fpo_agenda_cache', {})
     monkeypatch.setattr(app_module, '_fpo_today', lambda: '2026-11-15')
     app_module.app.config['TESTING'] = True
     with app_module.app.test_client() as c:

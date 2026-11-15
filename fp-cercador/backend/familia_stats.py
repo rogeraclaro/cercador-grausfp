@@ -20,6 +20,13 @@ def _ocup_key(rec: dict):
     return ('url', rec['ficha_url']) if rec.get('ficha_url') else ('id', rec.get('id'))
 
 
+def _is_occupation(name) -> bool:
+    """ocupaciones.json porta, barrejades amb els oficis, frases senceres de les fitxes
+    («Tu actividad está regulada por…») i trossos mal tallats («) geriatría, etc»)."""
+    return (isinstance(name, str) and name[:1].isalpha() and len(name) <= 60
+            and len(name.split()) <= 8)
+
+
 def _novetats(familia: str, history: list) -> list:
     """Altes i baixes de la família, de la més recent a la més antiga."""
     out = []
@@ -63,7 +70,7 @@ def build_familia_stats(familia: str, records: list, ocupacions: dict | None = N
 
     ocup = Counter()
     for r in records:
-        ocup.update(set((ocupacions or {}).get(_ocup_key(r)) or []))
+        ocup.update({o for o in (ocupacions or {}).get(_ocup_key(r)) or [] if _is_occupation(o)})
 
     return {
         'total': len(records),

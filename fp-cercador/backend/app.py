@@ -57,6 +57,7 @@ from flask_cors import CORS
 import cd_lomloe
 import compare
 import gap
+import familia_stats
 import fpo_agenda
 import fpo_alerts_service
 import fpo_ext
@@ -1751,7 +1752,23 @@ def api_fpo_especialitat(codi):
     })
 
 
-_fpo_agenda_cache: dict = {"key": None, "data": None}
+_fpo_agenda_cache: dict = {}   # {dies: (clau, agenda)}
+
+
+def _fpo_agenda(dies: int) -> dict:
+    """Agenda de `dies` dies. La finestra es mou cada dia: la data forma part de la clau,
+    a més dels fitxers."""
+    def _mt(path):
+        return os.path.getmtime(path) if os.path.exists(path) else None
+
+    avui = _fpo_today()
+    key = (_mt(SOC_CURSOS_PATH), _mt(EXT_CURSOS_PATH), _mt(SOC_ESPECS_PATH), avui)
+    cached = _fpo_agenda_cache.get(dies)
+    if not cached or cached[0] != key:
+        cached = (key, fpo_agenda.build_agenda(_get_soc_cursos() + _get_ext_cursos(), date.fromisoformat(avui),
+                                               dies, families=_fpo_families()))
+        _fpo_agenda_cache[dies] = cached
+    return cached[1]
 
 
 @app.route('/api/fpo/agenda')
@@ -1762,18 +1779,7 @@ def api_fpo_agenda():
     except ValueError:
         dies = fpo_agenda.DIES_DEFAULT
     dies = max(1, min(dies, fpo_agenda.DIES_MAX))
-
-    def _mt(path):
-        return os.path.getmtime(path) if os.path.exists(path) else None
-
-    # La finestra es mou cada dia: la data forma part de la clau, a més dels fitxers.
-    avui = _fpo_today()
-    key = (_mt(SOC_CURSOS_PATH), _mt(EXT_CURSOS_PATH), _mt(SOC_ESPECS_PATH), avui, dies)
-    if _fpo_agenda_cache["key"] != key or _fpo_agenda_cache["data"] is None:
-        data = fpo_agenda.build_agenda(_get_soc_cursos() + _get_ext_cursos(), date.fromisoformat(avui), dies,
-                                       families=_fpo_families())
-        _fpo_agenda_cache.update(key=key, data=data)
-    resp = dict(_fpo_agenda_cache["data"])
+    resp = dict(_fpo_agenda(dies))
     w = _soc_warning()
     if w:
         resp['warning'] = w
@@ -2272,7 +2278,7 @@ def _get_seo_data() -> dict | None:
         return os.path.getmtime(path) if os.path.exists(path) else None
 
     key = (_catalog_cache["key"], _mt(OCUPACIONES_PATH), _mt(BC_LOE_PATH), _mt(CE_ACCES_PATH),
-           SITE_URL)
+           SITE_URL, _mt(_OFERTA_CENTRES_PATH), _mt(_CENTRES_PATH), _mt(history.HISTORY_PATH))
     if _seo_cache["key"] == key and _seo_cache["data"] is not None:
         return _seo_cache["data"]
 
@@ -2295,6 +2301,17 @@ def _get_seo_data() -> dict | None:
     families_list = sorted(((p, f, len(recs)) for p, (f, recs) in families.items()),
                            key=lambda t: t[1])
 
+    # Pla 088: xifres de cada família (centres per comunitat, novetats, ocupacions).
+    try:
+        oferta_centres = _get_effective_oferta_centres()
+    except (OSError, ValueError) as exc:
+        logger.warning("_get_seo_data: centres no disponibles: %s", exc)
+        oferta_centres = {}
+    history_data = history._load_json(history.HISTORY_PATH) or []
+    stats = {p: familia_stats.build_familia_stats(f, recs, ocupacions, oferta_centres,
+                                                  _centres_index or {}, history_data)
+             for p, (f, recs) in families.items()}
+
     lastmod = date.fromtimestamp(os.path.getmtime(DATA_PATH)).isoformat()
     entries = [(SITE_URL + path, lastmod) for path in grau_page.STATIC_PAGES]
     entries += [(f'{SITE_URL}/familia/{p}', lastmod) for p, _, _ in families_list]
@@ -2306,6 +2323,7 @@ def _get_seo_data() -> dict | None:
         'ce_acces': _load_json_dict(CE_ACCES_PATH) or {},
         'families': families,
         'families_list': families_list,
+        'familia_stats': stats,
         'lastmod': lastmod,
         'sitemap': grau_page.render_sitemap(entries),
     }
@@ -2444,7 +2462,11 @@ def familia_publica(prefix):
     if prefix not in seo['families']:
         return _seo_error(404)
     familia, records = seo['families'][prefix]
-    return _seo_response(grau_page.render_familia(familia, prefix, records, SITE_URL))
+    # El bloc de l'FPO depèn del dia: es calcula a part, sobre l'agenda (amb memòria cau per dia).
+    stats = dict(seo['familia_stats'][prefix], lastmod=seo['lastmod'],
+                 fpo=familia_stats.fpo_soon(prefix, _fpo_agenda(familia_stats.FPO_DIES)['cursos'],
+                                            date.fromisoformat(_fpo_today())))
+    return _seo_response(grau_page.render_familia(familia, prefix, records, SITE_URL, stats=stats))
 
 
 @app.route('/api/families')
@@ -2453,7 +2475,8 @@ def families_publica():
     seo = _get_seo_data()
     if seo is None:
         return _seo_error(503)
-    return _seo_response(grau_page.render_families(seo['families_list'], SITE_URL))
+    per_grado = {p: s['per_grado'] for p, s in seo['familia_stats'].items()}
+    return _seo_response(grau_page.render_families(seo['families_list'], SITE_URL, per_grado=per_grado))
 
 
 @app.route('/api/sitemap.xml')

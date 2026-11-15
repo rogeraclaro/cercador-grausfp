@@ -114,6 +114,15 @@ def _setup(tmp_path, monkeypatch, skip=()):
             p.write_text(json.dumps(content), encoding='utf-8')
         monkeypatch.setattr(app_module, attr, str(p))
     monkeypatch.setattr(app_module, 'CICLOS_PATH', str(tmp_path / 'ciclos_fp.json'))
+    # Pla 088: les pàgines de família llegeixen l'historial i els cursos FPO
+    monkeypatch.setattr(app_module.history, 'HISTORY_PATH', str(tmp_path / 'refresh_history.json'))
+    for attr, name in (('SOC_CURSOS_PATH', 'soc_cursos.json'), ('SOC_ESPECS_PATH', 'soc_especs.json'),
+                       ('EXT_CURSOS_PATH', 'ext_cursos.json')):
+        monkeypatch.setattr(app_module, attr, str(tmp_path / name))
+    for cache in ('_soc_cursos_cache', '_soc_especs_cache', '_ext_cursos_cache'):
+        monkeypatch.setattr(app_module, cache, {'mtime': None, 'index': None})
+    monkeypatch.setattr(app_module, '_fpo_agenda_cache', {})
+    monkeypatch.setattr(app_module, '_fpo_today', lambda: '2026-11-15')
     monkeypatch.setattr(app_module, 'SITE_URL', SITE)
     _reset_caches(monkeypatch)
 
@@ -318,7 +327,7 @@ def test_topbar_enllaca_al_cercador_de_centres(client):
             'data-lang-href="https://centres.grausfp.es/" target="_blank" rel="noopener" '
             'data-i18n="nav.centres">') in body
     assert '/site.css?v=5"' in body
-    assert '/i18n.js?v=20261115b"' in body
+    assert '/i18n.js?v=20261115c"' in body
 
 
 CENTRES_SEARCH = 'centres.grausfp.es/es/search'
@@ -402,6 +411,130 @@ def test_llista_de_families(client):
     for prefix in ('ADG', 'IMA', 'IEX'):
         assert f'href="/familia/{prefix}"' in body
     assert f'<link rel="canonical" href="{SITE}/families">' in body
+
+
+# ---------------------------------------------------------------------------
+# Pla 088: pàgines de família enriquides
+# ---------------------------------------------------------------------------
+
+def _familia(client, prefix='ADG'):
+    resp = client.get(f'/api/familia/{prefix}')
+    assert resp.status_code == 200
+    return resp.get_data(as_text=True)
+
+
+def _fresh(monkeypatch):
+    """Les dades derivades es refan: s'han escrit fitxers nous després del _setup."""
+    for name in ('_seo_cache',):
+        monkeypatch.setattr(app_module, name, {'key': None, 'data': None})
+    monkeypatch.setattr(app_module, '_fpo_agenda_cache', {})
+    for cache in ('_soc_cursos_cache', '_soc_especs_cache', '_ext_cursos_cache'):
+        monkeypatch.setattr(app_module, cache, {'mtime': None, 'index': None})
+
+
+def test_familia_resum_en_xifres_i_boto_de_cerca(client):
+    body = _familia(client)
+    for g, n in (('A', 2), ('B', 3), ('C', 2), ('D', 1), ('E', 1)):
+        assert f'<a href="#grado-{g}"><span class="num">{n}</span>' in body
+        assert f'<section id="grado-{g}">' in body
+    # C1 imparteix dos graus de la família: compta un cop
+    assert '<strong>3</strong> centros la imparten en <strong>2</strong> comunidades autónomas.' in body
+    assert 'Catálogo actualizado el ' in body
+    assert 'href="/index.html?familia=Administraci%C3%B3n%20y%20Gesti%C3%B3n">Buscar en esta familia</a>' in body
+    assert body.index('fam-stats') < body.index('id="grado-A"')
+
+
+def test_familia_centres_per_comunitat(client):
+    body = _familia(client)
+    assert '<h2>Centros por comunidad autónoma</h2>' in body
+    assert body.index('<td>Cataluña</td><td class="n">2</td>') < body.index('<td>País Vasco</td><td class="n">1</td>')
+    assert 'INSTITUTO SECRETO' not in body
+
+
+def test_familia_sortides_professionals_amb_enllac_al_mode_ocupacio(client):
+    body = _familia(client)
+    assert '<h2>Salidas profesionales</h2>' in body      # totes surten un sol cop: no són «las más frecuentes»
+    assert 'href="/index.html?mode=ocupacio&amp;q=Grabadores%20de%20datos">Grabadores de datos</a>' in body
+    assert 'href="/index.html?mode=ocupacio&amp;q=Auxiliar%20administrativo">Auxiliar administrativo</a>' in body
+
+
+def test_familia_sortides_mes_frequents_quan_alguna_es_repeteix():
+    recs = [dict(r, ref=f'r{i}') for i, r in enumerate(OFERTES) if r['familia'] == FAM]
+    stats = {'per_grado': {}, 'ocupacions': [('Recepcionista', 3), ('Telefonista', 1)]}
+    body = grau_page.render_familia(FAM, 'ADG', recs, SITE, stats=stats)
+    assert '<h2>Salidas profesionales más frecuentes</h2>' in body
+    assert body.index('Recepcionista</a>') < body.index('Telefonista</a>')
+
+
+def test_familia_novetats_de_l_historial(client, tmp_path, monkeypatch):
+    assert '<h2>Novedades</h2>' not in _familia(client)       # sense historial, el bloc no surt
+    history = [{'ts': '2026-11-08T09:00:00+00:00', 'changes': {
+        'new_by_grado': {'B': ['Tratamiento informático de datos'], 'D': ['Técnico <b>nuevo</b>']},
+        'new_by_grado_meta': {'B': [{'denominacio': 'Tratamiento informático de datos', 'familia': FAM, 'nivel': 1}],
+                              'D': [{'denominacio': 'Técnico <b>nuevo</b>', 'familia': FAM, 'nivel': 2},
+                                    {'denominacio': 'De otra familia', 'familia': IMA, 'nivel': 2}]},
+        'removed_by_grado': {'A': ['UC retirada']},
+        'removed_by_grado_meta': {'A': [{'denominacio': 'UC retirada', 'familia': FAM, 'nivel': 1}]}}}]
+    (tmp_path / 'refresh_history.json').write_text(json.dumps(history), encoding='utf-8')
+    _fresh(monkeypatch)
+    body = _familia(client)
+    assert '<h2>Novedades</h2>' in body
+    assert '<time datetime="2026-11-08">08/11/2026</time>' in body
+    # una alta que encara és al catàleg enllaça a la seva pàgina; la resta, només text escapat
+    assert '<span class="kind">Alta</span><span class="g">Grado B</span> <a href="/grau/ADG_B_3001">' in body
+    assert 'Técnico &lt;b&gt;nuevo&lt;/b&gt;' in body and '<b>nuevo</b>' not in body
+    assert '<span class="kind out">Baja</span><span class="g">Grado A</span> UC retirada' in body
+    assert 'De otra familia' not in body
+    assert '<h2>Novedades</h2>' not in _familia(client, 'IEX')
+
+
+def test_familia_cursos_fpo_que_comencen_aviat(client, tmp_path, monkeypatch):
+    assert 'Cursos FPO que empiezan pronto' not in _familia(client)   # sense cursos, el bloc no surt
+
+    def _curs(id_, inici, fam='ADG', titol='Ofimática <i>avanzada</i>'):
+        return {'idCurs': id_, 'titol': {'ca': titol, 'es': titol}, 'familia': {'codi': fam, 'desc': {}},
+                'especialitat': {'codi': 'ADGG0408'}, 'modalitat': 'PRESENCIAL', 'dataInici': inici,
+                'municipi': 'SANT FELIU DE LLOBREGAT', 'centre': {'nom': 'Centre U'}}
+
+    cursos = [_curs(f'26/{i}', f'2026-12-{i + 1:02d}') for i in range(8)]
+    cursos += [_curs('fora', '2027-02-01'), _curs('altra', '2026-11-20', fam='SAN', titol='Curs de sanitat')]
+    (tmp_path / 'soc_cursos.json').write_text(json.dumps(cursos), encoding='utf-8')
+    _fresh(monkeypatch)
+    body = _familia(client)
+    assert '<h2>Cursos FPO que empiezan pronto (Cataluña)</h2>' in body
+    assert body.count('fitxa-curs.html?codi_curso_seleccionado=26/') == 6
+    assert 'Se muestran 6 de 8 cursos.' in body
+    assert 'Ofimática &lt;i&gt;avanzada&lt;/i&gt;' in body and '<i>avanzada</i>' not in body
+    assert '<time datetime="2026-12-01">01/12/2026</time>' in body
+    assert '<span class="g">Sant Feliu de Llobregat</span>' in body
+    assert 'Curs de sanitat' not in body and 'codi_curso_seleccionado=fora' not in body
+    assert 'href="/index.html?mode=fpo&amp;vista=agenda">Ver todos los cursos</a>' in body
+
+
+def test_familia_petita_queda_amb_els_blocs_que_te(client):
+    """IEX té un sol grau, sense centres, ocupacions, novetats ni cursos."""
+    body = _familia(client, 'IEX')
+    assert '<a href="#grado-A"><span class="num">1</span>' in body
+    assert 'Buscar en esta familia' in body
+    for absent in ('centros la imparten', 'centro la imparte', 'Salidas profesionales', 'Centros por comunidad',
+                   'Cursos FPO', 'Novedades'):
+        assert absent not in body
+    assert 'href="/grau/UF0620~IEX"' in body
+
+
+def test_render_familia_sense_stats_pinta_com_abans():
+    recs = [r for r in OFERTES if r['familia'] == IEX]
+    for r in recs:
+        r.setdefault('ref', 'UF0620~IEX')
+    body = grau_page.render_familia(IEX, 'IEX', recs, SITE)
+    assert 'fam-stats"' not in body and 'Buscar en esta familia' not in body
+    assert '<section id="grado-A">' in body
+
+
+def test_llista_de_families_amb_el_desglossament_per_lletra(client):
+    body = client.get('/api/families').get_data(as_text=True)
+    assert '<span class="n">9</span><span class="gr">A 2 · B 3 · C 2 · D 1 · E 1</span>' in body
+    assert '<span class="n">1</span><span class="gr">A 1</span>' in body
 
 
 def test_sitemap_valid_i_complet(client):

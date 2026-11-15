@@ -2440,8 +2440,8 @@
     }
   </style>
 
-  <script src="i18n.js?v=20261115b"></script>
-  <script src="auth.js?v=20261115b"></script>
+  <script src="i18n.js?v=20261115c"></script>
+  <script src="auth.js?v=20261115c"></script>
   <script src="held.js?v=1"></script>
   <script src="ics.js?v=1"></script>
   <script>
@@ -2717,7 +2717,12 @@
             this.loggedIn = authRes.ok;
             GFPHeld.init(this.loggedIn).then(refs => { this.heldRefs = refs; });
             const _params = new URLSearchParams(location.search);
-            if (_params.get('mode') === 'ocupacio') this.searchMode = 'ocupacio';
+            if (_params.get('mode') === 'ocupacio') {
+              this.searchMode = 'ocupacio';
+              // Pla 088: ?mode=ocupacio&q=… (enllaços de les pàgines de família) fa la cerca directament.
+              const ocupParam = (_params.get('q') || '').slice(0, 200).trim();
+              if (ocupParam) { this.ocupQuery = ocupParam; this.runOcupSearch(); }
+            }
             if (_params.get('mode') === 'fpo') {
               this.searchMode = 'fpo';
               const espParam = _params.get('esp');
@@ -2778,11 +2783,14 @@
             // Enllaç del perfil: ?ref=… obre els centres d'aquell grau (antic: ?oferta=<id>).
             const linkParams = new URLSearchParams(location.search);
             const queryParam = (linkParams.get('q') || '').slice(0, 200);
-            if (queryParam) {
+            if (queryParam && linkParams.get('mode') !== 'ocupacio') {
               this.search = queryParam;
               if (/^[A-E]$/.test(linkParams.get('grado') || '')) this.filterGrado = linkParams.get('grado');
               this.resetPage();
             }
+            // Pla 088: ?familia=<nom> (botó «Buscar en esta familia»), validat contra les famílies del catàleg.
+            const familiaParam = linkParams.get('familia');
+            if (familiaParam && this.families.includes(familiaParam)) { this.filterFamilia = familiaParam; this.resetPage(); }
             this.loadCompare(linkParams.get('compara'));
             if (linkParams.get('compara')) {
               // Un sol ús: es treu de l'adreça perquè recarregar no torni a afegir-los.

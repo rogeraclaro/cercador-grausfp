@@ -54,6 +54,13 @@ def test_ocupacions_limit_de_dotze():
     assert [n for n, _ in s['ocupacions']] == [f'Ocupació {i:02d}' for i in range(12)]
 
 
+def test_les_frases_i_els_trossos_mal_tallats_no_son_ocupacions():
+    ocupacions = {('C', 'SANC01'): ['Celador', ') geriatría, etc', 'Tu actividad está regulada por la Administración '
+                                    'sanitaria estatal', 'x' * 61, '', None,
+                                    'Actuarás como trabajador dependiente en organismos de cualquier tamaño']}
+    assert build_familia_stats(FAM, RECORDS, ocupacions=ocupacions)['ocupacions'] == [('Celador', 1)]
+
+
 def _entry(ts, new=None, removed=None, names=True):
     changes = {}
     for meta_key, names_key, items in (('new_by_grado_meta', 'new_by_grado', new),

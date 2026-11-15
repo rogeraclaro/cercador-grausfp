@@ -18,7 +18,7 @@ import json
 from urllib.parse import quote
 
 # Versions dels recursos compartits: les mateixes que a les subpàgines (fonts.html).
-I18N_VERSION = '20261115b'
+I18N_VERSION = '20261115c'
 SITE_CSS_VERSION = '5'
 FOOTER_VERSION = '3'
 FEEDBACK_VERSION = '3'
@@ -197,6 +197,26 @@ _CSS = """
     .fam-list { columns: 2 280px; column-gap: 32px; list-style: none; }
     .fam-list li { break-inside: avoid; padding: 4px 0; }
     .fam-list .n { color: var(--warm); font-size: var(--fs-small); margin-left: 4px; }
+    .fam-list .gr { display: block; font-family: 'Geist Mono', ui-monospace, monospace;
+      font-size: var(--fs-label); color: var(--warm); }
+    .fam-stats { display: flex; flex-wrap: wrap; gap: 8px; list-style: none; margin: 4px 0 14px; }
+    .fam-stats a { display: block; min-width: 92px; padding: 10px 14px; border: 1px solid var(--dark);
+      border-radius: 2px; background: var(--white); text-decoration: none; }
+    .fam-stats a:hover { background: var(--warm2); }
+    .fam-stats .num { display: block; font-family: 'DM Serif Display', serif; font-size: 28px; line-height: 1; }
+    .fam-stats .lbl { display: block; margin-top: 4px; font-size: var(--fs-label); color: var(--warm); }
+    .news { list-style: none; max-width: 75ch; border-top: 1px solid var(--border); }
+    .news li { display: grid; grid-template-columns: 96px 1fr; gap: 4px 14px; padding: 8px 0;
+      border-bottom: 1px solid var(--border); line-height: 1.45; color: var(--ink-soft); }
+    .news time { font-family: 'Geist Mono', ui-monospace, monospace; font-size: var(--fs-mono); color: var(--warm);
+      padding-top: 2px; }
+    .news .kind { font-size: var(--fs-label); font-weight: 700; padding: 1px 6px; border-radius: 3px;
+      background: var(--ok-bg); color: var(--ok-ink); margin-right: 6px; white-space: nowrap; }
+    .news .kind.out { background: var(--amber-bg); color: var(--amber-ink); }
+    .news .g { font-size: var(--fs-label); font-weight: 600; color: var(--warm); margin: 0 6px;
+      white-space: nowrap; }
+    .ocup a { text-decoration: none; }
+    .ocup a:hover { text-decoration: underline; }
     @media (max-width: 768px) {
       .crumbs { padding: 12px 16px 0; }
       .hero { padding: 12px 16px 20px; }
@@ -204,6 +224,9 @@ _CSS = """
       .content { padding: 20px 16px 48px; }
       .content h2 { font-size: 22px; margin-top: 32px; }
       .ccaa { min-width: 0; width: 100%; }
+      .fam-stats li { flex: 1 1 40%; }
+      .fam-stats a { min-width: 0; height: 100%; padding: 8px 12px; }
+      .news li { grid-template-columns: 1fr; }
     }
 """
 
@@ -470,8 +493,99 @@ def render_grau(rec: dict, ctx: dict, site_url: str) -> str:
 # Famílies
 # ---------------------------------------------------------------------------
 
-def render_familia(familia: str, prefix: str, records: list, site_url: str) -> str:
-    """Graus d'una família agrupats per grau (A→E). records: registres d'ofertes.json."""
+def _http(url) -> str:
+    return url if isinstance(url, str) and url.startswith(('http://', 'https://')) else ''
+
+
+def _familia_stats_html(familia: str, records: list, stats: dict) -> str:
+    """Blocs del Pla 088 que van abans de la llista de graus. Cada bloc només surt si té dades."""
+    h = ''
+    # 1. Resum en xifres
+    counts = ''.join(
+        f'<li><a href="#grado-{g}"><span class="num">{int(n)}</span>'
+        f'<span class="lbl">Grado {g} · {_e(GRADO_NOM_PLURAL[g])}</span></a></li>'
+        for g, n in (stats.get('per_grado') or {}).items() if n)
+    centres = stats.get('centres') or {}
+    lines = []
+    if centres.get('total'):
+        c_word = 'centro la imparte' if centres['total'] == 1 else 'centros la imparten'
+        cc_word = 'comunidad autónoma' if centres.get('n_ccaa') == 1 else 'comunidades autónomas'
+        lines.append(f'<strong>{int(centres["total"])}</strong> {c_word} en '
+                     f'<strong>{int(centres.get("n_ccaa") or 0)}</strong> {cc_word}.')
+    fecha = _fmt_date(stats.get('lastmod'))
+    if fecha:
+        lines.append(f'Catálogo actualizado el {fecha}.')
+    h += '\n    <section aria-label="Resumen de la familia">'
+    if counts:
+        h += f'<ul class="fam-stats">{counts}</ul>'
+    if lines:
+        h += f'<p>{" ".join(lines)}</p>'
+    # 2. Cercador filtrat per aquesta família
+    h += ('<div class="btns"><a class="btn" href="' + _e('/index.html?familia=' + quote(familia, safe=''))
+          + '">Buscar en esta familia</a></div></section>')
+
+    # 3. Novetats
+    news = stats.get('novetats') or []
+    if news:
+        by_name = {(r.get('grado'), r.get('denominacion')): r for r in records}
+        lis = []
+        for n in news:
+            rec = by_name.get((n.get('grado'), n.get('denominacio'))) if n.get('tipus') == 'alta' else None
+            name = (f'<a href="{_e(grau_path(rec["ref"]))}">{_e(n.get("denominacio"))}</a>' if rec
+                    else _e(n.get('denominacio')))
+            kind = ('<span class="kind out">Baja</span>' if n.get('tipus') == 'baixa'
+                    else '<span class="kind">Alta</span>')
+            lis.append(f'<li><time datetime="{_e(n.get("data"))}">{_e(_fmt_date(n.get("data")))}</time>'
+                       f'<span>{kind}<span class="g">Grado {_e(n.get("grado"))}</span> {name}</span></li>')
+        h += f'\n    <section><h2>Novedades</h2><ul class="news">{"".join(lis)}</ul></section>'
+
+    # 4. Sortides professionals més freqüents
+    ocup = stats.get('ocupacions') or []
+    if ocup:
+        lis = ''.join('<li><a href="' + _e('/index.html?mode=ocupacio&q=' + quote(name, safe='')) + '">'
+                      + _e(name) + '</a></li>' for name, _ in ocup)
+        # «Más frecuentes» només si alguna es repeteix; si totes surten un cop, és una mostra.
+        if ocup[0][1] > 1:
+            titol, text = ('Salidas profesionales más frecuentes',
+                           'Ocupaciones que más se repiten entre los grados de esta familia.')
+        else:
+            titol, text = 'Salidas profesionales', 'Algunas ocupaciones a las que dan acceso los grados de esta familia.'
+        h += (f'\n    <section><h2>{titol}</h2><p>{text} Cada una abre el buscador por ocupación.</p>'
+              f'<ul class="ocup">{lis}</ul></section>')
+
+    # 5. Centres per comunitat autònoma
+    rows = ''.join(f'<tr><td>{_e(nom_ccaa(c))}</td><td class="n">{int(n)}</td></tr>'
+                   for c, n in centres.get('per_ccaa') or [])
+    if rows:
+        h += ('\n    <section><h2>Centros por comunidad autónoma</h2>'
+              '<p>Centros distintos que imparten algún grado de esta familia.</p>'
+              '<table class="ccaa"><thead><tr><th scope="col">Comunidad autónoma</th>'
+              f'<th scope="col">Centros</th></tr></thead><tbody>{rows}</tbody></table></section>')
+
+    # 6. Cursos FPO que comencen aviat (Catalunya)
+    fpo = stats.get('fpo') or {}
+    if fpo.get('cursos'):
+        lis = []
+        for c in fpo['cursos']:
+            titol = (c.get('titol') or {}).get('es') or (c.get('titol') or {}).get('ca') or ''
+            url = _http(c.get('fitxaUrl'))
+            name = (f'<a href="{_e(url)}" target="_blank" rel="noopener">{_e(titol)}</a>' if url else _e(titol))
+            lloc = nom_ccaa(c.get('municipi') or '')
+            lis.append(f'<li><time datetime="{_e(c.get("dataInici"))}">{_e(_fmt_date(c.get("dataInici")))}</time>'
+                       f'<span>{name}' + (f'<span class="g">{_e(lloc)}</span>' if lloc else '') + '</span></li>')
+        total = int(fpo.get('total') or len(lis))
+        mes = (f'<p class="note">Se muestran {len(lis)} de {total} cursos.</p>' if total > len(lis) else '')
+        h += ('\n    <section><h2>Cursos FPO que empiezan pronto (Cataluña)</h2>'
+              '<p>Formación para el empleo de esta familia que empieza en los próximos 60 días.</p>'
+              f'<ul class="news">{"".join(lis)}</ul>{mes}'
+              '<div class="btns"><a class="btn" href="/index.html?mode=fpo&amp;vista=agenda">'
+              'Ver todos los cursos</a></div></section>')
+    return h
+
+
+def render_familia(familia: str, prefix: str, records: list, site_url: str, stats: dict | None = None) -> str:
+    """Graus d'una família agrupats per grau (A→E). records: registres d'ofertes.json.
+    `stats` (Pla 088, opcional): xifres de familia_stats, amb `lastmod` i `fpo`."""
     canonical = f'{site_url}/familia/{_q(prefix)}'
     per_grado: dict = {g: [] for g in GRADOS}
     for r in records:
@@ -485,6 +599,8 @@ def render_familia(familia: str, prefix: str, records: list, site_url: str) -> s
     body += (f'  <div class="hero">\n    <p class="eyebrow">Familia profesional</p>\n'
              f'    <h1>{_e(familia)}</h1>\n    <p class="hero-sub">{total} grados del A al E</p>\n  </div>\n\n')
     body += '  <main class="content" lang="es">'
+    if stats:
+        body += _familia_stats_html(familia, records, stats)
     for g in GRADOS:
         recs = sorted(per_grado[g], key=lambda r: (r.get('nivel') or 0, r.get('denominacion') or ''))
         if not recs:
@@ -499,21 +615,26 @@ def render_familia(familia: str, prefix: str, records: list, site_url: str) -> s
             if r.get('plan_antiguo'):
                 tail += ' <span class="badge-old">Plan antiguo</span>'
             lis.append(f'<li>{extra}<a href="{_e(grau_path(r["ref"]))}">{_e(r.get("denominacion"))}</a>{tail}</li>')
-        body += (f'\n    <section><h2>Grado {g} · {_e(GRADO_NOM_PLURAL[g])} ({len(recs)})</h2>'
+        body += (f'\n    <section id="grado-{g}"><h2>Grado {g} · {_e(GRADO_NOM_PLURAL[g])} ({len(recs)})</h2>'
                  f'<ul class="list">{"".join(lis)}</ul></section>')
     body += '\n  </main>'
     return _shell(title=title, description=description, canonical=canonical, body=body,
                   site_url=site_url)
 
 
-def render_families(families: list, site_url: str) -> str:
+def render_families(families: list, site_url: str, per_grado: dict | None = None) -> str:
     """families: [(prefix, familia, n_graus)] ja ordenades."""
     canonical = f'{site_url}/families'
     title = 'Familias profesionales de la Formación Profesional | GrausFP'
     description = ('Todas las familias profesionales de la Formación Profesional en España, '
                    'con sus grados del A al E y datos oficiales.')
-    lis = ''.join(f'<li><a href="/familia/{_e(_q(p))}">{_e(f)}</a><span class="n">{int(n)}</span></li>'
-                  for p, f, n in families)
+    def _breakdown(prefix):
+        counts = (per_grado or {}).get(prefix) or {}
+        text = ' · '.join(f'{g} {int(counts[g])}' for g in GRADOS if counts.get(g))
+        return f'<span class="gr">{text}</span>' if text else ''
+
+    lis = ''.join(f'<li><a href="/familia/{_e(_q(p))}">{_e(f)}</a><span class="n">{int(n)}</span>'
+                  f'{_breakdown(p)}</li>' for p, f, n in families)
     body = _crumbs([('GrausFP', '/index.html'), ('Familias profesionales', None)])
     body += ('  <div class="hero">\n    <p class="eyebrow">Formación Profesional</p>\n'
              '    <h1>Familias profesionales</h1>\n  </div>\n\n')
