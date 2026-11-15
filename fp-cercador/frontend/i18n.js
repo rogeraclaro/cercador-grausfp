@@ -12,6 +12,9 @@
       'nav.gap': 'Què em falta?',
       'footer.gap': 'Què em falta?',
       'page.title.gap': 'Què em falta? — Cercador Graus FP',
+      /* Pla 087: «Volies dir…» */
+      'index.didyoumean.lead': 'Volies dir',
+      'index.didyoumean.aria': 'Cerca «{q}»',
       /* Pla 086: agenda FPO, .ics i alertes de cursos nous */
       'auth.unsubscribe_error.toast': "L'enllaç de baixa ja no és vàlid. Entra al teu perfil per gestionar les alertes.",
       'fpo.agenda.vista.aria': 'Vista dels cursos',
@@ -974,6 +977,9 @@
       'nav.gap': '¿Qué me falta?',
       'footer.gap': '¿Qué me falta?',
       'page.title.gap': '¿Qué me falta? — Buscador Grados FP',
+      /* Pla 087: «Volies dir…» */
+      'index.didyoumean.lead': '¿Querías decir',
+      'index.didyoumean.aria': 'Buscar «{q}»',
       /* Pla 086: agenda FPO, .ics i alertes de cursos nous */
       'auth.unsubscribe_error.toast': 'El enlace de baja ya no es válido. Entra en tu perfil para gestionar las alertas.',
       'fpo.agenda.vista.aria': 'Vista de los cursos',
