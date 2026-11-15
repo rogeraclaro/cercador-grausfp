@@ -103,3 +103,23 @@ def test_refresh_fpo_no_falla_si_pimec_i_foment_peten(client, ext_mock):
         client.post("/api/admin/refresh-fpo", headers=_AUTH)
         st = _wait_status(client, "done")
     assert st["last_error"] is None
+
+
+def test_refresh_fpo_avisa_les_alertes_dels_cursos_nous(client, soc_paths):
+    """Pla 086: el refresc manual fa el mateix avís que el setmanal."""
+    (soc_paths / "soc_cursos.json").write_text(json.dumps([{"idCurs": "VELL"}]), encoding="utf-8")
+    with patch("scrapers.soc_scraper.build_soc_data", return_value=_FAKE_SOC), \
+         patch("fpo_alerts_service.dispatch", return_value=0) as dispatch:
+        assert client.post("/api/admin/refresh-fpo", headers=_AUTH).status_code == 200
+        _wait_status(client, "done")
+    assert [c["idCurs"] for c in dispatch.call_args[0][0]] == ["C1"]
+
+
+def test_refresh_fpo_fallat_no_avisa_ningu(client, soc_paths):
+    (soc_paths / "soc_cursos.json").write_text(json.dumps([{"idCurs": "VELL"}]), encoding="utf-8")
+    with patch("scrapers.soc_scraper.build_soc_data", side_effect=RuntimeError("Algolia 500")), \
+         patch("scrapers.pipeline._notify_admin_soc_failure"), \
+         patch("fpo_alerts_service.dispatch", return_value=0) as dispatch:
+        assert client.post("/api/admin/refresh-fpo", headers=_AUTH).status_code == 200
+        _wait_status(client, "error")
+    dispatch.assert_not_called()

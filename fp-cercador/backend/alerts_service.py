@@ -137,32 +137,34 @@ def _build_email_body(matched: list, description: str, alert_id: int, unsubscrib
     )
 
 
-def _get_or_create_unsubscribe_token(conn, alert_id: int, user_id: int) -> str:
-    """Retorna el token de baixa de l'alerta, o en crea un de nou si no existeix."""
-    prefix = f"alert_{alert_id}_"  # substr i no LIKE: el '_' de LIKE és comodí
+def _get_or_create_unsubscribe_token(conn, alert_id: int, user_id: int, *, kind: str = "alert",
+                                     token_type: str = "alert_unsubscribe") -> str:
+    """Retorna el token de baixa de l'alerta, o en crea un de nou si no existeix.
+    `kind` i `token_type` permeten reutilitzar-lo per a les alertes d'FPO (Pla 086)."""
+    prefix = f"{kind}_{alert_id}_"  # substr i no LIKE: el '_' de LIKE és comodí
     row = _db.query_one(
         conn,
-        "SELECT token FROM tokens WHERE user_id = ? AND type = 'alert_unsubscribe' "
+        "SELECT token FROM tokens WHERE user_id = ? AND type = ? "
         "AND substr(token, 1, ?) = ? AND expires_at > datetime('now')",
-        (user_id, len(prefix), prefix),
+        (user_id, token_type, len(prefix), prefix),
     )
     if row:
-        return row["token"].split("_", 2)[2]  # extreu el token real
+        return row["token"][len(prefix):]  # extreu el token real
     # Caducat (o inexistent): l'endpoint de baixa el rebutjaria; se'n fa un de nou.
     conn.execute(
-        "DELETE FROM tokens WHERE user_id = ? AND type = 'alert_unsubscribe' "
+        "DELETE FROM tokens WHERE user_id = ? AND type = ? "
         "AND substr(token, 1, ?) = ?",
-        (user_id, len(prefix), prefix),
+        (user_id, token_type, len(prefix), prefix),
     )
 
     raw_token = secrets.token_hex(32)
-    stored_token = f"alert_{alert_id}_{raw_token}"
+    stored_token = f"{prefix}{raw_token}"
     expires = (datetime.now(timezone.utc) + timedelta(days=UNSUBSCRIBE_TOKEN_DAYS)).strftime(
         "%Y-%m-%d %H:%M:%S"
     )
     conn.execute(
-        "INSERT INTO tokens (user_id, token, type, expires_at) VALUES (?, ?, 'alert_unsubscribe', ?)",
-        (user_id, stored_token, expires),
+        "INSERT INTO tokens (user_id, token, type, expires_at) VALUES (?, ?, ?, ?)",
+        (user_id, stored_token, token_type, expires),
     )
     conn.commit()
     return raw_token

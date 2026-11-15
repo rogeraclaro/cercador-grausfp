@@ -68,13 +68,12 @@ def test_els_externs_no_tenen_comarca_i_porten_font_i_tipus():
 
 
 def test_camps_d_un_curs_del_soc():
-    out = build_agenda([_soc('26/1', '2026-11-20', comarca='')], AVUI,
-                       soc_fitxa_url=lambda c: 'https://soc.test/' + c['idCurs'])
+    out = build_agenda([_soc('26/1', '2026-11-20', comarca='')], AVUI)
     c = out['cursos'][0]
     assert set(c) == {'idCurs', 'font', 'tipus', 'titol', 'especialitat', 'familia', 'hores', 'modalitat', 'estat',
                       'dataInici', 'dataFi', 'comarca', 'municipi', 'centreNom', 'centreAdreca', 'fitxaUrl',
                       'enLinia'}
     assert c['comarca'] == 'Barcelonès'            # si el curs no en porta, la del centre
     assert (c['centreNom'], c['centreAdreca']) == ('Centre U', 'C. Major, 1, 08001, Barcelona')
-    assert c['fitxaUrl'] == 'https://soc.test/26/1'
+    assert c['fitxaUrl'].endswith('fitxa-curs.html?codi_curso_seleccionado=26/1')
     assert c['especialitat'] == {'codi': 'ADGG0408'}

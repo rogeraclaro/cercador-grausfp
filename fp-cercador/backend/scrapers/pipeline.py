@@ -245,6 +245,59 @@ def refresh_ext_cursos(data_dir: str) -> dict:
     return {f: sum(1 for c in cursos if c.get('font') == f) for f, _ in fonts}
 
 
+# --- Pla 086: alertes de cursos FPO nous. Un sol punt d'entrada per al refresc setmanal
+# (run) i per al manual (app._run_fpo_refresh): snapshot abans, avís després. ---
+
+def fpo_snapshot(data_dir: str) -> list:
+    """Tots els cursos FPO que hi ha ara als fitxers (SOC + externs)."""
+    from scrapers import ext_cursos
+    cursos = []
+    for name in ('soc_cursos.json', ext_cursos.EXT_FILE):
+        data = _read_json_or(os.path.join(data_dir, name), [])
+        if isinstance(data, list):
+            cursos.extend(c for c in data if isinstance(c, dict))
+    return cursos
+
+
+def fpo_new_courses(prev: list, curr: list) -> list:
+    """Cursos de `curr` que no eren a `prev` (per idCurs), font per font.
+
+    Una font sense cap curs a `prev` no en dona cap de nou: és el primer refresc o s'ha
+    perdut el fitxer, i tots semblarien nous. Una font que ha fallat conserva el snapshot
+    anterior, de manera que tampoc en dona cap.
+    """
+    def _font(c):
+        return c.get('font') or 'soc'
+
+    prev_ids: dict = {}
+    for c in prev or []:
+        prev_ids.setdefault(_font(c), set()).add(c.get('idCurs'))
+    return [c for c in curr or []
+            if _font(c) in prev_ids and c.get('idCurs') not in prev_ids[_font(c)]]
+
+
+def notify_fpo_new_courses(data_dir: str, before: list) -> int:
+    """Avisa les alertes d'FPO dels cursos apareguts des del snapshot `before`. No fatal."""
+    try:
+        nous = fpo_new_courses(before, fpo_snapshot(data_dir))
+        if not nous:
+            return 0
+        import fpo_alerts_service
+        families = {}
+        for e in _read_json_or(os.path.join(data_dir, 'soc_especs.json'), []) or []:
+            f = (e.get('familia') or {}) if isinstance(e, dict) else {}
+            if f.get('codi'):
+                families.setdefault(f['codi'], f.get('desc') or {'ca': f['codi'], 'es': f['codi']})
+        site_url = os.environ.get('SITE_URL', 'https://grausfp.es').rstrip('/')
+        sent = fpo_alerts_service.dispatch(nous, base_url=os.environ.get('BASE_URL') or site_url,
+                                           families=families, site_url=site_url)
+        logger.info("pipeline: %d cursos FPO nous, %d correus d'alerta enviats", len(nous), sent)
+        return sent
+    except Exception as exc:
+        logger.warning("pipeline: les alertes de cursos FPO han fallat (no fatal): %s", exc)
+        return 0
+
+
 def refresh_sepe_especs(data_dir: str, *, max_age_days: int = 7) -> int | None:
     """Catàleg d'especialitats del SEPE -> sepe_especs.json (Pla 081).
 
@@ -496,6 +549,7 @@ def run(on_progress=None) -> dict:
 
     # --- Pla 059: cursos FPO del SOC (Catalunya) via Algolia (no fatal) ---
     _report('Cursos FPO (SOC Catalunya)')
+    _fpo_before = fpo_snapshot(os.path.dirname(DATA_PATH))
     try:
         from scrapers.soc_scraper import build_soc_data, write_soc_data
         _soc_dir = os.path.dirname(DATA_PATH)
@@ -521,6 +575,7 @@ def run(on_progress=None) -> dict:
         refresh_ext_cursos(os.path.dirname(DATA_PATH))
     except Exception as exc:
         logger.warning("pipeline: refresh_ext_cursos ha fallat (no fatal): %s", exc)
+    notify_fpo_new_courses(os.path.dirname(DATA_PATH), _fpo_before)
 
     families = sorted({r['familia'] for r in all_records if r['familia'] != 'Desconeguda'})
     denominacions = sorted({r['denominacion'] for r in all_records if r.get('denominacion')})

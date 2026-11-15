@@ -3,6 +3,7 @@ fpo_agenda.py — agenda «Comencen aviat» dels cursos FPO (Pla 086): cursos de
 externs amb data d'inici dins d'una finestra, ordenats per data. Funció pura, sense Flask.
 """
 from datetime import date, timedelta
+from urllib.parse import quote
 
 import fpo_ext
 
@@ -10,10 +11,20 @@ DIES_DEFAULT = 90
 DIES_MAX = 180
 EN_LINIA = ('TELEFORMACIÓ', 'VIDEOCONFERÈNCIA')
 _BUIT = {'ca': '', 'es': ''}
+_SOC_FITXA_CURS_URL = ("https://serveiocupacio.gencat.cat/ca/persones/vull-formar-me/"
+                       "cercadors-formacio-especialitats/cercador-integrat/fitxa-curs.html")
 
 
-def _row(curs: dict, families: dict, soc_fitxa_url) -> dict:
-    """Només els camps que la vista i el .ics necessiten."""
+def soc_fitxa_url(curs: dict) -> str:
+    """Enllaç a la fitxa del curs concret (centre inclòs) al cercador del SOC.
+
+    És el mateix GET que fa el formulari `formFitxaCursos` del cercador del SOC.
+    """
+    return f"{_SOC_FITXA_CURS_URL}?codi_curso_seleccionado={quote(curs.get('idCurs') or '', safe='/')}"
+
+
+def row(curs: dict, families: dict) -> dict:
+    """Un curs (del SOC o extern) amb només els camps que la vista, el .ics i les alertes necessiten."""
     centre = curs.get('centre') or {}
     ext = curs.get('font') in fpo_ext.FONTS
     if ext:
@@ -45,15 +56,14 @@ def _row(curs: dict, families: dict, soc_fitxa_url) -> dict:
     }
 
 
-def build_agenda(cursos: list, avui: date, dies: int = DIES_DEFAULT, families: dict | None = None,
-                 soc_fitxa_url=lambda curs: '') -> dict:
+def build_agenda(cursos: list, avui: date, dies: int = DIES_DEFAULT, families: dict | None = None) -> dict:
     """
     `cursos`: els de soc_cursos.json i ext_cursos.json junts. Torna els que comencen entre
     `avui` i `avui + dies` (tots dos inclosos), ordenats per data d'inici.
     """
     families = families or {}
     first, last = avui.isoformat(), (avui + timedelta(days=dies)).isoformat()
-    rows = [_row(c, families, soc_fitxa_url) for c in cursos
+    rows = [row(c, families) for c in cursos
             if c.get('dataInici') and first <= c['dataInici'] <= last]
     rows.sort(key=lambda r: (r['dataInici'], (r['titol'].get('ca') or '').lower(), r['idCurs']))
     return {

@@ -58,6 +58,7 @@ import cd_lomloe
 import compare
 import gap
 import fpo_agenda
+import fpo_alerts_service
 import fpo_ext
 import feed
 import og_page
@@ -276,7 +277,7 @@ def _set_auth_cors(response):
 
 def _needs_auth_cors(path):
     return (path.startswith("/api/auth/") or path.startswith("/api/favorites")
-            or path.startswith("/api/fpo/favorites")
+            or path.startswith("/api/fpo/favorites") or path.startswith("/api/fpo/alerts")
             or path.startswith("/api/alerts") or path.startswith("/api/centres-watch")
             or path.startswith("/api/feedback") or path.startswith("/api/admin/feedback")
             or path.startswith("/api/held") or path.startswith("/api/lists"))
@@ -894,6 +895,8 @@ def _run_fpo_refresh(data_dir):
     """Regenera els soc_*.json. Actualitza _fpo_refresh_state. Allibera el lock."""
     try:
         from scrapers.soc_scraper import build_soc_data, write_soc_data
+        from scrapers.pipeline import fpo_snapshot, notify_fpo_new_courses
+        fpo_before = fpo_snapshot(data_dir)
         soc = build_soc_data()
         write_soc_data(soc, data_dir)
         for cache in (_soc_cursos_cache, _soc_especs_cache, _soc_centres_cache):
@@ -906,6 +909,7 @@ def _run_fpo_refresh(data_dir):
             logger.warning("refresh-fpo: PIMEC/Foment ha fallat: %s", ext_exc)
         _ext_cursos_cache.update(mtime=None, index=None)
         _ext_index_cache.update(key=None, data=None)
+        notify_fpo_new_courses(data_dir, fpo_before)   # Pla 086: mateix avís que al refresc setmanal
         n = {k: len(soc.get(k, [])) for k in ("cursos", "especs", "centres")}
         _fpo_refresh_state.update(
             status="done", finished_at=datetime.now(timezone.utc).isoformat(),
@@ -1519,8 +1523,6 @@ _sepe_index_cache: dict = {"key": None, "data": None}
 _ext_cursos_cache: dict = {"mtime": None, "index": None}
 _ext_index_cache: dict = {"key": None, "data": None}
 
-_SOC_FITXA_CURS_URL = ("https://serveiocupacio.gencat.cat/ca/persones/vull-formar-me/"
-                       "cercadors-formacio-especialitats/cercador-integrat/fitxa-curs.html")
 
 
 def _read_soc_list(path: str, cache: dict) -> list:
@@ -1619,13 +1621,7 @@ def _soc_warning() -> str | None:
     return None
 
 
-def _soc_fitxa_url(curs: dict) -> str:
-    """Enllaç a la fitxa del curs concret (centre inclòs) al cercador del SOC.
-
-    És el mateix GET que fa el formulari `formFitxaCursos` del cercador del SOC.
-    """
-    from urllib.parse import quote
-    return f"{_SOC_FITXA_CURS_URL}?codi_curso_seleccionado={quote(curs.get('idCurs') or '', safe='/')}"
+_soc_fitxa_url = fpo_agenda.soc_fitxa_url
 
 
 def _soc_espec_index() -> dict:
@@ -1775,7 +1771,7 @@ def api_fpo_agenda():
     key = (_mt(SOC_CURSOS_PATH), _mt(EXT_CURSOS_PATH), _mt(SOC_ESPECS_PATH), avui, dies)
     if _fpo_agenda_cache["key"] != key or _fpo_agenda_cache["data"] is None:
         data = fpo_agenda.build_agenda(_get_soc_cursos() + _get_ext_cursos(), date.fromisoformat(avui), dies,
-                                       families=_fpo_families(), soc_fitxa_url=_soc_fitxa_url)
+                                       families=_fpo_families())
         _fpo_agenda_cache.update(key=key, data=data)
     resp = dict(_fpo_agenda_cache["data"])
     w = _soc_warning()
@@ -3228,6 +3224,169 @@ def favorites_remove_centre(key, centre_id):
         return "", 204
     finally:
         conn.close()
+
+
+# ---------------------------------------------------------------------------
+# Alertes de cursos FPO nous — /api/fpo/alerts  (Pla 086)
+# ---------------------------------------------------------------------------
+
+_FPO_ALERT_COMARCA_MAX = 60
+_FPO_ALERT_ESPEC_MAX = 160
+_FPO_ALERT_FAMILIA_RE = re.compile(r'^[A-Z]{3}$')
+
+
+def _fpo_alert_fields(data):
+    """Valida el cos d'una alerta. Torna (comarca, familia_codi, espec_codi, inclou_en_linia) o None."""
+    if not isinstance(data, dict):
+        return None
+    values = []
+    for key, max_len in (("comarca", _FPO_ALERT_COMARCA_MAX), ("familia_codi", 3),
+                         ("espec_codi", _FPO_ALERT_ESPEC_MAX)):
+        value = data.get(key)
+        if value is not None:
+            if not isinstance(value, str) or not value.strip() or len(value.strip()) > max_len:
+                return None
+            value = value.strip()
+        values.append(value)
+    comarca, familia, espec = values
+    if familia is not None and not _FPO_ALERT_FAMILIA_RE.match(familia):
+        return None
+    en_linia = data.get("inclou_en_linia", True)
+    if not isinstance(en_linia, bool) or not (comarca or familia or espec):
+        return None
+    return comarca, familia, espec, en_linia
+
+
+@app.route("/api/fpo/alerts", methods=["GET"])
+def fpo_alerts_get():
+    """Les alertes de cursos FPO de l'usuari, amb el nom de la família i de l'especialitat."""
+    import db as _db
+    user_id = _get_session_user(request)
+    if not user_id:
+        return jsonify({"error": "No autenticat"}), 401
+    conn = _db.get_db()
+    try:
+        rows = _db.query_all(
+            conn,
+            "SELECT id, comarca, familia_codi, espec_codi, inclou_en_linia, active, created_at, last_sent_at "
+            "FROM fpo_alerts WHERE user_id = ? ORDER BY id DESC", (user_id,))
+    finally:
+        conn.close()
+    families = _fpo_families()
+    return jsonify([{
+        "id": r["id"], "comarca": r["comarca"],
+        "familia_codi": r["familia_codi"], "familia_desc": families.get(r["familia_codi"]),
+        "espec_codi": r["espec_codi"],
+        "espec_titol": (_fpo_espec_by_codi(r["espec_codi"]).get("titol") if r["espec_codi"] else None),
+        "inclou_en_linia": bool(r["inclou_en_linia"]), "active": bool(r["active"]),
+        "created_at": r["created_at"], "last_sent_at": r["last_sent_at"],
+    } for r in rows]), 200
+
+
+@app.route("/api/fpo/alerts", methods=["POST"])
+def fpo_alerts_create():
+    """Crea una alerta. Cos: {comarca?, familia_codi?, espec_codi?, inclou_en_linia?}; cal algun filtre."""
+    import db as _db
+    user_id = _get_session_user(request)
+    if not user_id:
+        return jsonify({"error": "No autenticat"}), 401
+    fields = _fpo_alert_fields(request.get_json(silent=True))
+    if fields is None:
+        return jsonify({"error": "cal comarca, familia_codi o espec_codi vàlids"}), 400
+    comarca, familia, espec, en_linia = fields
+    conn = _db.get_db()
+    try:
+        rows = _db.query_all(
+            conn, "SELECT id, comarca, familia_codi, espec_codi, inclou_en_linia FROM fpo_alerts WHERE user_id = ?",
+            (user_id,))
+        for r in rows:
+            if ((r["comarca"] or "").casefold(), r["familia_codi"], r["espec_codi"], bool(r["inclou_en_linia"])) \
+                    == ((comarca or "").casefold(), familia, espec, en_linia):
+                conn.execute("UPDATE fpo_alerts SET active = 1 WHERE id = ?", (r["id"],))
+                conn.commit()
+                return jsonify({"status": "already_exists", "id": r["id"]}), 200
+        # Compten totes les files, també les pausades.
+        if len(rows) >= fpo_alerts_service.ALERTS_MAX_PER_USER:
+            return jsonify({"error": f"Límit de {fpo_alerts_service.ALERTS_MAX_PER_USER} alertes"}), 429
+        cur = conn.execute(
+            "INSERT INTO fpo_alerts (user_id, comarca, familia_codi, espec_codi, inclou_en_linia) "
+            "VALUES (?, ?, ?, ?, ?)", (user_id, comarca, familia, espec, int(en_linia)))
+        conn.commit()
+        return jsonify({"status": "created", "id": cur.lastrowid}), 201
+    finally:
+        conn.close()
+
+
+def _fpo_alert_owned(conn, user_id, alert_id):
+    import db as _db
+    return _db.query_one(conn, "SELECT id FROM fpo_alerts WHERE id = ? AND user_id = ?", (alert_id, user_id))
+
+
+def _fpo_alert_drop_tokens(conn, alert_id):
+    prefix = f"{fpo_alerts_service.TOKEN_KIND}_{alert_id}_"
+    conn.execute("DELETE FROM tokens WHERE type = ? AND substr(token, 1, ?) = ?",
+                 (fpo_alerts_service.TOKEN_TYPE, len(prefix), prefix))
+
+
+@app.route("/api/fpo/alerts/<int:alert_id>", methods=["PATCH"])
+def fpo_alerts_update(alert_id):
+    """Activa o pausa una alerta. Cos: {active: bool}."""
+    import db as _db
+    user_id = _get_session_user(request)
+    if not user_id:
+        return jsonify({"error": "No autenticat"}), 401
+    data = request.get_json(silent=True)
+    if not isinstance(data, dict) or not isinstance(data.get("active"), bool):
+        return jsonify({"error": "active ha de ser true o false"}), 400
+    conn = _db.get_db()
+    try:
+        if not _fpo_alert_owned(conn, user_id, alert_id):
+            return jsonify({"error": "Alerta no trobada"}), 404
+        conn.execute("UPDATE fpo_alerts SET active = ? WHERE id = ?", (int(data["active"]), alert_id))
+        conn.commit()
+        return jsonify({"status": "updated", "active": data["active"]}), 200
+    finally:
+        conn.close()
+
+
+@app.route("/api/fpo/alerts/<int:alert_id>", methods=["DELETE"])
+def fpo_alerts_delete(alert_id):
+    import db as _db
+    user_id = _get_session_user(request)
+    if not user_id:
+        return jsonify({"error": "No autenticat"}), 401
+    conn = _db.get_db()
+    try:
+        if not _fpo_alert_owned(conn, user_id, alert_id):
+            return jsonify({"error": "Alerta no trobada"}), 404
+        conn.execute("DELETE FROM fpo_alerts WHERE id = ?", (alert_id,))
+        _fpo_alert_drop_tokens(conn, alert_id)
+        conn.commit()
+        return "", 204
+    finally:
+        conn.close()
+
+
+@app.route("/api/fpo/alerts/<int:alert_id>/unsubscribe", methods=["GET"])
+def fpo_alerts_unsubscribe(alert_id):
+    """Baixa sense sessió des de l'enllaç del correu: pausa l'alerta. Sempre redirigeix a
+    la portada, amb l'avís de baixa feta o, si el token no val, amb l'avís d'error."""
+    import db as _db
+    from flask import redirect
+    stored_token = f"{fpo_alerts_service.TOKEN_KIND}_{alert_id}_{request.args.get('token', '')}"
+    conn = _db.get_db()
+    try:
+        row = _db.query_one(
+            conn, "SELECT id FROM tokens WHERE token = ? AND type = ? AND expires_at > datetime('now')",
+            (stored_token, fpo_alerts_service.TOKEN_TYPE))
+        if not row:
+            return redirect("/?unsubscribe_error=1")
+        conn.execute("UPDATE fpo_alerts SET active = 0 WHERE id = ?", (alert_id,))
+        conn.execute("DELETE FROM tokens WHERE id = ?", (row["id"],))
+        conn.commit()
+    finally:
+        conn.close()
+    return redirect("/?unsubscribed=1")
 
 
 # ---------------------------------------------------------------------------
