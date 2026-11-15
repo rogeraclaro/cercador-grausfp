@@ -38,16 +38,17 @@
     return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
   }
 
-  // Avisos de tornada del backend: /?verified=1, /?unsubscribed=1, /?google_error=<codi>.
+  // Avisos de tornada del backend: /?verified=1, /?unsubscribed=1, /?unsubscribe_error=1, /?google_error=<codi>.
   function showRedirectToast() {
     var url = new URL(window.location.href);
     var params = url.searchParams;
     var key = params.get('verified') === '1' ? 'auth.verified.toast'
       : params.get('unsubscribed') === '1' ? 'auth.unsubscribed.toast'
+      : params.get('unsubscribe_error') === '1' ? 'auth.unsubscribe_error.toast'
       : params.get('google_error') ? 'auth.google_error.toast' : null;
     if (!key) return;
-    var isError = key === 'auth.google_error.toast';
-    ['verified', 'unsubscribed', 'google_error'].forEach(function (k) { params.delete(k); });
+    var isError = key === 'auth.google_error.toast' || key === 'auth.unsubscribe_error.toast';
+    ['verified', 'unsubscribed', 'unsubscribe_error', 'google_error'].forEach(function (k) { params.delete(k); });
     history.replaceState(null, '', url);
     var toast = document.createElement('div');
     toast.setAttribute('role', isError ? 'alert' : 'status');

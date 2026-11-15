@@ -374,6 +374,54 @@
       padding: 48px 0;
     }
 
+    /* Pla 086: alertes de cursos FPO nous */
+    .fpo-alerts-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 24px;
+      font-weight: 400;
+      margin: 36px 0 6px;
+      padding-top: 24px;
+      border-top: 2px solid var(--dark);
+    }
+
+    .fpo-alerts-note { font-size: 13px; color: var(--warm); margin-bottom: 12px; }
+    .fpo-alerts-note a { color: var(--dark); }
+    .fpo-alerts-list { list-style: none; border-top: 1px solid var(--border); }
+
+    .fpo-alert {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px 16px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .fpo-alert-label { font-weight: 600; overflow-wrap: anywhere; }
+    .fpo-alert--paused .fpo-alert-label { color: var(--warm); font-weight: 400; }
+    .fpo-alert-actions { display: flex; gap: 8px; }
+
+    .fpo-alert-btn {
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--dark);
+      background: var(--white);
+      border: 1px solid var(--dark);
+      border-radius: 2px;
+      padding: 6px 12px;
+      cursor: pointer;
+    }
+
+    .fpo-alert-btn:hover { background: var(--dark); color: var(--white); }
+    .fpo-alert-btn--delete { border-color: var(--alert-ink); color: var(--alert-ink); }
+    .fpo-alert-btn--delete:hover { background: var(--alert-ink); color: var(--white); }
+
+    @media (pointer: coarse) {
+      .fpo-alert-btn { min-height: 44px; }
+    }
+
     .empty-state a {
       color: var(--dark);
     }
@@ -450,8 +498,8 @@
       }
     }
   </style>
-  <script src="i18n.js?v=20261115a"></script>
-  <script src="auth.js?v=20261115a"></script>
+  <script src="i18n.js?v=20261115b"></script>
+  <script src="auth.js?v=20261115b"></script>
   <script defer src="https://analytics.masellas.info/script.js" data-exclude-search="true" data-exclude-hash="true" data-website-id="ddb6c664-550b-4e2d-848f-796a676e4036"></script>
 </head>
 
@@ -500,9 +548,12 @@
       </div>
     </div>
     <div id="section-fpo" hidden>
-      <div class="loading-state">
-        <div class="spinner"></div>
+      <div id="fpo-favs">
+        <div class="loading-state">
+          <div class="spinner"></div>
+        </div>
       </div>
+      <div id="fpo-alerts"></div>
     </div>
   </main>
 
@@ -810,8 +861,64 @@
           removeBtn + rows.join('<br>') + '</div>';
       }
 
+      /* ── Pla 086: alertes de cursos FPO nous (pausa i esborrat) ── */
+      function titleCase(s) {
+        return String(s || '').toLowerCase().split(' ').map(function (w) { return w ? w[0].toUpperCase() + w.slice(1) : w; }).join(' ');
+      }
+
+      function fpoAlertLabel(a) {
+        var parts = [];
+        if (a.comarca) parts.push(titleCase(a.comarca) + (a.inclou_en_linia ? ' ' + t('fpo.alert.plus_online') : ''));
+        if (a.familia_codi) parts.push((a.familia_desc || {})[fpoLang] || a.familia_codi);
+        if (a.espec_codi) parts.push((a.espec_titol || {})[fpoLang] || a.espec_codi);
+        return parts.join(' · ');
+      }
+
+      async function loadFpoAlerts() {
+        var box = document.getElementById('fpo-alerts');
+        var alerts = [];
+        try {
+          var res = await fetch(API_BASE + '/api/fpo/alerts', { credentials: 'include' });
+          if (!res.ok) { box.innerHTML = ''; return; }
+          alerts = await res.json();
+        } catch (e) { box.innerHTML = ''; return; }
+
+        var items = alerts.map(function (a) {
+          return '<li class="fpo-alert' + (a.active ? '' : ' fpo-alert--paused') + '">' +
+            '<span class="fpo-alert-label">' + esc(fpoAlertLabel(a)) +
+            (a.active ? '' : ' <span class="badge-old">' + t('fpo.alert.paused') + '</span>') + '</span>' +
+            '<span class="fpo-alert-actions">' +
+            '<button type="button" class="fpo-alert-btn" data-id="' + a.id + '" data-active="' + (a.active ? '0' : '1') + '">' +
+            t(a.active ? 'fpo.alert.pause' : 'fpo.alert.resume') + '</button>' +
+            '<button type="button" class="fpo-alert-btn fpo-alert-btn--delete" data-id="' + a.id + '" ' +
+            'aria-label="' + esc(t('fpo.alert.delete_aria', { name: fpoAlertLabel(a) })) + '">' + t('fpo.alert.delete') + '</button>' +
+            '</span></li>';
+        }).join('');
+
+        box.innerHTML = '<h2 class="fpo-alerts-title">' + t('fpo.alert.title') + '</h2>' +
+          (alerts.length
+            ? '<p class="fpo-alerts-note">' + t('fpo.alert.note') + '</p><ul class="fpo-alerts-list">' + items + '</ul>'
+            : '<p class="fpo-alerts-note">' + t('fpo.alert.empty') +
+              ' <a href="index.html?mode=fpo&vista=agenda">' + t('fpo.alert.go_agenda') + '</a></p>');
+
+        box.querySelectorAll('.fpo-alert-btn').forEach(function (btn) {
+          btn.addEventListener('click', async function () {
+            btn.disabled = true;
+            var remove = btn.classList.contains('fpo-alert-btn--delete');
+            try {
+              var r = await fetch(API_BASE + '/api/fpo/alerts/' + btn.dataset.id, remove
+                ? { method: 'DELETE', credentials: 'include' }
+                : { method: 'PATCH', credentials: 'include', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ active: btn.dataset.active === '1' }) });
+              if (!r.ok) throw new Error('HTTP ' + r.status);
+              await loadFpoAlerts();
+            } catch (e) { btn.disabled = false; }
+          });
+        });
+      }
+
       async function loadFpo() {
-        var section = document.getElementById('section-fpo');
+        var section = document.getElementById('fpo-favs');
         try {
           var res = await fetch(API_BASE + '/api/fpo/favorites', { credentials: 'include' });
           if (res.status === 401) {
@@ -1132,7 +1239,10 @@
           document.querySelectorAll('.section-nav-link').forEach(function (l) { l.style.display = 'none'; });
           return;
         }
-        await Promise.all([loadFavorits(), loadAlertes(), loadSeguiment(), loadFpo()]);
+        /* perfil.html#fpo (o #alertes, #seguiment) obre directament aquella pestanya */
+        var wanted = location.hash.slice(1);
+        if (tabs.indexOf(wanted) >= 0) activateTab(wanted);
+        await Promise.all([loadFavorits(), loadAlertes(), loadSeguiment(), loadFpo(), loadFpoAlerts()]);
       });
     })();
   </script>
