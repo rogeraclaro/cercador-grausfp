@@ -1,6 +1,6 @@
 # Estat del projecte — per reprendre des d'un altre ordinador
 
-Última actualització: 2026-11-14. Producció: https://grausfp.es (VPS `contabo`) a `542aeaf`
+Última actualització: 2026-11-14. Producció: https://grausfp.es (VPS `contabo`) a `3dfed87`
 (auditoria en dues passades i pla 081 desplegats el 2026-11-14; `sepe_especs.json` copiat des de local).
 
 ## Com reprendre
@@ -154,7 +154,7 @@ La primera vegada, `--discover` triga ~20 min; després va de la memòria cau.
   1280 i 375 px. **Sense provar:** importar el `.ics` a un calendari de veritat (només n'he validat el format
   i el fitxer baixat) i l'enviament real d'un correu d'alerta (als tests, `send_email` sempre substituït).
 
-### Pla 088 «Pàgines de família enriquides» — fet el 2026-11-15, **sense desplegar**
+### Pla 088 «Pàgines de família enriquides» — fet i desplegat el 2026-11-15
 - `backend/familia_stats.py` (pur), integrat a `_get_seo_data` (`seo['familia_stats']`) i a `familia_publica`;
   `grau_page.render_familia(..., stats=)` i `render_families(..., per_grado=)`. Sense migració ni JavaScript nou.
   770 tests verds.
@@ -162,7 +162,7 @@ La primera vegada, `--discover` triga ~20 min; després va de la memòria cau.
   «Buscar en esta familia», novetats, sortides professionals, centres per comunitat i cursos FPO que comencen
   en 60 dies. Cada bloc només surt si té dades. `/families` porta el desglossament «A 12 · B 12 · C 3 · D 13».
 - Reconstrucció de `_get_seo_data` amb el catàleg sencer: 0,12 s (les xifres de les 28 famílies, 0,08 s).
-- Per desplegar: push, `git pull` i **reiniciar** `fp-cercador`. No cal tocar nginx.
+- Desplegat amb reinici del servei; no ha calgut tocar nginx.
 - Dependències toves resoltes aquí: `index.html` llegeix `?familia=<nom>` (validat contra les famílies del
   catàleg) i `?mode=ocupacio&q=…` (fa la cerca directament). El pla 087 ja no ha d'afegir `?familia=`.
 - Decisions preses en executar (revisables):

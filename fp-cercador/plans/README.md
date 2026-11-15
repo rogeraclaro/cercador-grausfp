@@ -101,7 +101,7 @@ amb quins prerequisits i quins passos manuals calen al servidor.
 | 085 | Comparador de fins a 3 graus en columnes | P2 | M-L | 058, 076, 077, 078 DONE | DONE |
 | 086 | Calendari FPO: agenda «Comencen aviat», `.ics` i alerta de cursos nous | P2 | L | 059–063, 028 DONE | DONE |
 | 087 | Cerca compartible (filtres a l'adreça) i «Volies dir…» | P2 | M | — | TODO |
-| 088 | Pàgines de família enriquides (xifres, novetats, sortides, centres, FPO) | P3 | M | 077 DONE (millor després de 087 i 086) | DONE (no desplegat) |
+| 088 | Pàgines de família enriquides (xifres, novetats, sortides, centres, FPO) | P3 | M | 077 DONE (millor després de 087 i 086) | DONE |
 | 089 | «Reporta un error en aquesta fitxa» (suggeriments amb el grau identificat) | P3 | S | 069, 076 DONE | TODO |
 
 Valors de Status: `TODO` | `IN PROGRESS` | `DONE` | `BLOCKED (motiu en una línia)` | `REJECTED (motiu en una línia)`
