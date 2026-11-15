@@ -55,6 +55,7 @@ from flask import Flask, jsonify, redirect, request
 from flask_cors import CORS
 
 import cd_lomloe
+import compare
 import gap
 import fpo_ext
 import feed
@@ -2378,6 +2379,34 @@ def grau_publica(ref):
     if not rec:
         return _seo_error(404)
     return _seo_response(grau_page.render_grau(rec, _grau_context(rec, seo), SITE_URL))
+
+
+_COMPARE_MAX = 3
+
+
+@app.route('/api/compara')
+def compara():
+    """Comparador (Pla 085): GET /api/compara?refs=a,b,c amb 2 o 3 ref del catàleg."""
+    seo = _get_seo_data()
+    if seo is None:
+        return jsonify({"error": "Data not available. Run /api/admin/refresh first."}), 503
+    refs = list(dict.fromkeys(r.strip() for r in (request.args.get('refs') or '').split(',') if r.strip()))
+    recs = {ref: _resolve_oferta(ref=ref) if oferta_ref.REF_RE.match(ref) else None
+            for ref in refs[:_COMPARE_MAX + 1]}
+    invalids = [ref for ref, rec in recs.items() if not rec]
+    if invalids or not 2 <= len(refs) <= _COMPARE_MAX:
+        return jsonify({"error": f"calen entre 2 i {_COMPARE_MAX} ref del catàleg", "invalids": invalids}), 400
+    contexts = []
+    for rec in recs.values():
+        ctx = _grau_context(rec, seo)
+        if rec.get('grado') == 'C' and not rec.get('plan_antiguo'):
+            # Els C del pla nou no porten contingut a _grau_context: els mòduls són a c_modulos.json.
+            ctx['contingut'] = {'modulos': [m['name'] for m in _get_c_modulos().get(rec.get('codigo'), [])
+                                            if m.get('name')]}
+        contexts.append({**ctx, 'rec': rec})
+    response = jsonify(compare.build_comparison(contexts))
+    response.headers['Cache-Control'] = 'public, max-age=3600'
+    return response
 
 
 @app.route('/api/familia/<path:prefix>')
