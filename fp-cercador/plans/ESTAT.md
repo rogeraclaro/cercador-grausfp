@@ -1,6 +1,6 @@
 # Estat del projecte — per reprendre des d'un altre ordinador
 
-Última actualització: 2026-11-14. Producció: https://grausfp.es (VPS `contabo`) a `d5cdca3`
+Última actualització: 2026-11-14. Producció: https://grausfp.es (VPS `contabo`) a `79889dd`
 (auditoria en dues passades i pla 081 desplegats el 2026-11-14; `sepe_especs.json` copiat des de local).
 
 ## Com reprendre
@@ -101,12 +101,11 @@ La primera vegada, `--discover` triga ~20 min; després va de la memòria cau.
   compartir, obrir sense sessió, imprimir, QR descodificat, desar a favorits, regenerar i enllaç antic
   caducat. Sense provar: el QR amb un mòbil de veritat i el diàleg d'impressió real (només `@media print`).
 
-### Pla 085 «Comparador de graus» — fet el 2026-11-15, **sense desplegar**
+### Pla 085 «Comparador de graus» — fet i desplegat el 2026-11-15
 - `backend/compare.py` (`build_comparison`), `GET /api/compara?refs=a,b,c`, `frontend/compara.html`, botó
   «Compara» i barra fixa al cercador (`index.html`), enllaç «Compara amb un altre grau» a `/grau/<ref>` i a
   `itinerari.html`. Sense migració. 690 tests verds.
-- Per desplegar: push, `git pull` i **reiniciar** `fp-cercador` (endpoint nou). No cal tocar el vhost: la
-  pàgina és `noindex`.
+- Desplegat amb reinici del servei; no ha calgut tocar el vhost (la pàgina és `noindex`).
 - `_grau_context` triga ~0,1 ms per grau amb les dades de producció: no ha calgut optimitzar res.
 - Decisions preses en executar (revisables):
   - **«Compara» és un botó dins la fila desplegada**, al costat de «Compartir» i «+ Llista», a totes les
