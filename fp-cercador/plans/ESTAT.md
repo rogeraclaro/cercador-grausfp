@@ -11,7 +11,7 @@
    `scp contabo:/home/masellas-grausfp/htdocs/grausfp.masellas.info/fp-cercador/backend/data/{ofertes,c_modulos,d_modulos,bc_lomloe}.json fp-cercador/backend/data/`
 3. El `.env` tampoc no és al git (ADMIN_TOKEN, SMTP, Google OAuth…): copiar-lo a mà del VPS.
 4. Tests: `cd fp-cercador/backend && python3 -m pytest tests -q --deselect tests/test_pipeline.py::test_ce_acces_falla_conserva_fitxer_anterior`
-   (668 verds el 2026-11-14 amb `--ignore=tests/test_pipeline.py`, que fa peticions de xarxa i es penja
+   (690 verds el 2026-11-15 amb `--ignore=tests/test_pipeline.py`, que fa peticions de xarxa i es penja
    sense connexió).
 5. Local: `python3 app.py` (port 5001) i `python3 -m http.server 8765` dins `frontend/`.
 
@@ -22,7 +22,7 @@
 - Si toca el backend: `systemctl restart fp-cercador`. **Mai diumenge 11:10–11:45**, que és quan corre el
   refresc setmanal.
 - Si es canvien textos o `auth.js`/`alertes.js`: apujar la versió `?v=` a totes les pàgines i a
-  `I18N_VERSION` de `backend/grau_page.py` (ara `20261114e`; `site.css?v=5`, `footer.js?v=3`).
+  `I18N_VERSION` de `backend/grau_page.py` (ara `20261115a`; `site.css?v=5`, `footer.js?v=3`).
 - Commits: conventional commits, sense atribució d'IA.
 
 ## Fet els darrers dies (tot desplegat)
@@ -101,10 +101,33 @@ La primera vegada, `--discover` triga ~20 min; després va de la memòria cau.
   compartir, obrir sense sessió, imprimir, QR descodificat, desar a favorits, regenerar i enllaç antic
   caducat. Sense provar: el QR amb un mòbil de veritat i el diàleg d'impressió real (només `@media print`).
 
-### Funcionalitats noves triades pel propietari el 2026-11-14 (plans 085–089, tots TODO)
+### Pla 085 «Comparador de graus» — fet el 2026-11-15, **sense desplegar**
+- `backend/compare.py` (`build_comparison`), `GET /api/compara?refs=a,b,c`, `frontend/compara.html`, botó
+  «Compara» i barra fixa al cercador (`index.html`), enllaç «Compara amb un altre grau» a `/grau/<ref>` i a
+  `itinerari.html`. Sense migració. 690 tests verds.
+- Per desplegar: push, `git pull` i **reiniciar** `fp-cercador` (endpoint nou). No cal tocar el vhost: la
+  pàgina és `noindex`.
+- `_grau_context` triga ~0,1 ms per grau amb les dades de producció: no ha calgut optimitzar res.
+- Decisions preses en executar (revisables):
+  - **«Compara» és un botó dins la fila desplegada**, al costat de «Compartir» i «+ Llista», a totes les
+    mides: una columna nova no hi cabia a les targetes del mòbil. Cal desplegar el grau per triar-lo.
+  - L'API afegeix `moduls_propis` a cada grau (els no comuns), perquè la pàgina no hagi de repetir la
+    normalització de noms.
+  - Els mòduls comuns són per nom normalitzat, sense les regles de convalidació de l'art. 126 del pla 083:
+    «Proyecto intermodular» o «Módulo profesional optativo» surten com a comuns si tots dos cicles en tenen.
+    La nota «Incluye una fase de formación en empresa…» no es compta com a mòdul.
+  - «Comparteix» a l'ordinador copia l'enllaç directament (sense menú de WhatsApp i correu).
+  - Els graus triats es desen a `sessionStorage` amb clau pròpia (`grausfp.compareRefs`), no dins de
+    `saveListState()`: així sobreviuen a qualsevol navegació de la pestanya.
+- Verificat al navegador (ca i es, 1280 i 375 px): dos D de la mateixa família (6 mòduls comuns), C del pla
+  nou amb el seu D (3 de 4), A + D (sense bloc de comuns), C pla antic + B, tres columnes, treure columna,
+  comunitat autònoma, plegat de llistes, copiar l'enllaç, estats buit i invàlid, `?compara=`, límit de 3.
+  Sense veure en dades reals: el ressaltat d'ocupacions i de «a què dona pas» comuns (cap parella provada
+  en tenia); la lògica és als tests de `compare.py`.
+
+### Funcionalitats noves triades pel propietari el 2026-11-14 (plans 086–089, tots TODO)
 Un pla per sessió nova. Ordre de prioritat del propietari:
-- 085 comparador ·
-  086 calendari FPO (agenda, `.ics`, alerta) · 088 pàgines de família enriquides ·
+- 086 calendari FPO (agenda, `.ics`, alerta) · 088 pàgines de família enriquides ·
   087 filtres a l'adreça i «Volies dir…» · 089 reporta un error a la fitxa.
 - 083–086 i 088 tenen el disseny validat pel propietari; a 087 i 089 les decisions tècniques
   són del redactor i es poden revisar abans d'executar.
