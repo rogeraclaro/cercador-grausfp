@@ -11,7 +11,7 @@
    `scp contabo:/home/masellas-grausfp/htdocs/grausfp.masellas.info/fp-cercador/backend/data/{ofertes,c_modulos,d_modulos,bc_lomloe}.json fp-cercador/backend/data/`
 3. El `.env` tampoc no és al git (ADMIN_TOKEN, SMTP, Google OAuth…): copiar-lo a mà del VPS.
 4. Tests: `cd fp-cercador/backend && python3 -m pytest tests -q --deselect tests/test_pipeline.py::test_ce_acces_falla_conserva_fitxer_anterior`
-   (770 verds el 2026-11-15 amb `--ignore=tests/test_pipeline.py`, que fa peticions de xarxa i es penja
+   (785 verds el 2026-11-15 amb `--ignore=tests/test_pipeline.py`, que fa peticions de xarxa i es penja
    sense connexió).
 5. Local: `python3 app.py` (port 5001) i `python3 -m http.server 8765` dins `frontend/`.
 
@@ -22,7 +22,7 @@
 - Si toca el backend: `systemctl restart fp-cercador`. **Mai diumenge 11:10–11:45**, que és quan corre el
   refresc setmanal.
 - Si es canvien textos o `auth.js`/`alertes.js`: apujar la versió `?v=` a totes les pàgines i a
-  `I18N_VERSION` de `backend/grau_page.py` (ara `20261115d`; `site.css?v=5`, `footer.js?v=3`).
+  `I18N_VERSION` de `backend/grau_page.py` (ara `20261115e`; `site.css?v=6`, `footer.js?v=3`, `feedback.js?v=5`).
 - Commits: conventional commits, sense atribució d'IA.
 
 ## Fet els darrers dies (tot desplegat)
@@ -202,12 +202,29 @@ La primera vegada, `--discover` triga ~20 min; després va de la memòria cau.
   invàlids, `favs=1` sense sessió, enllaç de l'observatori, enllaç del perfil, tornada de l'itinerari, mode FPO;
   `soldadra` → `soldadura`, `infermeria` sense suggeriment, paraula sense res semblant, filtre actiu; 375 px.
 
-### Funcionalitat nova triada pel propietari el 2026-11-14 (pla 089, TODO)
-Un pla per sessió nova. Ordre de prioritat del propietari:
-- 089 reporta un error a la fitxa.
-- 083–086 i 088 tenen el disseny validat pel propietari; a 087 i 089 les decisions tècniques
-  són del redactor i es poden revisar abans d'executar.
-- 089 afegeix una migració: el número és «el següent lliure» en executar (l'última és la 015).
+### Pla 089 «Reporta un error en aquesta fitxa» — fet el 2026-11-15, **sense desplegar**
+- Migració `016_feedback_oferta_ref.sql` (`feedback.oferta_ref`); `POST /api/feedback` accepta `ref` (opcional;
+  un `ref` invàlid o que no és al catàleg s'ignora, el comentari es desa igualment); l'avís per correu i
+  `GET /api/admin/feedback` porten el grau (`oferta: {denominacion, grado, url}`). 785 tests verds.
+- `feedback.js` exposa `window.grausfpFeedback.open({kind, ref, label})`: amb `ref` tria «Dades incorrectes» i
+  mostra «Sobre: …», que es pot treure amb ✕. La pestanya normal continua igual.
+- Enllaç «Hi ha un error en aquesta fitxa?» a la fila desplegada del cercador, a la capçalera de l'itinerari i
+  al peu de `/grau/<ref>` (l'afegeix `feedback.js` a partir de `data-report-ref`; sense JavaScript no surt).
+  A `admin.html`, el comentari porta l'enllaç al grau.
+- Per desplegar: push, `git pull` i **reiniciar** `fp-cercador` (migració 016, i de pas `I18N_VERSION`,
+  `SITE_CSS_VERSION` i `FEEDBACK_VERSION` nous a les pàgines públiques).
+- Decisions preses en executar (revisables):
+  - El `ref` s'envia com a camp propi del cos; el `context` no canvia (el backend ja el limita a `path`,
+    `query` i `lang`).
+  - Si el grau d'un comentari ja no és al catàleg, l'admin en veu el `ref` sense enllaç.
+  - L'enllaç de la pàgina pública surt en l'idioma del visitant (com el diàleg), encara que la pàgina sigui en
+    castellà.
+- Verificat al navegador, ca i es, 1280 i 375 px: des de la fila, l'itinerari i la pàgina pública; teclat
+  (Enter obre, Esc tanca i el focus torna a l'enllaç); treure «Sobre»; pestanya normal; sense `feedback.js`
+  l'enllaç no surt; el comentari arriba a l'admin amb l'enllaç al grau. Cap correu enviat a les proves
+  (`FEEDBACK_NOTIFY_EMAIL` buit). En local Flask no serveix `feedback.js`: a la pàgina pública s'ha injectat.
+
+**Els set plans triats el 2026-11-14 (083–089) estan fets.**
 
 ### Catàleg d'Especialitats Formatives del SEPE (plans 081–082)
 - 081: **fet** (commits f0a99b0, a54b18c, 7d46fee): scraper + `sepe_especs.json` + badges i filtre a l'FPO.
