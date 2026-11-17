@@ -50,7 +50,9 @@ def cert_rows_loe(cert: dict, estructura: dict | None, ucs: list, b_by_num: dict
         total, mp = cert.get('duracion_horas'), None
     else:
         mfs, mp = estructura['mf'], estructura.get('mp')
-        total = estructura['total_h'] if estructura['total_h'] is not None else cert.get('duracion_horas')
+        # duracion_horas ve corregida (c_horas_overrides.json); l'annex és el text original del decret i
+        # no recull modificacions posteriors (pla 094), de manera que només es fa servir si falta l'altra.
+        total = cert.get('duracion_horas') or estructura['total_h']
     shared: dict[str, int] = {}
     for mf in mfs:
         for uf in mf['ufs']:

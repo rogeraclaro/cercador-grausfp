@@ -81,7 +81,8 @@ def test_certificat_loe_una_fila_per_uf_amb_hores_i_transversals(client):
     rows = _csv(resp)
     assert rows[0][:2] == ['Codi certificat', 'Nom certificat'] and len(rows) == 1 + 5
     uf884 = rows[1]
-    assert uf884[4:] == ['920', 'MF0820_2', 'Instalaciones en viviendas', '170', 'UC0820_2',
+    # 900 is the catalogue figure (corrected by c_horas_overrides.json); the annex says 920.
+    assert uf884[4:] == ['900', 'MF0820_2', 'Instalaciones en viviendas', '170', 'UC0820_2',
                          'UF0884', 'Montaje de enlace', '60', 'no']
     assert [r[9:] for r in rows[2:4]] == [["UF0886", "'=Prevención", '30', 'sí']] * 2  # transversal + guard fórmula
     assert rows[4][5:] == ['MF0825_2', '', '180', 'UC0825_2', '', '', '', '']  # MF sense UF
@@ -114,3 +115,10 @@ def test_cicle_una_fila_per_modul_i_uc(client):
     (','.join(f'X{i:04d}' for i in range(101)), 400)])
 def test_errors(client, refs, status):
     assert client.get('/api/export/estructura', query_string={'refs': refs}).status_code == status
+
+
+def test_total_falls_back_to_the_annex_when_the_catalogue_has_no_hours():
+    from export_estructura import cert_rows_loe
+    estructura = {'total_h': 920, 'mf': [{'codigo': 'MF0820_2', 'h': 170, 'ufs': []}], 'mp': None}
+    rows = cert_rows_loe({'codigo': 'ELEE0109'}, estructura, [], {}, {})
+    assert rows[0][4] == 920

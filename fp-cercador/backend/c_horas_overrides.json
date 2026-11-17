@@ -1,0 +1,123 @@
+{
+ "_doc": "Pla 094: certificats LOE on el buscador de certificats de todofp dona una durada errònia. {codi: {buscador: hores que dona el buscador, h: hores correctes, motiu, norma}}. S'aplica a certificados_scraper.corrected_hours i NOMÉS mentre el buscador continuï donant el valor de «buscador»; si el canvia, l'excepció deixa d'actuar i s'avisa al registre. motiu: 'transversal' = suma més d'una vegada les UF transversals; 'erroni' = xifra que no és ni la del decret ni la suma dels mòduls (decret i llista del SEPE coincideixen); 'modificat' = no recull el decret modificador de «norma». Detall: plans/outputs/audit_cp_loe_20261117.md. Cada fila ha de sortir també a frontend/fonts.html (ho comprova tests/test_c_horas_overrides.py).",
+ "ADGN0110": {
+  "buscador": 690,
+  "h": 730,
+  "motiu": "erroni",
+  "norma": "RD 610/2013"
+ },
+ "ADGN0210": {
+  "buscador": 600,
+  "h": 730,
+  "motiu": "erroni",
+  "norma": "RD 610/2013"
+ },
+ "AFDA0210": {
+  "buscador": 620,
+  "h": 590,
+  "motiu": "transversal",
+  "norma": "RD 1518/2011"
+ },
+ "AFDA0311": {
+  "buscador": 610,
+  "h": 550,
+  "motiu": "erroni",
+  "norma": "RD 1076/2012"
+ },
+ "AGAN0411": {
+  "buscador": 400,
+  "h": 450,
+  "motiu": "erroni",
+  "norma": "RD 627/2013"
+ },
+ "AGAR0109": {
+  "buscador": 640,
+  "h": 610,
+  "motiu": "transversal",
+  "norma": "RD 682/2011"
+ },
+ "ARGC0110": {
+  "buscador": 380,
+  "h": 420,
+  "motiu": "erroni",
+  "norma": "RD 1520/2011"
+ },
+ "ARGT0109": {
+  "buscador": 420,
+  "h": 330,
+  "motiu": "erroni",
+  "norma": "RD 712/2011"
+ },
+ "ARGT0112": {
+  "buscador": 520,
+  "h": 630,
+  "motiu": "erroni",
+  "norma": "RD 984/2013"
+ },
+ "COML0109": {
+  "buscador": 550,
+  "h": 520,
+  "motiu": "transversal",
+  "norma": "RD 642/2011"
+ },
+ "COML0309": {
+  "buscador": 420,
+  "h": 390,
+  "motiu": "transversal",
+  "norma": "RD 642/2011"
+ },
+ "ENAT0108": {
+  "buscador": 480,
+  "h": 450,
+  "motiu": "erroni",
+  "norma": "RD 1381/2008"
+ },
+ "EOCB0208": {
+  "buscador": 360,
+  "h": 320,
+  "motiu": "erroni",
+  "norma": "RD 644/2011"
+ },
+ "EOCE0109": {
+  "buscador": 780,
+  "h": 600,
+  "motiu": "transversal",
+  "norma": "RD 644/2011"
+ },
+ "IMSV0308": {
+  "buscador": 540,
+  "h": 630,
+  "motiu": "erroni",
+  "norma": "RD 725/2011"
+ },
+ "IMSV0408": {
+  "buscador": 630,
+  "h": 440,
+  "motiu": "erroni",
+  "norma": "RD 725/2011"
+ },
+ "MAPN0111": {
+  "buscador": 440,
+  "h": 390,
+  "motiu": "erroni",
+  "norma": "RD 1774/2011"
+ },
+ "MAPN0210": {
+  "buscador": 310,
+  "h": 320,
+  "motiu": "modificat",
+  "norma": "RD 622/2013"
+ },
+ "MAPN0310": {
+  "buscador": 230,
+  "h": 210,
+  "motiu": "modificat",
+  "norma": "RD 622/2013, RD 988/2013"
+ },
+ "MAPN0712": {
+  "buscador": 530,
+  "h": 850,
+  "motiu": "modificat",
+  "norma": "RD 257/2019"
+ }
+}

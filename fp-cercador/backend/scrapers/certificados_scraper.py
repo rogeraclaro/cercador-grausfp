@@ -10,7 +10,9 @@ Flow:
 
 La font retorna HTML, no JSON. BeautifulSoup per al parsing.
 """
+import json
 import logging
+import os
 import re
 
 import requests
@@ -31,6 +33,33 @@ _HEADERS = {
 }
 
 _HOURS_RE = re.compile(r'(\d+)\s*horas')
+
+_HOURS_OVERRIDES_PATH = os.path.join(os.path.dirname(__file__), '..', 'c_horas_overrides.json')
+_hours_overrides: dict | None = None
+
+
+def load_hours_overrides() -> dict:
+    """Pla 094: {codi: {buscador, h, motiu, norma}} dels certificats on el buscador dona una durada errònia."""
+    global _hours_overrides
+    if _hours_overrides is None:
+        with open(_HOURS_OVERRIDES_PATH, encoding='utf-8') as f:
+            _hours_overrides = {k: v for k, v in json.load(f).items() if not k.startswith('_')}
+    return _hours_overrides
+
+
+def corrected_hours(codigo: str, hours: int | None, overrides: dict) -> int | None:
+    """
+    Durada corregida d'un certificat. L'excepció només actua mentre el buscador continuï donant el
+    valor erroni conegut: si el ministeri el canvia, mana la font i s'avisa perquè es revisi la taula.
+    """
+    override = overrides.get(codigo)
+    if not override or hours == override['h']:
+        return hours
+    if hours == override['buscador']:
+        return override['h']
+    logger.warning("c_horas_overrides: %s ja no dona %s h al buscador sinó %s; no es corregeix, cal revisar la taula",
+                   codigo, override['buscador'], hours)
+    return hours
 
 
 def _bootstrap_session(timeout: int = 30) -> requests.Session:
@@ -220,7 +249,7 @@ def enrich_record(record: dict, cert_data: dict) -> dict:
 
     return {
         **record,
-        'duracion_horas': cert_data['duracion_horas'],
+        'duracion_horas': corrected_hours(record['codigo'], cert_data['duracion_horas'], load_hours_overrides()),
         'cert_id_buscador': cert_data['cert_id'],
         'url_anexo_pdf': f"{BASE_DAM}/anexos/{codigo_lc}.pdf",
         'url_europass_es': f"{BASE_DAM}/europass/n{nivel_n}-{codigo_lc}-es-pub.pdf",
