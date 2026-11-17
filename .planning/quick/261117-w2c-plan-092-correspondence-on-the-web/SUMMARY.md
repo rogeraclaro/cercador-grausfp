@@ -16,4 +16,4 @@ date: 2026-11-17
   red line, listed last.
 - Checked in the browser with ELEE0109, the Mecanizado cycle and a mixed held list, ca and es, 1280 and
   375 px, keyboard. No horizontal overflow.
-- Not deployed. Deploy needs `git pull` and a service restart.
+- Deployed to production the same day (git pull, service restarted) and checked there.

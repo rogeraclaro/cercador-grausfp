@@ -88,7 +88,7 @@ La primera vegada, `--discover` triga ~20 min; després va de la memòria cau.
   - Desplegat (dues passades el mateix dia) amb `git pull`, `d_uc_corr.json` copiat al VPS (cal tornar-lo a copiar si es regenera) i
     reinici del servei. Verificat a producció: `?cp=ELEE0109` → 0232, 0238, 0240, 0235, 0236 (taula
     substituïda); `?cicle=sanidad~audiologia-protesica` → taula del RD 500/2024.
-- **Pla 092: fet el 2026-11-17, no desplegat.** La correspondència del 091 surt a tres llocs:
+- **Pla 092: fet i desplegat el 2026-11-17** (prod `56f54ed`). La correspondència del 091 surt a tres llocs:
   - **Itinerari d'un certificat del pla antic**: l'enllaç amb cada cicle porta «Convalida N de M mòduls»
     (o «falten UC») i, sota les vistes, un desplegable per cicle amb els mòduls convalidats i per quines
     UC, les files a mitges, la resta de mòduls del cicle i l'enllaç al decret. Els cicles que només venen
@@ -105,7 +105,9 @@ La primera vegada, `--discover` triga ~20 min; després va de la memòria cau.
   - Backend: arestes C→D amb `conv`, `mods` i `derogada` a `/api/itinerari/complet`; `certificats` i
     `moduls_restants` a `/api/correspondencia`; `convalidacions` a `/api/que-em-falta`.
   - Verificat al navegador (ca i es, 1280 i 375 px, teclat). Textos: `i18n.js?v=20261117a`.
-  - Per desplegar: `git pull` i reiniciar el servei.
+  - Desplegat amb `git pull` i reinici. Verificat a producció: aresta ELEE0109 → Instal·lacions
+    Elèctriques amb `conv: 5`, `derogada: true`; `/grau/fabricacion-mecanica~mecanizado` amb la secció de
+    convalidació; «Què em falta?» amb ELEE0109 i MF0836_2 torna la taula vigent i la derogada.
 - Exportació relacional (093) i revisions menors (094), **TODO**.
 - Materials de l'anàlisi (scripts de prova, llistes d'errors, instantània del SEPE):
   `plans/outputs/analisi-20261117/`. Cap codi tocat; res desplegat.
