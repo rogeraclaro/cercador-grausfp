@@ -126,6 +126,7 @@ None yet.
 | 261105-e3j | Link Grado C pages to the accredited centres search | 2026-11-05 | 4871115 | — | [261105-e3j-link-grado-c-pages-to-accredited-centres](./quick/261105-e3j-link-grado-c-pages-to-accredited-centres/) |
 | 261108-say | Pla 081: scraper catàleg SEPE + enriquiment FPO | 2026-11-08 | 7d46fee | — | [261108-say-pla-081-scraper-cat-leg-sepe-enriquiment](./quick/261108-say-pla-081-scraper-cat-leg-sepe-enriquiment/) |
 | 261114-ekq | Auditoria completa: correccions verificades (alertes, tokens de baixa, refresc de centres, observatori, errors del frontend) | 2026-11-14 | — | — | [261114-ekq-audit-fixes-verified-low-risk-defects-fr](./quick/261114-ekq-audit-fixes-verified-low-risk-defects-fr/) |
+| 261117-ew2 | Pla 090: bc_loe.json sense UC d'altres annexos (140 certificats corregits) | 2026-11-17 | 75f556d | — | [261117-ew2-plan-090-fix-bc-loe-json-contamination](./quick/261117-ew2-plan-090-fix-bc-loe-json-contamination/) |
 
 ### Blockers/Concerns
 

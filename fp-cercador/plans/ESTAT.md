@@ -44,9 +44,19 @@ La primera vegada, `--discover` triga ~20 min; després va de la memòria cau.
 - Origen: dos correus d'un usuari (docent d'FPO) que demanava enllaçar els MF dels certificats amb els
   mòduls dels cicles i poder-ho baixar en Excel. En contrastar dades amb els annexos oficials va sortir
   un error nostre.
-- **Error en producció:** `bc_loe.json` porta UC d'altres certificats en 110–130 certificats LOE (el
-  generador llegeix tot el PDF de l'annex, que sovint inclou un tros de l'annex veí). Afecta l'itinerari
-  B↔C LOE i els centres heretats dels mòduls B LOE. Pla 090, **TODO**, va primer.
+- **Pla 090: fet el 2026-11-17, no desplegat.** `bc_loe.json` regenerat en local: 140 certificats perden
+  399 UC que eren d'un altre annex, 6 en guanyen 15 (EOCH0108, MAPU0112 i QUIB0108, escanejats, i QUIE0108,
+  TMVI0112, FMEM0311) i 4 claus de certificats que ja no són al catàleg desapareixen. Font: annex en 516,
+  llista del SEPE en 59, cap en 5 (els de sufix `_N`, sense annex). Informe: `plans/outputs/audit_bc_loe.md`.
+  - Per desplegar: `git pull` al VPS **i copiar `backend/data/bc_loe.json`** (és fora del git). Còpia de
+    l'anterior en local: `backend/data/bc_loe.json.bak-pre090`.
+  - No dispara correus de seguiment de centres: a producció hi ha 4 seguiments actius (comprovat el
+    2026-11-17, només lectura) i cap és d'un mòdul B o A LOE.
+  - Decisions preses en executar (revisables): els codis surten de les capçaleres `Código: MF####_N` i no de
+    les d'UC (falten en uns 80 annexos i en d'altres porten errades); la llista del SEPE té un topall de 8
+    codis per certificat i amb 8 es tracta com a possiblement tallada; `--dry-run` ja no escriu el fitxer.
+  - Per al 091: en uns 19 certificats el número del MF i el de la UC de l'annex no coincideixen (ADGN0110:
+    MF2180_2 amb UC1445_2). `bc_loe.json` desa el número del MF.
 - La correspondència UC ↔ mòdul professional és als annexos V A i V B dels decrets dels títols (XML del
   BOE). Viable per a 142 dels 161 cicles de grau mitjà i superior; cal aplicar els RD 498–500/2024, que
   substitueixen annexos. Plans 091 (dades) i 092 (web), **TODO**.
