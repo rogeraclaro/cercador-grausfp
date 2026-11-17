@@ -73,6 +73,7 @@ def paths(tmp_path, monkeypatch):
         out[attr] = tmp_path / f'{attr}.json'
         out[attr].write_text(json.dumps(data), encoding='utf-8')
         monkeypatch.setattr(app_module, attr, str(out[attr]))
+    monkeypatch.setattr(app_module, 'UC_CORR_OVERRIDES_PATH', str(tmp_path / 'overrides.json'))
     for cache in ('_d_modulos_cache', '_d_uc_corr_cache'):
         monkeypatch.setattr(app_module, cache, {'mtime': None, 'index': None})
     monkeypatch.setattr(app_module, '_catalog_cache', {'key': None, 'data': None})
@@ -118,6 +119,20 @@ def test_cp_cas_de_referencia_elee0109(client):
     assert tel['a_mitges'] == [{'moduls': [_m('0362', 'Instalaciones eléctricas básicas')],
                                 'uc': ['UC0820_2', 'UC9000_2'], 'falten': ['UC9000_2']}]
     assert (tel['moduls_cicle'], tel['moduls_pendents']) == (None, None)
+
+
+def test_les_uc_corregides_manen_sobre_bc_loe(client, tmp_path):
+    (tmp_path / 'overrides.json').write_text(json.dumps({'_doc': 'x', 'ELEE0109': ['UC0825_2']}), encoding='utf-8')
+    body = client.get('/api/correspondencia', query_string={'cp': 'ELEE0109'}).json
+    assert body['cp']['uc'] == ['UC0825_2']
+    assert [c['moduls_convalidats'] for c in body['cicles']] == [['0240']]
+
+
+def test_el_fitxer_de_correccions_del_repo_es_valid():
+    with open(app_module.UC_CORR_OVERRIDES_PATH, encoding='utf-8') as f:
+        data = json.load(f)
+    codes = [uc for cp, ucs in data.items() if cp != '_doc' for uc in ucs]
+    assert codes and all(isinstance(uc, str) and uc.startswith('UC') for uc in codes)
 
 
 def test_sense_index_el_certificat_no_te_cicles(client, paths):

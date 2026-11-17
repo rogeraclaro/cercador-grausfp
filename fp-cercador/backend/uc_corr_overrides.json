@@ -1,0 +1,6 @@
+{
+ "_doc": "Pla 091: {certificat LOE: UC reals} per als certificats on bc_loe.json (que desa el número del MF) no porta el codi d'UC de la qualificació. Només el fa servir /api/correspondencia. Comprovat pel nom de la UC a l'annex del certificat i a les taules del BOE (2026-11-17).",
+ "MAPN0310": ["UC0010_1", "UC1308_1", "UC1309_1", "UC0733_1"],
+ "QUIE0108": ["UC0045_2", "UC0046_2", "UC0047_2", "UC0048_2"],
+ "TMVI0112": ["UC1461_2", "UC1466_2", "UC1467_2"]
+}

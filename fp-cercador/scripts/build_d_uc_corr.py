@@ -5,7 +5,7 @@ oficial entre unitats de competència (UC) i mòduls professionals de cada cicle
 l'informe plans/outputs/audit_d_uc_corr.md.
 
 Per a cada cicle: fitxa de todofp → enllaços al BOE → XML obert de cada decret → taules
-dels annexos V A) i V B). Els decrets que substitueixen annexos d'altres (RD 498–500/2024,
+dels annexos V A) i V B) (del PDF, amb pdfplumber, quan l'XML porta l'annex com a imatge). Els decrets que substitueixen annexos d'altres (RD 498–500/2024,
 «actualización» del 2023) s'apliquen a tots els cicles, encara que la fitxa no els enllaci.
 
 ~195 fitxes i ~330 decrets a 1 petició/s ≈ 10 min sense memòria cau. Execució manual; no
@@ -67,7 +67,13 @@ class Sources:
     def doc(self, doc_id: str) -> dict:
         if doc_id not in self.docs:
             xml = boe.fetch(boe.BOE_XML_URL.format(doc_id), os.path.join(self.dir, 'boe', doc_id + '.xml'))
-            self.docs[doc_id] = boe.parse_doc(xml)
+            doc = boe.parse_doc(xml)
+            if boe.needs_pdf(doc):  # annexos escanejats a l'XML: es llegeixen del PDF
+                path = os.path.join(self.dir, 'pdf', doc_id + '.pdf')
+                boe.fetch(doc['url_pdf'], path)
+                doc['blocks'] = boe.blocks_from_pdf(boe.pdf_pages(path), doc['numero'])
+                doc['from_pdf'] = bool(doc['blocks'])
+            self.docs[doc_id] = doc
         return self.docs[doc_id]
 
 
@@ -134,6 +140,10 @@ def report(records: list[dict], d_records: list[dict], linked: dict, e_linked: d
     anterior = sorted(ref for ref, e in index.items() if e.get('convalida_anterior'))
     out += ['', f'{len(anterior)} cicles conserven a `convalida_anterior` la taula A original que un decret '
             'posterior va substituir: els certificats LOE porten els codis d\'UC d\'aquella taula.']
+
+    from_pdf = sorted(ref for ref, e in index.items() if docs[e['vigent']].get('from_pdf'))
+    out += ['', f'{len(from_pdf)} cicles porten la taula llegida del PDF del BOE, perquè l\'XML la publica com a '
+            'imatge: ' + ', '.join(f'`{ref}`' for ref in from_pdf) + '.']
 
     out += ['', f'## Cicles sense taula ({len(without)})', '', '| Cicle | Nivell | Motiu | Decrets enllaçats |',
             '|---|---|---|---|']

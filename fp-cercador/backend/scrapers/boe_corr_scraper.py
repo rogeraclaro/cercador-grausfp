@@ -12,7 +12,11 @@ A decree can carry tables for another decree (RD 498–500/2024 and the 2023 «a
 decrees replace the annexes of many titles): each table is tagged with the royal decree its
 surrounding text targets, and resolve_title() picks the newest one for a given title.
 
-Everything here is pure (no network) except fetch(); scripts/build_d_uc_corr.py drives it.
+Three 2007 decrees publish their annexes as images in the XML; their tables are read from
+the BOE PDF instead (pdf_pages / blocks_from_pdf).
+
+Everything here is pure (no network, no files) except fetch() and pdf_pages();
+scripts/build_d_uc_corr.py drives it.
 """
 import html
 import os
@@ -60,6 +64,12 @@ _ESTABLISHES_RE = re.compile(
     r'Real Decreto (\d+/\d{4}), de [^,]+, por el que se establece el título de ([^,.]+?) y se fijan')
 _REFERENCE_RE = re.compile(r'<anterior referencia="(BOE-A-\d{4}-\d+)"[^>]*>(.*?)</anterior>', re.S)
 _MAX_NOTES_AFTER_TABLE = 3
+# «UC0696_ Desarrollar…»: level digit missing; completed from the rest of the decree.
+_UC_NO_LEVEL_RE = re.compile(r'\bUC(\d{4})_(?!\s?\d)')
+# The 2007 BOE PDFs embed fonts without a Unicode map: pdfplumber returns «(cid:34)» for «A»
+# (glyph code = character code − 31) and three accented glyphs land on the wrong character.
+_PDF_CID_RE = re.compile(r'\(cid:(\d+)\)')
+_PDF_GLYPH_FIXES = str.maketrans({'ò': 'ó', 'â': 'á', 'ÿ': 'fi'})
 
 
 def normalize_title(name: str) -> str:
@@ -121,7 +131,11 @@ def _grid(table: str) -> list[list[tuple[str, bool]]]:
     return rows
 
 
-def parse_ucs(cell: str) -> list[str]:
+def parse_ucs(cell: str, levels: dict[str, set[str]] | None = None) -> list[str]:
+    """
+    UC codes of a cell, typos normalised. `levels` ({'0696': {'3'}}, from the whole decree)
+    completes a code printed without its level when the decree knows only one.
+    """
     ucs = []
     for prefix, num, level in _UC_RE.findall(cell):
         num = num.replace('O', '0').zfill(4)
@@ -130,6 +144,9 @@ def parse_ucs(cell: str) -> list[str]:
                 continue
             num = num[1:]
         ucs.append(f'{prefix}{num}_{level}')
+    for num in _UC_NO_LEVEL_RE.findall(cell):
+        if levels and len(levels.get(num, ())) == 1:
+            ucs.append(f'UC{num}_{next(iter(levels[num]))}')
     return list(dict.fromkeys(ucs))
 
 
@@ -162,7 +179,7 @@ def _is_corr_header(row: list[tuple[str, bool]]) -> bool:
         and ('convalidables' in low or 'acreditables' in low)
 
 
-def parse_table(table: str) -> dict | None:
+def parse_table(table: str, levels: dict[str, set[str]] | None = None) -> dict | None:
     """
     {'kind', 'rows': [{'uc', 'moduls'}], 'notes', 'unread'} or None when it is not a
     correspondence table.
@@ -195,7 +212,7 @@ def parse_table(table: str) -> dict | None:
             if _NOTE_RE.search(cells[0]) and cells[0] not in notes:
                 notes.append(cells[0])
             continue
-        ucs, modules = parse_ucs(cells[uc_col]), parse_modules(cells[1 - uc_col])
+        ucs, modules = parse_ucs(cells[uc_col], levels), parse_modules(cells[1 - uc_col])
         continues = any(carried for _, carried in slots) or not all(cells)
         if rows and continues and (ucs or modules):
             row = rows[-1]
@@ -210,7 +227,8 @@ def parse_table(table: str) -> dict | None:
 
 def parse_doc(xml: str) -> dict:
     """
-    {'id', 'numero', 'titulo', 'fecha', 'rango', 'blocks', 'cites', 'has_uc', 'has_images'}.
+    {'id', 'numero', 'titulo', 'fecha', 'rango', 'url_pdf', 'blocks', 'cites', 'has_uc',
+     'has_images'}.
 
     'cites' maps the title names this decree mentions as established by another royal decree
     to that decree's BOE id (taken from the <anterior> references), for the titles whose
@@ -224,9 +242,13 @@ def parse_doc(xml: str) -> dict:
     """
     doc = {'id': _meta(xml, 'identificador'), 'numero': _meta(xml, 'numero_oficial'),
            'titulo': _meta(xml, 'titulo'), 'fecha': _meta(xml, 'fecha_disposicion'),
-           'rango': _meta(xml, 'rango'), 'blocks': [], 'cites': {}}
+           'rango': _meta(xml, 'rango'), 'url_pdf': _meta(xml, 'url_pdf'), 'blocks': [], 'cites': {}}
     body = xml[xml.find('<texto'):]
     doc['has_uc'], doc['has_images'] = bool(_UC_RE.search(body)), '<img' in body
+    levels: dict[str, set[str]] = {}
+    for prefix, num, level in _UC_RE.findall(body):
+        if prefix == 'UC' and len(num) == 4:
+            levels.setdefault(num.replace('O', '0'), set()).add(level)
     ids = {m.group(1): ref for ref, text in _REFERENCE_RE.findall(xml) for m in [_RD_NUM_RE.search(text)] if m}
     for numero, name in _ESTABLISHES_RE.findall(_text(body)):
         if numero in ids:
@@ -236,7 +258,7 @@ def parse_doc(xml: str) -> dict:
     notes_left = 0
     for token in _TOKEN_RE.findall(body):
         if token.startswith('<table'):
-            parsed = parse_table(token)
+            parsed = parse_table(token, levels)
             last_block, notes_left = None, 0
             if parsed:
                 parsed.update(target_rd=target_rd, target_anexo=target_anexo,
@@ -277,6 +299,49 @@ def parse_doc(xml: str) -> dict:
                 if _NOTE_RE.search(text) and len(text) > 40:
                     last_block['notes'].append(text.strip('«»'))
     return doc
+
+
+def decode_pdf_text(text: str | None) -> str:
+    """Text of a 2007 BOE PDF as pdfplumber returns it, turned back into characters."""
+    decoded = _PDF_CID_RE.sub(lambda m: chr(int(m.group(1)) + 31), text or '')
+    return decoded.translate(_PDF_GLYPH_FIXES)
+
+
+def blocks_from_pdf(pages: list[tuple[str, list[list[list[str | None]]]]], numero: str) -> list[dict]:
+    """
+    Correspondence tables of royal decree `numero` out of its BOE PDF.
+
+    pages: [(page text, tables as rows of cells)], as pdfplumber extracts them. The PDF is a
+    cut of BOE pages and starts with the tail of the previous decree, so only the pages after
+    the one where «REAL DECRETO <numero>» begins are read; [] when that heading is not found.
+    """
+    start = next((i for i, (text, _) in enumerate(pages)
+                  if f'REAL DECRETO {numero}' in decode_pdf_text(text)), None)
+    if start is None:
+        return []
+    blocks = []
+    for _, tables in pages[start + 1:]:
+        for rows in tables:
+            cells = ''.join('<tr>' + ''.join(f'<td>{html.escape(decode_pdf_text(c))}</td>' for c in row) + '</tr>'
+                            for row in rows)
+            parsed = parse_table(f'<table>{cells}</table>')
+            if parsed:
+                parsed.update(target_rd=None, target_anexo=None, anexo=None, anexo_titol=None)
+                blocks.append(parsed)
+    return blocks
+
+
+def pdf_pages(path: str) -> list[tuple[str, list]]:
+    """[(text, tables)] of every page of a PDF, for blocks_from_pdf()."""
+    import pdfplumber  # only the PDF fallback needs it
+    with pdfplumber.open(path) as pdf:
+        return [(page.extract_text() or '', page.extract_tables()) for page in pdf.pages]
+
+
+def needs_pdf(doc: dict) -> bool:
+    """An establishing decree with UCs whose annexes are images in the XML."""
+    return is_own_decree(doc) and not doc['blocks'] and doc['has_uc'] and doc['has_images'] \
+        and bool(doc['url_pdf'])
 
 
 def is_own_decree(doc: dict) -> bool:

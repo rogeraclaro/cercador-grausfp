@@ -242,3 +242,61 @@ def test_decret_sense_uc_diu_el_motiu():
     doc = boe.parse_doc(xml)
     assert boe.resolve_title('Técnico en Cuidados Auxiliares de Enfermería', [doc], [doc]) == {
         'decret': 'BOE-A-1995-1', 'motiu': 'the decree names no unit of competence'}
+
+
+# ---------------------------------------------------------------------------
+# Codi d'UC sense nivell i annexos que només són al PDF
+# ---------------------------------------------------------------------------
+
+def test_uc_sense_nivell_es_completa_si_el_decret_nomes_en_coneix_un():
+    assert boe.parse_ucs('UC0696_ Desarrollar proyectos.', {'0696': {'3'}}) == ['UC0696_3']
+    assert boe.parse_ucs('UC0696_ Desarrollar proyectos.', {'0696': {'2', '3'}}) == []
+    assert boe.parse_ucs('UC0696_ Desarrollar proyectos.', {}) == []
+
+
+def test_parse_doc_completa_el_nivell_des_de_la_resta_del_decret():
+    xml = ('<documento><metadatos><identificador>BOE-A-2013-1</identificador></metadatos><texto>'
+           '<p>UC0696_3: Desarrollar proyectos de productos gráficos.</p><table>'
+           '<tr><th>Módulos profesionales superados</th><th>Unidades de competencia acreditables</th></tr>'
+           '<tr><td>1479. Diseño de productos gráficos.</td><td>UC0696_ Desarrollar proyectos.</td></tr>'
+           '</table></texto></documento>')
+    block = boe.parse_doc(xml)['blocks'][0]
+    assert block['rows'] == [{'uc': ['UC0696_3'], 'moduls': [{'num': '1479', 'name': 'Diseño de productos gráficos'}]}]
+    assert block['unread'] == []
+
+
+def _cid(text: str) -> str:
+    """Com surt el text dels PDF del BOE del 2007: un codi de glif per caràcter."""
+    return ''.join(f'(cid:{ord(ch) - 31})' if ch != '\n' else ch for ch in text)
+
+
+def test_text_del_pdf_descodificat():
+    assert boe.decode_pdf_text(_cid('ANEXO V A)')) == 'ANEXO V A)'
+    assert boe.decode_pdf_text('Fabricaciòn por abrasiòn. Interpretaciòn grâÿca.') == \
+        'Fabricación por abrasión. Interpretación gráfica.'
+    assert boe.decode_pdf_text(None) == ''
+
+
+def test_taules_del_pdf_nomes_les_del_decret_propi():
+    veina = [['Módulo profesional superado', 'Unidades de competencia acreditables'],
+             ['0052. Mantenimiento del vehículo.', 'UC0069_1 Mantener el vehículo sanitario.']]
+    a = [[_cid('Unidades de Competencia acreditadas'), _cid('Módulos profesionales convalidables')],
+         [_cid('UC0094_2: Mecanizar por abrasión.'), _cid('0003. Fabricación por abrasión.')],
+         [_cid('UC0097_2: Mecanizar por corte.'), None]]
+    pages = [('BOE núm. 282\n20203 ' + _cid('REAL DECRETO 1398/2007, de 29 de octubre'), [veina]),
+             (_cid('ANEXO V A)'), [a])]
+    blocks = boe.blocks_from_pdf(pages, '1398/2007')
+    assert [(b['kind'], b['target_rd']) for b in blocks] == [('A', None)]
+    assert blocks[0]['rows'] == [{'uc': ['UC0094_2', 'UC0097_2'],
+                                  'moduls': [{'num': '0003', 'name': 'Fabricación por abrasión'}]}]
+    assert boe.blocks_from_pdf(pages, '1399/2007') == []   # no és el seu decret: no s'endevina
+
+
+def test_nomes_cal_el_pdf_si_l_annex_es_una_imatge():
+    xml = ('<documento><metadatos><identificador>BOE-A-2007-1</identificador><rango>Real Decreto</rango>'
+           '<numero_oficial>1398/2007</numero_oficial><titulo>Real Decreto 1398/2007, de 29 de octubre, por el que '
+           'se establece el título de Técnico en Mecanizado y se fijan sus enseñanzas mínimas.</titulo>'
+           '<url_pdf>https://www.boe.es/x.pdf</url_pdf></metadatos><texto><p>UC0089_2: Determinar.</p>{}'
+           '</texto></documento>')
+    assert boe.needs_pdf(boe.parse_doc(xml.format('<img src="a.png"/>'))) is True
+    assert boe.needs_pdf(boe.parse_doc(xml.format(''))) is False

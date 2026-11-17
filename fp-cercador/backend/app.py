@@ -101,6 +101,8 @@ BC_LOMLOE_PATH = os.path.join(_DATA_DIR, "bc_lomloe.json")  # Pla 057: {codigo_c
 C_MODULOS_PATH = os.path.join(_DATA_DIR, "c_modulos.json")  # Pla 078: {codigo_c: [{num, name}]}
 D_MODULOS_PATH = os.path.join(_DATA_DIR, "d_modulos.json")  # Pla 058: {str(id_d): {modulos, ensenanzaFP}}
 D_UC_CORR_PATH = os.path.join(_DATA_DIR, "d_uc_corr.json")  # Pla 091: {ref_d: {decret, vigent, convalida, acredita, notes}}
+# Pla 091: UC reals dels pocs certificats LOE on el número del MF (bc_loe.json) no és el de la UC.
+UC_CORR_OVERRIDES_PATH = os.path.join(os.path.dirname(__file__), "uc_corr_overrides.json")
 B_CONTINGUT_PATH = os.path.join(_DATA_DIR, "b_contingut.json")  # Pla 068: {codigo_b: {ecp, ra}}
 A_LOE_PARES_PATH = os.path.join(_DATA_DIR, "a_loe_pares.json")  # Pla 068: {codigo_uf: [codigo_mf]}
 CE_ACCES_PATH = os.path.join(_DATA_DIR, "ce_acces.json")  # Pla 074: {str(id_e): {d_ids, unmatched}}
@@ -1530,7 +1532,7 @@ def api_correspondencia():
         return jsonify({'error': 'Codi invàlid'}), 400
     cert = next((r for r in catalog['by_codigo'].get(cp, [])
                  if r.get('grado') == 'C' and r.get('plan_antiguo')), None)
-    ucs = (_load_json_dict(BC_LOE_PATH) or {}).get(cp)
+    ucs = (_load_json_dict(UC_CORR_OVERRIDES_PATH) or {}).get(cp) or (_load_json_dict(BC_LOE_PATH) or {}).get(cp)
     if not cert or not isinstance(ucs, list):
         return jsonify({'error': 'Certificat no trobat'}), 404
     cicles = []
