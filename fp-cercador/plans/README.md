@@ -106,7 +106,7 @@ amb quins prerequisits i quins passos manuals calen al servidor.
 | 090 | Corregir `bc_loe.json`: UC d'altres certificats enganxades (140 certificats LOE, 399 enllaços falsos) | P1 | S | — | DONE i desplegat el 2026-11-17 (prod `1482d6c` + `bc_loe.json` copiat al VPS) |
 | 091 | Correspondència UC ↔ mòdul professional des del BOE (dades i API) | P1 | M-L | 090 | DONE i desplegat el 2026-11-17 (prod `bafeff2` + `d_uc_corr.json` copiat al VPS) |
 | 092 | Correspondència certificat ↔ mòduls de cicle a la web (itinerari, fitxa, «Què em falta?») | P2 | M | 090, 091 | DONE i desplegat el 2026-11-17 (prod `56f54ed`) |
-| 093 | Exportació relacional: certificat–MF–UF amb hores i cicle–mòdul–UC | P2 | M | 090 (cicles: 091) | DONE el 2026-11-17, no desplegat; cal copiar `c_loe_estructura.json` al VPS |
+| 093 | Exportació relacional: certificat–MF–UF amb hores i cicle–mòdul–UC | P2 | M | 090 (cicles: 091) | DONE i desplegat el 2026-11-17 (prod `b61daef`) |
 | 094 | Revisions de dades dels certificats LOE: hores, UF i certificats absents | P3 | S | — (millor després de 090) | TODO |
 
 Valors de Status: `TODO` | `IN PROGRESS` | `DONE` | `BLOCKED (motiu en una línia)` | `REJECTED (motiu en una línia)`
