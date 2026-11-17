@@ -88,7 +88,24 @@ La primera vegada, `--discover` triga ~20 min; després va de la memòria cau.
   - Desplegat (dues passades el mateix dia) amb `git pull`, `d_uc_corr.json` copiat al VPS (cal tornar-lo a copiar si es regenera) i
     reinici del servei. Verificat a producció: `?cp=ELEE0109` → 0232, 0238, 0240, 0235, 0236 (taula
     substituïda); `?cicle=sanidad~audiologia-protesica` → taula del RD 500/2024.
-- Pla 092 (web), **TODO**.
+- **Pla 092: fet el 2026-11-17, no desplegat.** La correspondència del 091 surt a tres llocs:
+  - **Itinerari d'un certificat del pla antic**: l'enllaç amb cada cicle porta «Convalida N de M mòduls»
+    (o «falten UC») i, sota les vistes, un desplegable per cicle amb els mòduls convalidats i per quines
+    UC, les files a mitges, la resta de mòduls del cicle i l'enllaç al decret. Els cicles que només venen
+    de `ciclos_fp.json` es mantenen com a «sense detall».
+  - **Itinerari d'un cicle i pàgina pública `/grau/<ref>`**: taula mòdul → UC que el convaliden →
+    certificats del pla antic que les porten totes.
+  - **«Què em falta?»**: secció nova «Convalidacions oficials», a part dels objectius (no se n'ha tocat
+    ni l'ordre ni el criteri). Hi aporten UC els certificats LOE i els mòduls B del pla antic.
+    «Relacionats» queda per als cicles sense taula.
+  - **Taules derogades** (decisió del propietari): es mostren amb l'etiqueta «⚠ Taula derogada», vora
+    vermella, avís amb el decret que la substitueix, línia puntejada vermella a l'itinerari, al final de
+    la llista i en un grup a part a «Què em falta?». Si algú té UC antigues i noves alhora, surten les
+    dues taules del mateix cicle, cadascuna amb la seva etiqueta.
+  - Backend: arestes C→D amb `conv`, `mods` i `derogada` a `/api/itinerari/complet`; `certificats` i
+    `moduls_restants` a `/api/correspondencia`; `convalidacions` a `/api/que-em-falta`.
+  - Verificat al navegador (ca i es, 1280 i 375 px, teclat). Textos: `i18n.js?v=20261117a`.
+  - Per desplegar: `git pull` i reiniciar el servei.
 - Exportació relacional (093) i revisions menors (094), **TODO**.
 - Materials de l'anàlisi (scripts de prova, llistes d'errors, instantània del SEPE):
   `plans/outputs/analisi-20261117/`. Cap codi tocat; res desplegat.
