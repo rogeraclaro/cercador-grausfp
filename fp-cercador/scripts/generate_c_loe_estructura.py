@@ -33,12 +33,19 @@ logger = logging.getLogger(__name__)
 
 _REPO_ROOT = os.path.normpath(os.path.join(os.path.dirname(__file__), '..'))
 DATA_PATH = os.path.join(_REPO_ROOT, 'backend', 'data', 'ofertes.json')
+BC_LOE_PATH = os.path.join(_REPO_ROOT, 'backend', 'data', 'bc_loe.json')
 OUT_PATH = os.path.join(_REPO_ROOT, 'backend', 'data', 'c_loe_estructura.json')
 
-_TOTAL_PAT = re.compile(r'Duración de la formación asociada:\s*(\d+)\s*horas')
+_TOTAL_PAT = re.compile(r'Duración de la formación asociada:\s*(\d+)\s*horas', re.I)
 # «Código: X» obre un mòdul o una unitat; la primera «Duración: N horas» que el segueix és la seva.
-_TOKEN_PAT = re.compile(r'Código:\s*(MF\d{4}_\d|UF\d{4}|MP\d{4})|Duración:\s*(\d+)\s*horas'
-                        r'|Asociado a la Unidad de Competencia:\s*(UC\d{3,4}_\d)')
+_TOKEN_PAT = re.compile(r'Código:?\s*(MF\s?\d{3,4}\s?[_-]\s?\d|UF\s?\d{3,4}|MP\s?\d{3,4})|Duración:\s*(\d+)\s*horas'
+                        r'|Asociado a la Unidad de Competencia:\s*(UC\d{3,4}_\d)', re.I)
+
+
+def _normalize(code: str) -> str:
+    """Els annexos porten errades d'impremta (MF0121-2, MF 1323_1, «Código MF0881_1», UF425, MP093): es porten a MF0121_2, UF0425, MP0093."""
+    num = re.search(r'\d+', code).group().zfill(4)
+    return code[:2].upper() + num + ('_' + code.strip()[-1] if code.upper().startswith('MF') and re.search(r'[_-]\s*\d$', code) else '')
 
 
 def parse_estructura(segment: str) -> dict:
@@ -49,16 +56,17 @@ def parse_estructura(segment: str) -> dict:
     current = None
     for m in _TOKEN_PAT.finditer(segment):
         code, hours, uc = m.groups()
+        code = _normalize(code) if code else None
         if uc:
             if mfs and 'uc' not in mfs[-1]:  # alguns annexos escriuen UC820_2 sense el zero
                 mfs[-1]['uc'] = 'UC' + uc[2:].zfill(6)
         elif code is None:
             if current is not None and current['h'] is None:
                 current['h'] = int(hours)
-        elif code.startswith('MF'):
+        elif code.upper().startswith('MF'):
             current = {'codigo': code, 'h': None, 'ufs': []}
             mfs.append(current)
-        elif code.startswith('MP'):
+        elif code.upper().startswith('MP'):
             current = mp = {'codigo': code, 'h': None}
         elif mfs and not any(u['codigo'] == code for u in mfs[-1]['ufs']):
             current = {'codigo': code, 'h': None}
@@ -83,6 +91,38 @@ def _annex_text(codigo: str, cache_dir: str) -> str:
                           text=True, encoding='utf-8', errors='replace').stdout
 
 
+def _read_json(path: str) -> dict:
+    if not os.path.exists(path):
+        return {}
+    with open(path, encoding='utf-8') as f:
+        return json.load(f)
+
+
+def _contradicts_bc_loe(codigo: str, info: dict, bc_loe: dict) -> bool:
+    """Els MF de l'annex no són els números de les UC de bc_loe.json (que és el que la resta de la web usa).
+    Els pocs certificats amb UC corregides a mà (uc_corr_overrides.json) no es comparen."""
+    ucs = bc_loe.get(codigo)
+    if not ucs:
+        return False
+    overrides = _read_json(os.path.join(_REPO_ROOT, 'backend', 'uc_corr_overrides.json'))
+    return codigo not in overrides and {m['codigo'][2:6] for m in info['mf']} != {u[2:6] for u in ucs}
+
+
+def blank_inconsistent_hours(info: dict) -> int:
+    """Un MF amb UF sense hores o amb UF que no sumen les seves: les hores del MF i de les seves UF es
+    buiden (el text d'alguns annexos va a dues columnes i la durada pot caure a un altre codi).
+    Retorna quantes vegades ho ha fet."""
+    blanked = 0
+    for mf in info['mf']:
+        known = [u['h'] for u in mf['ufs']]
+        if mf['ufs'] and None not in known and mf['h'] is not None and sum(known) != mf['h']:
+            mf['h'] = None
+            for u in mf['ufs']:
+                u['h'] = None
+            blanked += 1
+    return blanked
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument('--dry-run', type=int, metavar='N')
@@ -103,16 +143,22 @@ def main() -> None:
             logger.error("%s — %s", codigo, exc)
             return codigo, None
 
+    bc_loe = _read_json(BC_LOE_PATH)
     result: dict[str, dict] = {}
+    blanked = 0
     with ThreadPoolExecutor(max_workers=3) as pool:  # 3 baixades alhora, cadascuna amb 1 s de pausa
         for i, (codigo, segment) in enumerate(pool.map(load, c_loe), 1):
             info = parse_estructura(segment or '')
-            if info['mf']:
+            blanked += blank_inconsistent_hours(info)
+            if info['mf'] and not _contradicts_bc_loe(codigo, info, bc_loe):
                 result[codigo] = info
+            elif info['mf']:
+                logger.warning("%s: els MF de l'annex no quadren amb bc_loe.json; no s'hi desa l'estructura", codigo)
             elif segment is not None:
                 logger.warning("[%d/%d] %s: cap MF a l'annex", i, len(c_loe), codigo)
 
     no_hours = [c for c, v in result.items() if v['total_h'] is None or any(m['h'] is None for m in v['mf'])]
+    logger.info("MF amb hores buidades per incoherents: %d", blanked)
     logger.info("Certificats amb estructura: %d de %d; amb alguna hora absent: %d", len(result), len(c_loe), len(no_hours))
     if args.dry_run:
         logger.info("DRY-RUN: no s'escriu res.")
