@@ -21,6 +21,15 @@ d'un cicle, i «Què em falta?», que passa a calcular també amb certificats an
 - La regla de càlcul (una UC convalida un mòdul només si totes les UC de la seva fila hi són) i l'API
   `/api/correspondencia` venen del pla 091.
 - Els mòduls B LOE del catàleg són `MF####_N` i la seva UC és `UC####_N` (mateix número i nivell).
+- **Resultat del pla 091 (2026-11-17).** `/api/correspondencia?cicle=<ref>` i `?cp=<codi>` ja són a
+  producció; 185 dels 195 cicles tenen taula. Els decrets del 2024 (RD 498–500/2024) i els
+  d'«actualización» del 2023 han substituït la taula de 92 cicles i n'han canviat els codis d'UC: per a
+  12 certificats (ELEE0109, EOCJ0109, HOTT0112, IMAR0108, IMAR0208, IMAR0408, INAF0108, INAV0109,
+  SEAD0111, SEAG0108, SSCS0108, TMVB0211) l'única correspondència és amb la taula substituïda. L'API la
+  torna amb `derogada: true`, `vigent` (el decret original) i `substituida_per` (el que la substitueix).
+  Per tant, el cas de referència ELEE0109 (0232, 0238, 0240, 0235, 0236) surt com a taula derogada.
+- Les UC d'un certificat per a la correspondència surten de `/api/correspondencia?cp=`, que corregeix
+  tres certificats amb `backend/uc_corr_overrides.json`; no llegir `bc_loe.json` directament.
 - RD 659/2023, art. 126: el Proyecto intermodular i la formació en empresa no es convaliden mai; ja ho
   recull `gap.py` (`_NEVER_MATCH_PREFIXES`).
 
@@ -38,6 +47,14 @@ d'un cicle, i «Què em falta?», que passa a calcular també amb certificats an
   només per als cicles sense taula. Un cicle acabat també ha de poder dir quines UC acredita
   (Annex V B) i, per tant, quins certificats LOE té a prop: valorar si entra aquí o es deixa per a un
   pla posterior.
+- **Taules derogades (decisió del propietari, 2026-11-17): es mostren, però ha de ser molt evident que
+  estan derogades.** Quan `derogada` és cert: etiqueta «Taula derogada» al costat del nom del cicle,
+  visible sense desplegar res; avís dins del desplegable amb el decret que la substitueix
+  (`substituida_per`, amb enllaç al BOE) i el motiu (els codis d'UC del certificat són els anteriors al
+  canvi i l'equivalència amb els nous no és a la taula); tractament visual diferent del de les taules
+  vigents (no n'hi ha prou amb el color: text i icona); i aquests cicles ordenats després dels que tenen
+  taula vigent. No sumar-los al recompte «convalida N de M» amb el mateix pes que els vigents. A «Què em
+  falta?» han d'anar en un grup a part o amb la mateixa etiqueta, mai barrejats.
 - Sempre visible la font: «Segons l'annex V del <reial decret>», amb enllaç al BOE, i un avís curt que
   la convalidació la resol l'administració educativa, no la web.
 - Textos en català i castellà (`i18n.js`).

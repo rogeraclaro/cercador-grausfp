@@ -71,7 +71,8 @@ La primera vegada, `--discover` triga ~20 min; després va de la memòria cau.
     UC0820_2…UC0825_2 i la taula vigent del cicle d'Instal·lacions Elèctriques parla d'UC2340_2…UC2345_2).
     L'índex desa també la taula original a `convalida_anterior` (57 cicles) i l'API hi recorre només quan cap
     UC del certificat surt a la vigent, marcant-ho amb `derogada: true` i `substituida_per`. Afecta 12
-    certificats; el pla 092 ha de dir-ho a la pantalla. L'equivalència entre UC antigues i noves no és a
+    certificats. Decisió del propietari (2026-11-17): la web les ha de mostrar, però deixant molt evident
+    que estan derogades; recollit al pla 092. L'equivalència entre UC antigues i noves no és a
     les taules (és als decrets de les qualificacions) i no s'ha tocat.
   - 10 cicles sense taula, i no en poden tenir: 5 anteriors al sistema d'UC i 5 d'aeronàutica sense UC al
     decret. Els 3 del 2007 amb l'annex com a imatge a l'XML (Mecanizado, Panadería, Educación Infantil) es
