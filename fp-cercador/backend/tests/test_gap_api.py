@@ -43,6 +43,9 @@ def paths(tmp_path, monkeypatch):
         out[attr] = tmp_path / f'{attr}.json'
         out[attr].write_text(json.dumps(data), encoding='utf-8')
         monkeypatch.setattr(app_module, attr, str(out[attr]))
+    # Pla 092: sense taules del BOE; les convalidacions tenen els seus tests a test_correspondencia_api.py.
+    for attr in ('D_UC_CORR_PATH', 'BC_LOE_PATH'):
+        monkeypatch.setattr(app_module, attr, str(tmp_path / f'{attr}-absent.json'))
     for cache in ('_d_modulos_cache', '_bc_lomloe_cache', '_c_modulos_cache', '_ciclos_fp_cache'):
         monkeypatch.setattr(app_module, cache, {'mtime': None, 'index': None})
     monkeypatch.setattr(app_module, '_catalog_cache', {'key': None, 'data': None})
@@ -74,7 +77,7 @@ def test_c_del_pla_antic_dona_relacionats(client):
 
 def test_llista_buida(client):
     assert client.post('/api/que-em-falta', json={'refs': []}).json == {
-        'held': [], 'ignorats': [], 'objectius': [], 'relacionats': []}
+        'held': [], 'ignorats': [], 'objectius': [], 'relacionats': [], 'convalidacions': []}
 
 
 def test_sense_ciclos_fp_funciona_igual(client, paths):

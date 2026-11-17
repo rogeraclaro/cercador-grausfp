@@ -1476,6 +1476,31 @@ def _get_d_uc_corr() -> dict:
     return data
 
 
+def _get_loe_ucs() -> dict:
+    """{certificat LOE: [UC]}: bc_loe.json amb les correccions d'uc_corr_overrides.json."""
+    ucs = dict(_load_json_dict(BC_LOE_PATH) or {})
+    ucs.update({cp: v for cp, v in (_load_json_dict(UC_CORR_OVERRIDES_PATH) or {}).items()
+                if isinstance(v, list)})
+    return ucs
+
+
+def _corr_cycles_for(ucs: list, catalog: dict) -> list[dict]:
+    """Cicles amb alguna d'aquestes UC a les taules del BOE, els de taula vigent primer."""
+    cicles = []
+    for ref, entry in _get_d_uc_corr().items():
+        rec = catalog['by_ref'].get(ref)
+        got = uc_corr.cycle_for_ucs(entry, ucs) if rec else None
+        if not got:
+            continue
+        moduls = _corr_moduls(rec, entry)
+        got.update(_corr_cicle(rec), notes=entry.get('notes') or [],
+                   moduls_cicle=len(moduls) or None,
+                   moduls_pendents=len(moduls) - len(got['moduls_convalidats']) if moduls else None)
+        cicles.append(got)
+    cicles.sort(key=lambda c: (c['derogada'], -len(c['moduls_convalidats']), c['denominacion'] or ''))
+    return cicles
+
+
 def _corr_cicle(rec: dict) -> dict:
     return {'ref': rec['ref'], 'denominacion': rec.get('denominacion'),
             'nivel': rec.get('nivel'), 'familia': rec.get('familia')}
@@ -1494,7 +1519,8 @@ def api_correspondencia():
     GET /api/correspondencia?cicle=<ref>
       → {"cicle": {ref, denominacion, nivel, familia}, "decret": "BOE-A-…", "vigent": "BOE-A-…",
          "convalida": [{"uc": [...], "moduls": [{num, name}]}],
-         "acredita": [{"moduls": [...], "uc": [...]}], "notes": [...], "moduls": [{num, name}]}
+         "acredita": [{"moduls": [...], "uc": [...]}], "notes": [...], "moduls": [{num, name}],
+         "certificats": {"UC…": [{codigo, ref, denominacion}]}}   (certificats LOE amb cada UC)
          (+ "vigent_acredita" i "convalida_anterior" quan n'hi ha). Sense taula: decret i
          vigent a null i les llistes buides.
 
@@ -1526,29 +1552,27 @@ def api_correspondencia():
                 'convalida': entry.get('convalida') or [], 'acredita': entry.get('acredita') or [],
                 'notes': entry.get('notes') or [], 'moduls': _corr_moduls(rec, entry)}
         body.update({k: entry[k] for k in ('vigent_acredita', 'convalida_anterior') if k in entry})
+        # Pla 092: certificats LOE que porten cada UC de les taules vigents.
+        in_tables = {u for key in ('convalida', 'acredita') for row in body[key] for u in row['uc']}
+        certs: dict = {}
+        for code, ucs in _get_loe_ucs().items():
+            cert = next((r for r in catalog['by_codigo'].get(code, [])
+                         if r.get('grado') == 'C' and r.get('plan_antiguo')), None)
+            for uc in in_tables.intersection(ucs if cert else ()):
+                certs.setdefault(uc, []).append({'codigo': code, 'ref': cert['ref'],
+                                                 'denominacion': cert.get('denominacion')})
+        body['certificats'] = {uc: sorted(v, key=lambda c: c['codigo']) for uc, v in sorted(certs.items())}
         return jsonify(body)
 
     if not _CODIGO_RE.match(cp):
         return jsonify({'error': 'Codi invàlid'}), 400
     cert = next((r for r in catalog['by_codigo'].get(cp, [])
                  if r.get('grado') == 'C' and r.get('plan_antiguo')), None)
-    ucs = (_load_json_dict(UC_CORR_OVERRIDES_PATH) or {}).get(cp) or (_load_json_dict(BC_LOE_PATH) or {}).get(cp)
+    ucs = _get_loe_ucs().get(cp)
     if not cert or not isinstance(ucs, list):
         return jsonify({'error': 'Certificat no trobat'}), 404
-    cicles = []
-    for ref, entry in index.items():
-        rec = catalog['by_ref'].get(ref)
-        got = uc_corr.cycle_for_ucs(entry, ucs) if rec else None
-        if not got:
-            continue
-        moduls = _corr_moduls(rec, entry)
-        got.update(_corr_cicle(rec), notes=entry.get('notes') or [],
-                   moduls_cicle=len(moduls) or None,
-                   moduls_pendents=len(moduls) - len(got['moduls_convalidats']) if moduls else None)
-        cicles.append(got)
-    cicles.sort(key=lambda c: (c['derogada'], -len(c['moduls_convalidats']), c['denominacion'] or ''))
     return jsonify({'cp': {'codigo': cp, 'denominacion': cert.get('denominacion'), 'uc': ucs},
-                    'cicles': cicles})
+                    'cicles': _corr_cycles_for(ucs, catalog)})
 
 
 _b_contingut_cache: dict = {"mtime": None, "index": None}
@@ -2266,6 +2290,20 @@ def _load_json_dict(path: str):
     return data if isinstance(data, dict) else None
 
 
+def _get_c_loe_corr() -> dict:
+    """Pla 092: {certificat LOE: [{ref, conv, total, derogada}]} amb les taules del BOE (pla 091)."""
+    catalog = _get_catalog()
+    if not catalog or not _get_d_uc_corr():
+        return {}
+    out = {}
+    for code, ucs in _get_loe_ucs().items():
+        cicles = _corr_cycles_for(ucs, catalog) if isinstance(ucs, list) else []
+        if cicles:
+            out[code] = [{'ref': c['ref'], 'conv': len(c['moduls_convalidats']),
+                          'total': c['moduls_cicle'], 'derogada': c['derogada']} for c in cicles]
+    return out
+
+
 def _get_itinerary_graph():
     """
     Graf complet (itinerary_graph.build_graph) + avisos de fonts que falten.
@@ -2278,7 +2316,8 @@ def _get_itinerary_graph():
     sources = {'a_loe_pares.json': A_LOE_PARES_PATH, 'bc_loe.json': BC_LOE_PATH,
                'bc_lomloe.json': BC_LOMLOE_PATH, 'd_modulos.json': D_MODULOS_PATH,
                'ciclos_fp.json': CICLOS_PATH}
-    key = (_mt(DATA_PATH), _mt(CE_ACCES_PATH), *(_mt(p) for p in sources.values()))
+    key = (_mt(DATA_PATH), _mt(CE_ACCES_PATH), _mt(D_UC_CORR_PATH), _mt(UC_CORR_OVERRIDES_PATH),
+           *(_mt(p) for p in sources.values()))
     if _itinerary_graph_cache["key"] == key and _itinerary_graph_cache["data"] is not None:
         return _itinerary_graph_cache["data"]
     try:
@@ -2296,6 +2335,7 @@ def _get_itinerary_graph():
         c_lomloe_to_d=_get_c_lomloe_to_d()['index'],
         ciclos_fp=_load_json_dict(CICLOS_PATH),
         ce_acces=_load_json_dict(CE_ACCES_PATH),  # opcional (Pla 074): sense avís si falta
+        c_loe_corr=_get_c_loe_corr(),  # opcional (Pla 092): sense avís si falta
     )
     warnings = [f'{name} no disponible — cal fer un refresh'
                 for name, path in sources.items() if not os.path.exists(path)]
@@ -3120,8 +3160,17 @@ def que_em_falta():
     catalog = _get_catalog()
     if not catalog:
         return jsonify({"error": "Data not available. Run /api/admin/refresh first."}), 503
-    return jsonify(gap.compute_gap(refs, catalog["records"], _get_bc_lomloe(), _get_c_modulos(),
-                                   _get_d_modulos(), _get_ciclos_fp())), 200
+    body = gap.compute_gap(refs, catalog["records"], _get_bc_lomloe(), _get_c_modulos(),
+                           _get_d_modulos(), _get_ciclos_fp())
+    # Pla 092: convalidacions oficials (taules del BOE) per les UC dels certificats i mòduls del
+    # pla antic. Van a part dels objectius; els «relacionats» queden per als cicles sense taula.
+    held = [catalog["by_ref"][h["ref"]] for h in body["held"]]
+    ucs = uc_corr.held_ucs(held, _get_loe_ucs())
+    held_refs = {h["ref"] for h in body["held"]}
+    body["convalidacions"] = [c for c in _corr_cycles_for(ucs, catalog) if c["ref"] not in held_refs] if ucs else []
+    amb_taula = {catalog["by_ref"][c["ref"]].get("ficha_url") for c in body["convalidacions"]}
+    body["relacionats"] = [r for r in body["relacionats"] if r.get("ficha_url") not in amb_taula]
+    return jsonify(body), 200
 
 
 @app.route("/api/held", methods=["GET"])

@@ -27,6 +27,23 @@ def convalidated(rows: list[dict], ucs) -> tuple[list[dict], list[dict]]:
     return full, partial
 
 
+def held_ucs(held: list[dict], loe_ucs: dict) -> list[str]:
+    """
+    UC que aporten els graus que algú ja té: les del certificat LOE (loe_ucs: {codi: [UC]}) i la
+    del mòdul B del pla antic (MF####_N ↔ UC####_N). Els graus del pla nou no van per UC.
+    """
+    ucs: list[str] = []
+    for rec in held:
+        code = rec.get('codigo') or ''
+        if not rec.get('plan_antiguo'):
+            continue
+        if rec.get('grado') == 'C':
+            ucs += loe_ucs.get(code) or []
+        elif rec.get('grado') == 'B' and code.startswith('MF'):
+            ucs.append('UC' + code[2:])
+    return list(dict.fromkeys(ucs))
+
+
 def cycle_for_ucs(entry: dict, ucs) -> dict | None:
     """
     Correspondència d'un cicle per a unes UC, o None si cap UC surt a les seves taules.

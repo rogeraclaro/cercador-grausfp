@@ -90,7 +90,7 @@ def serialize_node(rec: dict) -> dict:
 
 
 def build_graph(records, *, a_loe_pares=None, bc_loe=None, bc_lomloe=None,
-                c_lomloe_to_d=None, ciclos_fp=None, ce_acces=None) -> dict:
+                c_lomloe_to_d=None, ciclos_fp=None, ce_acces=None, c_loe_corr=None) -> dict:
     """
     Retorna {'records': {key: rec}, 'up': {key: [aresta]}, 'down': {key: [aresta]},
              'unresolved': {key_c: [denominacio_d, ...]}}.
@@ -152,6 +152,14 @@ def build_graph(records, *, a_loe_pares=None, bc_loe=None, bc_lomloe=None,
     for c_code, entries in (c_lomloe_to_d or {}).items():
         for e in entries:
             add(code_key('C', c_code), id_key(e['id']), 'cd', shared=e['shared'], total=e['total'])
+
+    # C → D LOE amb correspondència oficial UC ↔ mòdul (Pla 092): {c_code: [{ref, conv, total,
+    # derogada}]}. Va abans de ciclos_fp perquè l'aresta amb detall guanyi la que no en té.
+    key_by_ref = {r['ref']: node_key(r) for r in records if r.get('grado') == 'D' and r.get('ref')}
+    for c_code, cicles in (c_loe_corr or {}).items():
+        for c in cicles:
+            add(code_key('C', c_code), key_by_ref.get(c['ref']), 'cd',
+                conv=c['conv'], mods=c['total'], derogada=c['derogada'])
 
     # C → D LOE (ciclos_fp.json, sense id de D)
     d_by_url: dict = {}

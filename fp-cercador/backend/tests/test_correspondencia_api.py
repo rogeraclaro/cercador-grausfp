@@ -13,6 +13,7 @@ URL_IEA = ('https://www.todofp.es/que-estudiar/familias-profesionales/electricid
            'instalaciones-electricas-automaticas.html')
 URL_TEL = ('https://www.todofp.es/que-estudiar/familias-profesionales/electricidad-electronica/'
            'instalaciones-telecomunicaciones.html')
+URL_JOY = 'https://www.todofp.es/que-estudiar/familias-profesionales/fabricacion-mecanica/joyeria.html'
 REF_IEA = 'electricidad-electronica~instalaciones-electricas-automaticas'
 REF_TEL = 'electricidad-electronica~instalaciones-telecomunicaciones'
 
@@ -50,7 +51,7 @@ def _cataleg():
         {'grado': 'D', 'codigo': None, 'denominacion': 'Técnico en Instalaciones de Telecomunicaciones',
          'ficha_url': URL_TEL},
         {'grado': 'D', 'codigo': None, 'denominacion': 'Técnico en Joyería',
-         'ficha_url': 'https://www.todofp.es/que-estudiar/familias-profesionales/fabricacion-mecanica/joyeria.html'},
+         'ficha_url': URL_JOY},
     ]
     return [{'familia': ELE, 'nivel': 2, 'plan_antiguo': False, **r, 'id': i} for i, r in enumerate(base, start=1)]
 
@@ -61,6 +62,9 @@ def paths(tmp_path, monkeypatch):
         'DATA_PATH': _cataleg(),
         'D_UC_CORR_PATH': CORR,
         'BC_LOE_PATH': {'ELEE0109': ['UC0820_2', 'UC0821_2', 'UC0822_2', 'UC0823_2', 'UC0824_2', 'UC0825_2']},
+        'CICLOS_PATH': {'ELEE0109': [{'denominacion': 'Instalaciones de Telecomunicaciones', 'familia': ELE,
+                                      'ficha_url': URL_TEL},
+                                     {'denominacion': 'Joyería', 'familia': ELE, 'ficha_url': URL_JOY}]},
         'D_MODULOS_PATH': {'3': {'modulos': [
             {'num': None, 'name': n} for n in (
                 'Automatismos industriales', 'Instalaciones domóticas', 'Máquinas eléctricas',
@@ -74,8 +78,11 @@ def paths(tmp_path, monkeypatch):
         out[attr].write_text(json.dumps(data), encoding='utf-8')
         monkeypatch.setattr(app_module, attr, str(out[attr]))
     monkeypatch.setattr(app_module, 'UC_CORR_OVERRIDES_PATH', str(tmp_path / 'overrides.json'))
-    for cache in ('_d_modulos_cache', '_d_uc_corr_cache'):
+    for cache in ('_d_modulos_cache', '_d_uc_corr_cache', '_ciclos_fp_cache', '_bc_lomloe_cache', '_c_modulos_cache'):
         monkeypatch.setattr(app_module, cache, {'mtime': None, 'index': None})
+    monkeypatch.setattr(app_module, '_itinerary_graph_cache', {'key': None, 'data': None})
+    for attr in ('BC_LOMLOE_PATH', 'C_MODULOS_PATH', 'A_LOE_PARES_PATH', 'CE_ACCES_PATH'):
+        monkeypatch.setattr(app_module, attr, str(tmp_path / f'{attr}-absent.json'))
     monkeypatch.setattr(app_module, '_catalog_cache', {'key': None, 'data': None})
     return out
 
@@ -157,3 +164,44 @@ def test_parametres_dolents(client, query, status):
 def test_cataleg_illegible_dona_503(client, paths):
     paths['DATA_PATH'].write_text('{', encoding='utf-8')
     assert client.get('/api/correspondencia', query_string={'cicle': REF_IEA}).status_code == 503
+
+
+# ---------------------------------------------------------------------------
+# Pla 092: certificats per UC, arestes de l'itinerari i «Què em falta?»
+# ---------------------------------------------------------------------------
+
+def test_cicle_dona_els_certificats_de_cada_uc_de_les_taules_vigents(client):
+    body = client.get('/api/correspondencia', query_string={'cicle': REF_TEL}).json
+    assert body['certificats'] == {'UC0820_2': [{'codigo': 'ELEE0109', 'ref': 'ELEE0109',
+                                                 'denominacion': 'Montaje de instalaciones de baja tensión'}]}
+    # A la taula vigent del cicle d'instal·lacions elèctriques no hi ha cap UC del certificat.
+    assert client.get('/api/correspondencia', query_string={'cicle': REF_IEA}).json['certificats'] == {}
+
+
+def test_itinerari_les_arestes_del_certificat_porten_la_correspondencia(client):
+    body = client.get('/api/itinerari/complet', query_string={'grado': 'C', 'ref': 'ELEE0109'}).json
+    edges = {e['to']: e for e in body['edges'] if e['kind'] == 'cd'}
+    assert edges['D:' + REF_IEA] == {'from': 'C:ELEE0109', 'to': 'D:' + REF_IEA, 'kind': 'cd',
+                                     'conv': 5, 'mods': 8, 'derogada': True}
+    assert (edges['D:' + REF_TEL]['conv'], edges['D:' + REF_TEL]['derogada']) == (0, False)
+    # El cicle que només ve de ciclos_fp.json es manté, sense detall.
+    assert edges['D:fabricacion-mecanica~joyeria'] == {
+        'from': 'C:ELEE0109', 'to': 'D:fabricacion-mecanica~joyeria', 'kind': 'cd'}
+
+
+def test_que_em_falta_dona_convalidacions_i_deixa_relacionats_per_als_cicles_sense_taula(client):
+    body = client.post('/api/que-em-falta', json={'refs': ['ELEE0109']}).json
+    assert [(c['ref'], c['derogada'], c['moduls_convalidats']) for c in body['convalidacions']] == [
+        (REF_TEL, False, []), (REF_IEA, True, ['0232', '0238', '0240', '0235', '0236'])]
+    assert [r['denominacion'] for r in body['relacionats']] == ['Joyería']
+    assert body['objectius'] == []
+
+
+def test_que_em_falta_sense_graus_del_pla_antic_no_te_convalidacions(client):
+    body = client.post('/api/que-em-falta', json={'refs': [REF_TEL]}).json
+    assert body['convalidacions'] == []
+
+
+def test_que_em_falta_no_proposa_un_cicle_que_ja_es_te(client):
+    body = client.post('/api/que-em-falta', json={'refs': ['ELEE0109', REF_IEA]}).json
+    assert [c['ref'] for c in body['convalidacions']] == [REF_TEL]

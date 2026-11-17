@@ -76,6 +76,18 @@ def test_modul_repetit_en_dues_files_es_compta_un_sol_cop():
     assert uc_corr.cycle_for_ucs(entry, ['UC0070_2', 'UC0361_2'])['moduls_convalidats'] == ['0055', '0056']
 
 
+def test_uc_dels_graus_que_ja_es_tenen():
+    held = [{'grado': 'C', 'codigo': 'ELEE0109', 'plan_antiguo': True},
+            {'grado': 'B', 'codigo': 'MF0836_2', 'plan_antiguo': True},
+            {'grado': 'B', 'codigo': 'MF0820_2', 'plan_antiguo': True},      # repetida amb el certificat
+            {'grado': 'C', 'codigo': 'ELE_C_001_2', 'plan_antiguo': False},  # pla nou: no va per UC
+            {'grado': 'B', 'codigo': 'ELE_B_3001', 'plan_antiguo': False},
+            {'grado': 'D', 'codigo': None}]
+    assert uc_corr.held_ucs(held, {'ELEE0109': ['UC0820_2', 'UC0821_2'], 'ELE_C_001_2': ['UC0001_1']}) == [
+        'UC0820_2', 'UC0821_2', 'UC0836_2']
+    assert uc_corr.held_ucs([], {}) == []
+
+
 def test_numeros_de_modul_omplerts_pel_nom():
     entry = {'convalida': [{'uc': ['UC0822_2'], 'moduls': [_m('0232', 'Automatismos industriales')]}],
              'acredita': [{'uc': ['UC0825_2'], 'moduls': [_m('0240', 'Máquinas eléctricas')]}]}
