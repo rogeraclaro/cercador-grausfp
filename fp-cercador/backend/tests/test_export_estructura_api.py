@@ -104,7 +104,7 @@ def test_cicle_una_fila_per_modul_i_uc(client):
     assert rows[0][4:] == ['Codi mòdul', 'Nom mòdul', 'UC', "Grup d'UC que el convalida",
                            'Certificats LOE del grup', 'Decret']
     assert [r[4:] for r in rows[1:3]] == [
-        ['0362', 'Instalaciones eléctricas básicas', uc, 'UC0820_2 + UC0821_2', 'ELEE0109', 'BOE-A-2009-1']
+        ['="0362"', 'Instalaciones eléctricas básicas', uc, 'UC0820_2 + UC0821_2', 'ELEE0109', 'BOE-A-2009-1']
         for uc in ('UC0820_2', 'UC0821_2')]
     assert rows[3][4:] == ['', 'Electrónica', '', '', '', 'BOE-A-2009-1']  # mòdul sense UC: una fila
 

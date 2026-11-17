@@ -13,9 +13,15 @@ MP_NAME = 'Mòdul de pràctiques professionals no laborals'
 _FORMULA_START = ('=', '+', '-', '@')
 
 
+class AsText(str):
+    """Codi numèric que Excel ha de mantenir com a text (0237, no 237): s'escriu com a ="0237"."""
+
+
 def _cell(value) -> str:
     """Text d'una cel·la; els que Excel llegiria com a fórmula es desen com a text."""
     text = '' if value is None else str(value)
+    if isinstance(value, AsText):
+        return f'="{text}"' if text else ''
     return "'" + text if text.startswith(_FORMULA_START) else text
 
 
@@ -101,7 +107,7 @@ def cycle_rows(cycle: dict, modules: list[dict], entry: dict, certs_with_all) ->
     for m in modules:
         groups = [r['uc'] for r in entry.get('convalida') or []
                   if m['num'] and any(x['num'] == m['num'] for x in r['moduls'])]
-        base = head + [m['num'], m['name']]
+        base = head + [AsText(m['num'] or ''), m['name']]
         if not groups:
             rows.append(base + [None, None, None, decret])
         for ucs in groups:
