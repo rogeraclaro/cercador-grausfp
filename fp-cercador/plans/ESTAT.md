@@ -111,8 +111,7 @@ La primera vegada, `--discover` triga ~20 min; després va de la memòria cau.
 - **Pla 093: fet i desplegat el 2026-11-17** (prod `b61daef`; `c_loe_estructura.json` ja és al VPS). `GET /api/export/estructura?refs=` (CSV `;` amb BOM): certificats
   (una fila per UF amb hores i transversal; LOMLOE per A de cada B) o cicles (mòdul, UC que el convaliden,
   certificats LOE). Botons a l'itinerari i al cercador (filtre C o D, ≤50). Dades: `scripts/generate_c_loe_estructura.py`
-  (necessita `pdftotext`) → `backend/data/c_loe_estructura.json` (gitignored, copiat al VPS): 564 de 580
-  certificats; 62 amb alguna hora absent (queda buida). ELEE0109: 6 MF, 920 h. Pendent: provar-ho amb l'Excel.
+  (necessita `pdftotext`) → `backend/data/c_loe_estructura.json` (gitignored, copiat al VPS): 556 de 580 certificats (els 24 restants, amb annex escanejat o amb MF que no quadren amb `bc_loe.json`, cauen a les UC sense hores); les hores incoherents es buiden. La comprovació local va destapar errades d'impremta als annexos (`MF0121-2`, `UF425`, `Código MF…`), ja tolerades. ELEE0109: 6 MF, 920 h. Pendent: provar-ho amb l'Excel.
 - Revisions menors (094), **TODO**.
 - Materials de l'anàlisi (scripts de prova, llistes d'errors, instantània del SEPE):
   `plans/outputs/analisi-20261117/`. Cap codi tocat; res desplegat.
