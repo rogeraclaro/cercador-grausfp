@@ -71,6 +71,7 @@ import centres_inherit
 import oferta_ref
 import refresh_state
 import scheduler_service
+import uc_corr
 from scrapers import buscador_scraper, pipeline
 from scrapers.centres_scraper import build_centres_data
 
@@ -99,6 +100,7 @@ BC_LOE_PATH = os.path.join(_DATA_DIR, "bc_loe.json")
 BC_LOMLOE_PATH = os.path.join(_DATA_DIR, "bc_lomloe.json")  # Pla 057: {codigo_c: [codigo_b]}
 C_MODULOS_PATH = os.path.join(_DATA_DIR, "c_modulos.json")  # Pla 078: {codigo_c: [{num, name}]}
 D_MODULOS_PATH = os.path.join(_DATA_DIR, "d_modulos.json")  # Pla 058: {str(id_d): {modulos, ensenanzaFP}}
+D_UC_CORR_PATH = os.path.join(_DATA_DIR, "d_uc_corr.json")  # Pla 091: {ref_d: {decret, vigent, convalida, acredita, notes}}
 B_CONTINGUT_PATH = os.path.join(_DATA_DIR, "b_contingut.json")  # Pla 068: {codigo_b: {ecp, ra}}
 A_LOE_PARES_PATH = os.path.join(_DATA_DIR, "a_loe_pares.json")  # Pla 068: {codigo_uf: [codigo_mf]}
 CE_ACCES_PATH = os.path.join(_DATA_DIR, "ce_acces.json")  # Pla 074: {str(id_e): {d_ids, unmatched}}
@@ -1451,6 +1453,100 @@ def _get_d_modulos() -> dict:
     except (OSError, json.JSONDecodeError) as exc:
         logger.warning("_get_d_modulos: error llegint d_modulos.json: %s", exc)
         return {}
+
+
+# ---------------------------------------------------------------------------
+# Pla 091 — Correspondència oficial UC ↔ mòdul professional (taules del BOE)
+# ---------------------------------------------------------------------------
+
+_d_uc_corr_cache: dict = {"mtime": None, "index": None}
+
+
+def _get_d_uc_corr() -> dict:
+    """{ref_d: {decret, vigent, convalida, acredita, notes}} de d_uc_corr.json. {} si no n'hi ha."""
+    if not os.path.exists(D_UC_CORR_PATH):
+        return {}
+    mtime = os.path.getmtime(D_UC_CORR_PATH)
+    if _d_uc_corr_cache["mtime"] == mtime and _d_uc_corr_cache["index"] is not None:
+        return _d_uc_corr_cache["index"]
+    data = _load_json_dict(D_UC_CORR_PATH) or {}
+    _d_uc_corr_cache.update(mtime=mtime, index=data)
+    return data
+
+
+def _corr_cicle(rec: dict) -> dict:
+    return {'ref': rec['ref'], 'denominacion': rec.get('denominacion'),
+            'nivel': rec.get('nivel'), 'familia': rec.get('familia')}
+
+
+def _corr_moduls(rec: dict, entry: dict) -> list[dict]:
+    """Mòduls del cicle (d_modulos.json) amb el número omplert des de les taules del BOE."""
+    modulos = (_get_d_modulos().get(str(rec.get('id'))) or {}).get('modulos') or []
+    return uc_corr.cycle_modules(modulos, entry)
+
+
+@app.route('/api/correspondencia')
+def api_correspondencia():
+    """Pla 091: correspondència oficial entre UC i mòduls professionals d'un cicle D.
+
+    GET /api/correspondencia?cicle=<ref>
+      → {"cicle": {ref, denominacion, nivel, familia}, "decret": "BOE-A-…", "vigent": "BOE-A-…",
+         "convalida": [{"uc": [...], "moduls": [{num, name}]}],
+         "acredita": [{"moduls": [...], "uc": [...]}], "notes": [...], "moduls": [{num, name}]}
+         (+ "vigent_acredita" i "convalida_anterior" quan n'hi ha). Sense taula: decret i
+         vigent a null i les llistes buides.
+
+    GET /api/correspondencia?cp=<codi>   (certificat LOE)
+      → {"cp": {codigo, denominacion, uc: [...]},
+         "cicles": [{ref, denominacion, nivel, familia, decret, vigent, derogada, substituida_per,
+                     uc, convalida, a_mitges, moduls_convalidats, moduls_cicle, moduls_pendents,
+                     notes}]}
+         Una fila només convalida quan el certificat en té totes les UC; "a_mitges" són les
+         files on en falta alguna. "derogada": la taula és la que un decret posterior va
+         substituir (el certificat porta els codis d'UC antics).
+    """
+    cicle, cp = request.args.get('cicle'), request.args.get('cp')
+    if (cicle is None) == (cp is None):
+        return jsonify({'error': 'cal un sol paràmetre: cicle o cp'}), 400
+    catalog = _get_catalog()
+    if not catalog:
+        return jsonify({'error': 'Dades no disponibles'}), 503
+    index = _get_d_uc_corr()
+
+    if cicle is not None:
+        if not oferta_ref.REF_RE.match(cicle):
+            return jsonify({'error': 'ref invàlid'}), 400
+        rec = catalog['by_ref'].get(cicle)
+        if not rec or rec.get('grado') != 'D':
+            return jsonify({'error': 'Cicle no trobat'}), 404
+        entry = index.get(cicle) or {}
+        body = {'cicle': _corr_cicle(rec), 'decret': entry.get('decret'), 'vigent': entry.get('vigent'),
+                'convalida': entry.get('convalida') or [], 'acredita': entry.get('acredita') or [],
+                'notes': entry.get('notes') or [], 'moduls': _corr_moduls(rec, entry)}
+        body.update({k: entry[k] for k in ('vigent_acredita', 'convalida_anterior') if k in entry})
+        return jsonify(body)
+
+    if not _CODIGO_RE.match(cp):
+        return jsonify({'error': 'Codi invàlid'}), 400
+    cert = next((r for r in catalog['by_codigo'].get(cp, [])
+                 if r.get('grado') == 'C' and r.get('plan_antiguo')), None)
+    ucs = (_load_json_dict(BC_LOE_PATH) or {}).get(cp)
+    if not cert or not isinstance(ucs, list):
+        return jsonify({'error': 'Certificat no trobat'}), 404
+    cicles = []
+    for ref, entry in index.items():
+        rec = catalog['by_ref'].get(ref)
+        got = uc_corr.cycle_for_ucs(entry, ucs) if rec else None
+        if not got:
+            continue
+        moduls = _corr_moduls(rec, entry)
+        got.update(_corr_cicle(rec), notes=entry.get('notes') or [],
+                   moduls_cicle=len(moduls) or None,
+                   moduls_pendents=len(moduls) - len(got['moduls_convalidats']) if moduls else None)
+        cicles.append(got)
+    cicles.sort(key=lambda c: (c['derogada'], -len(c['moduls_convalidats']), c['denominacion'] or ''))
+    return jsonify({'cp': {'codigo': cp, 'denominacion': cert.get('denominacion'), 'uc': ucs},
+                    'cicles': cicles})
 
 
 _b_contingut_cache: dict = {"mtime": None, "index": None}

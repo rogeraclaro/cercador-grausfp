@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Fragment of https://www.boe.es/diario_boe/xml.php?id=BOE-A-2024-10685 (plan 091 test fixture) -->
+<documento>
+  <metadatos>
+    <identificador>BOE-A-2024-10685</identificador>
+    <rango codigo="1340">Real Decreto</rango>
+    <fecha_disposicion>20240521</fecha_disposicion>
+    <numero_oficial>500/2024</numero_oficial>
+    <titulo>Real Decreto 500/2024, de 21 de mayo, por el que se modifican determinados reales decretos por los que se establecen títulos de Formación Profesional de grado superior y se fijan sus enseñanzas mínimas.</titulo>
+    </metadatos>
+  <analisis><referencias><anteriores>
+<anterior referencia="BOE-A-2008-645" orden="2015">
+          <palabra codigo="270">MODIFICA</palabra>
+          <texto>los arts. 2, 10, 12, 15, anexos I, III, referencias indicadas y SUSTITUYE el anexo V.A y B del Real Decreto 1685/2007, de 14 de diciembre</texto>
+        </anterior>
+</anteriores></referencias></analisis>
+  <texto>
+<p class="parrafo">Artículo tercero. Modificaciones relativas a las cualificaciones profesionales y unidades de competencia.</p>
+<p class="articulo"><strong>Artículo tercero.</strong> Modificaciones relativas a las cualificaciones profesionales y unidades de competencia.</p>
+<p class="parrafo">Uno. En el Real Decreto 1685/2007, de 14 de diciembre, por el que se establece el título de Técnico Superior en Audiología protésica y se fijan sus enseñanzas mínimas, se sustituyen los anexos V A) y V B) por la siguiente redacción:</p>
+<p class="anexo_num">«ANEXO V A)</p>
+<p class="anexo_tit">Correspondencia de las unidades de competencia acreditadas con los módulos profesionales para su convalidación</p>
+<table class="tabla_ancha">
+        <colgroup>
+          <col width="50%"/>
+          <col width="50%"/>
+        </colgroup>
+        <thead>
+          <tr>
+            <th class="cabeza_tabla">Unidades de competencia acreditadas</th>
+            <th class="cabeza_tabla">Módulos profesionales convalidables</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="cuerpo_tabla_izq">UC0383_3: Analizar las características anatomosensoriales auditivas.</td>
+            <td class="cuerpo_tabla_izq">0199. Características anatomosensoriales auditivas.</td>
+          </tr>
+          <tr>
+            <td class="cuerpo_tabla_izq">UC0384_3: Seleccionar y adaptar prótesis auditivas.</td>
+            <td class="cuerpo_tabla_izq">0203. Elección y adaptación de prótesis auditivas.</td>
+          </tr>
+          <tr>
+            <td class="cuerpo_tabla_izq">UC0385_3: Elaborar adaptadores anatómicos, protectores y prótesis auditivas.</td>
+            <td class="cuerpo_tabla_izq">0202. Elaboración de moldes y protectores auditivos.</td>
+          </tr>
+          <tr>
+            <td class="cuerpo_tabla_izq">
+              <p class="cuerpo_tabla_izq">UC0386_3: Reparar prótesis auditivas.</p>
+            </td>
+            <td class="cuerpo_tabla_izq">0200. Tecnología electrónica en audioprótesis.</td>
+          </tr>
+          <tr>
+            <td class="cuerpo_tabla_izq">
+              <p class="cuerpo_tabla_izq">UC0387_3: Medir niveles sonoros y recomendar protecciones contra el ruido.</p>
+            </td>
+            <td class="cuerpo_tabla_izq">0201. Acústica y elementos de protección sonora.</td>
+          </tr>
+        </tbody>
+      </table>
+<p class="anexo_num">ANEXO V B)</p>
+<p class="anexo_tit">Correspondencia de los módulos profesionales y unidades de competencia para su acreditación</p>
+<table class="tabla_ancha">
+        <colgroup>
+          <col width="50%"/>
+          <col width="50%"/>
+        </colgroup>
+        <thead>
+          <tr>
+            <th class="cabeza_tabla">Módulos profesionales superados</th>
+            <th class="cabeza_tabla">Unidades de competencia acreditables</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="cuerpo_tabla_izq">0199. Características anatomosensoriales auditivas.</td>
+            <td class="cuerpo_tabla_izq">UC0383_3: Analizar las características anatomosensoriales auditivas.</td>
+          </tr>
+          <tr>
+            <td class="cuerpo_tabla_izq">0200. Tecnología electrónica en audioprótesis.</td>
+            <td class="cuerpo_tabla_izq">UC0386_3: Reparar prótesis auditivas.</td>
+          </tr>
+          <tr>
+            <td class="cuerpo_tabla_izq">0201. Acústica y elementos de protección sonora.</td>
+            <td class="cuerpo_tabla_izq">UC0387_3: Medir niveles sonoros y recomendar protecciones contra el ruido.</td>
+          </tr>
+          <tr>
+            <td class="cuerpo_tabla_izq">0202 Elaboración de moldes y protectores auditivos.</td>
+            <td class="cuerpo_tabla_izq">UC0385_3: Elaborar adaptadores anatómicos, protectores y prótesis auditivas.</td>
+          </tr>
+          <tr>
+            <td class="cuerpo_tabla_izq">0203. Elección y adaptación de prótesis auditivas.</td>
+            <td class="cuerpo_tabla_izq">UC0384_3: Seleccionar y adaptar prótesis auditivas.»</td>
+          </tr>
+        </tbody>
+      </table>
+<p class="parrafo_2">Dos. En el Real Decreto 1686/2007, de 14 de diciembre, por el que se establece el título de Técnico Superior en Gestión de Alojamientos Turísticos y se fijan sus enseñanzas mínimas, se da una nueva redacción al artículo 6 y se sustituyen los anexos V A) y V B) con la siguiente redacción:</p>
+<p class="anexo_num">«ANEXO V A)</p>
+<p class="anexo_tit">Correspondencia de las unidades de competencia acreditadas con los módulos profesionales para su convalidación</p>
+<table class="tabla_ancha">
+        <colgroup>
+          <col width="50%"/>
+          <col width="50%"/>
+        </colgroup>
+        <thead>
+          <tr>
+            <th class="cabeza_tabla">Unidades de competencia acreditadas</th>
+            <th class="cabeza_tabla">Módulos profesionales convalidables</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="cuerpo_tabla_izq">UC0263_3: Participar en el desarrollo de acciones comerciales y reservas.</td>
+            <td class="cuerpo_tabla_izq">0173. Marketing turístico.</td>
+          </tr>
+          <tr>
+            <td class="cuerpo_tabla_izq">UC0264_3: Realizar las actividades propias de la recepción.</td>
+            <td class="cuerpo_tabla_izq">
+              <p class="cuerpo_tabla_izq">0176. Recepción y reservas.</p>
+              <p class="cuerpo_tabla_izq">0172. Protocolo y relaciones públicas.</p>
+            </td>
+          </tr>
+          <tr>
+            <td class="cuerpo_tabla_izq">UC0265_3: Gestionar departamentos del área de alojamiento.</td>
+            <td class="cuerpo_tabla_izq">
+              <p class="cuerpo_tabla_izq">0176. Recepción y reservas.</p>
+              <p class="cuerpo_tabla_izq">0175. Gestión del departamento de pisos.</p>
+            </td>
+          </tr>
+          <tr>
+            <td class="cuerpo_tabla_izq">UC1067_3: Definir y organizar los procesos del departamento de pisos y prestar atención al cliente.</td>
+            <td class="cuerpo_tabla_izq">
+              <p class="cuerpo_tabla_izq">0175. Gestión del departamento de pisos.</p>
+              <p class="cuerpo_tabla_izq">0172. Protocolo y relaciones públicas.</p>
+            </td>
+          </tr>
+          <tr>
+            <td class="cuerpo_tabla_izq">UC1068_3: Supervisar los procesos del departamento de pisos.</td>
+            <td class="cuerpo_tabla_izq">0175. Gestión del departamento de pisos.</td>
+          </tr>
+          <tr>
+            <td class="cuerpo_tabla_izq">UC9999_3: Comunicarse en lengua inglesa con un nivel de usuario independiente (B1), según el marco común europeo de referencia para las lenguas, en el ámbito profesional</td>
+            <td class="cuerpo_tabla_izq">0179. Inglés profesional (GS).</td>
+          </tr>
+        </tbody>
+      </table>
+<p class="anexo_num">ANEXO V B)</p>
+<p class="anexo_tit">Correspondencia de los módulos profesionales y unidades de competencia para su acreditación</p>
+<table class="tabla_ancha">
+        <colgroup>
+          <col width="50%"/>
+          <col width="50%"/>
+        </colgroup>
+        <thead>
+          <tr>
+            <th class="cabeza_tabla">Módulos profesionales superados</th>
+            <th class="cabeza_tabla">Unidades de competencia acreditables</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="cuerpo_tabla_izq">
+              <p class="cuerpo_tabla_izq">0176. Recepción y reservas.</p>
+              <p class="cuerpo_tabla_izq">0173. Marketing turístico.</p>
+              <p class="cuerpo_tabla_izq">0171. Estructura del mercado turístico.</p>
+            </td>
+            <td class="cuerpo_tabla_izq">UC0263_3: Participar en el desarrollo de acciones comerciales y reservas.</td>
+          </tr>
+          <tr>
+            <td class="cuerpo_tabla_izq">
+              <p class="cuerpo_tabla_izq">0176. Recepción y reservas.</p>
+              <p class="cuerpo_tabla_izq">0172. Protocolo y relaciones públicas.</p>
+            </td>
+            <td class="cuerpo_tabla_izq">UC0264_3: Realizar las actividades propias de la recepción.</td>
+          </tr>
+          <tr>
+            <td class="cuerpo_tabla_izq">
+              <p class="cuerpo_tabla_izq">0176. Recepción y reservas.</p>
+              <p class="cuerpo_tabla_izq">0175. Gestión del departamento de pisos.</p>
+              <p class="cuerpo_tabla_izq">0177. Recursos humanos en el alojamiento.</p>
+            </td>
+            <td class="cuerpo_tabla_izq">UC0265_3: Gestionar departamentos del área de alojamiento.</td>
+          </tr>
+          <tr>
+            <td class="cuerpo_tabla_izq">0174. Dirección de alojamientos turísticos.</td>
+            <td class="cuerpo_tabla_izq">UC2277_2: Adaptar las posibilidades del establecimiento de alojamiento en el entorno rural al plan turístico local o comarcal, a su demanda y a sus planes de desarrollo.</td>
+          </tr>
+          <tr>
+            <td class="cuerpo_tabla_izq">
+              <p class="cuerpo_tabla_izq">0172. Protocolo y relaciones públicas.</p>
+              <p class="cuerpo_tabla_izq">0175. Gestión del departamento de pisos.</p>
+              <p class="cuerpo_tabla_izq">0177. Recursos humanos en el alojamiento.</p>
+            </td>
+            <td class="cuerpo_tabla_izq">UC1067_3: Definir y organizar los procesos del departamento de pisos y prestar atención al cliente.</td>
+          </tr>
+          <tr>
+            <td class="cuerpo_tabla_izq">0175. Gestión del departamento de pisos.</td>
+            <td class="cuerpo_tabla_izq">UC1068_3: Supervisar los procesos del departamento de pisos.</td>
+          </tr>
+          <tr>
+            <td class="cuerpo_tabla_izq">0179. Inglés profesional (GS).</td>
+            <td class="cuerpo_tabla_izq">UC9999_3: Comunicarse en lengua inglesa con un nivel de usuario independiente (B1), según el marco común europeo de referencia para las lenguas, en el ámbito profesional.»</td>
+          </tr>
+        </tbody>
+      </table>
+  </texto>
+</documento>

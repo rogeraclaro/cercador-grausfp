@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Fragment of https://www.boe.es/diario_boe/xml.php?id=BOE-A-2024-10684 (plan 091 test fixture) -->
+<documento>
+  <metadatos>
+    <identificador>BOE-A-2024-10684</identificador>
+    <rango codigo="1340">Real Decreto</rango>
+    <fecha_disposicion>20240521</fecha_disposicion>
+    <numero_oficial>499/2024</numero_oficial>
+    <titulo>Real Decreto 499/2024, de 21 de mayo, por el que se modifican determinados reales decretos por los que se establecen títulos de Formación Profesional de grado medio y se fijan sus enseñanzas mínimas.</titulo>
+    </metadatos>
+  <analisis><referencias><anteriores>
+<anterior referencia="BOE-A-2018-4748" orden="2015">
+          <palabra codigo="270">MODIFICA</palabra>
+          <texto>los arts. 2, 10, 12, 15, los anexos I, III y las referencias indicadas del Real Decreto 189/2018, de 6 de abril</texto>
+        </anterior>
+</anteriores></referencias></analisis>
+  <texto>
+<p class="parrafo">3.º Real Decreto 189/2018, de 6 de abril, por el que se establece el título de Técnico en comercialización de productos alimentarios y se fijan los aspectos básicos del currículo.</p>
+<p class="parrafo">Sesenta. En el Real Decreto 189/2018, de 6 de abril, por el que se establece el título de Técnico en comercialización de productos alimentarios y se fijan los aspectos básicos del currículo, se incluye como anexo III el que figura como anexo LXII en el presente real decreto.</p>
+  </texto>
+</documento>

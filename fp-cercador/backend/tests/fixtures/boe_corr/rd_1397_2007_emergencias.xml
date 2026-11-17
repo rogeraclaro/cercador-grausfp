@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Fragment of https://www.boe.es/diario_boe/xml.php?id=BOE-A-2007-20202 (plan 091 test fixture) -->
+<documento>
+  <metadatos>
+    <identificador>BOE-A-2007-20202</identificador>
+    <rango codigo="1340">Real Decreto</rango>
+    <fecha_disposicion>20071029</fecha_disposicion>
+    <numero_oficial>1397/2007</numero_oficial>
+    <titulo>Real Decreto 1397/2007, de 29 de octubre, por el que se establece el título de Técnico en Emergencias Sanitarias y se fijan sus enseñanzas mínimas.</titulo>
+    </metadatos>
+  <analisis><referencias><anteriores>
+</anteriores></referencias></analisis>
+  <texto>
+<table class="tabla_ancha">
+      <thead>
+        <tr>
+          <th class="cabeza_tabla">Unidades de competencia acreditadas</th>
+          <th class="cabeza_tabla">Módulos profesionales convalidables</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="cuerpo_tabla_izq" rowspan="2">UC0069_1 Mantener preventivamente el vehículo sanitario y controlar la dotación material del mismo.</td>
+          <td class="cuerpo_tabla_izq">0052. Mantenimiento mecánico preventivo del vehículo.</td>
+        </tr>
+        <tr>
+          <td class="cuerpo_tabla_izq">0054. Dotación sanitaria.</td>
+        </tr>
+        <tr>
+          <td class="cuerpo_tabla_izq" rowspan="2">UC0070_2 Prestar al paciente soporte vital básico y apoyo al soporte vital avanzado.</td>
+          <td class="cuerpo_tabla_izq">0055. Atención sanitaria inicial en situaciones de emergencia.</td>
+        </tr>
+        <tr>
+          <td class="cuerpo_tabla_izq">0056. Atención sanitaria especial en situaciones de emergencia.</td>
+        </tr>
+        <tr>
+          <td class="cuerpo_tabla_izq">UC0071_2 Trasladar al paciente al centro sanitario útil.</td>
+          <td class="cuerpo_tabla_izq">0057. Evacuación y traslado de pacientes.</td>
+        </tr>
+        <tr>
+          <td class="cuerpo_tabla_izq">UC0072_2 Aplicar técnicas de apoyo psicológico y social al paciente y sus familiares.</td>
+          <td class="cuerpo_tabla_izq">0058. Apoyo psicológico en situaciones de emergencia.</td>
+        </tr>
+        <tr>
+          <td class="cuerpo_tabla_izq">UC0360_2 Colaborar en la organización y el desarrollo de la logística sanitaria en escenarios con múltiples víctimas y catástrofes, asegurando el abastecimiento y la gestión de recursos y apoyando las labores de coordinación en situaciones de crisis.</td>
+          <td class="cuerpo_tabla_izq">0053. Logística sanitaria en emergencias.</td>
+        </tr>
+        <tr>
+          <td class="cuerpo_tabla_izq">UC0361_2 Prestar atención sanitaria inicial a múltiples víctimas.</td>
+          <td class="cuerpo_tabla_izq">0055. Atención sanitaria inicial en situaciones de emergencia.</td>
+        </tr>
+        <tr>
+          <td class="cuerpo_tabla_izq">UC0362_2 Colaborar en la preparación y en la ejecución de planes de emergencias y de dispositivos de riesgo previsible.</td>
+          <td class="cuerpo_tabla_izq">0059. Planes de emergencias y dispositivos de riesgo previsibles.</td>
+        </tr>
+      </tbody>
+    </table>
+<table class="tabla_ancha">
+      <colgroup>
+        <col/>
+        <col/>
+      </colgroup>
+      <thead>
+        <tr>
+          <th class="cabeza_tabla">Módulo profesional superado</th>
+          <th class="cabeza_tabla">Unidades de competencia acreditables</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            <p class="cuerpo_tabla_izq">0052. Mantenimiento mecánico preventivo del vehículo.</p>
+            <p class="cuerpo_tabla_izq">0054. Dotación sanitaria.</p>
+          </td>
+          <td class="cuerpo_tabla_izq">UC0069_1: Mantener preventivamente el vehículo sanitario y controlar la dotación material del mismo.</td>
+        </tr>
+        <tr>
+          <td class="cuerpo_tabla_izq">0053. Logística sanitaria en emergencias.</td>
+          <td class="cuerpo_tabla_izq">UC0360_2: Colaborar en la organización y el desarrollo de la logística sanitaria en escenarios con múltiples víctimas y catástrofes, asegurando el abastecimiento y la gestión de recursos y apoyando las labores de coordinación en situaciones de crisis.</td>
+        </tr>
+        <tr>
+          <td>
+            <p class="cuerpo_tabla_izq">0055. Atención sanitaria inicial en situaciones de emergencia.</p>
+            <p class="cuerpo_tabla_izq">0056. Atención sanitaria especial en situaciones de emergencia.</p>
+          </td>
+          <td class="cuerpo_tabla_izq">UC0070_2: Prestar al paciente soporte vital básico y apoyo al soporte vital avanzado.</td>
+        </tr>
+        <tr>
+          <td class="cuerpo_tabla_izq">0055. Atención sanitaria inicial en situaciones de emergencia.</td>
+          <td class="cuerpo_tabla_izq">UC0361_2: Prestar atención sanitaria inicial a múltiples víctimas.</td>
+        </tr>
+        <tr>
+          <td class="cuerpo_tabla_izq">0057. Evacuación y traslado de pacientes.</td>
+          <td class="cuerpo_tabla_izq">UC0071_2: Trasladar al paciente al centro sanitario útil.</td>
+        </tr>
+        <tr>
+          <td class="cuerpo_tabla_izq">0058. Apoyo psicológico en situaciones de emergencia.</td>
+          <td class="cuerpo_tabla_izq">UC0072_2: Aplicar técnicas de apoyo psicológico y social en situaciones de crisis.</td>
+        </tr>
+        <tr>
+          <td class="cuerpo_tabla_izq">0059. Planes de emergencias y dispositivos de riesgos previsibles.</td>
+          <td class="cuerpo_tabla_izq">UC0362_2: Colaborar en la preparación y en la ejecución de planes de emergencias y de dispositivos de riesgo previsible.</td>
+        </tr>
+      </tbody>
+    </table>
+  </texto>
+</documento>

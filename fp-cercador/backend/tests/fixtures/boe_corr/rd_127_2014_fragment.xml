@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Fragment of https://www.boe.es/diario_boe/xml.php?id=BOE-A-2014-2360 (plan 091 test fixture) -->
+<documento>
+  <metadatos>
+    <identificador>BOE-A-2014-2360</identificador>
+    <rango codigo="1340">Real Decreto</rango>
+    <fecha_disposicion>20140228</fecha_disposicion>
+    <numero_oficial>127/2014</numero_oficial>
+    <titulo>Real Decreto 127/2014, de 28 de febrero, por el que se regulan aspectos específicos de la Formación Profesional Básica de las enseñanzas de formación profesional del sistema educativo, se aprueban catorce títulos profesionales básicos, se fijan sus currículos básicos y se modifica el Real Decreto 1850/2009, de 4 de diciembre, sobre expedición de títulos académicos y profesionales correspondientes a las enseñanzas establecidas en la Ley Orgánica 2/2006, de 3 de mayo, de Educación.</titulo>
+    </metadatos>
+  <analisis><referencias><anteriores>
+</anteriores></referencias></analisis>
+  <texto>
+<p class="anexo_num"> ANEXO I</p>
+<p class="anexo_tit">Título Profesional Básico en Servicios Administrativos</p>
+<p class="parrafo_2">
+      <strong>6. Correspondencia entre módulos profesionales y unidades de competencia para su acreditación o convalidación.</strong>
+    </p>
+<table class="tabla">
+      <thead>
+        <tr>
+          <th class="cabeza_tabla">
+            <strong>Módulos profesionales superados</strong>
+          </th>
+          <th class="cabeza_tabla">
+            <strong>Unidades de competencia acreditables</strong>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="cuerpo_tabla_izq">3001.Tratamiento informático de datos.</td>
+          <td class="cuerpo_tabla_izq">UC0973_1: Introducir datos y textos en terminales informáticos en condiciones de seguridad, calidad y eficiencia.</td>
+        </tr>
+        <tr>
+          <td class="cuerpo_tabla_izq">3002. Aplicaciones básicas de ofimática.</td>
+          <td class="cuerpo_tabla_izq">UC0974_1: Realizar operaciones básicas de tratamiento de datos y textos, y confección de documentación.</td>
+        </tr>
+        <tr>
+          <td class="cuerpo_tabla_izq">3003. Técnicas administrativas básicas.</td>
+          <td class="cuerpo_tabla_izq">UC0969_1: Realizar e integrar operaciones de apoyo administrativo básico.</td>
+        </tr>
+        <tr>
+          <td class="cuerpo_tabla_izq">3004. Archivo y comunicación.</td>
+          <td>
+            <p class="cuerpo_tabla_izq">UC0970_1: Transmitir y recibir información operativa en gestiones rutinarias con agentes externos de la organización.</p>
+            <p class="cuerpo_tabla_izq">UC0971_1: Realizar operaciones auxiliares de reproducción y archivo en soporte convencional o informático.</p>
+          </td>
+        </tr>
+        <tr>
+          <td class="cuerpo_tabla_izq">3005. Atención al cliente.</td>
+          <td class="cuerpo_tabla_izq">UC1329_1: Proporcionar atención e información operativa, estructurada y protocolarizada al cliente.</td>
+        </tr>
+        <tr>
+          <td class="cuerpo_tabla_izq">3006. Preparación de pedidos y venta de productos.</td>
+          <td class="cuerpo_tabla_izq">UC1326_1: Preparar pedidos de forma eficaz y eficiente, siguiendo procedimientos establecidos.</td>
+        </tr>
+      </tbody>
+    </table>
+<p class="anexo_num">ANEXO XIII</p>
+<p class="anexo_tit">Título Profesional Básico en Tapicería y Cortinaje</p>
+<p class="parrafo_2">
+      <strong>6. Correspondenciaentremódulosprofesionalesyunidadesde competencia para su acreditación o convalidación.</strong>
+    </p>
+<table class="tabla">
+      <thead>
+        <tr>
+          <th class="cabeza_tabla">
+            <strong>Módulos profesionales superados</strong>
+          </th>
+          <th class="cabeza_tabla" colspan="2">
+            <strong>Unidades de competencia acreditables</strong>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="cuerpo_tabla_izq">3077. Materiales y productos textiles.</td>
+          <td class="cuerpo_tabla_izq" colspan="2">UC0177_1: Seleccionar materiales y productos para procesos de confección.</td>
+        </tr>
+        <tr>
+          <td class="cuerpo_tabla_izq">3078. Tapizado de muebles.</td>
+          <td colspan="2">
+            <p class="cuerpo_tabla_izq">UC0429_1: Realizar el desguarnecido, preparación y montado del tapizado en mobiliario.</p>
+            <p class="cuerpo_tabla_izq">UC0428_1: Atender al cliente y realizar el aprovisionamiento para procesos de tapizado.</p>
+          </td>
+        </tr>
+        <tr>
+          <td class="cuerpo_tabla_izq">3099. Tapizado de murales y entelado de superficies.</td>
+          <td class="cuerpo_tabla_izq">UC0430_1: Realizar el enmarcado, guarnecido y entelado de paredes, y tapizado de paneles murales.</td>
+        </tr>
+        <tr>
+          <td class="cuerpo_tabla_izq">3100. Confección y montaje de cortinas y estores.</td>
+          <td class="cuerpo_tabla_izq">UC0178_1: Realizar el corte, preparación, ensamblaje y acabado de cortinas y estores.</td>
+        </tr>
+        <tr>
+          <td class="cuerpo_tabla_izq">3101. Confección de artículos textiles para decoración.</td>
+          <td class="cuerpo_tabla_izq">UC0179_1: Realizar el corte, preparación, ensamblaje y acabado de cojines, fundas y accesorios.</td>
+        </tr>
+        <tr>
+          <td class="cuerpo_tabla_izq">3005. Atención al cliente.</td>
+          <td class="cuerpo_tabla_izq">UC1329_1: Proporcionar atención e información operativa, estructurada y protocolarizada al cliente.</td>
+        </tr>
+      </tbody>
+    </table>
+  </texto>
+</documento>

@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Fragment of https://www.boe.es/diario_boe/xml.php?id=BOE-A-2010-15356 (plan 091 test fixture) -->
+<documento>
+  <metadatos>
+    <identificador>BOE-A-2010-15356</identificador>
+    <rango codigo="1340">Real Decreto</rango>
+    <fecha_disposicion>20100910</fecha_disposicion>
+    <numero_oficial>1128/2010</numero_oficial>
+    <titulo>Real Decreto 1128/2010, de 10 de septiembre, por el que se establece el título de Técnico en Carpintería y Mueble y se fijan sus enseñanzas mínimas.</titulo>
+    </metadatos>
+  <analisis><referencias><anteriores>
+</anteriores></referencias></analisis>
+  <texto>
+<table class="tabla">
+      <tr>
+        <td>
+          <p class="cabeza_tabla">Unidades de competencia acreditadas</p>
+        </td>
+        <td>
+          <p class="cabeza_tabla">Módulos profesionales convalidables</p>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <p class="cuerpo_tabla_izq">UC0160_2: Preparar máquinas y equipos de taller.</p>
+        </td>
+        <td>
+          <p class="cuerpo_tabla_izq">0540. Operaciones básicas de carpintería. <br/>0541. Operaciones básicas de mobiliario.</p>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <p class="cuerpo_tabla_izq">UC0161_2: Preparar máquinas y equipos de taller industrializados. <br/>UC0162_1: Mecanizar madera y derivados.</p>
+        </td>
+        <td>
+          <p class="cuerpo_tabla_izq">0544. Mecanizado de madera y derivados. <br/>0545. Mecanizado por control numérico en carpintería y mueble.</p>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <p class="cuerpo_tabla_izq">UC0171_2: Controlar y organizar componentes y accesorios de carpintería y mueble.</p>
+        </td>
+        <td>
+          <p class="cuerpo_tabla_izq">0542. Control de almacén.</p>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <p class="cuerpo_tabla_izq">UC0172_2: Montar muebles y elementos de carpintería.</p>
+        </td>
+        <td>
+          <p class="cuerpo_tabla_izq">0546. Montaje de carpintería y mueble.</p>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <p class="cuerpo_tabla_izq">UC0166_2: Preparar el soporte y poner a punto los productos y equipos para la aplicación del acabado. <br/>UC0168_2: Realizar el tintado, acabados especiales y decorativos.</p>
+        </td>
+        <td>
+          <p class="cuerpo_tabla_izq">0547. Acabados en carpintería y mueble.</p>
+        </td>
+      </tr>
+    </table>
+<p class="normal">Nota: Las personas matriculadas en este ciclo formativo que tengan acreditadas todas las unidades de competencias incluidas en el título de acuerdo al procedimiento establecido en el RD 1224/2009, de reconocimiento de las competencias profesionales adquiridas por experiencia laboral o por vías no formales de formación, tendrán convalidados los módulos profesionales «0539. Soluciones constructivas» y «0543. Documentación técnica».</p>
+<p class="anexo_num">ANEXO V B)</p>
+<table class="tabla">
+      <tr>
+        <td>
+          <p class="cabeza_tabla">Módulos profesionales superados</p>
+        </td>
+        <td>
+          <p class="cabeza_tabla">Unidades de competencia acreditables</p>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <p class="cuerpo_tabla_izq">0540. Operaciones básicas de carpintería. <br/>0541. Operaciones básicas de mobiliario.</p>
+        </td>
+        <td>
+          <p class="cuerpo_tabla_izq">UC0160_2: Preparar máquinas y equipos de taller.</p>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <p class="cuerpo_tabla_izq">0544. Mecanizado de madera y derivados. <br/>0545. Mecanizado por control numérico en carpintería y mueble.</p>
+        </td>
+        <td>
+          <p class="cuerpo_tabla_izq">UC0161_2: Preparar máquinas y equipos de taller industrializados. <br/>UC0162_1: Mecanizar madera y derivados.</p>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <p class="cuerpo_tabla_izq">0542. Control de almacén.</p>
+        </td>
+        <td>
+          <p class="cuerpo_tabla_izq">UC0171_2: Controlar y organizar componentes y accesorios de carpintería y mueble.</p>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <p class="cuerpo_tabla_izq">0546. Montaje de carpintería y mueble.</p>
+        </td>
+        <td>
+          <p class="cuerpo_tabla_izq">UC0172_2: Montar muebles y elementos de carpintería.</p>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <p class="cuerpo_tabla_izq">0547. Acabados en carpintería y mueble.</p>
+        </td>
+        <td>
+          <p class="cuerpo_tabla_izq">UC0166_2: Preparar el soporte y poner a punto los productos y equipos para la aplicación del acabado. <br/>UC0168_2: Realizar el tintado, acabados especiales y decorativos.</p>
+        </td>
+      </tr>
+    </table>
+  </texto>
+</documento>

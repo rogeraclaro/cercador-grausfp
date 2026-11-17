@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Fragment of https://www.boe.es/diario_boe/xml.php?id=BOE-A-2008-3957 (plan 091 test fixture) -->
+<documento>
+  <metadatos>
+    <identificador>BOE-A-2008-3957</identificador>
+    <rango codigo="1340">Real Decreto</rango>
+    <fecha_disposicion>20080208</fecha_disposicion>
+    <numero_oficial>177/2008</numero_oficial>
+    <titulo>Real Decreto 177/2008, de 8 de febrero, por el que se establece el título de Técnico en Instalaciones Eléctricas y Automáticas y se fijan sus enseñanzas mínimas.</titulo>
+    </metadatos>
+  <analisis><referencias><anteriores>
+</anteriores></referencias></analisis>
+  <texto>
+<table>
+      <tr>
+        <td colspan="2" rowspan="1">
+          <p>Anexo V A)
+</p>
+          <p>Correspondencia de las unidades de competencia acreditadas de acuerdo a lo establecido en el artículo 8 de la Ley Orgánica 5/2002, de 19 de junio, con los módulos profesionales para su convalidación</p>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="1" rowspan="1">
+          <p>Unidades de competencia acreditadas</p>
+        </td>
+        <td colspan="1" rowspan="1">
+          <p>Módulos profesionales convalidables</p>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="1" rowspan="1">
+          <p> </p>
+        </td>
+        <td colspan="1" rowspan="1">
+          <p> </p>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="1" rowspan="1">
+          <p>UC0822_2: Montar y mantener instalaciones de automatismos en el entorno de viviendas y pequeña industria.</p>
+        </td>
+        <td colspan="1" rowspan="1">
+          <p>0232. Automatismos industriales.
+0238. Instalaciones domóticas.</p>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="1" rowspan="1">
+          <p>UC0825_2: Montar y mantener máquinas eléctricas.</p>
+        </td>
+        <td colspan="1" rowspan="1">
+          <p>0240. Máquinas eléctricas.</p>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="1" rowspan="1">
+          <p>UC0820_2: Montar y mantener instalaciones eléctricas de baja tensión en edificios destinados principalmente a viviendas.
+UC0821_2: Montar y mantener instalaciones eléctricas de baja tensión en edificios comerciales, de oficinas y de una o varias industrias.</p>
+        </td>
+        <td colspan="1" rowspan="1">
+          <p>0235. Instalaciones eléctricas interiores.</p>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="1" rowspan="1">
+          <p>UC0823_2: Montar y mantener redes eléctricas aéreas de baja tensión.
+UC0824_2: Montar y mantener redes eléctricas subterráneas de baja tensión.</p>
+        </td>
+        <td colspan="1" rowspan="1">
+          <p>0236. Instalaciones de distribución. </p>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="1" rowspan="1">
+          <p>UC0836_2 Montar instalaciones solares fotovoltaicas.
+UC0837_2 Mantener instalaciones solares fotovoltaicas.</p>
+        </td>
+        <td colspan="1" rowspan="1">
+          <p>0239. Instalaciones solares fotovoltaicas.</p>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="1" rowspan="1">
+          <p>UC0120_2: Montar y mantener instalaciones de captación de señales de radiodifusión sonora y TV en edificios o conjuntos de edificaciones (antenas y vía cable).
+UC0121_2: Montar y mantener instalaciones de acceso al servicio de telefonía disponible al público e instalaciones de control de acceso (telefonía interior y videoportería).</p>
+        </td>
+        <td colspan="1" rowspan="1">
+          <p>0237. Infraestructuras comunes de telecomunicación en viviendas y edificios.
+</p>
+        </td>
+      </tr>
+    </table>
+<table>
+      <tr>
+        <td colspan="2" rowspan="1">
+          <p>Anexo V B)
+</p>
+          <p>Correspondencia de los módulos profesionales con las unidades de competencia para su acreditación</p>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="1" rowspan="1">
+          <p>Módulos profesionales superados</p>
+        </td>
+        <td colspan="1" rowspan="1">
+          <p>Unidades de competencia acreditables</p>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="1" rowspan="1">
+          <p> </p>
+        </td>
+        <td colspan="1" rowspan="1">
+          <p> </p>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="1" rowspan="1">
+          <p>0232. Automatismos industriales.
+0238. Instalaciones domóticas.</p>
+        </td>
+        <td colspan="1" rowspan="1">
+          <p>UC0822_2: Montar y mantener instalaciones de automatismos en el entorno de viviendas y pequeña industria.</p>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="1" rowspan="1">
+          <p>0235. Instalaciones eléctricas interiores.</p>
+        </td>
+        <td colspan="1" rowspan="1">
+          <p>UC0820_2: Montar y mantener instalaciones eléctricas de baja tensión en edificios destinados principalmente a viviendas.
+UC0821_2: Montar y mantener instalaciones eléctricas de baja tensión en edificios comerciales, de oficinas y de una o varias industrias.</p>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="1" rowspan="1">
+          <p>0236. Instalaciones de distribución.</p>
+        </td>
+        <td colspan="1" rowspan="1">
+          <p>UC0823_2: Montar y mantener redes eléctricas aéreas de baja tensión.
+UC0824_2: Montar y mantener redes eléctricas subterráneas de baja tensión.</p>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="1" rowspan="1">
+          <p>0237. Infraestructuras comunes de telecomunicación en viviendas y edificios.</p>
+        </td>
+        <td colspan="1" rowspan="1">
+          <p>UC0120_2: Montar y mantener instalaciones de captación de señales de radiodifusión sonora y TV en edificios o conjuntos de edificaciones (antenas y vía cable).
+UC0121_2: Montar y mantener instalaciones de acceso al servicio de telefonía disponible al público e instalaciones de control de acceso (telefonía interior y videoportería).</p>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="1" rowspan="1">
+          <p>0239. Instalaciones solares fotovoltaicas.</p>
+        </td>
+        <td colspan="1" rowspan="1">
+          <p>UC0836_2 Montar instalaciones solares fotovoltaicas.
+UC0837_2 Mantener instalaciones solares fotovoltaicas.</p>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="1" rowspan="1">
+          <p>0240. Máquinas eléctricas.</p>
+        </td>
+        <td colspan="1" rowspan="1">
+          <p>UC0825_2: Montar y mantener máquinas eléctricas.</p>
+        </td>
+      </tr>
+    </table>
+  </texto>
+</documento>

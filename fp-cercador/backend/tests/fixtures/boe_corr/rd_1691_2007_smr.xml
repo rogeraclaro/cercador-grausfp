@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Fragment of https://www.boe.es/diario_boe/xml.php?id=BOE-A-2008-819 (plan 091 test fixture) -->
+<documento>
+  <metadatos>
+    <identificador>BOE-A-2008-819</identificador>
+    <rango codigo="1340">Real Decreto</rango>
+    <fecha_disposicion>20071214</fecha_disposicion>
+    <numero_oficial>1691/2007</numero_oficial>
+    <titulo>Real Decreto 1691/2007, de 14 de diciembre, por el que se establece el título de Técnico en Sistemas Microinformáticos y Redes y se fijan sus enseñanzas mínimas.</titulo>
+    </metadatos>
+  <analisis><referencias><anteriores>
+</anteriores></referencias></analisis>
+  <texto>
+<table>
+      <tr>
+        <td colspan="2" rowspan="1">
+          <p>Anexo V A)
+</p>
+          <p>Correspondencia de las unidades de competencia acreditadas de acuerdo a lo establecido en el Artículo 8 de la Ley Orgánica 5/2002,  de 19 de junio, con los módulos profesionales para su convalidación</p>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="1" rowspan="1">
+          <p>Unidades de competencia acreditadas</p>
+        </td>
+        <td colspan="1" rowspan="1">
+          <p>Módulos profesionales convalidables</p>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="1" rowspan="1">
+          <p> </p>
+        </td>
+        <td colspan="1" rowspan="1">
+          <p> </p>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="1" rowspan="1">
+          <p>UC0219_2: Instalar y configurar el software base en sistemas microinformáticos.</p>
+        </td>
+        <td colspan="1" rowspan="1">
+          <p>0222. Sistemas operativos monopuesto.</p>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="1" rowspan="1">
+          <p>UC0958_2: Ejecutar procedimientos de administración y mantenimiento en el software base y de aplicación de clientes.</p>
+        </td>
+        <td colspan="1" rowspan="1">
+          <p>0222. Sistemas operativos monopuesto.
+0226. Seguridad Informática.</p>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="1" rowspan="1">
+          <p>UC0220_2: Instalar, configurar y verificar los elementos de la red local según procedimientos establecidos.</p>
+        </td>
+        <td colspan="1" rowspan="1">
+          <p>0225. Redes locales.</p>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="1" rowspan="1">
+          <p>UC0221_2: Instalar, configurar y mantener paquetes informáticos de propósito general y aplicaciones específicas.</p>
+        </td>
+        <td colspan="1" rowspan="1">
+          <p>0223. Aplicaciones ofimáticas.</p>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="1" rowspan="1">
+          <p>UC0222_2: Facilitar al usuario la utilización de paquetes informáticos de propósito general y aplicaciones específicas.</p>
+        </td>
+        <td colspan="1" rowspan="1">
+          <p>0223. Aplicaciones ofimáticas.</p>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="1" rowspan="1">
+          <p>UC0953_2:Montar equipos microinformáticos.</p>
+        </td>
+        <td colspan="1" rowspan="1">
+          <p>0221. Montaje y mantenimiento de equipos.</p>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="1" rowspan="1">
+          <p>UC0954_2: Reparar y ampliar equipamiento microinformático.</p>
+        </td>
+        <td colspan="1" rowspan="1">
+          <p>0221. Montaje y mantenimiento de equipos.</p>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="1" rowspan="1">
+          <p>UC0957_2: Mantener y regular el subsistema físico en sistemas informáticos.</p>
+        </td>
+        <td colspan="1" rowspan="1">
+          <p>0226. Seguridad informática.</p>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="1" rowspan="1">
+          <p>UC0955_2: Monitorizar los procesos de comunicaciones de la red local.
+UC0956_2: Realizar los procesos de conexión entre redes privadas y redes públicas.</p>
+        </td>
+        <td colspan="1" rowspan="1">
+          <p>0227. Servicios en red.</p>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="1" rowspan="1">
+          <p>UC0959_2: Mantener la seguridad de los subsistemas  físicos y lógicos en sistemas informáticos.</p>
+        </td>
+        <td colspan="1" rowspan="1">
+          <p>0226. Seguridad informática.</p>
+        </td>
+      </tr>
+    </table>
+<table>
+      <tr>
+        <td colspan="2" rowspan="1">
+          <p>Anexo V B)
+</p>
+          <p>Correspondencia de los módulos profesionales con las unidades de competencia para su acreditación</p>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="1" rowspan="1">
+          <p>Unidades de competencia acreditadas</p>
+        </td>
+        <td colspan="1" rowspan="1">
+          <p>Módulos profesionales convalidables</p>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="1" rowspan="1">
+          <p> </p>
+        </td>
+        <td colspan="1" rowspan="1">
+          <p> </p>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="1" rowspan="1">
+          <p>0222. Sistemas operativos monopuesto.</p>
+        </td>
+        <td colspan="1" rowspan="1">
+          <p>UC0219_2: Instalar y configurar el software base en sistemas microinformáticos.</p>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="1" rowspan="1">
+          <p>0223. Aplicaciones Ofimáticas.</p>
+        </td>
+        <td colspan="1" rowspan="1">
+          <p>UC0222_2: Facilitar al usuario la utilización de paquetes informáticos de propósito general y aplicaciones específicas.
+UC0221_2: Instalar, configurar y mantener paquetes informáticos de propósito general y aplicaciones específicas.</p>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="1" rowspan="1">
+          <p>0222. Sistemas operativos monopuesto.
+0226. Seguridad informática.</p>
+        </td>
+        <td colspan="1" rowspan="1">
+          <p>UC0958_2: Ejecutar procedimientos de administración y mantenimiento en el software base y de aplicación de cliente.</p>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="1" rowspan="1">
+          <p>0225. Redes locales.</p>
+        </td>
+        <td colspan="1" rowspan="1">
+          <p>UC0220_2: Instalar, configurar y verificar los elementos de la red local según procedimientos establecidos.</p>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="1" rowspan="1">
+          <p>0225. Redes locales.
+0227. Servicios en red.</p>
+        </td>
+        <td colspan="1" rowspan="1">
+          <p>UC0955_2: Monitorizar los procesos de comunicaciones de la red local.</p>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="1" rowspan="1">
+          <p>0227. Servicios en red.</p>
+        </td>
+        <td colspan="1" rowspan="1">
+          <p>UC0956_2: Realizar los procesos de conexión entre redes privadas y redes públicas.</p>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="1" rowspan="1">
+          <p>0226. Seguridad informática.</p>
+        </td>
+        <td colspan="1" rowspan="1">
+          <p>UC0959_2: Mantener la seguridad de los subsistemas físicos y lógicos en sistemas informáticos.</p>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="1" rowspan="1">
+          <p>0221. Montaje y mantenimiento de equipos.
+0226. Seguridad informática.</p>
+        </td>
+        <td colspan="1" rowspan="1">
+          <p>UC0957_2: Mantener y regular el subsistema físico en sistemas informáticos.</p>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="1" rowspan="1">
+          <p>0221. Montaje y mantenimiento de equipos.</p>
+        </td>
+        <td colspan="1" rowspan="1">
+          <p>UC0954_2: Reparar y ampliar equipamiento microinformático.
+UC0953_2: Montar equipos microinformáticos.</p>
+        </td>
+      </tr>
+    </table>
+  </texto>
+</documento>

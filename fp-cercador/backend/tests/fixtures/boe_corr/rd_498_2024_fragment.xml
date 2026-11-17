@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Fragment of https://www.boe.es/diario_boe/xml.php?id=BOE-A-2024-10683 (plan 091 test fixture) -->
+<documento>
+  <metadatos>
+    <identificador>BOE-A-2024-10683</identificador>
+    <rango codigo="1340">Real Decreto</rango>
+    <fecha_disposicion>20240521</fecha_disposicion>
+    <numero_oficial>498/2024</numero_oficial>
+    <titulo>Real Decreto 498/2024, de 21 de mayo, por el que se modifican determinados reales decretos por los que se establecen títulos de Formación Profesional de grado básico y se fijan sus enseñanzas mínimas.</titulo>
+    </metadatos>
+  <analisis><referencias><anteriores>
+</anteriores></referencias></analisis>
+  <texto>
+<p class="parrafo">Artículo noveno. Modificación del apartado relativo a correspondencia entre módulos profesionales y unidades de competencia.</p>
+<p class="articulo"><strong>Artículo noveno.</strong> Modificación del apartado relativo a correspondencia entre módulos profesionales y unidades de competencia.</p>
+<p class="parrafo">Uno. En el Real Decreto 127/2014, de 28 de febrero, por el que se regulan aspectos específicos de la Formación Profesional Básica de las enseñanzas de Formación Profesional del sistema educativo, se aprueban catorce títulos profesionales básicos, se fijan sus currículos básicos y se modifica el Real Decreto 1850/2009, de 4 de diciembre, sobre expedición de títulos académicos y profesionales correspondientes a las enseñanzas establecidas en la Ley Orgánica 2/2006, de 3 de mayo, de Educación, se añade un nuevo apartado 6 bis al anexo I, con la siguiente redacción:</p>
+<p class="parrafo_2">«6 bis. Correspondencia de las unidades de competencia acreditadas con los módulos profesionales para su convalidación.</p>
+<table class="tabla_ancha">
+        <colgroup>
+          <col width="69%"/>
+          <col width="31%"/>
+        </colgroup>
+        <thead>
+          <tr>
+            <th class="cabeza_tabla">Unidades de competencia acreditadas</th>
+            <th class="cabeza_tabla">Módulos profesionales convalidables</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="cuerpo_tabla_izq">UC0973_1: Introducir datos y textos en terminales informáticos en condiciones de seguridad, calidad y eficiencia.</td>
+            <td class="cuerpo_tabla_izq">3001. Tratamiento informático de datos.</td>
+          </tr>
+          <tr>
+            <td class="cuerpo_tabla_izq">UC0974_1: Realizar operaciones básicas de tratamiento de datos y textos, y confección de documentación.</td>
+            <td class="cuerpo_tabla_izq">3002. Aplicaciones básicas de ofimática.</td>
+          </tr>
+          <tr>
+            <td class="cuerpo_tabla_izq">UC0969_1: Realizar e integrar operaciones de apoyo administrativo básico.</td>
+            <td class="cuerpo_tabla_izq">3003. Técnicas administrativas básicas.</td>
+          </tr>
+          <tr>
+            <td class="cuerpo_tabla_izq">
+              <p class="cuerpo_tabla_izq">UC0970_1: Transmitir y recibir información operativa en gestiones rutinarias con agentes externos de la organización.</p>
+              <p class="cuerpo_tabla_izq">UC0971_1: Realizar operaciones auxiliares de reproducción y archivo en soporte convencional o informático.</p>
+            </td>
+            <td class="cuerpo_tabla_izq">3004. Archivo y comunicación.</td>
+          </tr>
+          <tr>
+            <td class="cuerpo_tabla_izq">UC1329_1: Proporcionar atención e información operativa, estructurada y protocolarizada al cliente.</td>
+            <td class="cuerpo_tabla_izq">3005. Atención al cliente.</td>
+          </tr>
+          <tr>
+            <td class="cuerpo_tabla_izq">UC1326_1: Preparar pedidos de forma eficaz y eficiente, siguiendo procedimientos establecidos.</td>
+            <td class="cuerpo_tabla_izq">3006. Preparación de pedidos y venta de productos.»</td>
+          </tr>
+        </tbody>
+      </table>
+<p class="parrafo_2">Trece. En el Real Decreto 127/2014, de 28 de febrero, por el que se regulan aspectos específicos de la Formación Profesional Básica de las enseñanzas de Formación Profesional del sistema educativo, se aprueban catorce títulos profesionales básicos, se fijan sus currículos básicos y se modifica el Real Decreto 1850/2009, de 4 de diciembre, sobre expedición de títulos académicos y profesionales correspondientes a las enseñanzas establecidas en la Ley Orgánica 2/2006, de 3 de mayo, de Educación, se modifica el apartado 6 del anexo XIII y se añade un nuevo apartado 6 bis, quedando redactados como sigue:</p>
+<p class="parrafo_2">«6. Correspondencia de las unidades de competencia acreditadas con los módulos profesionales para su convalidación.</p>
+<table class="tabla_ancha">
+        <colgroup>
+          <col width="69%"/>
+          <col width="31%"/>
+        </colgroup>
+        <thead>
+          <tr>
+            <th class="cabeza_tabla">Unidades de competencia acreditadas</th>
+            <th class="cabeza_tabla">Módulos profesionales convalidables</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="cuerpo_tabla_izq">
+              <p class="cuerpo_tabla_izq">UC2346_1: Realizar operaciones de cosido y unión de piezas.</p>
+              <p class="cuerpo_tabla_izq">UC2347_1: Realizar actividades auxiliares de confección.</p>
+            </td>
+            <td class="cuerpo_tabla_izq">3077. Materiales y productos textiles.</td>
+          </tr>
+          <tr>
+            <td class="cuerpo_tabla_izq">
+              <p class="cuerpo_tabla_izq">UC0429_1: Realizar el desguarnecido, preparación y montado del tapizado en mobiliario.</p>
+              <p class="cuerpo_tabla_izq">UC0428_1: Atender al cliente y realizar el aprovisionamiento para procesos de tapizado.</p>
+            </td>
+            <td class="cuerpo_tabla_izq">3078. Tapizado de muebles.</td>
+          </tr>
+          <tr>
+            <td class="cuerpo_tabla_izq">UC0430_1: Realizar el enmarcado, guarnecido y entelado de paredes, y tapizado de paneles murales.</td>
+            <td class="cuerpo_tabla_izq">3099. Tapizado de murales y entelado de superficies.</td>
+          </tr>
+          <tr>
+            <td class="cuerpo_tabla_izq">
+              <p class="cuerpo_tabla_izq">UC2346_1: Realizar operaciones de cosido y unión de piezas.</p>
+              <p class="cuerpo_tabla_izq">UC2347_1: Realizar actividades auxiliares de confección.</p>
+            </td>
+            <td class="cuerpo_tabla_izq">3100. Confección y montaje de cortinas y estores.</td>
+          </tr>
+          <tr>
+            <td class="cuerpo_tabla_izq">
+              <p class="cuerpo_tabla_izq">UC2346_1: Realizar operaciones de cosido y unión de piezas.</p>
+              <p class="cuerpo_tabla_izq">UC2347_1: Realizar actividades auxiliares de confección.</p>
+            </td>
+            <td class="cuerpo_tabla_izq">3101. Confección de artículos textiles para decoración.</td>
+          </tr>
+          <tr>
+            <td class="cuerpo_tabla_izq">UC1329_1: Proporcionar atención e información operativa, estructurada y protocolarizada al cliente.</td>
+            <td class="cuerpo_tabla_izq">3005. Atención al cliente.</td>
+          </tr>
+        </tbody>
+      </table>
+<p class="parrafo_2">6 bis. Correspondencia entre módulos profesionales y unidades de competencia para su acreditación.</p>
+<table class="tabla_ancha">
+        <colgroup>
+          <col width="31%"/>
+          <col width="69%"/>
+        </colgroup>
+        <thead>
+          <tr>
+            <th class="cabeza_tabla">Módulos profesionales superados</th>
+            <th class="cabeza_tabla">Unidades de competencia acreditables</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="cuerpo_tabla_izq">3077. Materiales y productos textiles.</td>
+            <td class="cuerpo_tabla_izq">
+              <p class="cuerpo_tabla_izq">UC2346_1: Realizar operaciones de cosido y unión de piezas.</p>
+              <p class="cuerpo_tabla_izq">UC2347_1: Realizar actividades auxiliares de confección.</p>
+            </td>
+          </tr>
+          <tr>
+            <td class="cuerpo_tabla_izq">3078. Tapizado de muebles.</td>
+            <td class="cuerpo_tabla_izq">
+              <p class="cuerpo_tabla_izq">UC0429_1: Realizar el desguarnecido, preparación y montado del tapizado en mobiliario.</p>
+              <p class="cuerpo_tabla_izq">UC0428_1: Atender al cliente y realizar el aprovisionamiento para procesos de tapizado.</p>
+            </td>
+          </tr>
+          <tr>
+            <td class="cuerpo_tabla_izq">3099. Tapizado de murales y entelado de superficies.</td>
+            <td class="cuerpo_tabla_izq">UC0430_1: Realizar el enmarcado, guarnecido y entelado de paredes, y tapizado de paneles murales.</td>
+          </tr>
+          <tr>
+            <td class="cuerpo_tabla_izq">3100. Confección y montaje de cortinas y estores.</td>
+            <td class="cuerpo_tabla_izq">
+              <p class="cuerpo_tabla_izq">UC2346_1: Realizar operaciones de cosido y unión de piezas.</p>
+              <p class="cuerpo_tabla_izq">UC2347_1: Realizar actividades auxiliares de confección.</p>
+            </td>
+          </tr>
+          <tr>
+            <td class="cuerpo_tabla_izq">3101. Confección de artículos textiles para decoración.</td>
+            <td class="cuerpo_tabla_izq">
+              <p class="cuerpo_tabla_izq">UC2346_1: Realizar operaciones de cosido y unión de piezas.</p>
+              <p class="cuerpo_tabla_izq">UC2347_1: Realizar actividades auxiliares de confección.</p>
+            </td>
+          </tr>
+          <tr>
+            <td class="cuerpo_tabla_izq">3005. Atención al cliente.</td>
+            <td class="cuerpo_tabla_izq">UC1329_1: Proporcionar atención e información operativa, estructurada y protocolarizada al cliente.»</td>
+          </tr>
+        </tbody>
+      </table>
+  </texto>
+</documento>

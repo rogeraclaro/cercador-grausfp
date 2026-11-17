@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Fragment of https://www.boe.es/diario_boe/xml.php?id=BOE-A-2008-645 (plan 091 test fixture) -->
+<documento>
+  <metadatos>
+    <identificador>BOE-A-2008-645</identificador>
+    <rango codigo="1340">Real Decreto</rango>
+    <fecha_disposicion>20071214</fecha_disposicion>
+    <numero_oficial>1685/2007</numero_oficial>
+    <titulo>Real Decreto 1685/2007, de 14 de diciembre, por el que se establece el título de Técnico Superior en Audiología Protésica y se fijan sus enseñanzas mínimas.</titulo>
+    </metadatos>
+  <analisis><referencias><anteriores>
+</anteriores></referencias></analisis>
+  <texto>
+<table>
+      <tr>
+        <td colspan="2" rowspan="1">
+          <p>Anexo V A)
+</p>
+          <p>Correspondencia de las unidades de competencia acreditadas de acuerdo a lo establecido en el Artículo 8 de la Ley Orgánica 5/2002, de 19 de junio, con los módulos profesionales para su convalidación</p>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="1" rowspan="1">
+          <p>Unidades de competencia acreditadas</p>
+        </td>
+        <td colspan="1" rowspan="1">
+          <p>Módulos profesionales convalidables</p>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="1" rowspan="1">
+          <p> </p>
+        </td>
+        <td colspan="1" rowspan="1">
+          <p> </p>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="1" rowspan="1">
+          <p>UC0382_3: Gestionar un gabinete audioprotésico. </p>
+        </td>
+        <td colspan="1" rowspan="1">
+          <p>0208. Empresa e iniciativa emprendedora.</p>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="1" rowspan="1">
+          <p>UC0383_3: Analizar las características anatomosensoriales auditivas. </p>
+        </td>
+        <td colspan="1" rowspan="1">
+          <p>0199. Características anatomosensoriales auditivas.</p>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="1" rowspan="1">
+          <p>UC0384_3: Seleccionar y adaptar prótesis auditivas. </p>
+        </td>
+        <td colspan="1" rowspan="1">
+          <p>0203. Elección y adaptación de prótesis auditivas.</p>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="1" rowspan="1">
+          <p>UC0385_3: Elaborar adaptadores anatómicos, protectores y prótesis auditivas. </p>
+        </td>
+        <td colspan="1" rowspan="1">
+          <p>0202. Elaboración de moldes y protectores auditivos.</p>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="1" rowspan="1">
+          <p>UC0386_3: Reparar prótesis auditivas.</p>
+        </td>
+        <td colspan="1" rowspan="1">
+          <p>0200. Tecnología electrónica en audioprótesis.</p>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="1" rowspan="1">
+          <p>UC0387_3: Medir niveles sonoros y recomendar protecciones contra el ruido. </p>
+        </td>
+        <td colspan="1" rowspan="1">
+          <p>0201. Acústica y elementos de protección sonora.</p>
+        </td>
+      </tr>
+    </table>
+<table>
+      <tr>
+        <td colspan="2" rowspan="1">
+          <p>Anexo V B)
+</p>
+          <p>Correspondencia de los módulos profesionales con las unidades de competencia para su acreditación</p>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="1" rowspan="1">
+          <p>Módulos profesionales superados</p>
+        </td>
+        <td colspan="1" rowspan="1">
+          <p>Unidades de competencia acreditables</p>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="1" rowspan="1">
+          <p> </p>
+        </td>
+        <td colspan="1" rowspan="1">
+          <p> </p>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="1" rowspan="1">
+          <p>0199. Características anatomosensoriales auditivas. </p>
+        </td>
+        <td colspan="1" rowspan="1">
+          <p>UC0383_3: Analizar las características anatomosensoriales auditivas.</p>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="1" rowspan="1">
+          <p>0200. Tecnología electrónica en audioprótesis.</p>
+        </td>
+        <td colspan="1" rowspan="1">
+          <p>UC0386_3: Reparar prótesis auditivas.</p>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="1" rowspan="1">
+          <p>0201. Acústica y elementos de protección sonora.</p>
+        </td>
+        <td colspan="1" rowspan="1">
+          <p>UC0387_3: Medir niveles sonoros y recomendar protecciones contra el ruido.</p>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="1" rowspan="1">
+          <p>0202 Elaboración de moldes y protectores auditivos.</p>
+        </td>
+        <td colspan="1" rowspan="1">
+          <p>UC0385_3: Elaborar adaptadores anatómicos, protectores y prótesis auditivas.</p>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="1" rowspan="1">
+          <p>0203. Elección y adaptación de prótesis auditivas.</p>
+        </td>
+        <td colspan="1" rowspan="1">
+          <p>UC0384_3: Seleccionar y adaptar prótesis auditivas.</p>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="1" rowspan="1">
+          <p>0208. Empresa e iniciativa emprendedora.</p>
+        </td>
+        <td colspan="1" rowspan="1">
+          <p>UC0382_3: Gestionar un gabinete audioprotésico.</p>
+        </td>
+      </tr>
+    </table>
+  </texto>
+</documento>
