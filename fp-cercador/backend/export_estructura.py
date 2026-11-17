@@ -8,7 +8,7 @@ import io
 CERT_HEADER = ['Codi certificat', 'Nom certificat', 'Nivell', 'Família', 'Hores certificat',
                'Codi MF', 'Nom MF', 'Hores MF', 'UC', 'Codi UF', 'Nom UF', 'Hores UF', 'Transversal']
 CYCLE_HEADER = ['Ref cicle', 'Nom cicle', 'Nivell', 'Família', 'Codi mòdul', 'Nom mòdul',
-                'UC que el convaliden', 'Certificats LOE', 'Decret']
+                'UC', 'Grup d\'UC que el convalida', 'Certificats LOE del grup', 'Decret']
 MP_NAME = 'Mòdul de pràctiques professionals no laborals'
 _FORMULA_START = ('=', '+', '-', '@')
 
@@ -89,17 +89,22 @@ def cert_rows_lomloe(cert: dict, modules: list[dict], children_a) -> list[list]:
 
 def cycle_rows(cycle: dict, modules: list[dict], entry: dict, certs_with_all) -> list[list]:
     """
-    Una fila per mòdul del cicle: les UC que el convaliden (cada fila de la taula A separada per
-    « | », les UC d'una fila amb « + ») i els certificats LOE que les porten totes.
+    Una fila per mòdul del cicle i per UC que el convalida (clau per creuar amb la columna UC del
+    fitxer de certificats). «Grup d'UC» conserva la fila de la taula A (les UC d'un grup s'han
+    de tenir totes: separades per « + ») i els certificats LOE que les porten totes.
+    Un mòdul sense cap UC a les taules dona una sola fila amb aquestes columnes buides.
     certs_with_all(ucs) → [{codigo, …}].
     """
     head = [cycle.get('ref'), cycle.get('denominacion'), cycle.get('nivel'), cycle.get('familia')]
     decret = entry.get('vigent') or entry.get('decret')  # decret de la taula en vigor (convalida)
     rows = []
     for m in modules:
-        matching = [r['uc'] for r in entry.get('convalida') or []
-                    if m['num'] and any(x['num'] == m['num'] for x in r['moduls'])]
-        certs = list(dict.fromkeys(c['codigo'] for ucs in matching for c in certs_with_all(ucs)))
-        rows.append(head + [m['num'], m['name'], ' | '.join(' + '.join(u) for u in matching),
-                            ', '.join(certs), decret])
+        groups = [r['uc'] for r in entry.get('convalida') or []
+                  if m['num'] and any(x['num'] == m['num'] for x in r['moduls'])]
+        base = head + [m['num'], m['name']]
+        if not groups:
+            rows.append(base + [None, None, None, decret])
+        for ucs in groups:
+            certs = ', '.join(c['codigo'] for c in certs_with_all(ucs))
+            rows += [base + [uc, ' + '.join(ucs), certs, decret] for uc in ucs]
     return rows

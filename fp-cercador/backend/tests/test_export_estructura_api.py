@@ -99,12 +99,14 @@ def test_certificat_lomloe_files_per_a(client):
     assert rows[1][5:] == ['ELE_B_3001', 'Mòdul B nou', '', '', 'ELE_A_3001_01', 'Unitat A nova', '', 'no']
 
 
-def test_cicle_moduls_amb_uc_i_certificats(client):
+def test_cicle_una_fila_per_modul_i_uc(client):
     rows = _csv(client.get('/api/export/estructura', query_string={'refs': REF_TEL}))
-    assert rows[0][0] == 'Ref cicle'
-    assert rows[1][4:] == ['0362', 'Instalaciones eléctricas básicas', 'UC0820_2 + UC0821_2', 'ELEE0109',
-                           'BOE-A-2009-1']
-    assert rows[2][4:6] == ['', 'Electrónica']
+    assert rows[0][4:] == ['Codi mòdul', 'Nom mòdul', 'UC', "Grup d'UC que el convalida",
+                           'Certificats LOE del grup', 'Decret']
+    assert [r[4:] for r in rows[1:3]] == [
+        ['0362', 'Instalaciones eléctricas básicas', uc, 'UC0820_2 + UC0821_2', 'ELEE0109', 'BOE-A-2009-1']
+        for uc in ('UC0820_2', 'UC0821_2')]
+    assert rows[3][4:] == ['', 'Electrónica', '', '', '', 'BOE-A-2009-1']  # mòdul sense UC: una fila
 
 
 @pytest.mark.parametrize('refs,status', [
