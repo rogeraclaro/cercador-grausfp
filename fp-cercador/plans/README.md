@@ -103,7 +103,7 @@ amb quins prerequisits i quins passos manuals calen al servidor.
 | 087 | Cerca compartible (filtres a l'adreça) i «Volies dir…» | P2 | M | — | DONE |
 | 088 | Pàgines de família enriquides (xifres, novetats, sortides, centres, FPO) | P3 | M | 077 DONE (millor després de 087 i 086) | DONE |
 | 089 | «Reporta un error en aquesta fitxa» (suggeriments amb el grau identificat) | P3 | S | 069, 076 DONE | DONE |
-| 090 | Corregir `bc_loe.json`: UC d'altres certificats enganxades (140 certificats LOE, 399 enllaços falsos) | P1 | S | — | DONE (2026-11-17; **no desplegat**: cal copiar `bc_loe.json` al VPS) |
+| 090 | Corregir `bc_loe.json`: UC d'altres certificats enganxades (140 certificats LOE, 399 enllaços falsos) | P1 | S | — | DONE i desplegat el 2026-11-17 (prod `1482d6c` + `bc_loe.json` copiat al VPS) |
 | 091 | Correspondència UC ↔ mòdul professional des del BOE (dades i API) | P1 | M-L | 090 | TODO |
 | 092 | Correspondència certificat ↔ mòduls de cicle a la web (itinerari, fitxa, «Què em falta?») | P2 | M | 090, 091 | TODO |
 | 093 | Exportació relacional: certificat–MF–UF amb hores i cicle–mòdul–UC | P2 | M | 090 (cicles: 091) | TODO |

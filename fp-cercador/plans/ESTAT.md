@@ -44,12 +44,13 @@ La primera vegada, `--discover` triga ~20 min; després va de la memòria cau.
 - Origen: dos correus d'un usuari (docent d'FPO) que demanava enllaçar els MF dels certificats amb els
   mòduls dels cicles i poder-ho baixar en Excel. En contrastar dades amb els annexos oficials va sortir
   un error nostre.
-- **Pla 090: fet el 2026-11-17, no desplegat.** `bc_loe.json` regenerat en local: 140 certificats perden
+- **Pla 090: fet i desplegat el 2026-11-17** (prod `1482d6c`). `bc_loe.json` regenerat en local: 140 certificats perden
   399 UC que eren d'un altre annex, 6 en guanyen 15 (EOCH0108, MAPU0112 i QUIB0108, escanejats, i QUIE0108,
   TMVI0112, FMEM0311) i 4 claus de certificats que ja no són al catàleg desapareixen. Font: annex en 516,
   llista del SEPE en 59, cap en 5 (els de sufix `_N`, sense annex). Informe: `plans/outputs/audit_bc_loe.md`.
-  - Per desplegar: `git pull` al VPS **i copiar `backend/data/bc_loe.json`** (és fora del git). Còpia de
-    l'anterior en local: `backend/data/bc_loe.json.bak-pre090`.
+  - Desplegat sense reiniciar (l'aplicació rellegeix `bc_loe.json` quan en canvia la data). Còpia de
+    l'anterior al VPS: `/root/bc_loe.json.bak-20261117-pre090`; en local, `backend/data/bc_loe.json.bak-pre090`.
+    Verificat a producció: ELEM0311 → MF1978_2 i MF1979_2; MF1975_2 → només ELEM0411; MAPU0112 → 3 mòduls.
   - No dispara correus de seguiment de centres: a producció hi ha 4 seguiments actius (comprovat el
     2026-11-17, només lectura) i cap és d'un mòdul B o A LOE.
   - Decisions preses en executar (revisables): els codis surten de les capçaleres `Código: MF####_N` i no de
