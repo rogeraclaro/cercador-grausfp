@@ -156,6 +156,17 @@
       border-radius: 3px;
     }
 
+    .err-table td:first-child {
+      width: 34%;
+      font-weight: 400;
+    }
+
+    .err-table td:nth-child(2),
+    .err-table td:nth-child(3),
+    .err-table td:nth-child(5) {
+      white-space: nowrap;
+    }
+
     .table-scroll {
       overflow-x: auto;
       margin: 12px 0 24px;
@@ -192,7 +203,7 @@
     }
 
   </style>
-  <script src="i18n.js?v=20261117b"></script>
+  <script src="i18n.js?v=20261118"></script>
   <script src="auth.js?v=20261117b"></script>
 </head>
 
@@ -218,7 +229,7 @@
 
   <main class="content">
 
-    <p data-i18n="fonts.intro.p1">Totes les dades del cercador provenen de <strong>fonts públiques i oficials</strong> de l'Administració General de l'Estat. Cap dada s'introdueix manualment: el sistema llegeix automàticament les fonts que es descriuen a continuació i les consolida en un únic índex.</p>
+    <p data-i18n="fonts.intro.p1">Totes les dades del cercador provenen de <strong>fonts públiques i oficials</strong> de l'Administració General de l'Estat. Cap dada s'introdueix manualment, llevat de les correccions documentades a <a href="#errors">Errors coneguts a les fonts oficials</a>: el sistema llegeix automàticament les fonts que es descriuen a continuació i les consolida en un únic índex.</p>
     <p data-i18n="fonts.intro.p2">El marc de referència és la <strong>Llei Orgànica 3/2022</strong>, d'ordenació i integració de la Formació Professional, que estableix els Graus A, B, C, D i E i el catàleg de famílies professionals.</p>
 
     <h2 data-i18n="fonts.s1.h2">Ministeri d'Educació, Formació Professional i Esports</h2>
@@ -286,6 +297,167 @@
       </tbody>
     </table>
     </div>
+
+    <h2 id="errors" data-i18n="fonts.err.h2">Errors coneguts a les fonts oficials</h2>
+    <p data-i18n="fonts.err.p1">Les fonts oficials també s'equivoquen. Quan dues es contradiuen, comprovem el text del reial decret al BOE i mostrem la xifra del decret. Les d'aquest apartat són les úniques dades del cercador corregides a mà, i cada correcció deixa d'aplicar-se sola si el Ministeri esmena la seva xifra.</p>
+    <p data-i18n="fonts.err.p2"><strong>Buscador de Certificados de Profesionalidad: durada en hores.</strong> A la columna «Duración» del llistat de resultats del <a href="https://www.todofp.es/buscadorcertificados/buscador" target="_blank" rel="noopener">buscador de certificats de todofp.es</a>, 20 dels 588 certificats porten una durada total que no és la del reial decret que els regula. Ho hem contrastat amb l'annex de cada decret, amb la llista de certificats del SEPE i amb el BOE (revisió del 18 de novembre de 2026). El cercador mostra la xifra de la columna «Hores correctes».</p>
+    <!-- Una fila per entrada de backend/c_horas_overrides.json (ho comprova tests/test_c_horas_overrides.py). -->
+    <div class="table-scroll">
+    <table class="src-table err-table">
+      <thead>
+        <tr>
+          <th data-i18n="fonts.err.th.cert">Certificat</th>
+          <th data-i18n="fonts.err.th.bus">Hores al buscador de todofp</th>
+          <th data-i18n="fonts.err.th.ok">Hores correctes</th>
+          <th data-i18n="fonts.err.th.motiu">Què falla</th>
+          <th data-i18n="fonts.err.th.norma">Norma</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>ADGN0110</code> Gestión comercial y técnica de seguros y reaseguros privados</td>
+          <td>690 h</td>
+          <td>730 h</td>
+          <td data-i18n="fonts.err.m.erroni">La xifra no és la del reial decret ni la suma dels seus mòduls.</td>
+          <td>RD 610/2013</td>
+        </tr>
+        <tr>
+          <td><code>ADGN0210</code> Mediación de seguros y reaseguros privados y actividades auxiliares</td>
+          <td>600 h</td>
+          <td>730 h</td>
+          <td data-i18n="fonts.err.m.erroni">La xifra no és la del reial decret ni la suma dels seus mòduls.</td>
+          <td>RD 610/2013</td>
+        </tr>
+        <tr>
+          <td><code>AFDA0210</code> Acondicionamiento físico en sala de entrenamiento polivalente</td>
+          <td>620 h</td>
+          <td>590 h</td>
+          <td data-i18n="fonts.err.m.transversal">Suma més d'una vegada les unitats formatives transversals, que es repeteixen en diversos mòduls.</td>
+          <td>RD 1518/2011</td>
+        </tr>
+        <tr>
+          <td><code>AFDA0311</code> Instrucción en yoga</td>
+          <td>610 h</td>
+          <td>550 h</td>
+          <td data-i18n="fonts.err.m.erroni">La xifra no és la del reial decret ni la suma dels seus mòduls.</td>
+          <td>RD 1076/2012</td>
+        </tr>
+        <tr>
+          <td><code>AGAN0411</code> Producción de animales cinegéticos</td>
+          <td>400 h</td>
+          <td>450 h</td>
+          <td data-i18n="fonts.err.m.erroni">La xifra no és la del reial decret ni la suma dels seus mòduls.</td>
+          <td>RD 627/2013</td>
+        </tr>
+        <tr>
+          <td><code>AGAR0109</code> Gestión de repoblaciones forestales y de tratamientos silvícolas</td>
+          <td>640 h</td>
+          <td>610 h</td>
+          <td data-i18n="fonts.err.m.transversal">Suma més d'una vegada les unitats formatives transversals, que es repeteixen en diversos mòduls.</td>
+          <td>RD 682/2011</td>
+        </tr>
+        <tr>
+          <td><code>ARGC0110</code> Operaciones de encuadernación industrial en rústica y tapa dura</td>
+          <td>380 h</td>
+          <td>420 h</td>
+          <td data-i18n="fonts.err.m.erroni">La xifra no és la del reial decret ni la suma dels seus mòduls.</td>
+          <td>RD 1520/2011</td>
+        </tr>
+        <tr>
+          <td><code>ARGT0109</code> Troquelado</td>
+          <td>420 h</td>
+          <td>330 h</td>
+          <td data-i18n="fonts.err.m.erroni">La xifra no és la del reial decret ni la suma dels seus mòduls.</td>
+          <td>RD 712/2011</td>
+        </tr>
+        <tr>
+          <td><code>ARGT0112</code> Gestión de la producción en transformados de papel, cartón y otros soportes gráficos</td>
+          <td>520 h</td>
+          <td>630 h</td>
+          <td data-i18n="fonts.err.m.erroni">La xifra no és la del reial decret ni la suma dels seus mòduls.</td>
+          <td>RD 984/2013</td>
+        </tr>
+        <tr>
+          <td><code>COML0109</code> Tráfico de mercancías por carretera</td>
+          <td>550 h</td>
+          <td>520 h</td>
+          <td data-i18n="fonts.err.m.transversal">Suma més d'una vegada les unitats formatives transversals, que es repeteixen en diversos mòduls.</td>
+          <td>RD 642/2011</td>
+        </tr>
+        <tr>
+          <td><code>COML0309</code> Organización y gestión de almacenes</td>
+          <td>420 h</td>
+          <td>390 h</td>
+          <td data-i18n="fonts.err.m.transversal">Suma més d'una vegada les unitats formatives transversals, que es repeteixen en diversos mòduls.</td>
+          <td>RD 642/2011</td>
+        </tr>
+        <tr>
+          <td><code>ENAT0108</code> Montaje y mantenimiento de redes de agua</td>
+          <td>480 h</td>
+          <td>450 h</td>
+          <td data-i18n="fonts.err.m.erroni">La xifra no és la del reial decret ni la suma dels seus mòduls.</td>
+          <td>RD 1381/2008</td>
+        </tr>
+        <tr>
+          <td><code>EOCB0208</code> Operaciones auxiliares de albañilería de fábricas y cubiertas</td>
+          <td>360 h</td>
+          <td>320 h</td>
+          <td data-i18n="fonts.err.m.erroni">La xifra no és la del reial decret ni la suma dels seus mòduls.</td>
+          <td>RD 644/2011</td>
+        </tr>
+        <tr>
+          <td><code>EOCE0109</code> Levantamientos y replanteos</td>
+          <td>780 h</td>
+          <td>600 h</td>
+          <td data-i18n="fonts.err.m.transversal">Suma més d'una vegada les unitats formatives transversals, que es repeteixen en diversos mòduls.</td>
+          <td>RD 644/2011</td>
+        </tr>
+        <tr>
+          <td><code>IMSV0308</code> Cámara de cine, vídeo y televisión</td>
+          <td>540 h</td>
+          <td>630 h</td>
+          <td data-i18n="fonts.err.m.erroni">La xifra no és la del reial decret ni la suma dels seus mòduls.</td>
+          <td>RD 725/2011</td>
+        </tr>
+        <tr>
+          <td><code>IMSV0408</code> Asistencia a la dirección cinematográfica y de obras audiovisuales</td>
+          <td>630 h</td>
+          <td>440 h</td>
+          <td data-i18n="fonts.err.m.erroni">La xifra no és la del reial decret ni la suma dels seus mòduls.</td>
+          <td>RD 725/2011</td>
+        </tr>
+        <tr>
+          <td><code>MAPN0111</code> Pesca local</td>
+          <td>440 h</td>
+          <td>390 h</td>
+          <td data-i18n="fonts.err.m.erroni">La xifra no és la del reial decret ni la suma dels seus mòduls.</td>
+          <td>RD 1774/2011</td>
+        </tr>
+        <tr>
+          <td><code>MAPN0210</code> Actividades en pesca en palangre, arrastre y cerco, y en transporte marítimo</td>
+          <td>310 h</td>
+          <td>320 h</td>
+          <td data-i18n="fonts.err.m.modificat">No recull la modificació posterior del certificat.</td>
+          <td>RD 622/2013</td>
+        </tr>
+        <tr>
+          <td><code>MAPN0310</code> Amarre de puerto y monoboyas</td>
+          <td>230 h</td>
+          <td>210 h</td>
+          <td data-i18n="fonts.err.m.modificat">No recull la modificació posterior del certificat.</td>
+          <td>RD 622/2013, RD 988/2013</td>
+        </tr>
+        <tr>
+          <td><code>MAPN0712</code> Operaciones portuarias de carga, estiba, descarga, desestiba y transbordo</td>
+          <td>530 h</td>
+          <td>850 h</td>
+          <td data-i18n="fonts.err.m.modificat">No recull la modificació posterior del certificat.</td>
+          <td>RD 257/2019</td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+    <p data-i18n="fonts.err.p3"><strong>Annexos en PDF dels certificats.</strong> Els annexos que todofp.es publica al seu repositori de documents són el text original de cada decret: no incorporen les modificacions ni les correccions d'errors posteriors. En 9 certificats la durada total que hi consta no és la vigent o no quadra amb els seus propis mòduls: MAPN0210, MAPN0310 i MAPN0712 (a la taula) i ADGD0208, ARTB0112, IEXM0509, IFCT0610, MAPN0110 i SSCE0112, en què el buscador sí que dona la xifra bona.</p>
 
     <h2 data-i18n="fonts.s2.h2">Registre Estatal d'Entitats de Formació de la FP</h2>
     <p class="src-host">registrosfp.educacion.gob.es</p>
