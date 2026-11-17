@@ -18,7 +18,7 @@ import json
 from urllib.parse import quote
 
 # Versions dels recursos compartits: les mateixes que a les subpàgines (fonts.html).
-I18N_VERSION = '20261115e'
+I18N_VERSION = '20261117a'
 SITE_CSS_VERSION = '6'
 FOOTER_VERSION = '3'
 FEEDBACK_VERSION = '5'
@@ -346,6 +346,23 @@ def _description(rec: dict, ctx: dict) -> str:
     return ' '.join(parts)
 
 
+def _correspondencia_html(corr: dict) -> str:
+    """Pla 092: mòduls que es convaliden amb unitats de competència acreditades (taula del BOE)."""
+    lis = ''
+    for fila in corr['files']:
+        mods = ' · '.join(f'{m["num"]} {m["name"]}' for m in fila['moduls'])
+        certs = ', '.join(f'<a href="{_e(grau_path(c["ref"]))}">{_e(c["codigo"])} {_e(c.get("denominacion") or "")}</a>'
+                          for c in fila['certs'])
+        lis += (f'<li><strong>{_e(mods)}</strong> — con <span class="code">{_e(" + ".join(fila["uc"]))}</span>'
+                + (f'. Certificados del plan antiguo que las incluyen todas: {certs}' if certs else '') + '</li>')
+    boe = f'https://www.boe.es/buscar/doc.php?id={_q(corr["vigent"])}'
+    return ('<h2>Convalidación por unidades de competencia</h2>'
+            '<p>Módulos que se convalidan a quien tiene acreditadas estas unidades de competencia, según la '
+            f'tabla de correspondencia del real decreto del título (<a href="{_e(boe)}" rel="noopener">'
+            f'{_e(corr["vigent"])}</a>). Hacen falta todas las de la fila; la convalidación la resuelve la '
+            f'administración educativa.</p><ul class="list">{lis}</ul>')
+
+
 def _contingut_html(rec: dict, contingut: dict) -> str:
     grado = rec.get('grado')
     out = []
@@ -363,6 +380,8 @@ def _contingut_html(rec: dict, contingut: dict) -> str:
     if contingut.get('modulos'):
         lis = ''.join(f'<li>{_e(m)}</li>' for m in contingut['modulos'])
         out.append(f'<h2>Módulos profesionales</h2><ul class="list">{lis}</ul>')
+    if contingut.get('correspondencia'):
+        out.append(_correspondencia_html(contingut['correspondencia']))
     if contingut.get('acceso') or contingut.get('acceso_otros'):
         lis = ''.join(_node_li(n) for n in contingut.get('acceso') or [])
         lis += ''.join(f'<li>{_e(t)}</li>' for t in contingut.get('acceso_otros') or [])

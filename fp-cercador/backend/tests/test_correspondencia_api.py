@@ -99,9 +99,10 @@ def test_cicle_dona_les_taules_i_els_moduls_amb_numero(client):
     assert (body['decret'], body['vigent']) == ('BOE-A-2008-3957', 'BOE-A-2024-10684')
     assert body['convalida'] == IEA_2024 and body['convalida_anterior'] == IEA_2008
     assert body['notes'] == ['Nota del decret.']
-    # El número surt de la taula vigent; la nota de la fitxa no és un mòdul.
+    # El número surt de les taules (vigent o substituïda); la nota de la fitxa no és un mòdul.
     assert body['moduls'][0] == {'num': '0232', 'name': 'Automatismos industriales'}
-    assert body['moduls'][1] == {'num': None, 'name': 'Instalaciones domóticas'}
+    assert body['moduls'][1] == {'num': '0238', 'name': 'Instalaciones domóticas'}
+    assert body['moduls'][7] == {'num': None, 'name': 'Electrónica'}
     assert len(body['moduls']) == 8
 
 
@@ -119,6 +120,8 @@ def test_cp_cas_de_referencia_elee0109(client):
     assert iea['moduls_convalidats'] == ['0232', '0238', '0240', '0235', '0236']
     assert iea['a_mitges'] == []
     assert (iea['moduls_cicle'], iea['moduls_pendents']) == (8, 3)
+    assert [m['name'] for m in iea['moduls_restants']] == [
+        'Instalaciones solares fotovoltaicas', 'Infraestructuras comunes de telecomunicación', 'Electrónica']
     assert iea['uc'] == ['UC0822_2', 'UC0825_2', 'UC0820_2', 'UC0821_2', 'UC0823_2', 'UC0824_2']
 
     assert tel['ref'] == REF_TEL and tel['derogada'] is False

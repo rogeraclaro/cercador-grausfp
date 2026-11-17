@@ -327,7 +327,7 @@ def test_topbar_enllaca_al_cercador_de_centres(client):
             'data-lang-href="https://centres.grausfp.es/" target="_blank" rel="noopener" '
             'data-i18n="nav.centres">') in body
     assert '/site.css?v=6"' in body
-    assert '/i18n.js?v=20261115e"' in body
+    assert '/i18n.js?v=20261117a"' in body
 
 
 CENTRES_SEARCH = 'centres.grausfp.es/es/search'
@@ -595,3 +595,16 @@ def test_la_pagina_del_grau_porta_el_ref_per_reportar_un_error(client):
     assert '/feedback.js?v=5"' in body
     assert 'error en esta ficha' not in body       # sense JavaScript, l'enllaç no surt
     assert 'data-report-ref' not in client.get('/api/familia/ADG').get_data(as_text=True)
+
+
+def test_correspondencia_del_cicle_amb_enllac_al_boe_i_als_certificats():
+    """Pla 092: taula UC → mòduls a la pàgina del cicle, tot escapat."""
+    html = grau_page._correspondencia_html({'vigent': 'BOE-A-2007-20203', 'files': [
+        {'moduls': [{'num': '0001', 'name': 'Procesos <b>de</b> mecanizado'}], 'uc': ['UC0089_2', 'UC0092_2'],
+         'certs': [{'ref': 'FMEH0109', 'codigo': 'FMEH0109', 'denominacion': 'Mecanizado & viruta'}]},
+        {'moduls': [{'num': '0002', 'name': 'Control numérico'}], 'uc': ['UC0090_2'], 'certs': []}]})
+    assert 'https://www.boe.es/buscar/doc.php?id=BOE-A-2007-20203' in html
+    assert '0001 Procesos &lt;b&gt;de&lt;/b&gt; mecanizado' in html and '<b>de</b>' not in html
+    assert 'UC0089_2 + UC0092_2' in html
+    assert '<a href="/grau/FMEH0109">FMEH0109 Mecanizado &amp; viruta</a>' in html
+    assert html.count('Certificados del plan antiguo') == 1

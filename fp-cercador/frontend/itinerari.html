@@ -350,6 +350,59 @@
     .tl-lines path.t-part, .cd-swatch .t-part { stroke-dasharray: 7 4; }
     .tl-lines path.t-old, .cd-swatch .t-old { stroke-dasharray: 1.5 4; stroke-linecap: round; }
     .tl-lines path.t-old:not(.on) { stroke: color-mix(in srgb, var(--warm) 30%, transparent); }
+    /* Pla 092: convalidació oficial (BOE) = traç llarg; taula derogada = puntejat i vermell */
+    .tl-lines path.t-boe, .cd-swatch .t-boe { stroke-dasharray: 12 3; }
+    .tl-lines path.t-derog, .cd-swatch .t-derog { stroke-dasharray: 1.5 4; stroke-linecap: round; stroke: var(--alert-ink); }
+    .tl-lines path.t-derog:not(.on) { stroke: color-mix(in srgb, var(--alert-ink) 45%, transparent); }
+
+    .derog-tag {
+      display: inline-block;
+      font-size: var(--fs-label);
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--alert-ink);
+      background: var(--alert-bg);
+      border: 1px solid var(--alert-ink);
+      border-radius: 2px;
+      padding: 1px 6px;
+    }
+    .derog-tag::before { content: '⚠ '; }
+    .derog-note {
+      margin: 10px 0;
+      padding: 10px 12px;
+      font-size: var(--fs-small);
+      color: var(--alert-ink);
+      background: var(--alert-bg);
+      border: 1px solid var(--alert-edge);
+      border-radius: 2px;
+    }
+    .derog-note a { color: inherit; }
+
+    /* Pla 092: detall de la correspondència oficial UC ↔ mòdul */
+    .corr { margin-top: 40px; max-width: 920px; }
+    .corr h2 { font-size: var(--fs-title); font-weight: 600; }
+    .corr-note { margin: 6px 0 16px; font-size: var(--fs-small); color: var(--warm); }
+    .corr-note a, .corr-source a, .corr a.cert { color: var(--dark); }
+    .corr-item { border: 1px solid var(--border); border-radius: 2px; background: var(--white); margin-bottom: 10px; }
+    .corr-item.derog { border-color: var(--alert-edge); border-left: 4px solid var(--alert-ink); }
+    .corr-item summary { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 10px; padding: 12px 16px; cursor: pointer; }
+    .corr-item summary .name { flex: 1; min-width: 14ch; font-weight: 600; overflow-wrap: anywhere; }
+    .corr-body { padding: 0 16px 14px; font-size: var(--fs-small); }
+    .corr-body h3 { margin: 12px 0 4px; font-size: var(--fs-label); font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: var(--warm); }
+    .corr-body ul { list-style: none; }
+    .corr-body li { padding: 5px 0; border-bottom: 1px dotted var(--border); overflow-wrap: anywhere; }
+    .corr-body .by { color: var(--warm); font-size: var(--fs-mono); }
+    .corr-source { margin-top: 12px; font-size: var(--fs-mono); color: var(--warm); }
+    .corr-links { display: flex; flex-wrap: wrap; gap: 6px 18px; margin-top: 10px; }
+    .corr-links a { color: var(--dark); }
+    .corr-table-wrap { overflow-x: auto; }
+    .corr-table { width: 100%; border-collapse: collapse; font-size: var(--fs-small); background: var(--white); }
+    .corr-table th, .corr-table td { text-align: left; vertical-align: top; padding: 8px 10px; border: 1px solid var(--border); overflow-wrap: anywhere; }
+    .corr-table th { font-size: var(--fs-label); font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: var(--warm); }
+    .corr-table .code { font-family: 'Geist Mono', monospace; font-size: var(--fs-mono); }
+    .corr-table td > span, .corr-table td > a { display: block; }
+    .corr-table .none { color: var(--faded); }
 
     .cd-legend { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 14px; margin-bottom: 16px; font-size: var(--fs-small); color: var(--ink-soft); }
     .cd-legend-title { font-weight: 600; }
@@ -893,8 +946,8 @@
       .t-actions { margin-left: 6px; }
     }
   </style>
-  <script src="i18n.js?v=20261115e"></script>
-  <script src="auth.js?v=20261115e"></script>
+  <script src="i18n.js?v=20261117a"></script>
+  <script src="auth.js?v=20261117a"></script>
   <script src="held.js?v=1"></script>
   <script>
     const API_BASE = window.location.hostname === 'localhost' ? 'http://localhost:5001' : '';
@@ -946,8 +999,11 @@
     // Força d'un enllaç C→D (només kind 'cd'): 'full' si el certificat cobreix tots els mòduls
     // en comú (shared === total), 'part' si només una part, 'old' si no hi ha detall (pla antic,
     // relació de ciclos_fp sense shared/total). '' per a la resta d'arestes.
+    // Pla 092: amb correspondència oficial del BOE (e.conv definit): 'boe', o 'derog' si la taula
+    // és la que un decret posterior va substituir.
     function cdTier(e) {
       if (!e || e.kind !== 'cd') return '';
+      if (e.conv != null) return e.derogada ? 'derog' : 'boe';
       if (!e.total) return 'old';
       return e.shared >= e.total ? 'full' : 'part';
     }
@@ -956,6 +1012,8 @@
     // parcial (2 + ràtio, que és < 1), pla antic (1), sense relació C→D (0).
     function cdScore(e) {
       const tier = cdTier(e);
+      if (tier === 'boe') return e.conv ? 2 + Math.min(e.conv / (e.mods || 100), 0.99) : 1.5;
+      if (tier === 'derog') return 0.5;   // les taules derogades, després de tota la resta
       return tier === 'full' ? 3 + e.shared / 1000 : tier === 'part' ? 2 + e.shared / e.total : tier === 'old' ? 1 : 0;
     }
 
@@ -1026,7 +1084,7 @@
         const tl = g.timeline({ onComplete: cleanup });
         paths.forEach((p, i) => {
           const at = Math.max(col((vm.byKey[p.dataset.from] || {}).grado), 0) * STEP;
-          if (p.classList.contains('t-part') || p.classList.contains('t-old')) {
+          if (['t-part', 't-old', 't-boe', 't-derog'].some(c => p.classList.contains(c))) {
             // Tram discontinu: pathLength reescalaria el seu patró CSS i un dasharray en línia el trepitjaria.
             // Es destapa amb una màscara (clon blanc amb pathLength=1 + dashoffset). userSpaceOnUse és obligatori:
             // amb objectBoundingBox, un tram horitzontal (caixa d'alçada 0) quedaria totalment emmascarat.
@@ -1148,6 +1206,8 @@
         // Força C→D: complet = continu (per defecte), parcial = discontinu, pla antic = puntejat i més clar
         { selector: 'edge[tier = "part"]', style: { 'line-style': 'dashed', 'line-dash-pattern': [7, 4] } },
         { selector: 'edge[tier = "old"]', style: { 'line-style': 'dotted', 'line-dash-pattern': [2, 4], opacity: 0.35 } },
+        { selector: 'edge[tier = "boe"]', style: { 'line-style': 'dashed', 'line-dash-pattern': [12, 3] } },
+        { selector: 'edge[tier = "derog"]', style: { 'line-style': 'dotted', 'line-dash-pattern': [2, 4], 'line-color': '#991b1b', 'target-arrow-color': '#991b1b' } },
         { selector: 'edge.on', style: { width: 2.5, opacity: 1, 'line-color': v('--dark'), 'target-arrow-color': v('--dark') } },
       ];
     }
@@ -1161,6 +1221,7 @@
         state: 'loading',          // loading | error | notfound | noparams | data
         query: null,               // {grado, codigo?, id?}
         focusKey: null,
+        corr: null,                // Pla 092: /api/correspondencia del focus (certificat LOE o cicle)
         nodes: [],
         edges: [],
         byKey: {},
@@ -1237,6 +1298,36 @@
 
         get focus() { return this.byKey[this.focusKey] || null; },
 
+        // ── Pla 092: correspondència oficial UC ↔ mòdul (taules del BOE) ──
+        convText(n, m) { return m ? t('corr.count', { n, m }) : t('corr.count_nototal', { n }); },
+        convCount(c) { return c.moduls_convalidats.length ? this.convText(c.moduls_convalidats.length, c.moduls_cicle) : t('corr.count.none'); },
+        modLabel(mods) { return mods.map(m => (m.num ? m.num + ' ' : '') + m.name).join(' · '); },
+        boeUrl(id) { return 'https://www.boe.es/buscar/doc.php?id=' + encodeURIComponent(id || ''); },
+        itinHref(grado, ref) { return 'itinerari.html?grado=' + grado + '&ref=' + encodeURIComponent(ref); },
+        // Certificats LOE que porten totes les UC d'una fila (els que convaliden aquells mòduls).
+        rowCerts(row) {
+          const by = (this.corr && this.corr.certificats) || {};
+          const lists = row.uc.map(u => by[u] || []);
+          return (lists[0] || []).filter(c => lists.every(l => l.some(x => x.codigo === c.codigo)));
+        },
+        get corrCicles() { return (this.corr && this.corr.cicles) || []; },
+        get corrRows() { return (this.corr && this.corr.cicle && this.corr.convalida) || []; },
+
+        // Detall per al focus: un certificat del pla antic (?cp=) o un cicle (?cicle=). Si falla, no es mostra.
+        async loadCorr(seq) {
+          this.corr = null;
+          const f = this.focus;
+          const qs = !f ? '' : f.grado === 'C' && f.plan_antiguo && f.codigo ? 'cp=' + encodeURIComponent(f.codigo)
+            : f.grado === 'D' && f.ref ? 'cicle=' + encodeURIComponent(f.ref) : '';
+          if (!qs) return;
+          try {
+            const res = await fetch(API_BASE + '/api/correspondencia?' + qs);
+            if (!res.ok) return;
+            const body = await res.json();
+            if (seq === this._seq) this.corr = body;
+          } catch (e) { /* bloc opcional */ }
+        },
+
         async load(q) {
           const seq = ++this._seq;
           this.query = q;
@@ -1252,6 +1343,7 @@
             if (seq !== this._seq) return;
             this.setData(body);
             this.state = 'data';
+            this.loadCorr(seq);
             if (!q.ref && this.focus && this.focus.ref) this.setUrl(this.focus);  // enllaç antic → ref
             document.title = this.focus.denominacion + ' — ' + t('itin.page.title');
             this.$nextTick(() => { this.renderTree(); this.redraw(); });
@@ -1529,6 +1621,9 @@
           if (tier === 'full') return { text: t('itin.shared_full', { n: e.shared, m: e.total }), cls: 'pill' };
           if (tier === 'part') return { text: t('itin.shared_part', { n: e.shared, m: e.total }), cls: 'pill part' };
           if (tier === 'old') return { text: t('itin.no_detail'), cls: 'pill old' };
+          if (tier === 'boe') return e.conv ? { text: this.convText(e.conv, e.mods), cls: 'pill' }
+            : { text: t('itin.corr.pill_none'), cls: 'pill part' };
+          if (tier === 'derog') return { text: t('corr.derog.tag') + (e.conv ? ' · ' + e.conv + (e.mods ? '/' + e.mods : '') : ''), cls: 'derog-tag' };
           return null;
         },
 
@@ -1791,6 +1886,8 @@
           <!-- Columnes i graf: mostra de línia. Arbre: no dibuixa línies, així que s'hi mostra la mateixa etiqueta que porta cada C. -->
           <li x-show="cdTiers && cdTiers.has('full')"><svg class="cd-swatch" x-show="view !== 'tree'" viewBox="0 0 36 8" aria-hidden="true"><path class="t-full" d="M2 4H34"/></svg><span class="pill" x-show="view === 'tree'" x-text="t('itin.legend.full')"></span><span x-text="(view === 'tree' ? '' : t('itin.legend.full') + ' — ') + t('itin.legend.full_desc')"></span></li>
           <li x-show="cdTiers && cdTiers.has('part')"><svg class="cd-swatch" x-show="view !== 'tree'" viewBox="0 0 36 8" aria-hidden="true"><path class="t-part" d="M2 4H34"/></svg><span class="pill part" x-show="view === 'tree'" x-text="t('itin.legend.part')"></span><span x-text="(view === 'tree' ? '' : t('itin.legend.part') + ' — ') + t('itin.legend.part_desc')"></span></li>
+          <li x-show="cdTiers && cdTiers.has('boe')"><svg class="cd-swatch" x-show="view !== 'tree'" viewBox="0 0 36 8" aria-hidden="true"><path class="t-boe" d="M2 4H34"/></svg><span class="pill" x-show="view === 'tree'" x-text="t('itin.legend.boe')"></span><span x-text="(view === 'tree' ? '' : t('itin.legend.boe') + ' — ') + t('itin.legend.boe_desc')"></span></li>
+          <li x-show="cdTiers && cdTiers.has('derog')"><svg class="cd-swatch" x-show="view !== 'tree'" viewBox="0 0 36 8" aria-hidden="true"><path class="t-derog" d="M2 4H34"/></svg><span class="derog-tag" x-text="t('corr.derog.tag')"></span><span x-text="t('itin.legend.derog_desc')"></span></li>
           <li x-show="cdTiers && cdTiers.has('old')"><svg class="cd-swatch" x-show="view !== 'tree'" viewBox="0 0 36 8" aria-hidden="true"><path class="t-old" d="M2 4H34"/></svg><span class="badge-old" x-show="view === 'tree'" x-text="t('itin.legend.old')"></span><span x-text="(view === 'tree' ? '' : t('itin.legend.old') + ' — ') + t('itin.legend.old_desc')"></span></li>
         </ul>
         <p class="cd-legend-note" x-show="cdTiers && (cdTiers.has('full') || cdTiers.has('part'))" x-text="t('index.convalida_nota')"></p>
@@ -1886,6 +1983,89 @@
             <p x-show="gs.ref"><a class="grau-link" :href="gs.ref ? grauUrl(gs) : '#'" x-text="t('grau.page_link')"></a></p>
           </div>
         </aside>
+      </section>
+
+      <!-- Pla 092: correspondència oficial d'un certificat del pla antic amb els cicles -->
+      <section class="corr" x-cloak x-show="state === 'data' && corrCicles.length" aria-labelledby="corr-cp-title">
+        <h2 id="corr-cp-title" x-text="t('itin.corr.cp_title')"></h2>
+        <p class="corr-note" x-text="t('itin.corr.note')"></p>
+        <template x-for="c in corrCicles" :key="c.ref + (c.derogada ? '|d' : '')">
+          <details class="corr-item" :class="{ derog: c.derogada }">
+            <summary>
+              <span class="name" x-text="c.denominacion"></span>
+              <span class="derog-tag" x-show="c.derogada" x-text="t('corr.derog.tag')"></span>
+              <span :class="c.moduls_convalidats.length && !c.derogada ? 'pill' : 'pill part'" x-text="convCount(c)"></span>
+            </summary>
+            <div class="corr-body">
+              <p class="derog-note" x-show="c.derogada" role="note">
+                <span x-text="t('corr.derog.warn')"></span>
+                <a :href="boeUrl(c.substituida_per)" target="_blank" rel="noopener" x-text="c.substituida_per"></a>.
+              </p>
+              <h3 x-show="c.convalida.length" x-text="t('itin.corr.done')"></h3>
+              <ul x-show="c.convalida.length">
+                <template x-for="(row, i) in c.convalida" :key="i">
+                  <li><span x-text="modLabel(row.moduls)"></span> <span class="by" x-text="t('corr.by', {ucs: row.uc.join(' + ')})"></span></li>
+                </template>
+              </ul>
+              <h3 x-show="c.a_mitges.length" x-text="t('itin.corr.partial')"></h3>
+              <ul x-show="c.a_mitges.length">
+                <template x-for="(row, i) in c.a_mitges" :key="i">
+                  <li x-text="t('corr.partial', {mods: modLabel(row.moduls), ucs: row.falten.join(' + ')})"></li>
+                </template>
+              </ul>
+              <h3 x-show="c.moduls_restants.length" x-text="t('itin.corr.rest', {n: c.moduls_restants.length})"></h3>
+              <ul x-show="c.moduls_restants.length">
+                <template x-for="(m, i) in c.moduls_restants" :key="i">
+                  <li x-text="modLabel([m])"></li>
+                </template>
+              </ul>
+              <p class="corr-source">
+                <span x-text="t('corr.source')"></span>
+                <a :href="boeUrl(c.vigent)" target="_blank" rel="noopener" x-text="c.vigent"></a>
+              </p>
+              <p class="corr-links">
+                <a :href="itinHref('D', c.ref)" x-text="t('itin.corr.see_cycle')"></a>
+                <a :href="grauUrl(c)" x-text="t('grau.page_link')"></a>
+              </p>
+            </div>
+          </details>
+        </template>
+      </section>
+
+      <!-- Pla 092: taula oficial d'un cicle (UC que convaliden cada mòdul i certificats que les porten) -->
+      <section class="corr" x-cloak x-show="state === 'data' && corrRows.length" aria-labelledby="corr-d-title">
+        <h2 id="corr-d-title" x-text="t('itin.corr.cicle_title')"></h2>
+        <p class="corr-note" x-text="t('itin.corr.note')"></p>
+        <div class="corr-table-wrap">
+          <table class="corr-table">
+            <thead><tr>
+              <th scope="col" x-text="t('itin.corr.col_mod')"></th>
+              <th scope="col" x-text="t('itin.corr.col_uc')"></th>
+              <th scope="col" x-text="t('itin.corr.col_cert')"></th>
+            </tr></thead>
+            <tbody>
+              <template x-for="(row, i) in corrRows" :key="i">
+                <tr>
+                  <td><template x-for="m in row.moduls" :key="m.num"><span><span class="code" x-text="m.num"></span> <span x-text="m.name"></span></span></template></td>
+                  <td><template x-for="u in row.uc" :key="u"><span class="code" x-text="u"></span></template></td>
+                  <td>
+                    <template x-for="c in rowCerts(row)" :key="c.codigo">
+                      <a class="cert" :href="itinHref('C', c.ref)"><span class="code" x-text="c.codigo"></span> <span x-text="c.denominacion"></span></a>
+                    </template>
+                    <span class="none" x-show="!rowCerts(row).length">—</span>
+                  </td>
+                </tr>
+              </template>
+            </tbody>
+          </table>
+        </div>
+        <template x-for="(note, i) in (corr && corr.notes) || []" :key="i">
+          <p class="corr-note" x-text="note"></p>
+        </template>
+        <p class="corr-source">
+          <span x-text="t('corr.source')"></span>
+          <a :href="boeUrl(corr && corr.vigent)" target="_blank" rel="noopener" x-text="corr && corr.vigent"></a>
+        </p>
       </section>
     </main>
 

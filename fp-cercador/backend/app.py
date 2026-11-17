@@ -1489,16 +1489,30 @@ def _corr_cycles_for(ucs: list, catalog: dict) -> list[dict]:
     cicles = []
     for ref, entry in _get_d_uc_corr().items():
         rec = catalog['by_ref'].get(ref)
-        got = uc_corr.cycle_for_ucs(entry, ucs) if rec else None
-        if not got:
-            continue
-        moduls = _corr_moduls(rec, entry)
-        got.update(_corr_cicle(rec), notes=entry.get('notes') or [],
-                   moduls_cicle=len(moduls) or None,
-                   moduls_pendents=len(moduls) - len(got['moduls_convalidats']) if moduls else None)
-        cicles.append(got)
+        results = uc_corr.cycles_for_ucs(entry, ucs) if rec else []
+        moduls = _corr_moduls(rec, entry) if results else []
+        for got in results:  # la taula vigent i, si aporta mòduls, la substituïda
+            done = set(got['moduls_convalidats'])
+            got.update(_corr_cicle(rec), notes=entry.get('notes') or [],
+                       moduls_cicle=len(moduls) or None,
+                       moduls_restants=[m for m in moduls if m['num'] not in done])
+            got['moduls_pendents'] = len(got['moduls_restants']) if moduls else None
+            cicles.append(got)
     cicles.sort(key=lambda c: (c['derogada'], -len(c['moduls_convalidats']), c['denominacion'] or ''))
     return cicles
+
+
+def _corr_certs_by_uc(entry: dict, catalog: dict) -> dict:
+    """Pla 092: {UC: [{codigo, ref, denominacion}]} dels certificats LOE amb cada UC de les taules vigents."""
+    in_tables = {u for key in ('convalida', 'acredita') for row in entry.get(key) or [] for u in row['uc']}
+    certs: dict = {}
+    for code, ucs in _get_loe_ucs().items():
+        cert = next((r for r in catalog['by_codigo'].get(code, [])
+                     if r.get('grado') == 'C' and r.get('plan_antiguo')), None)
+        for uc in in_tables.intersection(ucs if cert and isinstance(ucs, list) else ()):
+            certs.setdefault(uc, []).append({'codigo': code, 'ref': cert['ref'],
+                                             'denominacion': cert.get('denominacion')})
+    return {uc: sorted(v, key=lambda c: c['codigo']) for uc, v in sorted(certs.items())}
 
 
 def _corr_cicle(rec: dict) -> dict:
@@ -1528,7 +1542,7 @@ def api_correspondencia():
       → {"cp": {codigo, denominacion, uc: [...]},
          "cicles": [{ref, denominacion, nivel, familia, decret, vigent, derogada, substituida_per,
                      uc, convalida, a_mitges, moduls_convalidats, moduls_cicle, moduls_pendents,
-                     notes}]}
+                     moduls_restants, notes}]}
          Una fila només convalida quan el certificat en té totes les UC; "a_mitges" són les
          files on en falta alguna. "derogada": la taula és la que un decret posterior va
          substituir (el certificat porta els codis d'UC antics).
@@ -1552,16 +1566,7 @@ def api_correspondencia():
                 'convalida': entry.get('convalida') or [], 'acredita': entry.get('acredita') or [],
                 'notes': entry.get('notes') or [], 'moduls': _corr_moduls(rec, entry)}
         body.update({k: entry[k] for k in ('vigent_acredita', 'convalida_anterior') if k in entry})
-        # Pla 092: certificats LOE que porten cada UC de les taules vigents.
-        in_tables = {u for key in ('convalida', 'acredita') for row in body[key] for u in row['uc']}
-        certs: dict = {}
-        for code, ucs in _get_loe_ucs().items():
-            cert = next((r for r in catalog['by_codigo'].get(code, [])
-                         if r.get('grado') == 'C' and r.get('plan_antiguo')), None)
-            for uc in in_tables.intersection(ucs if cert else ()):
-                certs.setdefault(uc, []).append({'codigo': code, 'ref': cert['ref'],
-                                                 'denominacion': cert.get('denominacion')})
-        body['certificats'] = {uc: sorted(v, key=lambda c: c['codigo']) for uc, v in sorted(certs.items())}
+        body['certificats'] = _corr_certs_by_uc(entry, catalog)
         return jsonify(body)
 
     if not _CODIGO_RE.match(cp):
@@ -2298,9 +2303,14 @@ def _get_c_loe_corr() -> dict:
     out = {}
     for code, ucs in _get_loe_ucs().items():
         cicles = _corr_cycles_for(ucs, catalog) if isinstance(ucs, list) else []
-        if cicles:
-            out[code] = [{'ref': c['ref'], 'conv': len(c['moduls_convalidats']),
-                          'total': c['moduls_cicle'], 'derogada': c['derogada']} for c in cicles]
+        # Una aresta per cicle: la del resultat que convalida més mòduls (a igualtat, la vigent).
+        best: dict = {}
+        for c in cicles:
+            if c['ref'] not in best or len(c['moduls_convalidats']) > best[c['ref']]['conv']:
+                best[c['ref']] = {'ref': c['ref'], 'conv': len(c['moduls_convalidats']),
+                                  'total': c['moduls_cicle'], 'derogada': c['derogada']}
+        if best:
+            out[code] = list(best.values())
     return out
 
 
@@ -2519,6 +2529,14 @@ def _grau_context(rec: dict, seo: dict) -> dict:
     elif grado == 'D':
         modulos = (_get_d_modulos().get(str(rec.get('id'))) or {}).get('modulos') or []
         contingut = {'modulos': [m['name'] for m in modulos if m.get('name')]}
+        # Pla 092: taula oficial UC → mòduls convalidables, amb els certificats LOE que les porten totes.
+        entry = _get_d_uc_corr().get(ref) or {}
+        catalog = _get_catalog()
+        if entry.get('convalida') and catalog:
+            by_uc = _corr_certs_by_uc(entry, catalog)
+            contingut['correspondencia'] = {'vigent': entry['vigent'], 'files': [
+                {'moduls': row['moduls'], 'uc': row['uc'],
+                 'certs': uc_corr.certs_with_all(row['uc'], by_uc)} for row in entry['convalida']]}
     elif grado == 'E':
         # Els D que hi donen accés ja són els veïns "previs" del graf (ce_acces.json):
         # es mostren com a requisits d'accés i no es repeteixen a l'itinerari.

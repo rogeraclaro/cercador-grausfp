@@ -44,25 +44,36 @@ def held_ucs(held: list[dict], loe_ucs: dict) -> list[str]:
     return list(dict.fromkeys(ucs))
 
 
-def cycle_for_ucs(entry: dict, ucs) -> dict | None:
+def cycles_for_ucs(entry: dict, ucs) -> list[dict]:
     """
-    Correspondència d'un cicle per a unes UC, o None si cap UC surt a les seves taules.
+    Correspondència d'un cicle per a unes UC: cap resultat, un o dos.
 
-    Mana la taula vigent. Si cap UC hi surt però sí a la taula que un decret posterior va
-    substituir ('convalida_anterior'), es dona aquella amb 'derogada': True: els certificats
-    d'abans del canvi porten els codis d'UC antics i l'equivalència no és a la taula.
+    Mana la taula vigent. La taula que un decret posterior va substituir ('convalida_anterior')
+    s'hi afegeix, amb 'derogada': True, quan convalida algun mòdul que la vigent no dona: els
+    certificats d'abans del canvi porten els codis d'UC antics i l'equivalència no és a la taula.
     """
     held = set(ucs)
+    out: list[dict] = []
     for key, derogada in (('convalida', False), ('convalida_anterior', True)):
         rows = entry.get(key) or []
         used = [u for u in dict.fromkeys(u for r in rows for u in r['uc']) if u in held]
-        if used:
-            full, partial = convalidated(rows, held)
-            nums = list(dict.fromkeys(m['num'] for r in full for m in r['moduls']))
-            return {'decret': entry['decret'], 'vigent': entry['decret'] if derogada else entry['vigent'],
+        if not used:
+            continue
+        full, partial = convalidated(rows, held)
+        nums = list(dict.fromkeys(m['num'] for r in full for m in r['moduls']))
+        if derogada and out and not set(nums) - set(out[0]['moduls_convalidats']):
+            continue
+        out.append({'decret': entry['decret'], 'vigent': entry['decret'] if derogada else entry['vigent'],
                     'derogada': derogada, 'substituida_per': entry['vigent'] if derogada else None,
-                    'uc': used, 'convalida': full, 'a_mitges': partial, 'moduls_convalidats': nums}
-    return None
+                    'uc': used, 'convalida': full, 'a_mitges': partial, 'moduls_convalidats': nums})
+    return out
+
+
+def certs_with_all(ucs: list[str], by_uc: dict) -> list[dict]:
+    """Certificats ({codigo, …}) que porten totes les UC d'una fila; by_uc: {UC: [certificat]}."""
+    lists = [by_uc.get(u) or [] for u in ucs]
+    return [c for c in (lists[0] if lists else [])
+            if all(any(x['codigo'] == c['codigo'] for x in other) for other in lists[1:])]
 
 
 def cycle_modules(modulos: list[dict], entry: dict) -> list[dict]:
@@ -72,7 +83,7 @@ def cycle_modules(modulos: list[dict], entry: dict) -> list[dict]:
     formació en empresa que les fitxes llisten com a mòdul.
     """
     by_name: dict[str, str] = {}
-    for key in ('convalida', 'acredita'):
+    for key in ('convalida', 'acredita', 'convalida_anterior'):
         for row in entry.get(key) or []:
             for m in row['moduls']:
                 by_name.setdefault(normalize_module_name(m['name']), m['num'])
