@@ -30,6 +30,20 @@ Tots els fitxers són a `plans/outputs/analisi-20261117/`.
    FMEC0110/0210 van ser substituïts pels FMEC0x19 i AGAO0308M és una variant d'AGAO0308; la resta
    poden ser derogats o absents de la font que fem servir.
 
+## Què ha canviat amb el pla 093 (2026-11-17, llegir abans de començar)
+
+- Hi ha un lector d'annexos millor que el de prova: `scripts/generate_c_loe_estructura.py`
+  (`parse_estructura`, necessita `pdftotext`; `--cache DIR` desa els PDF). Tolera les errades d'impremta
+  dels annexos (`MF0121-2`, `MF 1323_1`, `Código MF…` sense dos punts, `UF425`). El lector de prova
+  (`parse_cp.py`) no les tolerava i penjava les UF del MF anterior: **part de les 45 discrepàncies del
+  punt 2 poden ser falsos positius**. Primer pas del punt 2: recalcular-les amb el lector nou.
+- `backend/data/c_loe_estructura.json` (556 de 580 certificats) porta `total_h` de l'annex per a 517.
+  Serveix per contrastar els 20 casos del punt 1.
+- L'exportació (`/api/export/estructura`) ja mostra el total de l'annex i només cau a `duracion_horas`
+  quan l'annex no el dona. Mentre el punt 1 no es resolgui, el cercador i el CSV poden donar hores
+  diferents per al mateix certificat.
+- Punt 3: FMEC0119_2, FMEC0219_2, FMEC0319_2 i AFDA0119_2 no tenen cap MF a l'annex (avís del generador).
+
 ## Disseny
 
 - Per a cada punt: primer diagnòstic (quina font té raó i per què), després correcció a l'origen
