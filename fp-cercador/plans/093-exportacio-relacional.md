@@ -65,7 +65,8 @@ cicle: una fila per mòdul amb les UC que l'acrediten.
 ## STOP — atura't i pregunta
 
 - Si per fer-ho bé cal una dependència nova.
-- Si es vol un sol fitxer `.xlsx` amb pestanyes en lloc de CSV: és una decisió del propietari.
+- Format: **CSV, decidit pel propietari el 2026-11-17** («de moment»). No afegir cap dependència per fer
+  `.xlsx`; si més endavant es vol un sol fitxer amb pestanyes, és un pla a part.
 - No desplegar sense aprovació explícita.
 
 ## En acabar
