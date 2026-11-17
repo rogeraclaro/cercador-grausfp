@@ -10,7 +10,7 @@ Només hi surt el que diu l'annex; si no dona una hora, el camp és None (no s'i
 Els certificats sense cap MF a l'annex (escanejat) no hi són: l'endpoint cau a bc_loe.json.
 
 Ús: python3 scripts/generate_c_loe_estructura.py [--dry-run N] [--cache DIR]
-Necessita `pdftotext` (poppler) i xarxa; la caché de PDFs és la mateixa que la de generate_bc_loe.py.
+Necessita `pdftotext` (poppler), xarxa i backend/data/a_loe_pares.json (del refresc); la caché de PDFs és la mateixa que la de generate_bc_loe.py.
 """
 import argparse
 import json
@@ -34,9 +34,11 @@ logger = logging.getLogger(__name__)
 _REPO_ROOT = os.path.normpath(os.path.join(os.path.dirname(__file__), '..'))
 DATA_PATH = os.path.join(_REPO_ROOT, 'backend', 'data', 'ofertes.json')
 BC_LOE_PATH = os.path.join(_REPO_ROOT, 'backend', 'data', 'bc_loe.json')
+A_LOE_PARES_PATH = os.path.join(_REPO_ROOT, 'backend', 'data', 'a_loe_pares.json')
 OUT_PATH = os.path.join(_REPO_ROOT, 'backend', 'data', 'c_loe_estructura.json')
 
-_TOTAL_PAT = re.compile(r'Duración de la formación asociada:\s*(\d+)\s*horas', re.I)
+# Alguns annexos escriuen «(390 horas)» o «.390 horas».
+_TOTAL_PAT = re.compile(r'Duración de la formación asociada:\s*[.(]?\s*(\d+)\s*horas', re.I)
 # «Código: X» obre un mòdul o una unitat; la primera «Duración: N horas» que el segueix és la seva.
 _TOKEN_PAT = re.compile(r'Código:?\s*(MF\s?\d{3,4}\s?[_-]\s?\d|UF\s?\d{3,4}|MP\s?\d{3,4})|Duración:\s*(\d+)\s*horas'
                         r'|Asociado a la Unidad de Competencia:\s*(UC\d{3,4}_\d)', re.I)
@@ -108,6 +110,29 @@ def _contradicts_bc_loe(codigo: str, info: dict, bc_loe: dict) -> bool:
     return codigo not in overrides and {m['codigo'][2:6] for m in info['mf']} != {u[2:6] for u in ucs}
 
 
+def apply_uf_parents(info: dict, pares: dict) -> int:
+    """Corregeix de quin MF penja cada UF amb a_loe_pares.json ({codi_uf: [codi_mf]}, de la fitxa de
+    cada UF a todofp). Cal perquè els annexos a dues columnes surten de `pdftotext` amb el «Código: UF…»
+    abans del «Código: MF…» del seu mòdul, i la UF queda penjada del mòdul anterior (pla 094: en 20 casos
+    mirats a mà, la fitxa tenia raó sempre). Una UF que la fitxa no coneix es queda on la posa l'annex.
+    Retorna quants MF han canviat de llista d'UF."""
+    hours: dict[str, int] = {}
+    for mf in info['mf']:
+        for uf in mf['ufs']:
+            if uf['h'] is not None:
+                hours.setdefault(uf['codigo'], uf['h'])
+    changed = 0
+    for mf in info['mf']:
+        parsed = [u['codigo'] for u in mf['ufs']]
+        kept = [c for c in parsed if c not in pares or mf['codigo'] in pares[c]]
+        missing = [uf for uf, mfs in pares.items() if mf['codigo'] in mfs and uf not in kept]
+        if kept == parsed and not missing:
+            continue
+        mf['ufs'] = [{'codigo': c, 'h': hours.get(c)} for c in sorted(kept + missing)]
+        changed += 1
+    return changed
+
+
 def blank_inconsistent_hours(info: dict) -> int:
     """Un MF amb UF sense hores o amb UF que no sumen les seves: les hores del MF i de les seves UF es
     buiden (el text d'alguns annexos va a dues columnes i la durada pot caure a un altre codi).
@@ -144,11 +169,15 @@ def main() -> None:
             return codigo, None
 
     bc_loe = _read_json(BC_LOE_PATH)
+    pares = _read_json(A_LOE_PARES_PATH)
+    if not pares:
+        logger.warning("Sense a_loe_pares.json: les UF es queden on les posa l'annex")
     result: dict[str, dict] = {}
-    blanked = 0
+    blanked = moved = 0
     with ThreadPoolExecutor(max_workers=3) as pool:  # 3 baixades alhora, cadascuna amb 1 s de pausa
         for i, (codigo, segment) in enumerate(pool.map(load, c_loe), 1):
             info = parse_estructura(segment or '')
+            moved += apply_uf_parents(info, pares)
             blanked += blank_inconsistent_hours(info)
             if info['mf'] and not _contradicts_bc_loe(codigo, info, bc_loe):
                 result[codigo] = info
@@ -158,6 +187,7 @@ def main() -> None:
                 logger.warning("[%d/%d] %s: cap MF a l'annex", i, len(c_loe), codigo)
 
     no_hours = [c for c, v in result.items() if v['total_h'] is None or any(m['h'] is None for m in v['mf'])]
+    logger.info("MF amb la llista d'UF corregida amb a_loe_pares.json: %d", moved)
     logger.info("MF amb hores buidades per incoherents: %d", blanked)
     logger.info("Certificats amb estructura: %d de %d; amb alguna hora absent: %d", len(result), len(c_loe), len(no_hours))
     if args.dry_run:

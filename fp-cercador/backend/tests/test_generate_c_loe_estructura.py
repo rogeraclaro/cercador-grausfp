@@ -4,7 +4,7 @@ import sys
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', 'scripts'))
 
-from generate_c_loe_estructura import blank_inconsistent_hours, parse_estructura  # noqa: E402
+from generate_c_loe_estructura import apply_uf_parents, blank_inconsistent_hours, parse_estructura  # noqa: E402
 
 # Shape of elee0109.pdf (pdfplumber text), cut down: MF with UF, a shared UF, MF without UF, MP.
 SAMPLE = """
@@ -88,3 +88,36 @@ def test_hours_that_do_not_add_up_are_blanked():
     ok = parse_estructura('Código: MF0001_1\nDuración: 60 horas\nCódigo: UF0001\nDuración: 30 horas\n'
                           'Código: UF0002\nDuración: 30 horas')
     assert blank_inconsistent_hours(ok) == 0 and ok['mf'][0]['h'] == 60
+
+
+def test_total_hours_tolerates_annex_punctuation():
+    # mapn0111.pdf writes «(390 horas)» and coml0309.pdf «.390 horas».
+    assert parse_estructura('Duración de la formación asociada: (390 horas)')['total_h'] == 390
+    assert parse_estructura('Duración de la formación asociada: .390 horas')['total_h'] == 390
+
+
+def test_uf_parents_from_the_ministry_fix_two_column_annexes():
+    # hotr0408.pdf is laid out in two columns: «Código: UF0063» comes out before «Código: MF0260_2»,
+    # so the unit hangs from the previous module. The UF page of todofp says which MF it belongs to.
+    info = parse_estructura('Código: MF0259_2\nDuración: 70 horas\nCódigo: UF0063\nDuración: 60 horas\n'
+                            'Código: MF0260_2\nDuración: 130 horas\nCódigo: UF0064\nDuración: 70 horas')
+    moved = apply_uf_parents(info, {'UF0063': ['MF0260_2'], 'UF0064': ['MF0260_2']})
+    assert moved == 2
+    assert info['mf'][0]['ufs'] == []
+    assert info['mf'][1]['ufs'] == [{'codigo': 'UF0063', 'h': 60}, {'codigo': 'UF0064', 'h': 70}]
+    assert blank_inconsistent_hours(info) == 0
+
+
+def test_uf_parents_add_shared_unit_missing_under_a_module_and_drop_foreign_ones():
+    # eles0111.pdf: the shared UF1969 is lost under MF1563_2; fmec0209.pdf prints UF0971 for UF0871.
+    info = parse_estructura('Código: MF1562_2\nCódigo: UF1969\nDuración: 30 horas\nCódigo: MF1563_2\n'
+                            'Código: UF0971\nDuración: 60 horas')
+    apply_uf_parents(info, {'UF1969': ['MF1562_2', 'MF1563_2'], 'UF0971': ['MF0788_3']})
+    assert info['mf'][0]['ufs'] == [{'codigo': 'UF1969', 'h': 30}]
+    assert info['mf'][1]['ufs'] == [{'codigo': 'UF1969', 'h': 30}]
+
+
+def test_uf_unknown_to_the_ministry_stays_where_the_annex_puts_it():
+    info = parse_estructura('Código: MF0001_1\nCódigo: UF0001\nDuración: 30 horas')
+    assert apply_uf_parents(info, {}) == 0
+    assert info['mf'][0]['ufs'] == [{'codigo': 'UF0001', 'h': 30}]
