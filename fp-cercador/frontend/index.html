@@ -2470,8 +2470,8 @@
     }
   </style>
 
-  <script src="i18n.js?v=20261117a"></script>
-  <script src="auth.js?v=20261117a"></script>
+  <script src="i18n.js?v=20261117b"></script>
+  <script src="auth.js?v=20261117b"></script>
   <script src="held.js?v=1"></script>
   <script src="ics.js?v=1"></script>
   <script src="search-tools.js?v=1"></script>
@@ -3065,6 +3065,24 @@
           a.download = 'grausfp-export.csv';
           a.click();
           URL.revokeObjectURL(url);
+        },
+
+        // Pla 093: CSV relacional de la selecció (graus C o D); el backend el construeix.
+        EXPORT_STRUCTURE_MAX: 50,  // les ref dels cicles són llargues: 50 caben a la URL
+        exportStructureFailed: false,
+        async exportEstructura() {
+          this.exportStructureFailed = false;
+          const refs = this.filteredRecords.map(r => r.ref).join(',');
+          try {
+            const res = await fetch(API_BASE + '/api/export/estructura?refs=' + encodeURIComponent(refs));
+            if (!res.ok) throw new Error('HTTP ' + res.status);
+            const url = URL.createObjectURL(await res.blob());
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = this.filterGrado === 'D' ? 'grausfp-estructura-cicles.csv' : 'grausfp-estructura-certificats.csv';
+            a.click();
+            URL.revokeObjectURL(url);
+          } catch (e) { this.exportStructureFailed = true; }
         },
 
         get pagedRecords() {
@@ -4261,6 +4279,12 @@
       <button class="save-alert-btn" x-show="state === 'ready' && filteredCount > 0" @click="exportCSV()"
         :title="t(filteredCount === 1 ? 'index.btn.exportTitle_one' : 'index.btn.exportTitle', {n: filteredCount})" x-text="t('index.btn.exportCsv')">
       </button>
+      <button class="save-alert-btn" x-show="state === 'ready' && filteredCount > 0 && ['C', 'D'].includes(filterGrado)"
+        :disabled="filteredCount > EXPORT_STRUCTURE_MAX" @click="exportEstructura()"
+        :title="filteredCount > EXPORT_STRUCTURE_MAX ? t('export.structure.toomany', {n: EXPORT_STRUCTURE_MAX}) : t('export.structure.title')"
+        x-text="t('export.structure')">
+      </button>
+      <span role="status" style="font-size:13px;color:#9b2c2c" x-show="exportStructureFailed" x-text="t('export.structure.error')"></span>
       <button class="clear-btn"
         x-show="search || filterGrado || filterFamilia || filterNivel || filterOld !== 'all' || filterFavs"
         @click="search=''; filterGrado=''; filterFamilia=''; filterNivel=''; filterOld='all'; filterFavs=false; resetPage()"

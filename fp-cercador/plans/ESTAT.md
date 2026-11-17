@@ -108,7 +108,12 @@ La primera vegada, `--discover` triga ~20 min; després va de la memòria cau.
   - Desplegat amb `git pull` i reinici. Verificat a producció: aresta ELEE0109 → Instal·lacions
     Elèctriques amb `conv: 5`, `derogada: true`; `/grau/fabricacion-mecanica~mecanizado` amb la secció de
     convalidació; «Què em falta?» amb ELEE0109 i MF0836_2 torna la taula vigent i la derogada.
-- Exportació relacional (093) i revisions menors (094), **TODO**.
+- **Pla 093: fet el 2026-11-17, NO desplegat.** `GET /api/export/estructura?refs=` (CSV `;` amb BOM): certificats
+  (una fila per UF amb hores i transversal; LOMLOE per A de cada B) o cicles (mòdul, UC que el convaliden,
+  certificats LOE). Botons a l'itinerari i al cercador (filtre C o D, ≤50). Dades: `scripts/generate_c_loe_estructura.py`
+  (necessita `pdftotext`) → `backend/data/c_loe_estructura.json` (gitignored, **cal copiar-lo al VPS**): 564 de 580
+  certificats; 62 amb alguna hora absent (queda buida). ELEE0109: 6 MF, 920 h. Pendent: provar-ho amb l'Excel.
+- Revisions menors (094), **TODO**.
 - Materials de l'anàlisi (scripts de prova, llistes d'errors, instantània del SEPE):
   `plans/outputs/analisi-20261117/`. Cap codi tocat; res desplegat.
 - Pendent del propietari: contestar l'usuari.

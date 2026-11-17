@@ -410,6 +410,10 @@
       'csv.no': 'No',
       'index.btn.exportTitle': 'Exporta {n} registres a CSV',
       'index.btn.exportTitle_one': 'Exporta 1 registre a CSV',
+      'export.structure': '↓ Exporta l\'estructura',
+      'export.structure.title': 'Baixa un CSV amb l\'estructura: mòduls i unitats formatives dels certificats, o mòduls i UC que els convaliden dels cicles',
+      'export.structure.toomany': 'Filtra a {n} registres o menys per exportar-ne l\'estructura',
+      'export.structure.error': 'No s\'ha pogut baixar l\'estructura. Torna-ho a provar.',
 
       /* ── index.html — paginació ── */
       'pagination.aria': 'Paginació de resultats',
@@ -1404,6 +1408,10 @@
       'csv.no': 'No',
       'index.btn.exportTitle': 'Exportar {n} registros a CSV',
       'index.btn.exportTitle_one': 'Exportar 1 registro a CSV',
+      'export.structure': '↓ Exportar la estructura',
+      'export.structure.title': 'Descarga un CSV con la estructura: módulos y unidades formativas de los certificados, o módulos y UC que los convalidan de los ciclos',
+      'export.structure.toomany': 'Filtra a {n} registros o menos para exportar su estructura',
+      'export.structure.error': 'No se ha podido descargar la estructura. Inténtalo de nuevo.',
 
       /* ── index.html — paginació ── */
       'pagination.aria': 'Paginación de resultados',

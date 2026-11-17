@@ -51,10 +51,11 @@ from urllib.parse import urlsplit
 import requests
 from bs4 import BeautifulSoup
 from dotenv import load_dotenv
-from flask import Flask, jsonify, redirect, request
+from flask import Flask, Response, jsonify, redirect, request
 from flask_cors import CORS
 
 import cd_lomloe
+import export_estructura
 import compare
 import gap
 import familia_stats
@@ -100,6 +101,7 @@ BC_LOE_PATH = os.path.join(_DATA_DIR, "bc_loe.json")
 BC_LOMLOE_PATH = os.path.join(_DATA_DIR, "bc_lomloe.json")  # Pla 057: {codigo_c: [codigo_b]}
 C_MODULOS_PATH = os.path.join(_DATA_DIR, "c_modulos.json")  # Pla 078: {codigo_c: [{num, name}]}
 D_MODULOS_PATH = os.path.join(_DATA_DIR, "d_modulos.json")  # Pla 058: {str(id_d): {modulos, ensenanzaFP}}
+C_LOE_ESTRUCTURA_PATH = os.path.join(_DATA_DIR, "c_loe_estructura.json")  # Pla 093: {codigo_c: {total_h, mf, mp}}
 D_UC_CORR_PATH = os.path.join(_DATA_DIR, "d_uc_corr.json")  # Pla 091: {ref_d: {decret, vigent, convalida, acredita, notes}}
 # Pla 091: UC reals dels pocs certificats LOE on el número del MF (bc_loe.json) no és el de la UC.
 UC_CORR_OVERRIDES_PATH = os.path.join(os.path.dirname(__file__), "uc_corr_overrides.json")
@@ -1578,6 +1580,64 @@ def api_correspondencia():
         return jsonify({'error': 'Certificat no trobat'}), 404
     return jsonify({'cp': {'codigo': cp, 'denominacion': cert.get('denominacion'), 'uc': ucs},
                     'cicles': _corr_cycles_for(ucs, catalog)})
+
+
+_EXPORT_MAX_REFS = 100
+
+
+@app.route('/api/export/estructura')
+def api_export_estructura():
+    """Pla 093: CSV relacional (`;`, BOM UTF-8) de la selecció.
+
+    GET /api/export/estructura?refs=<ref,…>   (fins a 100; tots graus C o tots graus D)
+      · Graus C → una fila per UF de cada MF del certificat (LOMLOE: per A de cada mòdul B).
+      · Graus D → una fila per mòdul del cicle amb les UC que el convaliden i els certificats LOE.
+    """
+    refs = list(dict.fromkeys(r.strip() for r in (request.args.get('refs') or '').split(',') if r.strip()))
+    if not refs or len(refs) > _EXPORT_MAX_REFS:
+        return jsonify({'error': f'cal entre 1 i {_EXPORT_MAX_REFS} ref'}), 400
+    if not all(oferta_ref.REF_RE.match(r) for r in refs):
+        return jsonify({'error': 'ref invàlid'}), 400
+    catalog = _get_catalog()
+    if not catalog:
+        return jsonify({'error': 'Dades no disponibles'}), 503
+    recs = [catalog['by_ref'].get(r) for r in refs]
+    if not all(recs):
+        return jsonify({'error': 'ref no trobat'}), 404
+    grados = {r.get('grado') for r in recs}
+    if len(grados) != 1 or grados - {'C', 'D'}:
+        return jsonify({'error': 'només graus C o només graus D'}), 400
+
+    if grados == {'C'}:
+        estructura = _load_json_dict(C_LOE_ESTRUCTURA_PATH) or {}
+        loe_ucs, bc_lomloe = _get_loe_ucs(), _get_bc_lomloe()
+        b_by_num = {r['codigo'][2:6]: r for r in catalog['records']
+                    if r.get('grado') == 'B' and r.get('plan_antiguo') and (r.get('codigo') or '').startswith('MF')}
+        uf_names = {r['codigo']: r.get('denominacion') for r in catalog['records']
+                    if r.get('grado') == 'A' and r.get('plan_antiguo')}
+        index = _get_itinerary_index()
+        rows = []
+        for cert in recs:
+            code = cert['codigo']
+            if cert.get('plan_antiguo'):
+                rows += export_estructura.cert_rows_loe(cert, estructura.get(code), loe_ucs.get(code) or [],
+                                                        b_by_num, uf_names)
+            else:
+                modules = [catalog['by_codigo'][b][0] for b in bc_lomloe.get(code) or [] if b in catalog['by_codigo']]
+                rows += export_estructura.cert_rows_lomloe(
+                    cert, modules, lambda b: itinerary.get_children_a(b, index))
+        header, name = export_estructura.CERT_HEADER, 'grausfp-estructura-certificats.csv'
+    else:
+        rows = []
+        for cycle in recs:
+            entry = _get_d_uc_corr().get(cycle['ref']) or {}
+            by_uc = _corr_certs_by_uc(entry, catalog)
+            rows += export_estructura.cycle_rows(
+                _corr_cicle(cycle), _corr_moduls(cycle, entry), entry,
+                lambda ucs: uc_corr.certs_with_all(ucs, by_uc))
+        header, name = export_estructura.CYCLE_HEADER, 'grausfp-estructura-cicles.csv'
+    return Response(export_estructura.to_csv(header, rows), mimetype='text/csv; charset=utf-8',
+                    headers={'Content-Disposition': f'attachment; filename="{name}"'})
 
 
 _b_contingut_cache: dict = {"mtime": None, "index": None}
