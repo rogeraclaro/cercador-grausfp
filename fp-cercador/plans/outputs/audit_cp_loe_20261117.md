@@ -68,12 +68,18 @@ MAPN0310: el RD 988/2013 diu literalment «de 230 horas a 200 horas», sense ten
 Aquests 6, més els 3 d'1b, surten malament a l'exportació CSV (`/api/export/estructura`), que prefereix
 el total de l'annex.
 
-### Correcció proposada (pendent d'aprovació: canvia el que escriu el refresc setmanal)
+### Correcció aplicada (aprovada pel propietari el 2026-11-18)
 
-Taula d'excepcions petita i documentada (20 files: les 17 d'1a i les 3 d'1b), aplicada a
-`certificados_scraper.enrich_record`, i que només s'aplica mentre el buscador continuï donant la xifra
-errònia coneguda (si el ministeri la canvia, l'excepció deixa d'actuar i s'avisa al registre). Un cop
-`duracion_horas` sigui fiable, l'exportació l'ha de preferir al total de l'annex.
+- `backend/c_horas_overrides.json`: 20 files (les 17 d'1a i les 3 d'1b) amb la xifra del buscador, la
+  correcta, el motiu i la norma.
+- `certificados_scraper.corrected_hours` l'aplica dins `enrich_record`, i només mentre el buscador continuï
+  donant la xifra errònia coneguda; si el ministeri la canvia, mana la font i s'avisa al registre.
+  Comprovat contra el buscador en viu: 20 de 20 corregits, la resta intactes.
+- L'exportació prefereix `duracion_horas` i només cau al total de l'annex si falta.
+- Documentat a la web: `fonts.html#errors` («Errors coneguts a les fonts oficials», ca/es). Un test comprova
+  que cada fila de la taula d'excepcions surt a la pàgina.
+- **Efecte**: les hores canvien a `ofertes.json` quan corre el refresc. Entre el desplegament i el refresc,
+  el CSV donaria malament els 17 d'1a: cal llançar el refresc just després de desplegar.
 
 ## 2. UF penjades d'un MF diferent
 
