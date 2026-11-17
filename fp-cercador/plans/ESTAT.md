@@ -59,8 +59,8 @@ La primera vegada, `--discover` triga ~20 min; després va de la memòria cau.
   - Per al 091: en uns 19 certificats el número del MF i el de la UC de l'annex no coincideixen (ADGN0110:
     MF2180_2 amb UC1445_2). `bc_loe.json` desa el número del MF.
 - **Pla 091: fet i desplegat el 2026-11-17** (prod `bafeff2`). `backend/data/d_uc_corr.json` (no viatja amb el git) porta
-  la correspondència oficial UC ↔ mòdul de 182 dels 195 cicles D, per `ref`: 34 de 34 bàsics, 63 de 67
-  mitjans i 85 de 94 superiors. Es genera amb `python3 scripts/build_d_uc_corr.py [--cache DIR]` (manual,
+  la correspondència oficial UC ↔ mòdul de 185 dels 195 cicles D, per `ref`: 34 de 34 bàsics, 65 de 67
+  mitjans i 86 de 94 superiors. Es genera amb `python3 scripts/build_d_uc_corr.py [--cache DIR]` (manual,
   fora del refresc setmanal; ~10 min sense memòria cau). Informe: `plans/outputs/audit_d_uc_corr.md`.
   - API: `GET /api/correspondencia?cicle=<ref>` i `GET /api/correspondencia?cp=<codi>` (certificat LOE).
     Regla a `backend/uc_corr.py`: una fila només convalida quan el certificat en té totes les UC.
@@ -73,14 +73,18 @@ La primera vegada, `--discover` triga ~20 min; després va de la memòria cau.
     UC del certificat surt a la vigent, marcant-ho amb `derogada: true` i `substituida_per`. Afecta 12
     certificats; el pla 092 ha de dir-ho a la pantalla. L'equivalència entre UC antigues i noves no és a
     les taules (és als decrets de les qualificacions) i no s'ha tocat.
-  - 13 cicles sense taula: 5 anteriors al sistema d'UC, 5 d'aeronàutica sense UC al decret i 3 del 2007
-    (Mecanizado, Panadería, Educación Infantil) amb els annexos publicats com a imatge a l'XML: per a
-    aquests tres caldria llegir el PDF.
+  - 10 cicles sense taula, i no en poden tenir: 5 anteriors al sistema d'UC i 5 d'aeronàutica sense UC al
+    decret. Els 3 del 2007 amb l'annex com a imatge a l'XML (Mecanizado, Panadería, Educación Infantil) es
+    llegeixen del PDF del BOE amb pdfplumber (només el generador; el servidor no el necessita).
   - Els números de mòdul no s'han escrit a `d_modulos.json`: l'API els omple en llegir (1.210 mòduls casen
     pel nom). Fer-ho servir a la resta de l'aplicació és una decisió a part.
-  - Pendent conegut: els ~19 certificats on `bc_loe.json` desa el número del MF i no el de la UC (vegeu
-    090) poden no casar amb les taules. Graus E fora (19 dels 38 tenen taula al decret propi).
-  - Desplegat amb `git pull`, `d_uc_corr.json` copiat al VPS (cal tornar-lo a copiar si es regenera) i
+  - Certificats on el número del MF i el de la UC de l'annex no coincideixen: revisats els 16 pel nom de la
+    UC. En 13 és una errada de l'annex i `bc_loe.json` ja és correcte; en 3 (MAPN0310, QUIE0108, TMVI0112)
+    la UC real és una altra i es corregeix a `backend/uc_corr_overrides.json`, que només fa servir
+    `/api/correspondencia` (no toca `bc_loe.json` ni l'itinerari).
+  - Cap fila il·legible: un codi d'UC imprès sense nivell es completa des de la resta del mateix decret.
+  - Graus E fora de l'índex per decisió del pla (19 dels 38 tenen taula al decret propi).
+  - Desplegat (dues passades el mateix dia) amb `git pull`, `d_uc_corr.json` copiat al VPS (cal tornar-lo a copiar si es regenera) i
     reinici del servei. Verificat a producció: `?cp=ELEE0109` → 0232, 0238, 0240, 0235, 0236 (taula
     substituïda); `?cicle=sanidad~audiologia-protesica` → taula del RD 500/2024.
 - Pla 092 (web), **TODO**.

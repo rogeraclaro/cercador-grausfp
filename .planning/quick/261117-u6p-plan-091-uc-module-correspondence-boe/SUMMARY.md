@@ -17,4 +17,7 @@ date: 2026-11-17
 - 13 cycles without a table, each with its reason in the report (pre-UC titles, no UC in the decree,
   annexes published as images).
 - Reference case checked through the API: ELEE0109 → 0232, 0238, 0240, 0235, 0236 (replaced table).
-- Not deployed. Deploy needs `git pull`, a restart and copying `d_uc_corr.json` to the VPS.
+- Follow-up the same day: annexes published as images are read from the BOE PDF (3 cycles → 185 of
+  195), a UC printed without level is completed from the decree, and 3 certificates get their real UC
+  codes from `backend/uc_corr_overrides.json`. Backend suite: 859 passed.
+- Deployed to production (git pull, `d_uc_corr.json` copied, service restarted).
