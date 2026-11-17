@@ -40,6 +40,21 @@ La primera vegada, `--discover` triga ~20 min; després va de la memòria cau.
 
 ## Pendent
 
+### Correspondència certificats ↔ cicles i error a `bc_loe.json` (plans 090–094, escrits el 2026-11-17)
+- Origen: dos correus d'un usuari (docent d'FPO) que demanava enllaçar els MF dels certificats amb els
+  mòduls dels cicles i poder-ho baixar en Excel. En contrastar dades amb els annexos oficials va sortir
+  un error nostre.
+- **Error en producció:** `bc_loe.json` porta UC d'altres certificats en 110–130 certificats LOE (el
+  generador llegeix tot el PDF de l'annex, que sovint inclou un tros de l'annex veí). Afecta l'itinerari
+  B↔C LOE i els centres heretats dels mòduls B LOE. Pla 090, **TODO**, va primer.
+- La correspondència UC ↔ mòdul professional és als annexos V A i V B dels decrets dels títols (XML del
+  BOE). Viable per a 142 dels 161 cicles de grau mitjà i superior; cal aplicar els RD 498–500/2024, que
+  substitueixen annexos. Plans 091 (dades) i 092 (web), **TODO**.
+- Exportació relacional (093) i revisions menors (094), **TODO**.
+- Materials de l'anàlisi (scripts de prova, llistes d'errors, instantània del SEPE):
+  `plans/outputs/analisi-20261117/`. Cap codi tocat; res desplegat.
+- Pendent del propietari: contestar l'usuari.
+
 ### Dels plans 078–080 (C LOMLOE)
 - **SEA_C_004_5B i SEA_C_006_5B, mòdul 1782.** Probablement associat a UC1970_2 (PRL en incendis
   forestals), però el decret de grup (RD 211/2025) no té taula mòdul↔UC. Mantenen la nota de l'art.

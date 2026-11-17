@@ -1,0 +1,917 @@
+[
+ {
+  "ref": "actividades-fisicas-deportivas~acceso-y-conservacion-en-instalaciones-deportivas",
+  "nivel": 1,
+  "grado": "D",
+  "denominacion": "Título Profesional Básico en Acceso y Conservación en Instalaciones Deportivas",
+  "boe": [
+   "BOE-A-2018-2328",
+   "BOE-A-2019-10843"
+  ],
+  "compartits": [
+   "BOE-A-2024-10683"
+  ]
+ },
+ {
+  "ref": "administracion-gestion~informatica-oficina",
+  "nivel": 1,
+  "grado": "D",
+  "denominacion": "Título Profesional Básico en Informática de Oficina",
+  "boe": [],
+  "compartits": [
+   "BOE-A-2014-5591"
+  ]
+ },
+ {
+  "ref": "administracion-gestion~servicios-administrativos",
+  "nivel": 1,
+  "grado": "D",
+  "denominacion": "Título Profesional Básico en Servicios Administrativos",
+  "boe": [],
+  "compartits": [
+   "BOE-A-2014-2360",
+   "BOE-A-2024-10683"
+  ]
+ },
+ {
+  "ref": "agraria~actividades-agropecuarias",
+  "nivel": 1,
+  "grado": "D",
+  "denominacion": "Título Profesional Básico en Actividades Agropecuarias",
+  "boe": [],
+  "compartits": [
+   "BOE-A-2014-5591"
+  ]
+ },
+ {
+  "ref": "agraria~agrojardineria-composiciones-florales",
+  "nivel": 1,
+  "grado": "D",
+  "denominacion": "Título Profesional Básico en Agro-jardinería y Composiciones Florales",
+  "boe": [],
+  "compartits": [
+   "BOE-A-2014-2360",
+   "BOE-A-2024-10683"
+  ]
+ },
+ {
+  "ref": "agraria~aprovechamientos-forestales",
+  "nivel": 1,
+  "grado": "D",
+  "denominacion": "Título Profesional Básico en Aprovechamientos Forestales",
+  "boe": [],
+  "compartits": [
+   "BOE-A-2014-5591",
+   "BOE-A-2024-10683"
+  ]
+ },
+ {
+  "ref": "artes-graficas~artes-graficas",
+  "nivel": 1,
+  "grado": "D",
+  "denominacion": "Título Profesional Básico en Artes Gráficas",
+  "boe": [],
+  "compartits": [
+   "BOE-A-2014-5591",
+   "BOE-A-2024-10683"
+  ]
+ },
+ {
+  "ref": "comercio-marketing~servicios-comerciales",
+  "nivel": 1,
+  "grado": "D",
+  "denominacion": "Título Profesional Básico en Servicios Comerciales",
+  "boe": [],
+  "compartits": [
+   "BOE-A-2014-2360",
+   "BOE-A-2024-10683"
+  ]
+ },
+ {
+  "ref": "edificacion-obra-civil~reforma-mantenimiento-edificios",
+  "nivel": 1,
+  "grado": "D",
+  "denominacion": "Título Profesional Básico en Reforma y Mantenimiento de Edificios",
+  "boe": [],
+  "compartits": [
+   "BOE-A-2014-2360",
+   "BOE-A-2024-10683"
+  ]
+ },
+ {
+  "ref": "electricidad-electronica~electricidad-electronica",
+  "nivel": 1,
+  "grado": "D",
+  "denominacion": "Título Profesional Básico en Electricidad y Electrónica",
+  "boe": [],
+  "compartits": [
+   "BOE-A-2014-2360",
+   "BOE-A-2024-10683"
+  ]
+ },
+ {
+  "ref": "electricidad-electronica~fabricacion-elementos-metalicos",
+  "nivel": 1,
+  "grado": "D",
+  "denominacion": "Título Profesional Básico en Fabricación de Elementos Metálicos",
+  "boe": [],
+  "compartits": [
+   "BOE-A-2015-9462",
+   "BOE-A-2024-10683"
+  ]
+ },
+ {
+  "ref": "electricidad-electronica~instalaciones-electrotecnicas-mecanica",
+  "nivel": 1,
+  "grado": "D",
+  "denominacion": "Título Profesional Básico en Instalaciones Electrotécnicas y Mecánica",
+  "boe": [],
+  "compartits": [
+   "BOE-A-2015-9462",
+   "BOE-A-2024-10683"
+  ]
+ },
+ {
+  "ref": "fabricacion-mecanica~fabricacion-elementos-metalicos",
+  "nivel": 1,
+  "grado": "D",
+  "denominacion": "Título Profesional Básico en Fabricación de Elementos Metálicos",
+  "boe": [],
+  "compartits": [
+   "BOE-A-2015-9462",
+   "BOE-A-2024-10683"
+  ]
+ },
+ {
+  "ref": "fabricacion-mecanica~fabricacion-montaje",
+  "nivel": 1,
+  "grado": "D",
+  "denominacion": "Título Profesional Básico en Fabricación y Montaje",
+  "boe": [],
+  "compartits": [
+   "BOE-A-2014-2360",
+   "BOE-A-2024-10683"
+  ]
+ },
+ {
+  "ref": "fabricacion-mecanica~instalaciones-electrotecnicas-mecanica",
+  "nivel": 1,
+  "grado": "D",
+  "denominacion": "Título Profesional Básico en Instalaciones Electrotécnicas y Mecánica",
+  "boe": [],
+  "compartits": [
+   "BOE-A-2015-9462",
+   "BOE-A-2024-10683"
+  ]
+ },
+ {
+  "ref": "hosteleria-turismo~actividades-panaderia-pasteleria",
+  "nivel": 1,
+  "grado": "D",
+  "denominacion": "Título Profesional Básico en Actividades de Panadería y Pastelería",
+  "boe": [],
+  "compartits": [
+   "BOE-A-2015-9462"
+  ]
+ },
+ {
+  "ref": "hosteleria-turismo~alojamiento-lavanderia",
+  "nivel": 1,
+  "grado": "D",
+  "denominacion": "Título Profesional Básico en Alojamiento y Lavandería",
+  "boe": [],
+  "compartits": [
+   "BOE-A-2014-5591",
+   "BOE-A-2024-10683"
+  ]
+ },
+ {
+  "ref": "hosteleria-turismo~cocina-restauracion",
+  "nivel": 1,
+  "grado": "D",
+  "denominacion": "Título Profesional Básico en Cocina y Restauración",
+  "boe": [],
+  "compartits": [
+   "BOE-A-2014-2360",
+   "BOE-A-2024-10683"
+  ]
+ },
+ {
+  "ref": "imagen-personal~peluqueria-estetica",
+  "nivel": 1,
+  "grado": "D",
+  "denominacion": "Título Profesional Básico en Peluquería y Estética",
+  "boe": [],
+  "compartits": [
+   "BOE-A-2014-2360",
+   "BOE-A-2024-10683"
+  ]
+ },
+ {
+  "ref": "industrias-alimentarias~actividades-panaderia-pasteleria",
+  "nivel": 1,
+  "grado": "D",
+  "denominacion": "Título Profesional Básico en Actividades de Panadería y Pastelería",
+  "boe": [],
+  "compartits": [
+   "BOE-A-2015-9462"
+  ]
+ },
+ {
+  "ref": "industrias-alimentarias~industrias-alimentarias",
+  "nivel": 1,
+  "grado": "D",
+  "denominacion": "Título Profesional Básico en Industrias Alimentarias",
+  "boe": [],
+  "compartits": [
+   "BOE-A-2014-5591",
+   "BOE-A-2024-10683"
+  ]
+ },
+ {
+  "ref": "informatica-comunicaciones~informatica-oficina",
+  "nivel": 1,
+  "grado": "D",
+  "denominacion": "Título Profesional Básico en Informática de Oficina",
+  "boe": [],
+  "compartits": [
+   "BOE-A-2014-5591"
+  ]
+ },
+ {
+  "ref": "informatica-comunicaciones~informatica-comunicaciones",
+  "nivel": 1,
+  "grado": "D",
+  "denominacion": "Título Profesional Básico en Informática y Comunicaciones",
+  "boe": [],
+  "compartits": [
+   "BOE-A-2014-2360",
+   "BOE-A-2024-10683"
+  ]
+ },
+ {
+  "ref": "instalacion-mantenimiento~fabricacion-montaje",
+  "nivel": 1,
+  "grado": "D",
+  "denominacion": "Título Profesional Básico en Fabricación y Montaje",
+  "boe": [],
+  "compartits": [
+   "BOE-A-2014-2360"
+  ]
+ },
+ {
+  "ref": "instalacion-mantenimiento~mantenimiento-viviendas",
+  "nivel": 1,
+  "grado": "D",
+  "denominacion": "Título Profesional Básico en Mantenimiento de Viviendas",
+  "boe": [],
+  "compartits": [
+   "BOE-A-2015-9462",
+   "BOE-A-2024-10683"
+  ]
+ },
+ {
+  "ref": "madera-mueble-corcho~fpb-carpinteria-mueble",
+  "nivel": 1,
+  "grado": "D",
+  "denominacion": "Título Profesional Básico en Carpintería y Mueble",
+  "boe": [],
+  "compartits": [
+   "BOE-A-2014-2360",
+   "BOE-A-2024-10683"
+  ]
+ },
+ {
+  "ref": "maritimo-pesquera~actividades-maritimo-pesquera",
+  "nivel": 1,
+  "grado": "D",
+  "denominacion": "Título Profesional Básico en Actividades Marítimo-Pesqueras",
+  "boe": [],
+  "compartits": [
+   "BOE-A-2014-5591",
+   "BOE-A-2024-10684"
+  ]
+ },
+ {
+  "ref": "maritimo-pesquera~mnto-embarcaciones-deportivas-recreo",
+  "nivel": 1,
+  "grado": "D",
+  "denominacion": "Título Profesional Básico en Mantenimiento de Embarcaciones Deportivas y de Recreo",
+  "boe": [],
+  "compartits": [
+   "BOE-A-2015-9462",
+   "BOE-A-2024-10683"
+  ]
+ },
+ {
+  "ref": "servicios-socioculturales-comunidad~activ-domesticas-limpieza-edificios",
+  "nivel": 1,
+  "grado": "D",
+  "denominacion": "Título Profesional Básico en Actividades Domésticas y Limpieza de Edificios",
+  "boe": [],
+  "compartits": [
+   "BOE-A-2015-9462",
+   "BOE-A-2024-10683"
+  ]
+ },
+ {
+  "ref": "textil-confeccion-piel~arreglo-reparacion-articulos-textil-piel",
+  "nivel": 1,
+  "grado": "D",
+  "denominacion": "Título Profesional Básico en Arreglo y Reparación de Artículos Textiles y de Piel",
+  "boe": [],
+  "compartits": [
+   "BOE-A-2014-2360",
+   "BOE-A-2024-10683"
+  ]
+ },
+ {
+  "ref": "textil-confeccion-piel~tapiceria-cortinaje",
+  "nivel": 1,
+  "grado": "D",
+  "denominacion": "Título Profesional Básico en Tapicería y Cortinaje",
+  "boe": [],
+  "compartits": [
+   "BOE-A-2014-2360",
+   "BOE-A-2024-10683"
+  ]
+ },
+ {
+  "ref": "transporte-mantenimiento-vehiculos~mnto-embarcaciones-deportivas-recreo",
+  "nivel": 1,
+  "grado": "D",
+  "denominacion": "Título Profesional Básico en Mantenimiento de Embarcaciones Deportivas y de Recreo",
+  "boe": [],
+  "compartits": [
+   "BOE-A-2015-9462"
+  ]
+ },
+ {
+  "ref": "transporte-mantenimiento-vehiculos~mantenimiento-vehiculos",
+  "nivel": 1,
+  "grado": "D",
+  "denominacion": "Título Profesional Básico en Mantenimiento de Vehículos",
+  "boe": [],
+  "compartits": [
+   "BOE-A-2014-2360",
+   "BOE-A-2024-10683"
+  ]
+ },
+ {
+  "ref": "vidrio-ceramica~vidreria-alfareria",
+  "nivel": 1,
+  "grado": "D",
+  "denominacion": "Título Profesional Básico en Vidriería y Alfarería",
+  "boe": [],
+  "compartits": [
+   "BOE-A-2014-2360",
+   "BOE-A-2024-10683"
+  ]
+ },
+ {
+  "ref": "comercio-marketing~comercializacion-productos-alimentarios",
+  "nivel": 2,
+  "grado": "D",
+  "denominacion": "Técnico en Comercialización de Productos Alimentarios",
+  "boe": [],
+  "compartits": [
+   "BOE-A-2024-10684"
+  ]
+ },
+ {
+  "ref": "fabricacion-mecanica~joyeria",
+  "nivel": 2,
+  "grado": "D",
+  "denominacion": "Técnico en Joyería",
+  "boe": [
+   "BOE-A-2003-10468",
+   "BOE-A-2003-16048"
+  ],
+  "compartits": []
+ },
+ {
+  "ref": "fabricacion-mecanica~mecanizado",
+  "nivel": 2,
+  "grado": "D",
+  "denominacion": "Técnico en Mecanizado",
+  "boe": [
+   "BOE-A-2007-20203",
+   "BOE-A-2008-19100"
+  ],
+  "compartits": [
+   "BOE-A-2024-10684"
+  ]
+ },
+ {
+  "ref": "hosteleria-turismo~cocina-gastronomia",
+  "nivel": 2,
+  "grado": "D",
+  "denominacion": "Técnico en Cocina y Gastronomía",
+  "boe": [
+   "BOE-A-2007-20084",
+   "BOE-A-2008-19176"
+  ],
+  "compartits": [
+   "BOE-A-2024-10684"
+  ]
+ },
+ {
+  "ref": "hosteleria-turismo~comercializacion-productos-alimentarios",
+  "nivel": 2,
+  "grado": "D",
+  "denominacion": "Técnico en Comercialización de Productos Alimentarios",
+  "boe": [],
+  "compartits": [
+   "BOE-A-2024-10684"
+  ]
+ },
+ {
+  "ref": "industrias-alimentarias~panaderia-reposteria-confiteria",
+  "nivel": 2,
+  "grado": "D",
+  "denominacion": "Técnico en Panadería, Repostería y Confitería",
+  "boe": [
+   "BOE-A-2007-20204",
+   "BOE-A-2008-19099"
+  ],
+  "compartits": [
+   "BOE-A-2024-10684"
+  ]
+ },
+ {
+  "ref": "sanidad~cuidados-auxiliares-enfermeria",
+  "nivel": 2,
+  "grado": "D",
+  "denominacion": "Técnico en Cuidados Auxiliares de Enfermería",
+  "boe": [
+   "BOE-A-1995-13533",
+   "BOE-A-1995-13592"
+  ],
+  "compartits": []
+ },
+ {
+  "ref": "servicios-socioculturales-comunidad~servicios-funerarios",
+  "nivel": 2,
+  "grado": "D",
+  "denominacion": "Técnico en Servicios Funerarios",
+  "boe": [
+   "BOE-A-2025-14086"
+  ],
+  "compartits": []
+ },
+ {
+  "ref": "artes-artesanias~construccion-artesanal-instrumentos-de-cuerda",
+  "nivel": 3,
+  "grado": "D",
+  "denominacion": "Técnico Superior en Diseño y construcción artesanal de instrumentos musicales de cuerda",
+  "boe": [
+   "BOE-A-2026-8022",
+   "BOE-A-2026-13294"
+  ],
+  "compartits": []
+ },
+ {
+  "ref": "fabricacion-mecanica~optica-anteojeria",
+  "nivel": 3,
+  "grado": "D",
+  "denominacion": "Técnico Superior en Óptica de Anteojería",
+  "boe": [
+   "BOE-A-2001-8794",
+   "BOE-A-2003-6139"
+  ],
+  "compartits": []
+ },
+ {
+  "ref": "mantenimiento-servicios-produccion~prevencion-riesgos-profesionales",
+  "nivel": 3,
+  "grado": "D",
+  "denominacion": "Técnico Superior en Prevención de Riesgos Profesionales (Título LOGSE)",
+  "boe": [
+   "BOE-A-2021-18189",
+   "BOE-A-2001-21714",
+   "BOE-A-2003-6137"
+  ],
+  "compartits": []
+ },
+ {
+  "ref": "sanidad~dietetica",
+  "nivel": 3,
+  "grado": "D",
+  "denominacion": "Técnico Superior en Dietética",
+  "boe": [
+   "BOE-A-1995-13285",
+   "BOE-A-1995-13287"
+  ],
+  "compartits": []
+ },
+ {
+  "ref": "seguridad-medio-ambiente~educacion-control-ambiental",
+  "nivel": 3,
+  "grado": "D",
+  "denominacion": "Técnico Superior en Educación y Control Ambiental",
+  "boe": [
+   "BOE-A-2011-6709",
+   "BOE-A-2011-10053"
+  ],
+  "compartits": []
+ },
+ {
+  "ref": "servicios-socioculturales-comunidad~educacion-infantil",
+  "nivel": 3,
+  "grado": "D",
+  "denominacion": "Técnico Superior en Educación Infantil",
+  "boe": [
+   "BOE-A-2007-20201",
+   "BOE-A-2009-3788"
+  ],
+  "compartits": [
+   "BOE-A-2024-10685"
+  ]
+ },
+ {
+  "ref": "transporte-mantenimiento-vehiculos~mtmo-aeromecanico-aviones-motor-piston",
+  "nivel": 3,
+  "grado": "D",
+  "denominacion": "Técnico Superior en Mantenimiento Aeromecánico de Aviones con Motor de Pistón",
+  "boe": [
+   "BOE-A-2019-544"
+  ],
+  "compartits": [
+   "BOE-A-2024-10685"
+  ]
+ },
+ {
+  "ref": "transporte-mantenimiento-vehiculos~mtmo-aeromecanica-aviones-motor-turbina",
+  "nivel": 3,
+  "grado": "D",
+  "denominacion": "Técnico Superior en Mantenimiento Aeromecánico de Aviones con Motor de Turbina",
+  "boe": [
+   "BOE-A-2022-10806",
+   "BOE-A-2019-545",
+   "BOE-A-2022-9846"
+  ],
+  "compartits": [
+   "BOE-A-2024-10685"
+  ]
+ },
+ {
+  "ref": "transporte-mantenimiento-vehiculos~mtmo-aeromecanico-helicopteros-motor-piston",
+  "nivel": 3,
+  "grado": "D",
+  "denominacion": "Técnico Superior en Mantenimiento Aeromecánico de Helicópteros con Motor de Pistón",
+  "boe": [
+   "BOE-A-2019-546"
+  ],
+  "compartits": [
+   "BOE-A-2024-10685"
+  ]
+ },
+ {
+  "ref": "transporte-mantenimiento-vehiculos~mtmo-aeromecanico-helicopteros-motor-turbina",
+  "nivel": 3,
+  "grado": "D",
+  "denominacion": "Técnico Superior en Mantenimiento Aeromecánico de Helicópteros con Motor de Turbina",
+  "boe": [
+   "BOE-A-2019-547"
+  ],
+  "compartits": [
+   "BOE-A-2024-10685"
+  ]
+ },
+ {
+  "ref": "transporte-mantenimiento-vehiculos~mtmo-sistemas-electronicos-avionicos-aeronaves",
+  "nivel": 3,
+  "grado": "D",
+  "denominacion": "Técnico Superior en Mantenimiento de Sistemas Electrónicos y Aviónicos de Aeronaves",
+  "boe": [
+   "BOE-A-2019-548"
+  ],
+  "compartits": [
+   "BOE-A-2024-10685"
+  ]
+ },
+ {
+  "ref": "agraria~ce-floristeria-arte-floral",
+  "nivel": null,
+  "grado": "E",
+  "denominacion": "Curso de especialización en Floristería y arte floral (Acceso GM)",
+  "boe": [
+   "BOE-A-2024-21707"
+  ],
+  "compartits": []
+ },
+ {
+  "ref": "agraria~ce-fp-insecticultura",
+  "nivel": null,
+  "grado": "E",
+  "denominacion": "Curso de especialización en Insecticultura (Acceso GM)",
+  "boe": [
+   "BOE-A-2026-5871"
+  ],
+  "compartits": []
+ },
+ {
+  "ref": "electricidad-electronica~ce-ciberseguridad-tecnologias-operacion",
+  "nivel": null,
+  "grado": "E",
+  "denominacion": "Curso de Especialización en Ciberseguridad en entornos de las tecnologías de operación (Acceso GS)",
+  "boe": [
+   "BOE-A-2020-4962"
+  ],
+  "compartits": [
+   "BOE-A-2024-10682"
+  ]
+ },
+ {
+  "ref": "electricidad-electronica~ce-implementacion-redes-5g",
+  "nivel": null,
+  "grado": "E",
+  "denominacion": "Curso de Especialización en Implementación de redes 5G (Acceso GM)",
+  "boe": [
+   "BOE-A-2021-7556"
+  ],
+  "compartits": [
+   "BOE-A-2024-10682"
+  ]
+ },
+ {
+  "ref": "electricidad-electronica~ce-robotica-colaborativa",
+  "nivel": null,
+  "grado": "E",
+  "denominacion": "Curso de Especialización en Robótica colaborativa (Acceso GS)",
+  "boe": [],
+  "compartits": [
+   "BOE-A-2024-10682"
+  ]
+ },
+ {
+  "ref": "electricidad-electronica~ce-sistemas-senalizacion-ferroviaria",
+  "nivel": null,
+  "grado": "E",
+  "denominacion": "Curso de Especialización en Sistemas de señalización y telecomunicaciones ferroviarias (Acceso GS)",
+  "boe": [
+   "BOE-A-2021-5947"
+  ],
+  "compartits": [
+   "BOE-A-2024-10682"
+  ]
+ },
+ {
+  "ref": "electricidad-electronica~ce-desarrollo-equipos-sistemas-electronicos",
+  "nivel": null,
+  "grado": "E",
+  "denominacion": "Desarrollo de equipos y sistemas electrónicos (Acceso GS)",
+  "boe": [
+   "BOE-A-2026-15853"
+  ],
+  "compartits": []
+ },
+ {
+  "ref": "fabricacion-mecanica~ce-materiales-compuestos-industria-aeroespacial",
+  "nivel": null,
+  "grado": "E",
+  "denominacion": "Curso de especialización en Materiales compuestos en la industria aeroespacial (Acceso GS)",
+  "boe": [
+   "BOE-A-2022-2119"
+  ],
+  "compartits": [
+   "BOE-A-2024-10682"
+  ]
+ },
+ {
+  "ref": "hosteleria-turismo~ce-maestria-corte-y-cata-de-jamon-y-paleta-curados",
+  "nivel": null,
+  "grado": "E",
+  "denominacion": "Curso de Especialización en Maestría de corte y cata de jamón y paleta curados (Acceso GM)",
+  "boe": [
+   "BOE-A-2026-3208"
+  ],
+  "compartits": []
+ },
+ {
+  "ref": "hosteleria-turismo~ce-panaderia-bolleria-artesanal",
+  "nivel": null,
+  "grado": "E",
+  "denominacion": "Curso de Especialización en Panadería y bollería artesanales (Acceso GM)",
+  "boe": [
+   "BOE-A-2021-8658",
+   "BOE-A-2020-4966"
+  ],
+  "compartits": [
+   "BOE-A-2024-10682"
+  ]
+ },
+ {
+  "ref": "hosteleria-turismo~ce-turismo-micologico",
+  "nivel": null,
+  "grado": "E",
+  "denominacion": "Curso de especialización en Turismo micológico (Acceso GS)",
+  "boe": [
+   "BOE-A-2026-4674"
+  ],
+  "compartits": []
+ },
+ {
+  "ref": "imagen-sonido~ce-audiodescripcion-subtitulacion",
+  "nivel": null,
+  "grado": "E",
+  "denominacion": "Curso de Especialización en Audiodescripción y subtitulación (Acceso GS)",
+  "boe": [
+   "BOE-A-2020-4965"
+  ],
+  "compartits": [
+   "BOE-A-2024-10682"
+  ]
+ },
+ {
+  "ref": "industrias-alimentarias~ce-tecnologia-gestion-quesera",
+  "nivel": null,
+  "grado": "E",
+  "denominacion": "Curso de especialización en Tecnología y gestión quesera (Acceso GS)",
+  "boe": [
+   "BOE-A-2024-21708"
+  ],
+  "compartits": []
+ },
+ {
+  "ref": "informatica-comunicaciones~ce-ciberseguridad-entornos-tecnologias-informacion",
+  "nivel": null,
+  "grado": "E",
+  "denominacion": "Curso de Especialización en Ciberseguridad en Entornos de las Tecnologías de la Información (Acceso GS)",
+  "boe": [
+   "BOE-A-2020-4963"
+  ],
+  "compartits": [
+   "BOE-A-2024-10682"
+  ]
+ },
+ {
+  "ref": "informatica-comunicaciones~ce-lenguaje-phyton",
+  "nivel": null,
+  "grado": "E",
+  "denominacion": "Curso de Especialización en Desarrollo de aplicaciones en lenguaje Python (Acceso GS)",
+  "boe": [
+   "BOE-A-2024-12503"
+  ],
+  "compartits": []
+ },
+ {
+  "ref": "informatica-comunicaciones~ce-desarrollo-videojuegos-realidad-virtual",
+  "nivel": null,
+  "grado": "E",
+  "denominacion": "Curso de Especialización en Desarrollo de videojuegos y realidad virtual (Acceso GS)",
+  "boe": [
+   "BOE-A-2021-7555"
+  ],
+  "compartits": [
+   "BOE-A-2024-10682"
+  ]
+ },
+ {
+  "ref": "informatica-comunicaciones~ce-despliegue-productos-software-en-contenedores",
+  "nivel": null,
+  "grado": "E",
+  "denominacion": "Curso de Especialización en Despliegue de Productos Software en Contenedores (Acceso GS)",
+  "boe": [
+   "BOE-A-2026-4672"
+  ],
+  "compartits": []
+ },
+ {
+  "ref": "informatica-comunicaciones~ce-inteligencia-artificial-bigdata",
+  "nivel": null,
+  "grado": "E",
+  "denominacion": "Curso de Especialización en Inteligencia Artificial y Big Data (Acceso GS)",
+  "boe": [
+   "BOE-A-2021-7686"
+  ],
+  "compartits": [
+   "BOE-A-2024-10682"
+  ]
+ },
+ {
+  "ref": "informatica-comunicaciones~ce-recursos-servicios-en-la-nube",
+  "nivel": null,
+  "grado": "E",
+  "denominacion": "Curso de Especialización en Recursos y Servicios en la Nube (Acceso GS)",
+  "boe": [
+   "BOE-A-2026-4673"
+  ],
+  "compartits": []
+ },
+ {
+  "ref": "instalacion-mantenimiento~ce-digita-mante-industrial",
+  "nivel": null,
+  "grado": "E",
+  "denominacion": "Curso de Especialización en Digitalización del Mantenimiento Industrial (Acceso GS)",
+  "boe": [
+   "BOE-A-2020-4964"
+  ],
+  "compartits": [
+   "BOE-A-2024-10682"
+  ]
+ },
+ {
+  "ref": "instalacion-mantenimiento~ce-fabricacion-inteligente",
+  "nivel": null,
+  "grado": "E",
+  "denominacion": "Curso de Especialización en Fabricación Inteligente (Acceso GS)",
+  "boe": [
+   "BOE-A-2020-4965"
+  ],
+  "compartits": [
+   "BOE-A-2024-10682"
+  ]
+ },
+ {
+  "ref": "instalacion-mantenimiento~ce-modelado-informacion-construccion",
+  "nivel": null,
+  "grado": "E",
+  "denominacion": "Curso de Especialización en Modelado de la información en la construcción (BIM) (Acceso GS)",
+  "boe": [
+   "BOE-A-2021-7557"
+  ],
+  "compartits": [
+   "BOE-A-2024-10682"
+  ]
+ },
+ {
+  "ref": "inteligencia-artificial-data~aprendizaje-automatico-gestion-datos-entrenamiento",
+  "nivel": null,
+  "grado": "E",
+  "denominacion": "Curso de especialización de Aprendizaje automático: gestión de datos y entrenamiento (Acceso GS)",
+  "boe": [
+   "BOE-A-2026-5869"
+  ],
+  "compartits": []
+ },
+ {
+  "ref": "inteligencia-artificial-data~aprendizaje-automatico-instalacion-despliegue",
+  "nivel": null,
+  "grado": "E",
+  "denominacion": "Curso de especialización en Aprendizaje automático: instalación, despliegue y explotación de sistemas (Acceso GS)",
+  "boe": [
+   "BOE-A-2026-5870"
+  ],
+  "compartits": []
+ },
+ {
+  "ref": "quimica~ce-cultivos-celulares",
+  "nivel": null,
+  "grado": "E",
+  "denominacion": "Curso de Especialización en Cultivos Celulares (Acceso GS)",
+  "boe": [
+   "BOE-A-2022-2119"
+  ],
+  "compartits": [
+   "BOE-A-2024-10682"
+  ]
+ },
+ {
+  "ref": "transporte-mantenimiento-vehiculos~ce-mtmo-material-rodante-ferroviario",
+  "nivel": null,
+  "grado": "E",
+  "denominacion": "Curso de Especialización en Mantenimiento avanzado de sistemas de material rodante ferroviario (Acceso GS)",
+  "boe": [
+   "BOE-A-2021-5948"
+  ],
+  "compartits": [
+   "BOE-A-2024-10682"
+  ]
+ },
+ {
+  "ref": "transporte-mantenimiento-vehiculos~ce-mantenimiento-vehiculos-electricos-hibridos",
+  "nivel": null,
+  "grado": "E",
+  "denominacion": "Curso de Especialización en Mantenimiento de vehículos híbridos y eléctricos (Acceso GM)",
+  "boe": [
+   "BOE-A-2021-8451",
+   "BOE-A-2021-7687"
+  ],
+  "compartits": [
+   "BOE-A-2024-10682"
+  ]
+ },
+ {
+  "ref": "transporte-mantenimiento-vehiculos~ce-mantenimiento-seguridad-hibridos-electricos",
+  "nivel": null,
+  "grado": "E",
+  "denominacion": "Curso de Especialización en Mantenimiento y seguridad en sistemas de vehículos híbridos y eléctricos (Acceso GS)",
+  "boe": [
+   "BOE-A-2022-2057"
+  ],
+  "compartits": [
+   "BOE-A-2024-10682"
+  ]
+ },
+ {
+  "ref": "transporte-mantenimiento-vehiculos~ce-mont-integral-mnto-bicicleta-vehic-mov-personal",
+  "nivel": null,
+  "grado": "E",
+  "denominacion": "Curso de especialización de  Montaje integral y mantenimiento de bicicletas y vehículos de movilidad personal (Acceso GM)",
+  "boe": [
+   "BOE-A-2026-15852"
+  ],
+  "compartits": []
+ }
+]

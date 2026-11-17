@@ -1,0 +1,9907 @@
+{
+ "SEAD0112": {
+  "denominacion": "VIGILANCIA, SEGURIDAD PRIVADA Y PROTECCIÓN DE PERSONAS",
+  "mf": [
+   "MF0080",
+   "MF0081"
+  ],
+  "mp": [
+   "MP0557"
+  ],
+  "nivel": 2,
+  "horas_mf": 290,
+  "horas_practicas": 40,
+  "horas_total": 330,
+  "real_decreto": "548/2014"
+ },
+ "SEAD0212": {
+  "denominacion": "VIGILANCIA, SEGURIDAD PRIVADA Y PROTECCIÓN DE EXPLOSIVOS",
+  "mf": [
+   "MF0080",
+   "MF0082"
+  ],
+  "mp": [
+   "MP0558"
+  ],
+  "nivel": 2,
+  "horas_mf": 310,
+  "horas_practicas": 40,
+  "horas_total": 350,
+  "real_decreto": "548/2014"
+ },
+ "SEAD0312": {
+  "denominacion": "TELEOPERACIONES DE ATENCIÓN, GESTIÓN Y COORDINACIÓN DE EMERGENCIAS",
+  "mf": [
+   "MF2168",
+   "MF2169",
+   "MF2170",
+   "MF2171",
+   "MF2172"
+  ],
+  "mp": [
+   "MP0564"
+  ],
+  "nivel": 3,
+  "horas_mf": 610,
+  "horas_practicas": 120,
+  "horas_total": 730,
+  "real_decreto": "548/2014"
+ },
+ "SEAD0512": {
+  "denominacion": "INSTRUCCIÓN CANINA EN OPERACIONES DE SEGURIDAD Y PROTECCIÓN CIVIL",
+  "mf": [
+   "MF1741",
+   "MF1743",
+   "MF1744",
+   "MF1756",
+   "MF1757",
+   "MF1758"
+  ],
+  "mp": [
+   "MP0569"
+  ],
+  "nivel": 3,
+  "horas_mf": 630,
+  "horas_practicas": 40,
+  "horas_total": 670,
+  "real_decreto": "548/2014"
+ },
+ "SEAD0412": {
+  "denominacion": "ADIESTRAMIENTO DE BASE Y EDUCACIÓN CANINA",
+  "mf": [
+   "MF1741",
+   "MF1742",
+   "MF1743",
+   "MF1744"
+  ],
+  "mp": [
+   "MP0568"
+  ],
+  "nivel": 2,
+  "horas_mf": 340,
+  "horas_practicas": 40,
+  "horas_total": 380,
+  "real_decreto": "548/2014"
+ },
+ "TCPF0512": {
+  "denominacion": "CORTE DE MATERIALES",
+  "mf": [
+   "MF0195",
+   "MF0198",
+   "MF0199"
+  ],
+  "mp": [
+   "MP0587"
+  ],
+  "nivel": 2,
+  "horas_mf": 330,
+  "horas_practicas": 40,
+  "horas_total": 370,
+  "real_decreto": "991/2013"
+ },
+ "TCPN0212": {
+  "denominacion": "APRESTOS Y ACABADOS DE MATERIAS Y ARTÍCULOS TEXTILES",
+  "mf": [
+   "MF0180",
+   "MF0188",
+   "MF0890",
+   "MF0891"
+  ],
+  "mp": [
+   "MP0538"
+  ],
+  "nivel": 2,
+  "horas_mf": 410,
+  "horas_practicas": 80,
+  "horas_total": 490,
+  "real_decreto": "991/2013"
+ },
+ "TCPN0412": {
+  "denominacion": "DISEÑO TÉCNICO DE ESTAMPACIÓN TEXTIL",
+  "mf": [
+   "MF0453",
+   "MF0900",
+   "MF0901",
+   "MF0902"
+  ],
+  "mp": [
+   "MP0539"
+  ],
+  "nivel": 3,
+  "horas_mf": 590,
+  "horas_practicas": 40,
+  "horas_total": 630,
+  "real_decreto": "991/2013"
+ },
+ "TCPP0112": {
+  "denominacion": "DESARROLLO DE TEXTILES TÉCNICOS",
+  "mf": [
+   "MF0453",
+   "MF1242",
+   "MF1243",
+   "MF1244"
+  ],
+  "mp": [
+   "MP0580"
+  ],
+  "nivel": 3,
+  "horas_mf": 560,
+  "horas_practicas": 40,
+  "horas_total": 600,
+  "real_decreto": "991/2013"
+ },
+ "TCPF0612": {
+  "denominacion": "ENSAMBLAJE DE MATERIALES",
+  "mf": [
+   "MF0195",
+   "MF0196",
+   "MF0197"
+  ],
+  "mp": [
+   "MP0588"
+  ],
+  "nivel": 2,
+  "horas_mf": 510,
+  "horas_practicas": 40,
+  "horas_total": 550,
+  "real_decreto": "991/2013"
+ },
+ "TCPN0512": {
+  "denominacion": "ACABADO DE PIELES",
+  "mf": [
+   "MF0191",
+   "MF0887",
+   "MF0888",
+   "MF0889"
+  ],
+  "mp": [
+   "MP0560"
+  ],
+  "nivel": 2,
+  "horas_mf": 390,
+  "horas_practicas": 80,
+  "horas_total": 470,
+  "real_decreto": "991/2013"
+ },
+ "TCPC0112": {
+  "denominacion": "PATRONAJE DE CALZADO Y MARROQUINERÍA",
+  "mf": [
+   "MF0474",
+   "MF0912",
+   "MF0916",
+   "MF0917",
+   "MF0918"
+  ],
+  "mp": [
+   "MP0549"
+  ],
+  "nivel": 3,
+  "horas_mf": 630,
+  "horas_practicas": 120,
+  "horas_total": 750,
+  "real_decreto": "991/2013"
+ },
+ "TCPF0312": {
+  "denominacion": "CONTROL DE CALIDAD DE PRODUCTOS EN TEXTIL Y PIEL",
+  "mf": [
+   "MF2056",
+   "MF2057",
+   "MF2058"
+  ],
+  "mp": [
+   "MP0548"
+  ],
+  "nivel": 3,
+  "horas_mf": 540,
+  "horas_practicas": 80,
+  "horas_total": 620,
+  "real_decreto": "991/2013"
+ },
+ "TCPN0312": {
+  "denominacion": "OPERACIONES AUXILIARES DE LAVANDERÍA INDUSTRIAL Y DE PROXIMIDAD",
+  "mf": [
+   "MF0434",
+   "MF0435",
+   "MF0436",
+   "MF0437"
+  ],
+  "mp": [
+   "MP0545"
+  ],
+  "nivel": 1,
+  "horas_mf": 300,
+  "horas_practicas": 40,
+  "horas_total": 340,
+  "real_decreto": "991/2013"
+ },
+ "TCPP0512": {
+  "denominacion": "GESTIÓN DE LA PRODUCCIÓN Y CALIDAD DE TEJEDURÍA DE PUNTO",
+  "mf": [
+   "MF0453",
+   "MF0460",
+   "MF0461",
+   "MF0462",
+   "MF0463"
+  ],
+  "mp": [
+   "MP0554"
+  ],
+  "nivel": 3,
+  "horas_mf": 630,
+  "horas_practicas": 40,
+  "horas_total": 670,
+  "real_decreto": "991/2013"
+ },
+ "TCPF0212": {
+  "denominacion": "CONFECCIÓN DE VESTUARIO A MEDIDA EN TEXTIL Y PIEL",
+  "mf": [
+   "MF1225",
+   "MF1234",
+   "MF1235",
+   "MF1236",
+   "MF1237"
+  ],
+  "mp": [
+   "MP0547"
+  ],
+  "nivel": 2,
+  "horas_mf": 580,
+  "horas_practicas": 80,
+  "horas_total": 660,
+  "real_decreto": "991/2013"
+ },
+ "TCPC0212": {
+  "denominacion": "FABRICACIÓN DE CALZADO A MEDIDA Y ORTOPÉDICO",
+  "mf": [
+   "MF1502",
+   "MF1503",
+   "MF1504",
+   "MF1505"
+  ],
+  "mp": [
+   "MP0586"
+  ],
+  "nivel": 2,
+  "horas_mf": 570,
+  "horas_practicas": 120,
+  "horas_total": 690,
+  "real_decreto": "991/2013"
+ },
+ "TCPF0712": {
+  "denominacion": "PATRONAJE DE ARTÍCULOS DE CONFECCIÓN EN TEXTIL Y PIEL",
+  "mf": [
+   "MF0474",
+   "MF0912",
+   "MF0913",
+   "MF0914",
+   "MF0915"
+  ],
+  "mp": [
+   "MP0589"
+  ],
+  "nivel": 3,
+  "horas_mf": 660,
+  "horas_practicas": 120,
+  "horas_total": 780,
+  "real_decreto": "991/2013"
+ },
+ "TCPF0912": {
+  "denominacion": "REALIZACIÓN DE VESTUARIO PARA EL ESPECTÁCULO",
+  "mf": [
+   "MF1517",
+   "MF1518",
+   "MF1519",
+   "MF1520",
+   "MF1521"
+  ],
+  "mp": [
+   "MP0590"
+  ],
+  "nivel": 3,
+  "horas_mf": 730,
+  "horas_practicas": 120,
+  "horas_total": 850,
+  "real_decreto": "991/2013"
+ },
+ "TCPN0612": {
+  "denominacion": "TINTURA Y ENGRASE DE PIELES",
+  "mf": [
+   "MF0191",
+   "MF0192",
+   "MF0193",
+   "MF0194"
+  ],
+  "mp": [
+   "MP0562"
+  ],
+  "nivel": 2,
+  "horas_mf": 440,
+  "horas_practicas": 80,
+  "horas_total": 520,
+  "real_decreto": "991/2013"
+ },
+ "TCPP0612": {
+  "denominacion": "TEJEDURÍA DE CALADA",
+  "mf": [
+   "MF0180",
+   "MF0183",
+   "MF0184"
+  ],
+  "mp": [
+   "MP0582"
+  ],
+  "nivel": 2,
+  "horas_mf": 500,
+  "horas_practicas": 40,
+  "horas_total": 540,
+  "real_decreto": "991/2013"
+ },
+ "TCPP0812": {
+  "denominacion": "GESTIÓN DE LA PRODUCCIÓN Y CALIDAD DE HILATURA, TELAS NO TEJIDAS Y TEJEDURÍA",
+  "mf": [
+   "MF0453",
+   "MF0469",
+   "MF0470",
+   "MF0471",
+   "MF0472",
+   "MF0473"
+  ],
+  "mp": [
+   "MP0584"
+  ],
+  "nivel": 3,
+  "horas_mf": 570,
+  "horas_practicas": 80,
+  "horas_total": 650,
+  "real_decreto": "991/2013"
+ },
+ "TCPF0112": {
+  "denominacion": "CORTE, MONTADO Y ACABADO EN PELETERÍA",
+  "mf": [
+   "MF0441",
+   "MF0442",
+   "MF0443",
+   "MF0444"
+  ],
+  "mp": [
+   "MP0546"
+  ],
+  "nivel": 2,
+  "horas_mf": 570,
+  "horas_practicas": 120,
+  "horas_total": 690,
+  "real_decreto": "991/2013"
+ },
+ "TCPF0412": {
+  "denominacion": "ASISTENCIA TÉCNICA EN LA LOGÍSTICA DE LOS PROCESOS DE EXTERNALIZACIÓN DE LA PRODUCCIÓN TEXTIL, PIEL Y CONFECCIÓN",
+  "mf": [
+   "MF0474",
+   "MF1005",
+   "MF2173",
+   "MF2174",
+   "MF2175",
+   "MF2176"
+  ],
+  "mp": [
+   "MP0585"
+  ],
+  "nivel": 3,
+  "horas_mf": 660,
+  "horas_practicas": 120,
+  "horas_total": 780,
+  "real_decreto": "991/2013"
+ },
+ "TCPP0212": {
+  "denominacion": "TEJEDURÍA DE PUNTO POR URDIMBRE",
+  "mf": [
+   "MF0180",
+   "MF0897",
+   "MF0898",
+   "MF0899"
+  ],
+  "mp": [
+   "MP0540"
+  ],
+  "nivel": 2,
+  "horas_mf": 530,
+  "horas_practicas": 80,
+  "horas_total": 610,
+  "real_decreto": "991/2013"
+ },
+ "TCPP0312": {
+  "denominacion": "HILATURA Y TELAS NO TEJIDAS",
+  "mf": [
+   "MF0180",
+   "MF0181",
+   "MF0182"
+  ],
+  "mp": [
+   "MP0543"
+  ],
+  "nivel": 2,
+  "horas_mf": 480,
+  "horas_practicas": 80,
+  "horas_total": 560,
+  "real_decreto": "991/2013"
+ },
+ "TCPN0112": {
+  "denominacion": "BLANQUEO Y TINTURA DE MATERIAS TEXTILES",
+  "mf": [
+   "MF0180",
+   "MF0188",
+   "MF0189",
+   "MF0190"
+  ],
+  "mp": [
+   "MP0537"
+  ],
+  "nivel": 2,
+  "horas_mf": 460,
+  "horas_practicas": 80,
+  "horas_total": 540,
+  "real_decreto": "991/2013"
+ },
+ "TCPP0412": {
+  "denominacion": "ASISTENCIA A LA CONSERVACIÓN Y RESTAURACIÓN DE TAPICES Y ALFOMBRAS",
+  "mf": [
+   "MF1238",
+   "MF1239",
+   "MF1240",
+   "MF1241"
+  ],
+  "mp": [
+   "MP0552"
+  ],
+  "nivel": 3,
+  "horas_mf": 520,
+  "horas_practicas": 80,
+  "horas_total": 600,
+  "real_decreto": "991/2013"
+ },
+ "TCPP0712": {
+  "denominacion": "TEJEDURÍA DE PUNTO POR TRAMA O RECOGIDA",
+  "mf": [
+   "MF0180",
+   "MF0894",
+   "MF0895",
+   "MF0896"
+  ],
+  "mp": [
+   "MP0583"
+  ],
+  "nivel": 2,
+  "horas_mf": 570,
+  "horas_practicas": 40,
+  "horas_total": 610,
+  "real_decreto": "991/2013"
+ },
+ "TCPF0812": {
+  "denominacion": "GESTIÓN DE SASTRERÍA DEL ESPECTÁCULO EN VIVO",
+  "mf": [
+   "MF1506",
+   "MF1507",
+   "MF1508",
+   "MF1509"
+  ],
+  "mp": [
+   "MP0574"
+  ],
+  "nivel": 3,
+  "horas_mf": 690,
+  "horas_practicas": 80,
+  "horas_total": 770,
+  "real_decreto": "991/2013"
+ },
+ "TMVU0512": {
+  "denominacion": "ORGANIZACIÓN Y SUPERVISIÓN DEL MANTENIMIENTO DE ELEMENTOS  ESTRUCTURALES Y DE RECUBRIMIENTO DE SUPERFICIES DE EMBARCACIONES DEPORTIVAS Y DE RECREO",
+  "mf": [
+   "MF1990",
+   "MF1991",
+   "MF1992",
+   "MF1993"
+  ],
+  "mp": [
+   "MP0581"
+  ],
+  "nivel": 3,
+  "horas_mf": 390,
+  "horas_practicas": 40,
+  "horas_total": 430,
+  "real_decreto": "992/2013"
+ },
+ "TMVO0212": {
+  "denominacion": "ASISTENCIA A PASAJEROS, TRIPULACIONES, AERONAVES Y MERCANCIAS EN AEROPUERTOS",
+  "mf": [
+   "MF2213",
+   "MF2214",
+   "MF2215",
+   "MF2216",
+   "MF2217"
+  ],
+  "mp": [
+   "MP0563"
+  ],
+  "nivel": 2,
+  "horas_mf": 600,
+  "horas_practicas": 120,
+  "horas_total": 720,
+  "real_decreto": "992/2013"
+ },
+ "TMVU0412": {
+  "denominacion": "ORGANIZACIÓN Y SUPERVISIÓN DEL MANTENIMIENTO DEL APAREJO DE EMBARCACIONES DEPORTIVAS Y DE RECREO",
+  "mf": [
+   "MF1993",
+   "MF1994",
+   "MF1995"
+  ],
+  "mp": [
+   "MP0556"
+  ],
+  "nivel": 3,
+  "horas_mf": 340,
+  "horas_practicas": 40,
+  "horas_total": 380,
+  "real_decreto": "992/2013"
+ },
+ "TMVU0212": {
+  "denominacion": "MANTENIMIENTO E INSTALACIÓN DE SISTEMAS ELÉCTRICOS Y ELECTRÓNICOS DE EMBARCACIONES DEPORTIVAS Y DE RECREO",
+  "mf": [
+   "MF1831",
+   "MF1832",
+   "MF1833",
+   "MF1834"
+  ],
+  "mp": [
+   "MP0513"
+  ],
+  "nivel": 2,
+  "horas_mf": 580,
+  "horas_practicas": 80,
+  "horas_total": 660,
+  "real_decreto": "992/2013"
+ },
+ "TMVU0312": {
+  "denominacion": "ORGANIZACIÓN Y SUPERVISIÓN DEL MANTENIMIENTO DE LOS SISTEMAS Y EQUIPOS DE EMBARCACIONES DEPORTIVAS Y DE RECREO",
+  "mf": [
+   "MF1993",
+   "MF1996",
+   "MF1997",
+   "MF1998",
+   "MF1999"
+  ],
+  "mp": [
+   "MP0525"
+  ],
+  "nivel": 3,
+  "horas_mf": 490,
+  "horas_practicas": 40,
+  "horas_total": 530,
+  "real_decreto": "992/2013"
+ },
+ "TMVO0112": {
+  "denominacion": "OPERACIONES AUXILIARES DE ASISTENCIA A PASAJEROS, EQUIPAJES, MERCANCIAS Y AERONAVES EN AEROPUERTOS",
+  "mf": [
+   "MF2209",
+   "MF2210",
+   "MF2211",
+   "MF2212"
+  ],
+  "mp": [
+   "MP0534"
+  ],
+  "nivel": 1,
+  "horas_mf": 360,
+  "horas_practicas": 120,
+  "horas_total": 480,
+  "real_decreto": "992/2013"
+ },
+ "TMVU0112": {
+  "denominacion": "MANTENIMIENTO DE LA PLANTA PROPULSORA, MÁQUINAS Y EQUIPOS AUXILIARES DE EMBARCACIONES DEPORTIVAS Y DE RECREO",
+  "mf": [
+   "MF0132",
+   "MF0133",
+   "MF1835",
+   "MF1836",
+   "MF1837"
+  ],
+  "mp": [
+   "MP0507"
+  ],
+  "nivel": 2,
+  "horas_mf": 760,
+  "horas_practicas": 80,
+  "horas_total": 840,
+  "real_decreto": "992/2013"
+ },
+ "TMVO0111": {
+  "denominacion": "TRIPULACIÓN DE CABINA DE PASAJEROS",
+  "mf": [
+   "MF0809",
+   "MF2000",
+   "MF2001",
+   "MF2002",
+   "MF2003",
+   "MF2004",
+   "MF2005"
+  ],
+  "mp": [
+   "MP0033"
+  ],
+  "nivel": 3,
+  "horas_mf": 510,
+  "horas_practicas": 40,
+  "horas_total": 550,
+  "real_decreto": "992/2013"
+ },
+ "VICI0212": {
+  "denominacion": "ORGANIZACIÓN DE LA FABRICACIÓN EN LA TRANSFORMACIÓN DE PRODUCTOS DE VIDRIO",
+  "mf": [
+   "MF0664",
+   "MF0665",
+   "MF0672",
+   "MF0673",
+   "MF0674"
+  ],
+  "mp": [
+   "MP0519"
+  ],
+  "nivel": 3,
+  "horas_mf": 400,
+  "horas_practicas": 80,
+  "horas_total": 480,
+  "real_decreto": "993/2013"
+ },
+ "VICI0312": {
+  "denominacion": "ORGANIZACIÓN DE LA FABRICACIÓN DE PRODUCTOS DE VIDRIO",
+  "mf": [
+   "MF0664",
+   "MF0665",
+   "MF0669",
+   "MF0670",
+   "MF0671"
+  ],
+  "mp": [
+   "MP0528"
+  ],
+  "nivel": 3,
+  "horas_mf": 370,
+  "horas_practicas": 80,
+  "horas_total": 450,
+  "real_decreto": "993/2013"
+ },
+ "VICI0412": {
+  "denominacion": "OPERACIONES EN LÍNEA AUTOMÁTICA DE FABRICACIÓN Y TRANSFORMACIÓN DE VIDRIO",
+  "mf": [
+   "MF0151",
+   "MF0152",
+   "MF0153",
+   "MF0154"
+  ],
+  "mp": [
+   "MP0533"
+  ],
+  "nivel": 2,
+  "horas_mf": 500,
+  "horas_practicas": 80,
+  "horas_total": 580,
+  "real_decreto": "993/2013"
+ },
+ "VICI0112": {
+  "denominacion": "ENSAYOS DE CALIDAD EN INDUSTRIAS DEL VIDRIO",
+  "mf": [
+   "MF2053",
+   "MF2054",
+   "MF2055"
+  ],
+  "mp": [
+   "MP0512"
+  ],
+  "nivel": 2,
+  "horas_mf": 360,
+  "horas_practicas": 80,
+  "horas_total": 440,
+  "real_decreto": "993/2013"
+ },
+ "ARTG0112": {
+  "denominacion": "MANTENIMIENTO Y REPARACIÓN DE INSTRUMENTOS DE VIENTO-METAL",
+  "mf": [
+   "MF2107",
+   "MF2108",
+   "MF2112",
+   "MF2113",
+   "MF2114"
+  ],
+  "mp": [
+   "MP0527"
+  ],
+  "nivel": 2,
+  "horas_mf": 560,
+  "horas_practicas": 120,
+  "horas_total": 680,
+  "real_decreto": "985/2013"
+ },
+ "ARTU0112": {
+  "denominacion": "CONSTRUCCIÓN DE DECORADOS PARA LA ESCENOGRAFÍA DE ESPECTÁCULOS EN VIVO, EVENTOS Y AUDIOVISUALES",
+  "mf": [
+   "MF1706",
+   "MF1707",
+   "MF1708",
+   "MF1709",
+   "MF1710"
+  ],
+  "mp": [
+   "MP0523"
+  ],
+  "nivel": 3,
+  "horas_mf": 720,
+  "horas_practicas": 120,
+  "horas_total": 840,
+  "real_decreto": "985/2013"
+ },
+ "ARTU0212": {
+  "denominacion": "ASISTENCIA A LA DIRECCIÓN TÉCNICA DE ESPECTÁCULOS EN VIVO Y EVENTOS",
+  "mf": [
+   "MF2248",
+   "MF2249",
+   "MF2250"
+  ],
+  "mp": [
+   "MP0522"
+  ],
+  "nivel": 3,
+  "horas_mf": 450,
+  "horas_practicas": 80,
+  "horas_total": 530,
+  "real_decreto": "985/2013"
+ },
+ "ARTG0512": {
+  "denominacion": "REGULACIÓN DE PIANOS VERTICALES Y DE COLA",
+  "mf": [
+   "MF1690",
+   "MF2117",
+   "MF2118",
+   "MF2119",
+   "MF2127",
+   "MF2128",
+   "MF2129"
+  ],
+  "mp": [
+   "MP0550"
+  ],
+  "nivel": 3,
+  "horas_mf": 910,
+  "horas_practicas": 80,
+  "horas_total": 990,
+  "real_decreto": "985/2013"
+ },
+ "ARTG0312": {
+  "denominacion": "MANTENIMIENTO Y REPARACIÓN DE INSTRUMENTOS MUSICALES DE CUERDA",
+  "mf": [
+   "MF1690",
+   "MF2122",
+   "MF2123",
+   "MF2124",
+   "MF2125",
+   "MF2126"
+  ],
+  "mp": [
+   "MP0526"
+  ],
+  "nivel": 3,
+  "horas_mf": 730,
+  "horas_practicas": 80,
+  "horas_total": 810,
+  "real_decreto": "985/2013"
+ },
+ "ARTG0212": {
+  "denominacion": "MANTENIMIENTO Y REPARACIÓN DE INSTRUMENTOS DE VIENTO-MADERA",
+  "mf": [
+   "MF2107",
+   "MF2108",
+   "MF2109",
+   "MF2110",
+   "MF2111"
+  ],
+  "mp": [
+   "MP0514"
+  ],
+  "nivel": 2,
+  "horas_mf": 560,
+  "horas_practicas": 120,
+  "horas_total": 680,
+  "real_decreto": "985/2013"
+ },
+ "ARTR0112": {
+  "denominacion": "RESTAURACIÓN Y REPARACIÓN DE RELOJES DE ÉPOCA, HISTÓRICOS Y AUTÓMATAS",
+  "mf": [
+   "MF2130",
+   "MF2131"
+  ],
+  "mp": [
+   "MP0510"
+  ],
+  "nivel": 3,
+  "horas_mf": 630,
+  "horas_practicas": 120,
+  "horas_total": 750,
+  "real_decreto": "985/2013"
+ },
+ "ARTG0412": {
+  "denominacion": "AFINACIÓN Y ARMONIZACIÓN DEL PIANO",
+  "mf": [
+   "MF1690",
+   "MF2117",
+   "MF2118",
+   "MF2119",
+   "MF2120",
+   "MF2121"
+  ],
+  "mp": [
+   "MP0544"
+  ],
+  "nivel": 3,
+  "horas_mf": 730,
+  "horas_practicas": 80,
+  "horas_total": 810,
+  "real_decreto": "985/2013"
+ },
+ "ARTA0112": {
+  "denominacion": "ELABORACIÓN DE OBRAS DE FORJA ARTESANAL",
+  "mf": [
+   "MF1690",
+   "MF2244",
+   "MF2245",
+   "MF2246",
+   "MF2247"
+  ],
+  "mp": [
+   "MP0551"
+  ],
+  "nivel": 2,
+  "horas_mf": 430,
+  "horas_practicas": 80,
+  "horas_total": 510,
+  "real_decreto": "985/2013"
+ },
+ "ARTB0112": {
+  "denominacion": "REPOSICIÓN, MONTAJE Y MANTENIMIENTO DE ELEMENTOS DE RELOJERÍA FINA",
+  "mf": [
+   "MF1690",
+   "MF2115",
+   "MF2116"
+  ],
+  "mp": [
+   "MP0511"
+  ],
+  "nivel": 2,
+  "horas_mf": 340,
+  "horas_practicas": 120,
+  "horas_total": 460,
+  "real_decreto": "985/2013"
+ },
+ "MAPN0512": {
+  "denominacion": "ACTIVIDADES AUXILIARES DE MANTENIMIENTO DE MÁQUINAS, EQUIPOS E INSTALACIONES DEL BUQUE",
+  "mf": [
+   "MF0731",
+   "MF0732",
+   "MF0733"
+  ],
+  "mp": [
+   "MP0553"
+  ],
+  "nivel": 1,
+  "horas_mf": 350,
+  "horas_practicas": 80,
+  "horas_total": 430,
+  "real_decreto": "988/2013"
+ },
+ "MAPN0112": {
+  "denominacion": "ACTIVIDADES DE EXTRACCIÓN Y RECOGIDA DE CRUSTÁCEOS ADHERIDOS A LAS ROCAS",
+  "mf": [
+   "MF0010",
+   "MF0733",
+   "MF1889"
+  ],
+  "mp": [
+   "MP0529"
+  ],
+  "nivel": 1,
+  "horas_mf": 160,
+  "horas_practicas": 40,
+  "horas_total": 200,
+  "real_decreto": "988/2013"
+ },
+ "MAPN0712": {
+  "denominacion": "OPERACIONES PORTUARIAS DE CARGA, ESTIBA, DESCARGA, DESESTIBA Y TRANSBORDO",
+  "mf": [
+   "MF0807",
+   "MF1955",
+   "MF1956",
+   "MF1957"
+  ],
+  "mp": [
+   "MP0555"
+  ],
+  "nivel": 2,
+  "horas_mf": 450,
+  "horas_practicas": 400,
+  "horas_total": 850,
+  "real_decreto": "988/2013"
+ },
+ "MAPB0112": {
+  "denominacion": "ACTIVIDADES SUBACUÁTICAS PARA INSTALACIONES ACUÍCOLAS Y RECOLECCIÓN DE RECURSOS",
+  "mf": [
+   "MF1299",
+   "MF1300",
+   "MF1301"
+  ],
+  "mp": [
+   "MP0566"
+  ],
+  "nivel": 1,
+  "horas_mf": 330,
+  "horas_practicas": 80,
+  "horas_total": 410,
+  "real_decreto": "988/2013"
+ },
+ "MAPN0212": {
+  "denominacion": "GOBIERNO DE EMBARCACIONES Y MOTOS NAÚTICAS DESTINADAS AL SOCORRISMO ACUÁTICO",
+  "mf": [
+   "MF0011",
+   "MF0269",
+   "MF0733",
+   "MF2048",
+   "MF2049"
+  ],
+  "mp": [
+   "MP0530"
+  ],
+  "nivel": 2,
+  "horas_mf": 400,
+  "horas_practicas": 40,
+  "horas_total": 440,
+  "real_decreto": "988/2013"
+ },
+ "MAPN0412": {
+  "denominacion": "OPERACIONES DE BOMBEO PARA CARGA Y DESCARGA DEL BUQUE",
+  "mf": [
+   "MF0733",
+   "MF1893"
+  ],
+  "mp": [
+   "MP0532"
+  ],
+  "nivel": 2,
+  "horas_mf": 140,
+  "horas_practicas": 40,
+  "horas_total": 180,
+  "real_decreto": "988/2013"
+ },
+ "MAPN0612": {
+  "denominacion": "MANTENIMIENTO DE LOS EQUIPOS DE UN PARQUE DE PESCA Y DE LA INSTALACIÓN FRIGORÍFICA",
+  "mf": [
+   "MF0010",
+   "MF0733",
+   "MF1890",
+   "MF1891",
+   "MF1892"
+  ],
+  "mp": [
+   "MP0536"
+  ],
+  "nivel": 2,
+  "horas_mf": 400,
+  "horas_practicas": 80,
+  "horas_total": 480,
+  "real_decreto": "988/2013"
+ },
+ "MAPN0312": {
+  "denominacion": "MANIPULACIÓN Y CONSERVACIÓN EN PESCA Y ACUICULTURA",
+  "mf": [
+   "MF0010",
+   "MF0015",
+   "MF0016",
+   "MF0733"
+  ],
+  "mp": [
+   "MP0531"
+  ],
+  "nivel": 2,
+  "horas_mf": 340,
+  "horas_practicas": 80,
+  "horas_total": 420,
+  "real_decreto": "988/2013"
+ },
+ "MAPU0112": {
+  "denominacion": "MANTENIMIENTO DE INSTALACIONES EN ACUICULTURA",
+  "mf": [
+   "MF1620",
+   "MF1621",
+   "MF1622"
+  ],
+  "mp": [
+   "MP0567"
+  ],
+  "nivel": 2,
+  "horas_mf": 290,
+  "horas_practicas": 120,
+  "horas_total": 410,
+  "real_decreto": "988/2013"
+ },
+ "QUIO0212": {
+  "denominacion": "CONTROL DEL PRODUCTO PASTERO-PAPELERO",
+  "mf": [
+   "MF0052",
+   "MF0053",
+   "MF1542",
+   "MF1543",
+   "MF1544"
+  ],
+  "mp": [
+   "MP0565"
+  ],
+  "nivel": 3,
+  "horas_mf": 450,
+  "horas_practicas": 120,
+  "horas_total": 570,
+  "real_decreto": "989/2013"
+ },
+ "QUIA0112": {
+  "denominacion": "ORGANIZACIÓN Y CONTROL DE ENSAYOS DESTRUCTIVOS DE CARACTERIZACIÓN DE MATERIALES Y PRODUCTOS",
+  "mf": [
+   "MF0052",
+   "MF2197",
+   "MF2198",
+   "MF2199",
+   "MF2200",
+   "MF2201",
+   "MF2202",
+   "MF2203"
+  ],
+  "mp": [],
+  "nivel": 3,
+  "horas_mf": 760,
+  "horas_practicas": 120,
+  "horas_total": 880,
+  "real_decreto": "989/2013"
+ },
+ "QUIO0112": {
+  "denominacion": "FABRICACIÓN DE PASTAS QUÍMICAS Y/O SEMIQUÍMICAS",
+  "mf": [
+   "MF0044",
+   "MF0770",
+   "MF0772",
+   "MF0773"
+  ],
+  "mp": [
+   "MP0524"
+  ],
+  "nivel": 2,
+  "horas_mf": 560,
+  "horas_practicas": 120,
+  "horas_total": 680,
+  "real_decreto": "989/2013"
+ },
+ "SSCI0212": {
+  "denominacion": "ACTIVIDADES FUNERARIAS Y DE MANTENIMIENTO EN CEMENTERIOS",
+  "mf": [
+   "MF0522",
+   "MF2006",
+   "MF2007"
+  ],
+  "mp": [
+   "MP0506"
+  ],
+  "nivel": 1,
+  "horas_mf": 170,
+  "horas_practicas": 80,
+  "horas_total": 250,
+  "real_decreto": "990/2013"
+ },
+ "SSCI0112": {
+  "denominacion": "INSTRUCCIÓN DE PERROS DE ASISTENCIA",
+  "mf": [
+   "MF1741",
+   "MF2016",
+   "MF2017",
+   "MF2018",
+   "MF2019",
+   "MF2020",
+   "MF2021"
+  ],
+  "mp": [
+   "MP0505"
+  ],
+  "nivel": 3,
+  "horas_mf": 760,
+  "horas_practicas": 80,
+  "horas_total": 840,
+  "real_decreto": "990/2013"
+ },
+ "SSCI0412": {
+  "denominacion": "OPERACIONES EN SERVICIOS FUNERARIOS",
+  "mf": [
+   "MF1607",
+   "MF2011",
+   "MF2012",
+   "MF2013",
+   "MF2014",
+   "MF2015"
+  ],
+  "mp": [
+   "MP0509"
+  ],
+  "nivel": 2,
+  "horas_mf": 370,
+  "horas_practicas": 80,
+  "horas_total": 450,
+  "real_decreto": "990/2013"
+ },
+ "SSCI0312": {
+  "denominacion": "ATENCIÓN AL CLIENTE Y ORGANIZACIÓN DE ACTOS DE PROTOCOLO EN SERVICIOS FUNERARIOS",
+  "mf": [
+   "MF2008",
+   "MF2009",
+   "MF2010"
+  ],
+  "mp": [
+   "MP0508"
+  ],
+  "nivel": 2,
+  "horas_mf": 240,
+  "horas_practicas": 40,
+  "horas_total": 280,
+  "real_decreto": "990/2013"
+ },
+ "SSCE0212": {
+  "denominacion": "PROMOCIÓN PARA LA IGUALDAD EFECTIVA DE MUJERES Y HOMBRES",
+  "mf": [
+   "MF1453",
+   "MF1454",
+   "MF1582",
+   "MF1583",
+   "MF1584"
+  ],
+  "mp": [
+   "MP0561"
+  ],
+  "nivel": 3,
+  "horas_mf": 450,
+  "horas_practicas": 120,
+  "horas_total": 570,
+  "real_decreto": "990/2013"
+ },
+ "SSCI0209": {
+  "denominacion": "GESTIÓN Y ORGANIZACIÓN DE EQUIPOS DE LIMPIEZA",
+  "mf": [
+   "MF1434",
+   "MF1435",
+   "MF1436"
+  ],
+  "mp": [
+   "MP0227"
+  ],
+  "nivel": 3,
+  "horas_mf": 300,
+  "horas_practicas": 80,
+  "horas_total": 380,
+  "real_decreto": "990/2013"
+ },
+ "ENAA0112": {
+  "denominacion": "GESTIÓN DEL USO EFICIENTE DEL AGUA",
+  "mf": [
+   "MF1196",
+   "MF2204",
+   "MF2205",
+   "MF2206",
+   "MF2207",
+   "MF2208"
+  ],
+  "mp": [
+   "MP0575"
+  ],
+  "nivel": 3,
+  "horas_mf": 680,
+  "horas_practicas": 80,
+  "horas_total": 760,
+  "real_decreto": "987/2013"
+ },
+ "EOCO0112": {
+  "denominacion": "CONTROL DE EJECUCIÓN DE OBRAS DE EDIFICACIÓN",
+  "mf": [
+   "MF1360",
+   "MF2140",
+   "MF2141",
+   "MF2146",
+   "MF2147",
+   "MF2148",
+   "MF2149",
+   "MF2150"
+  ],
+  "mp": [],
+  "nivel": 3,
+  "horas_mf": 630,
+  "horas_practicas": 120,
+  "horas_total": 750,
+  "real_decreto": "986/2013"
+ },
+ "EOCO0212": {
+  "denominacion": "CONTROL DE EJECUCIÓN DE OBRAS CIVILES",
+  "mf": [
+   "MF1360",
+   "MF2140",
+   "MF2141",
+   "MF2142",
+   "MF2143",
+   "MF2144",
+   "MF2145",
+   "MF2146"
+  ],
+  "mp": [],
+  "nivel": 3,
+  "horas_mf": 530,
+  "horas_practicas": 120,
+  "horas_total": 650,
+  "real_decreto": "986/2013"
+ },
+ "EOCJ0109": {
+  "denominacion": "MONTAJE DE ANDAMIOS TUBULARES",
+  "mf": [
+   "MF1360",
+   "MF1926",
+   "MF1927",
+   "MF1928"
+  ],
+  "mp": [
+   "MP0264"
+  ],
+  "nivel": 2,
+  "horas_mf": 280,
+  "horas_practicas": 80,
+  "horas_total": 360,
+  "real_decreto": "986/2013"
+ },
+ "AGAN0112": {
+  "denominacion": "ASISTENCIA EN LOS CONTROLES SANITARIOS EN MATADEROS, ESTABLECIMIENTOS DE MANIPULACIÓN DE CAZA Y SALAS DE DESPIECE",
+  "mf": [
+   "MF2132",
+   "MF2133",
+   "MF2134",
+   "MF2135",
+   "MF2136",
+   "MF2137"
+  ],
+  "mp": [
+   "MP0515"
+  ],
+  "nivel": 3,
+  "horas_mf": 750,
+  "horas_practicas": 80,
+  "horas_total": 830,
+  "real_decreto": "983/2013"
+ },
+ "AGAN0212": {
+  "denominacion": "REALIZACIÓN DE PROCEDIMIENTOS EXPERIMENTALES CON ANIMALES PARA INVESTIGACIÓN Y OTROS FINES CIENTÍFICOS",
+  "mf": [
+   "MF1586",
+   "MF1724",
+   "MF1725",
+   "MF1737",
+   "MF1738",
+   "MF1739",
+   "MF1740"
+  ],
+  "mp": [
+   "MP0516"
+  ],
+  "nivel": 3,
+  "horas_mf": 630,
+  "horas_practicas": 120,
+  "horas_total": 750,
+  "real_decreto": "983/2013"
+ },
+ "AGAN0312": {
+  "denominacion": "CUIDADOS DE ANIMALES SALVAJES, DE ZOOLÓGICOS Y ACUARIOS",
+  "mf": [
+   "MF1725",
+   "MF2062",
+   "MF2063",
+   "MF2064",
+   "MF2065"
+  ],
+  "mp": [
+   "MP0518"
+  ],
+  "nivel": 2,
+  "horas_mf": 420,
+  "horas_practicas": 80,
+  "horas_total": 500,
+  "real_decreto": "983/2013"
+ },
+ "AGAN0111": {
+  "denominacion": "CUIDADOS Y MANTENIMIENTO DE ANIMALES UTILIZADOS PARA INVESTIGACIÓN Y OTROS FINES CIENTÍFICOS",
+  "mf": [
+   "MF1722",
+   "MF1723",
+   "MF1724",
+   "MF1725"
+  ],
+  "mp": [
+   "MP0250"
+  ],
+  "nivel": 2,
+  "horas_mf": 330,
+  "horas_practicas": 120,
+  "horas_total": 450,
+  "real_decreto": "983/2013"
+ },
+ "ARGA0112": {
+  "denominacion": "GRABADO Y TÉCNICAS DE ESTAMPACIÓN",
+  "mf": [
+   "MF2224",
+   "MF2225",
+   "MF2226",
+   "MF2227",
+   "MF2228",
+   "MF2229"
+  ],
+  "mp": [
+   "MP0572"
+  ],
+  "nivel": 3,
+  "horas_mf": 720,
+  "horas_practicas": 80,
+  "horas_total": 800,
+  "real_decreto": "984/2013"
+ },
+ "ARGC0112": {
+  "denominacion": "GESTIÓN DE LA PRODUCCIÓN EN ENCUADERNACIÓN INDUSTRIAL",
+  "mf": [
+   "MF1669",
+   "MF1670",
+   "MF1671",
+   "MF1672",
+   "MF1673"
+  ],
+  "mp": [
+   "MP0576"
+  ],
+  "nivel": 3,
+  "horas_mf": 580,
+  "horas_practicas": 80,
+  "horas_total": 660,
+  "real_decreto": "984/2013"
+ },
+ "ARGG0112": {
+  "denominacion": "DISEÑO ESTRUCTURAL DE ENVASES Y EMBALAJES DE PAPEL, CARTÓN Y OTROS SOPORTES GRÁFICOS",
+  "mf": [
+   "MF2220",
+   "MF2221",
+   "MF2222",
+   "MF2223"
+  ],
+  "mp": [
+   "MP0570"
+  ],
+  "nivel": 3,
+  "horas_mf": 400,
+  "horas_practicas": 80,
+  "horas_total": 480,
+  "real_decreto": "984/2013"
+ },
+ "ARGI0112": {
+  "denominacion": "GESTIÓN DE LA PRODUCCIÓN EN PROCESOS DE IMPRESIÓN",
+  "mf": [
+   "MF1669",
+   "MF1670",
+   "MF1674",
+   "MF1675",
+   "MF1676",
+   "MF1677"
+  ],
+  "mp": [
+   "MP0577"
+  ],
+  "nivel": 3,
+  "horas_mf": 730,
+  "horas_practicas": 80,
+  "horas_total": 810,
+  "real_decreto": "984/2013"
+ },
+ "ARGT0112": {
+  "denominacion": "GESTIÓN DE LA PRODUCCIÓN EN TRANSFORMADOS DE PAPEL, CARTÓN Y OTROS SOPORTES GRÁFICOS",
+  "mf": [
+   "MF1669",
+   "MF1670",
+   "MF1681",
+   "MF1682",
+   "MF1683"
+  ],
+  "mp": [
+   "MP0579"
+  ],
+  "nivel": 3,
+  "horas_mf": 550,
+  "horas_practicas": 80,
+  "horas_total": 630,
+  "real_decreto": "984/2013"
+ },
+ "ARGG0212": {
+  "denominacion": "ILUSTRACIÓN",
+  "mf": [
+   "MF2229",
+   "MF2230",
+   "MF2231",
+   "MF2232",
+   "MF2233",
+   "MF2234"
+  ],
+  "mp": [
+   "MP0571"
+  ],
+  "nivel": 3,
+  "horas_mf": 670,
+  "horas_practicas": 80,
+  "horas_total": 750,
+  "real_decreto": "984/2013"
+ },
+ "ARGP0112": {
+  "denominacion": "GESTIÓN DE LA PRODUCCIÓN EN PROCESOS DE PREIMPRESIÓN",
+  "mf": [
+   "MF1669",
+   "MF1670",
+   "MF1674",
+   "MF1678",
+   "MF1679",
+   "MF1680"
+  ],
+  "mp": [
+   "MP0578"
+  ],
+  "nivel": 3,
+  "horas_mf": 670,
+  "horas_practicas": 80,
+  "horas_total": 750,
+  "real_decreto": "984/2013"
+ },
+ "AFDA0112": {
+  "denominacion": "GUÍA POR BARRANCOS SECOS O ACUÁTICOS",
+  "mf": [
+   "MF0272",
+   "MF1076",
+   "MF1077",
+   "MF1078"
+  ],
+  "mp": [
+   "MP0517"
+  ],
+  "nivel": 2,
+  "horas_mf": 500,
+  "horas_practicas": 160,
+  "horas_total": 660,
+  "real_decreto": "982/2013"
+ },
+ "AFDA0212": {
+  "denominacion": "GUÍA DE ESPELEOLOGÍA",
+  "mf": [
+   "MF0272",
+   "MF1640",
+   "MF1641",
+   "MF1642",
+   "MF1643"
+  ],
+  "mp": [
+   "MP0520"
+  ],
+  "nivel": 2,
+  "horas_mf": 510,
+  "horas_practicas": 160,
+  "horas_total": 670,
+  "real_decreto": "982/2013"
+ },
+ "AGAU0112": {
+  "denominacion": "PRODUCCIÓN Y RECOLECCIÓN DE SETAS Y TRUFAS",
+  "mf": [
+   "MF0525",
+   "MF0526",
+   "MF1810",
+   "MF1811",
+   "MF1812",
+   "MF1813"
+  ],
+  "mp": [
+   "MP0502"
+  ],
+  "nivel": 2,
+  "horas_mf": 720,
+  "horas_practicas": 40,
+  "horas_total": 760,
+  "real_decreto": "627/2013"
+ },
+ "AGAU0211": {
+  "denominacion": "GESTIÓN DE LA PRODUCCIÓN Y RECOLECCIÓN DE SETAS Y TRUFAS",
+  "mf": [
+   "MF1132",
+   "MF1814",
+   "MF1815",
+   "MF1816",
+   "MF1817"
+  ],
+  "mp": [
+   "MP0475"
+  ],
+  "nivel": 3,
+  "horas_mf": 790,
+  "horas_practicas": 80,
+  "horas_total": 870,
+  "real_decreto": "627/2013"
+ },
+ "AGAN0311": {
+  "denominacion": "GESTIÓN DE LA PRODUCCIÓN GANADERA",
+  "mf": [
+   "MF0536",
+   "MF1495",
+   "MF1496",
+   "MF1497"
+  ],
+  "mp": [
+   "MP0450"
+  ],
+  "nivel": 3,
+  "horas_mf": 670,
+  "horas_practicas": 40,
+  "horas_total": 710,
+  "real_decreto": "627/201."
+ },
+ "AGAR0111": {
+  "denominacion": "MANTENIMIENTO Y MEJORA DEL HÁBITAT CINEGÉTICO-PISCÍCOLA",
+  "mf": [
+   "MF1121",
+   "MF1472",
+   "MF1473",
+   "MF1474",
+   "MF1475"
+  ],
+  "mp": [
+   "MP0471"
+  ],
+  "nivel": 2,
+  "horas_mf": 490,
+  "horas_practicas": 80,
+  "horas_total": 570,
+  "real_decreto": "627/2013"
+ },
+ "AGAR0211": {
+  "denominacion": "GESTIÓN DE LOS APROVECHAMIENTOS CINEGÉTICO-PISCÍCOLAS",
+  "mf": [
+   "MF0730",
+   "MF1486",
+   "MF1498",
+   "MF1499",
+   "MF1500",
+   "MF1501"
+  ],
+  "mp": [
+   "MP0477"
+  ],
+  "nivel": 3,
+  "horas_mf": 660,
+  "horas_practicas": 80,
+  "horas_total": 740,
+  "real_decreto": "627/2013"
+ },
+ "AGAN0411": {
+  "denominacion": "PRODUCCIÓN DE ANIMALES CINEGÉTICOS",
+  "mf": [
+   "MF0006",
+   "MF1476",
+   "MF1477",
+   "MF1478"
+  ],
+  "mp": [
+   "MP0458"
+  ],
+  "nivel": 2,
+  "horas_mf": 410,
+  "horas_practicas": 40,
+  "horas_total": 450,
+  "real_decreto": "627/2013"
+ },
+ "AGAN0511": {
+  "denominacion": "GESTIÓN DE LA PRODUCCIÓN DE ANIMALES CINEGÉTICOS",
+  "mf": [
+   "MF0536",
+   "MF1489",
+   "MF1490",
+   "MF1491"
+  ],
+  "mp": [
+   "MP0466"
+  ],
+  "nivel": 3,
+  "horas_mf": 530,
+  "horas_practicas": 40,
+  "horas_total": 570,
+  "real_decreto": "627/2013"
+ },
+ "IFCD0211": {
+  "denominacion": "SISTEMAS DE GESTIÓN DE INFORMACIÓN",
+  "mf": [
+   "MF0966",
+   "MF0967",
+   "MF0968"
+  ],
+  "mp": [
+   "MP0459"
+  ],
+  "nivel": 3,
+  "horas_mf": 510,
+  "horas_practicas": 80,
+  "horas_total": 590,
+  "real_decreto": "628/2013"
+ },
+ "IFCD0111": {
+  "denominacion": "PROGRAMACIÓN EN LENGUAJES ESTRUCTURADOS DE APLICACIONES DE GESTIÓN",
+  "mf": [
+   "MF0223",
+   "MF0226",
+   "MF0494"
+  ],
+  "mp": [
+   "MP0452"
+  ],
+  "nivel": 3,
+  "horas_mf": 620,
+  "horas_practicas": 80,
+  "horas_total": 700,
+  "real_decreto": "628/2013"
+ },
+ "IFCM0111": {
+  "denominacion": "MANTENIMIENTO DE SEGUNDO NIVEL EN SISTEMAS DE RADIOCOMUNICACIONES",
+  "mf": [
+   "MF1221",
+   "MF1222",
+   "MF1223"
+  ],
+  "mp": [
+   "MP0453"
+  ],
+  "nivel": 3,
+  "horas_mf": 600,
+  "horas_practicas": 80,
+  "horas_total": 680,
+  "real_decreto": "628/2013"
+ },
+ "IFCD0112": {
+  "denominacion": "PROGRAMACIÓN CON LENGUAJES ORIENTADOS A OBJETOS Y BASES DE DATOS RELACIONALES",
+  "mf": [
+   "MF0223",
+   "MF0226",
+   "MF0227"
+  ],
+  "mp": [
+   "MP0501"
+  ],
+  "nivel": 3,
+  "horas_mf": 630,
+  "horas_practicas": 80,
+  "horas_total": 710,
+  "real_decreto": "628/2013"
+ },
+ "SSCE0111": {
+  "denominacion": "PROMOCIÓN E INTERVENCIÓN SOCIOEDUCATIVA CON PERSONAS CON DISCAPACIDAD",
+  "mf": [
+   "MF1448",
+   "MF1449",
+   "MF1450",
+   "MF1451",
+   "MF1452"
+  ],
+  "mp": [
+   "MP0478"
+  ],
+  "nivel": 3,
+  "horas_mf": 370,
+  "horas_practicas": 80,
+  "horas_total": 450,
+  "real_decreto": "625/2013"
+ },
+ "SSCE0112": {
+  "denominacion": "ATENCIÓN AL ALUMNADO CON NECESIDADES EDUCATIVAS ESPECIALES (ACNEE) EN CENTROS EDUCATIVOS",
+  "mf": [
+   "MF1426",
+   "MF1427",
+   "MF1428",
+   "MF1429",
+   "MF1430"
+  ],
+  "mp": [
+   "MP0503"
+  ],
+  "nivel": 3,
+  "horas_mf": 470,
+  "horas_practicas": 80,
+  "horas_total": 550,
+  "real_decreto": "625/2013"
+ },
+ "SSCG0112": {
+  "denominacion": "PROMOCIÓN Y PARTICIPACIÓN DE LA COMUNIDAD SORDA",
+  "mf": [
+   "MF1023",
+   "MF1437",
+   "MF1447"
+  ],
+  "mp": [
+   "MP0495"
+  ],
+  "nivel": 3,
+  "horas_mf": 540,
+  "horas_practicas": 120,
+  "horas_total": 660,
+  "real_decreto": "625/2013"
+ },
+ "SSCG0211": {
+  "denominacion": "MEDIACIÓN ENTRE LA PERSONA SORDOCIEGA Y LA COMUNIDAD",
+  "mf": [
+   "MF1437",
+   "MF1438",
+   "MF1439",
+   "MF1440",
+   "MF1441"
+  ],
+  "mp": [
+   "MP0493"
+  ],
+  "nivel": 3,
+  "horas_mf": 710,
+  "horas_practicas": 120,
+  "horas_total": 830,
+  "real_decreto": "625/2013"
+ },
+ "TMVI0112": {
+  "denominacion": "CONDUCCIÓN PROFESIONAL DE VEHÍCULOS TURISMOS Y FURGONETAS",
+  "mf": [
+   "MF1461",
+   "MF1466",
+   "MF1467"
+  ],
+  "mp": [
+   "MP0497"
+  ],
+  "nivel": 2,
+  "horas_mf": 240,
+  "horas_practicas": 40,
+  "horas_total": 280,
+  "real_decreto": "626/2013"
+ },
+ "TMVU0111": {
+  "denominacion": "PINTURA, REPARACIÓN Y CONSTRUCCIÓN DE ELEMENTOS DE PLÁSTICO REFORZADO CON FIBRA DE EMBARCACIONES DEPORTIVAS Y DE RECREO",
+  "mf": [
+   "MF1841",
+   "MF1842",
+   "MF1843",
+   "MF1844"
+  ],
+  "mp": [
+   "MP0474"
+  ],
+  "nivel": 2,
+  "horas_mf": 400,
+  "horas_practicas": 80,
+  "horas_total": 480,
+  "real_decreto": "626/2013"
+ },
+ "TMVU0311": {
+  "denominacion": "MANTENIMIENTO DE APAREJOS DE EMBARCACIONES DEPORTIVAS Y DE RECREO",
+  "mf": [
+   "MF1827",
+   "MF1828",
+   "MF1829",
+   "MF1830"
+  ],
+  "mp": [
+   "MP0479"
+  ],
+  "nivel": 2,
+  "horas_mf": 490,
+  "horas_practicas": 80,
+  "horas_total": 570,
+  "real_decreto": "626/2013"
+ },
+ "TMVU0211": {
+  "denominacion": "OPERACIONES DE MANTENIMIENTO DE ELEMENTOS DE MADERA DE EMBARCACIONES DEPORTIVAS Y DE RECREO",
+  "mf": [
+   "MF1838",
+   "MF1839",
+   "MF1840"
+  ],
+  "mp": [
+   "MP0476"
+  ],
+  "nivel": 2,
+  "horas_mf": 370,
+  "horas_practicas": 80,
+  "horas_total": 450,
+  "real_decreto": "626/2013"
+ },
+ "TMVB0111": {
+  "denominacion": "MANTENIMIENTO DE LOS SISTEMAS MECÁNICOS DE MATERIAL RODANTE FERROVIARIO",
+  "mf": [
+   "MF0629",
+   "MF0630",
+   "MF0631"
+  ],
+  "mp": [
+   "MP0426"
+  ],
+  "nivel": 2,
+  "horas_mf": 590,
+  "horas_practicas": 120,
+  "horas_total": 710,
+  "real_decreto": "626/2013"
+ },
+ "TMVB0211": {
+  "denominacion": "MANTENIMIENTO DE SISTEMAS ELÉCTRICOS Y ELECTRÓNICOS DE MATERIAL RODANTE FERROVIARIO",
+  "mf": [
+   "MF0632",
+   "MF0633"
+  ],
+  "mp": [
+   "MP0442"
+  ],
+  "nivel": 2,
+  "horas_mf": 390,
+  "horas_practicas": 120,
+  "horas_total": 510,
+  "real_decreto": "626/2013"
+ },
+ "QUIE0111": {
+  "denominacion": "ORGANIZACIÓN Y CONTROL DE PROCESOS Y REALIZACIÓN DE SERVICIOS BIOTECNOLÓGICOS",
+  "mf": [
+   "MF0577",
+   "MF0578",
+   "MF1537",
+   "MF1541",
+   "MF1557",
+   "MF1558"
+  ],
+  "mp": [
+   "MP0437"
+  ],
+  "nivel": 3,
+  "horas_mf": 640,
+  "horas_practicas": 80,
+  "horas_total": 720,
+  "real_decreto": "623/2013"
+ },
+ "QUIA0111": {
+  "denominacion": "ANÁLISIS BIOTECNOLÓGICO",
+  "mf": [
+   "MF0052",
+   "MF1537",
+   "MF1538",
+   "MF1539",
+   "MF1540",
+   "MF1541"
+  ],
+  "mp": [
+   "MP0436"
+  ],
+  "nivel": 3,
+  "horas_mf": 700,
+  "horas_practicas": 80,
+  "horas_total": 780,
+  "real_decreto": "623/2013"
+ },
+ "SEAD0411": {
+  "denominacion": "OPERACIONES DE VIGILANCIA Y EXTINCIÓN DE INCENDIOS FORESTALES Y APOYO A CONTINGENCIAS EN EL MEDIO NATURAL Y RURAL",
+  "mf": [
+   "MF0272",
+   "MF1964",
+   "MF1965",
+   "MF1966"
+  ],
+  "mp": [
+   "MP0491"
+  ],
+  "nivel": 2,
+  "horas_mf": 370,
+  "horas_practicas": 80,
+  "horas_total": 450,
+  "real_decreto": "624/2013"
+ },
+ "SEAG0311": {
+  "denominacion": "GESTIÓN DE SERVICIOS PARA EL CONTROL DE ORGANISMOS NOCIVOS",
+  "mf": [
+   "MF0799",
+   "MF0800",
+   "MF0801",
+   "MF0802"
+  ],
+  "mp": [
+   "MP0462"
+  ],
+  "nivel": 3,
+  "horas_mf": 430,
+  "horas_practicas": 80,
+  "horas_total": 510,
+  "real_decreto": "624/2013"
+ },
+ "SEAD0311": {
+  "denominacion": "GESTIÓN Y COORDINACIÓN EN PROTECCIÓN CIVIL Y EMERGENCIAS",
+  "mf": [
+   "MF1751",
+   "MF1752",
+   "MF1753",
+   "MF1754",
+   "MF1755"
+  ],
+  "mp": [
+   "MP0490"
+  ],
+  "nivel": 3,
+  "horas_mf": 540,
+  "horas_practicas": 80,
+  "horas_total": 620,
+  "real_decreto": "624/2013"
+ },
+ "SEAD0511": {
+  "denominacion": "COORDINACIÓN DE OPERACIONES EN INCENDIOS FORESTALES Y APOYO A CONTINGENCIAS EN EL MEDIO NATURAL Y RURAL",
+  "mf": [
+   "MF0272",
+   "MF1967",
+   "MF1968",
+   "MF1969",
+   "MF1970"
+  ],
+  "mp": [
+   "MP0492"
+  ],
+  "nivel": 3,
+  "horas_mf": 520,
+  "horas_practicas": 80,
+  "horas_total": 600,
+  "real_decreto": "624/2013"
+ },
+ "SEAG0112": {
+  "denominacion": "CONTROL DE RUIDOS, VIBRACIONES Y AISLAMIENTO ACÚSTICO",
+  "mf": [
+   "MF1617",
+   "MF1618",
+   "MF1619"
+  ],
+  "mp": [
+   "MP0498"
+  ],
+  "nivel": 3,
+  "horas_mf": 340,
+  "horas_practicas": 80,
+  "horas_total": 420,
+  "real_decreto": "624/2013"
+ },
+ "SEAD0111": {
+  "denominacion": "EXTINCIÓN DE INCENDIOS Y SALVAMENTO",
+  "mf": [
+   "MF0401",
+   "MF0402",
+   "MF0403",
+   "MF0404"
+  ],
+  "mp": [
+   "MP0488"
+  ],
+  "nivel": 2,
+  "horas_mf": 610,
+  "horas_practicas": 40,
+  "horas_total": 650,
+  "real_decreto": "624/2013"
+ },
+ "SEAD0211": {
+  "denominacion": "PREVENCIÓN DE INCENDIOS Y MANTENIMIENTO",
+  "mf": [
+   "MF0272",
+   "MF1747",
+   "MF1748",
+   "MF1749"
+  ],
+  "mp": [
+   "MP0489"
+  ],
+  "nivel": 2,
+  "horas_mf": 340,
+  "horas_practicas": 40,
+  "horas_total": 380,
+  "real_decreto": "624/2013"
+ },
+ "SEAG0212": {
+  "denominacion": "MANTENIMIENTO HIGIÉNICO-SANITARIO DE INSTALACIONES SUSCEPTIBLES DE PROLIFERACIÓN DE MICROORGANISMOS NOCIVOS Y SU DISEMINACIÓN POR AEROSOLIZACIÓN",
+  "mf": [
+   "MF1610",
+   "MF1611",
+   "MF1612"
+  ],
+  "mp": [
+   "MP0500"
+  ],
+  "nivel": 2,
+  "horas_mf": 250,
+  "horas_practicas": 80,
+  "horas_total": 330,
+  "real_decreto": "624/2013"
+ },
+ "IMSE0109": {
+  "denominacion": "LUMINOTECNIA PARA EL ESPECTÁCULO EN VIVO",
+  "mf": [
+   "MF0210",
+   "MF0211",
+   "MF0212"
+  ],
+  "mp": [
+   "MP0162"
+  ],
+  "nivel": 3,
+  "horas_mf": 560,
+  "horas_practicas": 80,
+  "horas_total": 640,
+  "real_decreto": "621/2013"
+ },
+ "IMSE0111": {
+  "denominacion": "ANIMACIÓN MUSICAL Y VISUAL EN VIVO Y EN DIRECTO",
+  "mf": [
+   "MF1396",
+   "MF1397",
+   "MF1398"
+  ],
+  "mp": [
+   "MP0423"
+  ],
+  "nivel": 2,
+  "horas_mf": 310,
+  "horas_practicas": 40,
+  "horas_total": 350,
+  "real_decreto": "621/2013"
+ },
+ "MAPU0111": {
+  "denominacion": "GESTIÓN DE LA PRODUCCIÓN DE CRIADERO EN ACUICULTURA",
+  "mf": [
+   "MF0741",
+   "MF0742",
+   "MF0743"
+  ],
+  "mp": [
+   "MP0445"
+  ],
+  "nivel": 3,
+  "horas_mf": 360,
+  "horas_practicas": 120,
+  "horas_total": 480,
+  "real_decreto": "622/2013"
+ },
+ "IMPE0211": {
+  "denominacion": "CARACTERIZACIÓN DE PERSONAJES",
+  "mf": [
+   "MF0066",
+   "MF1254",
+   "MF1255",
+   "MF1256",
+   "MF1257",
+   "MF1258",
+   "MF1259"
+  ],
+  "mp": [
+   "MP0435"
+  ],
+  "nivel": 3,
+  "horas_mf": 860,
+  "horas_practicas": 120,
+  "horas_total": 980,
+  "real_decreto": "620/2013"
+ },
+ "IMPE0111": {
+  "denominacion": "ASESORÍA INTEGRAL DE IMAGEN PERSONAL",
+  "mf": [
+   "MF1248",
+   "MF1249",
+   "MF1250",
+   "MF1251",
+   "MF1252",
+   "MF1253"
+  ],
+  "mp": [
+   "MP0434"
+  ],
+  "nivel": 3,
+  "horas_mf": 630,
+  "horas_practicas": 120,
+  "horas_total": 750,
+  "real_decreto": "620/2013"
+ },
+ "FMEM0211": {
+  "denominacion": "FABRICACIÓN POR MECANIZADO A ALTA VELOCIDAD Y ALTO RENDIMIENTO",
+  "mf": [
+   "MF2164",
+   "MF2165",
+   "MF2166",
+   "MF2167"
+  ],
+  "mp": [
+   "MP0432"
+  ],
+  "nivel": 3,
+  "horas_mf": 590,
+  "horas_practicas": 40,
+  "horas_total": 630,
+  "real_decreto": "618/2013"
+ },
+ "FMEM0111": {
+  "denominacion": "FABRICACIÓN POR DECOLETAJE",
+  "mf": [
+   "MF2159",
+   "MF2160",
+   "MF2161",
+   "MF2162",
+   "MF2163"
+  ],
+  "mp": [
+   "MP0424"
+  ],
+  "nivel": 3,
+  "horas_mf": 590,
+  "horas_practicas": 40,
+  "horas_total": 630,
+  "real_decreto": "618/2013"
+ },
+ "FMEM0411": {
+  "denominacion": "FABRICACIÓN DE MOLDES PARA LA PRODUCCIÓN DE PIEZAS POLIMÉRICAS Y DE ALEACIONES LIGERAS",
+  "mf": [
+   "MF2151",
+   "MF2152",
+   "MF2153",
+   "MF2154"
+  ],
+  "mp": [
+   "MP0470"
+  ],
+  "nivel": 3,
+  "horas_mf": 590,
+  "horas_practicas": 40,
+  "horas_total": 630,
+  "real_decreto": "618/2013"
+ },
+ "FMEM0311": {
+  "denominacion": "FABRICACIÓN DE TROQUELES PARA LA PRODUCCIÓN DE PIEZAS DE CHAPA METÁLICA",
+  "mf": [
+   "MF2155",
+   "MF2156",
+   "MF2157",
+   "MF2158"
+  ],
+  "mp": [
+   "MP0449"
+  ],
+  "nivel": 3,
+  "horas_mf": 590,
+  "horas_practicas": 40,
+  "horas_total": 630,
+  "real_decreto": "618/2013"
+ },
+ "HOTT0112": {
+  "denominacion": "ATENCIÓN A PASAJEROS EN TRANSPORTE FERROVIARIO",
+  "mf": [
+   "MF1057",
+   "MF2003",
+   "MF2005",
+   "MF2195",
+   "MF2196"
+  ],
+  "mp": [
+   "MP0504"
+  ],
+  "nivel": 2,
+  "horas_mf": 310,
+  "horas_practicas": 40,
+  "horas_total": 350,
+  "real_decreto": "619/2013"
+ },
+ "HOTU0111": {
+  "denominacion": "GUARDA DE REFUGIOS Y ALBERGUES DE MONTAÑA",
+  "mf": [
+   "MF0272",
+   "MF0711",
+   "MF1043",
+   "MF1044",
+   "MF2190",
+   "MF2191",
+   "MF2192",
+   "MF2193"
+  ],
+  "mp": [],
+  "nivel": 2,
+  "horas_mf": 680,
+  "horas_practicas": 40,
+  "horas_total": 720,
+  "real_decreto": "619/2013"
+ },
+ "ELEM0311": {
+  "denominacion": "MONTAJE Y MANTENIMIENTO DE SISTEMAS DE AUTOMATIZACIÓN INDUSTRIAL",
+  "mf": [
+   "MF1978",
+   "MF1979"
+  ],
+  "mp": [
+   "MP0463"
+  ],
+  "nivel": 2,
+  "horas_mf": 390,
+  "horas_practicas": 120,
+  "horas_total": 510,
+  "real_decreto": "616/2013"
+ },
+ "ELEM0411": {
+  "denominacion": "MANTENIMIENTO DE ELECTRODOMÉSTICOS",
+  "mf": [
+   "MF1975",
+   "MF1976",
+   "MF1977"
+  ],
+  "mp": [
+   "MP0464"
+  ],
+  "nivel": 2,
+  "horas_mf": 420,
+  "horas_practicas": 80,
+  "horas_total": 500,
+  "real_decreto": "616/2013"
+ },
+ "ELES0411": {
+  "denominacion": "GESTIÓN Y SUPERVISIÓN DEL MONTAJE Y MANTENIMIENTO DE EQUIPAMIENTO DE RED Y ESTACIONES BASE DE TELEFONÍA",
+  "mf": [
+   "MF1571",
+   "MF1572",
+   "MF1573",
+   "MF1574"
+  ],
+  "mp": [
+   "MP0447"
+  ],
+  "nivel": 3,
+  "horas_mf": 690,
+  "horas_practicas": 80,
+  "horas_total": 770,
+  "real_decreto": "616/2013"
+ },
+ "ELEM0511": {
+  "denominacion": "DESARROLLO DE PROYECTOS DE SISTEMAS DOMÓTICOS E INMÓTICOS",
+  "mf": [
+   "MF1980",
+   "MF1981",
+   "MF1982"
+  ],
+  "mp": [
+   "MP0465"
+  ],
+  "nivel": 3,
+  "horas_mf": 430,
+  "horas_practicas": 120,
+  "horas_total": 550,
+  "real_decreto": "616/2013"
+ },
+ "ELEM0211": {
+  "denominacion": "GESTIÓN Y SUPERVISIÓN DEL MONTAJE Y MANTENIMIENTO DE SISTEMAS DOMÓTICOS E INMÓTICOS",
+  "mf": [
+   "MF1820",
+   "MF1821",
+   "MF1822"
+  ],
+  "mp": [
+   "MP0446"
+  ],
+  "nivel": 3,
+  "horas_mf": 430,
+  "horas_practicas": 120,
+  "horas_total": 550,
+  "real_decreto": "616/2013"
+ },
+ "ELEQ0311": {
+  "denominacion": "MANTENIMIENTO DE EQUIPOS ELECTRÓNICOS",
+  "mf": [
+   "MF1823",
+   "MF1824",
+   "MF1825",
+   "MF1826"
+  ],
+  "mp": [
+   "MP0448"
+  ],
+  "nivel": 3,
+  "horas_mf": 600,
+  "horas_practicas": 80,
+  "horas_total": 680,
+  "real_decreto": "616/2013"
+ },
+ "ELEQ0211": {
+  "denominacion": "REPARACIÓN DE EQUIPOS ELECTRÓNICOS DE AUDIO Y VIDEO",
+  "mf": [
+   "MF0118",
+   "MF0119"
+  ],
+  "mp": [
+   "MP0441"
+  ],
+  "nivel": 2,
+  "horas_mf": 500,
+  "horas_practicas": 80,
+  "horas_total": 580,
+  "real_decreto": "616/2013"
+ },
+ "ENAE0111": {
+  "denominacion": "OPERACIONES BÁSICAS EN EL MONTAJE Y MANTENIMIENTO DE INSTALACIONES DE ENERGÍAS RENOVABLES",
+  "mf": [
+   "MF0620",
+   "MF2050",
+   "MF2051",
+   "MF2052"
+  ],
+  "mp": [
+   "MP0469"
+  ],
+  "nivel": 1,
+  "horas_mf": 420,
+  "horas_practicas": 120,
+  "horas_total": 540,
+  "real_decreto": "617/2013"
+ },
+ "EOCJ0211": {
+  "denominacion": "INSTALACIÓN DE SISTEMAS TÉCNICOS DE PAVIMENTOS, EMPANELADOS Y MAMPARAS",
+  "mf": [
+   "MF0871",
+   "MF1360",
+   "MF1902",
+   "MF1924",
+   "MF1925"
+  ],
+  "mp": [
+   "MP0484"
+  ],
+  "nivel": 2,
+  "horas_mf": 310,
+  "horas_practicas": 80,
+  "horas_total": 390,
+  "real_decreto": "615/2013"
+ },
+ "EOCJ0311": {
+  "denominacion": "OPERACIONES BÁSICAS DE REVESTIMIENTOS LIGEROS Y TÉCNICOS EN CONSTRUCCIÓN",
+  "mf": [
+   "MF0276",
+   "MF0871",
+   "MF1902",
+   "MF1903"
+  ],
+  "mp": [
+   "MP0487"
+  ],
+  "nivel": 1,
+  "horas_mf": 270,
+  "horas_practicas": 40,
+  "horas_total": 310,
+  "real_decreto": "615/2013"
+ },
+ "EOCB0110": {
+  "denominacion": "PINTURA DECORATIVA EN CONSTRUCCIÓN",
+  "mf": [
+   "MF0871",
+   "MF0873",
+   "MF1360",
+   "MF1933",
+   "MF1934",
+   "MF1935"
+  ],
+  "mp": [
+   "MP0334"
+  ],
+  "nivel": 2,
+  "horas_mf": 560,
+  "horas_practicas": 80,
+  "horas_total": 640,
+  "real_decreto": "615/2013"
+ },
+ "EOCB0311": {
+  "denominacion": "PINTURA INDUSTRIAL EN CONSTRUCCIÓN",
+  "mf": [
+   "MF0871",
+   "MF0873",
+   "MF1360",
+   "MF1935",
+   "MF1936",
+   "MF1937"
+  ],
+  "mp": [
+   "MP0486"
+  ],
+  "nivel": 2,
+  "horas_mf": 520,
+  "horas_practicas": 80,
+  "horas_total": 600,
+  "real_decreto": "615/2013"
+ },
+ "EOCE0211": {
+  "denominacion": "ENCOFRADOS",
+  "mf": [
+   "MF0278",
+   "MF1360",
+   "MF1912",
+   "MF1913",
+   "MF1914",
+   "MF1915",
+   "MF1916"
+  ],
+  "mp": [
+   "MP0482"
+  ],
+  "nivel": 2,
+  "horas_mf": 530,
+  "horas_practicas": 80,
+  "horas_total": 610,
+  "real_decreto": "615/2013"
+ },
+ "EOCB0111": {
+  "denominacion": "CUBIERTAS INCLINADAS",
+  "mf": [
+   "MF0869",
+   "MF0870",
+   "MF1360",
+   "MF1908",
+   "MF1909",
+   "MF1910",
+   "MF1911"
+  ],
+  "mp": [
+   "MP0481"
+  ],
+  "nivel": 2,
+  "horas_mf": 570,
+  "horas_practicas": 80,
+  "horas_total": 650,
+  "real_decreto": "615/2013"
+ },
+ "EOCB0210": {
+  "denominacion": "REVESTIMIENTOS CON PASTAS Y MORTEROS EN CONSTRUCCIÓN",
+  "mf": [
+   "MF0869",
+   "MF0871",
+   "MF0872",
+   "MF1360",
+   "MF1938",
+   "MF1939",
+   "MF1940",
+   "MF1941"
+  ],
+  "mp": [],
+  "nivel": 2,
+  "horas_mf": 590,
+  "horas_practicas": 80,
+  "horas_total": 670,
+  "real_decreto": "615/2013"
+ },
+ "EOCB0211": {
+  "denominacion": "PAVIMENTOS Y ALBAÑILERÍA DE URBANIZACIÓN",
+  "mf": [
+   "MF0869",
+   "MF1321",
+   "MF1360",
+   "MF1929",
+   "MF1930",
+   "MF1931",
+   "MF1932"
+  ],
+  "mp": [
+   "MP0485"
+  ],
+  "nivel": 2,
+  "horas_mf": 410,
+  "horas_practicas": 80,
+  "horas_total": 490,
+  "real_decreto": "615/2013"
+ },
+ "EOCJ0110": {
+  "denominacion": "INSTALACIÓN DE PLACA DE YESO LAMINADO Y FALSOS TECHOS",
+  "mf": [
+   "MF1360",
+   "MF1903",
+   "MF1920",
+   "MF1921",
+   "MF1922",
+   "MF1923"
+  ],
+  "mp": [
+   "MP0335"
+  ],
+  "nivel": 2,
+  "horas_mf": 470,
+  "horas_practicas": 80,
+  "horas_total": 550,
+  "real_decreto": "615/2013"
+ },
+ "EOCE0111": {
+  "denominacion": "ARMADURAS PASIVAS PARA HORMIGÓN",
+  "mf": [
+   "MF0637",
+   "MF1360",
+   "MF1904",
+   "MF1905",
+   "MF1906",
+   "MF1907"
+  ],
+  "mp": [
+   "MP0480"
+  ],
+  "nivel": 2,
+  "horas_mf": 530,
+  "horas_practicas": 80,
+  "horas_total": 610,
+  "real_decreto": "615/2013"
+ },
+ "EOCJ0111": {
+  "denominacion": "IMPERMEABILIZACIÓN MEDIANTE MEMBRANAS FORMADAS CON LÁMINAS",
+  "mf": [
+   "MF0869",
+   "MF1360",
+   "MF1911",
+   "MF1917",
+   "MF1918",
+   "MF1919"
+  ],
+  "mp": [
+   "MP0483"
+  ],
+  "nivel": 2,
+  "horas_mf": 510,
+  "horas_practicas": 80,
+  "horas_total": 590,
+  "real_decreto": "615/2013"
+ },
+ "EOCB0310": {
+  "denominacion": "REVESTIMIENTOS CON PIEZAS RÍGIDAS POR ADHERENCIA EN CONSTRUCCIÓN",
+  "mf": [
+   "MF0869",
+   "MF0871",
+   "MF1320",
+   "MF1360",
+   "MF1938",
+   "MF1941",
+   "MF1942",
+   "MF1943"
+  ],
+  "mp": [],
+  "nivel": 2,
+  "horas_mf": 670,
+  "horas_practicas": 80,
+  "horas_total": 750,
+  "real_decreto": "615/2013"
+ },
+ "ARTA0111": {
+  "denominacion": "TALLA DE ELEMENTOS DECORATIVOS EN MADERA",
+  "mf": [
+   "MF1690",
+   "MF1698",
+   "MF1699",
+   "MF1700"
+  ],
+  "mp": [
+   "MP0451"
+  ],
+  "nivel": 2,
+  "horas_mf": 380,
+  "horas_practicas": 120,
+  "horas_total": 500,
+  "real_decreto": "613/2013"
+ },
+ "ARTB0211": {
+  "denominacion": "REPARACIÓN DE JOYERÍA",
+  "mf": [
+   "MF1690",
+   "MF2045",
+   "MF2046",
+   "MF2047"
+  ],
+  "mp": [
+   "MP0440"
+  ],
+  "nivel": 2,
+  "horas_mf": 510,
+  "horas_practicas": 80,
+  "horas_total": 590,
+  "real_decreto": "613/2013"
+ },
+ "ARTB0111": {
+  "denominacion": "ELABORACIÓN DE ARTÍCULOS DE PLATERÍA",
+  "mf": [
+   "MF1690",
+   "MF2041",
+   "MF2042",
+   "MF2043",
+   "MF2044"
+  ],
+  "mp": [
+   "MP0439"
+  ],
+  "nivel": 2,
+  "horas_mf": 540,
+  "horas_practicas": 80,
+  "horas_total": 620,
+  "real_decreto": "613/2013"
+ },
+ "COMT0111": {
+  "denominacion": "GESTIÓN COMERCIAL INMOBILIARIA",
+  "mf": [
+   "MF0810",
+   "MF0811",
+   "MF1001",
+   "MF1002",
+   "MF1701"
+  ],
+  "mp": [
+   "MP0404"
+  ],
+  "nivel": 3,
+  "horas_mf": 540,
+  "horas_practicas": 40,
+  "horas_total": 580,
+  "real_decreto": "614/2013"
+ },
+ "COMM0111": {
+  "denominacion": "ASISTENCIA A LA INVESTIGACIÓN DE MERCADOS",
+  "mf": [
+   "MF0993",
+   "MF0994",
+   "MF0995",
+   "MF0997"
+  ],
+  "mp": [
+   "MP0443"
+  ],
+  "nivel": 3,
+  "horas_mf": 430,
+  "horas_practicas": 80,
+  "horas_total": 510,
+  "real_decreto": "614/2013"
+ },
+ "COMT0112": {
+  "denominacion": "ACTIVIDADES DE GESTIÓN DEL PEQUEÑO COMERCIO",
+  "mf": [
+   "MF0239",
+   "MF1792",
+   "MF2104",
+   "MF2105",
+   "MF2106"
+  ],
+  "mp": [
+   "MP0496"
+  ],
+  "nivel": 2,
+  "horas_mf": 450,
+  "horas_practicas": 80,
+  "horas_total": 530,
+  "real_decreto": "614/2013"
+ },
+ "COMM0112": {
+  "denominacion": "GESTIÓN DE MARKETING Y COMUNICACIÓN",
+  "mf": [
+   "MF1002",
+   "MF1007",
+   "MF2185",
+   "MF2186",
+   "MF2187",
+   "MF2188",
+   "MF2189"
+  ],
+  "mp": [
+   "MP0499"
+  ],
+  "nivel": 3,
+  "horas_mf": 730,
+  "horas_practicas": 80,
+  "horas_total": 810,
+  "real_decreto": "614/2013"
+ },
+ "COML0111": {
+  "denominacion": "TRÁFICO DE VIAJEROS POR CARRETERA",
+  "mf": [
+   "MF1464",
+   "MF2059",
+   "MF2060",
+   "MF2061"
+  ],
+  "mp": [
+   "MP0460"
+  ],
+  "nivel": 3,
+  "horas_mf": 370,
+  "horas_practicas": 80,
+  "horas_total": 450,
+  "real_decreto": "614/2013"
+ },
+ "COML0211": {
+  "denominacion": "GESTIÓN COMERCIAL Y FINANCIERA DEL TRANSPORTE POR CARRETERA",
+  "mf": [
+   "MF1006",
+   "MF2061",
+   "MF2182",
+   "MF2183",
+   "MF2184"
+  ],
+  "mp": [
+   "MP0461"
+  ],
+  "nivel": 3,
+  "horas_mf": 550,
+  "horas_practicas": 80,
+  "horas_total": 630,
+  "real_decreto": "614/2013"
+ },
+ "ARGT0111": {
+  "denominacion": "OPERACIONES DE MANIPULADO Y FINALIZACIÓN DE PRODUCTOS GRÁFICOS",
+  "mf": [
+   "MF1668",
+   "MF2138",
+   "MF2139"
+  ],
+  "mp": [
+   "MP0456"
+  ],
+  "nivel": 1,
+  "horas_mf": 220,
+  "horas_practicas": 80,
+  "horas_total": 300,
+  "real_decreto": "612/2013"
+ },
+ "ARGA0111": {
+  "denominacion": "LITOGRAFÍA",
+  "mf": [
+   "MF0687",
+   "MF0924",
+   "MF0925"
+  ],
+  "mp": [
+   "MP0454"
+  ],
+  "nivel": 2,
+  "horas_mf": 370,
+  "horas_practicas": 80,
+  "horas_total": 450,
+  "real_decreto": "612/2013"
+ },
+ "ARGT0411": {
+  "denominacion": "FABRICACIÓN DE COMPLEJOS, ENVASES, EMBALAJES Y OTROS ARTÍCULOS DE PAPEL Y CARTÓN",
+  "mf": [
+   "MF0200",
+   "MF1335",
+   "MF1339",
+   "MF1340",
+   "MF1341",
+   "MF1342",
+   "MF1343"
+  ],
+  "mp": [
+   "MP0468"
+  ],
+  "nivel": 2,
+  "horas_mf": 520,
+  "horas_practicas": 80,
+  "horas_total": 600,
+  "real_decreto": "612/2013"
+ },
+ "ARGT0211": {
+  "denominacion": "OPERACIONES AUXILIARES EN INDUSTRIAS GRÁFICAS",
+  "mf": [
+   "MF0432",
+   "MF1666",
+   "MF1667",
+   "MF1668"
+  ],
+  "mp": [
+   "MP0457"
+  ],
+  "nivel": 1,
+  "horas_mf": 240,
+  "horas_practicas": 120,
+  "horas_total": 360,
+  "real_decreto": "612/2013"
+ },
+ "ARGT0311": {
+  "denominacion": "ELABORACIÓN DE CARTÓN ONDULADO",
+  "mf": [
+   "MF1335",
+   "MF1336",
+   "MF1337",
+   "MF1338"
+  ],
+  "mp": [
+   "MP0467"
+  ],
+  "nivel": 2,
+  "horas_mf": 340,
+  "horas_practicas": 80,
+  "horas_total": 420,
+  "real_decreto": "612/2013"
+ },
+ "ARGA0211": {
+  "denominacion": "ENCUADERNACIÓN ARTÍSTICA",
+  "mf": [
+   "MF1352",
+   "MF1353",
+   "MF1354",
+   "MF1355",
+   "MF1356"
+  ],
+  "mp": [
+   "MP0455"
+  ],
+  "nivel": 3,
+  "horas_mf": 630,
+  "horas_practicas": 120,
+  "horas_total": 750,
+  "real_decreto": "612/2013"
+ },
+ "ARGA0311": {
+  "denominacion": "SERIGRAFÍA ARTÍSTICA",
+  "mf": [
+   "MF0687",
+   "MF2101",
+   "MF2102",
+   "MF2103"
+  ],
+  "mp": [
+   "MP0472"
+  ],
+  "nivel": 2,
+  "horas_mf": 490,
+  "horas_practicas": 80,
+  "horas_total": 570,
+  "real_decreto": "612/2013"
+ },
+ "ADGN0210": {
+  "denominacion": "MEDIACIÓN DE SEGUROS Y REASEGUROS PRIVADOS Y ACTIVIDADES AUXILIARES",
+  "mf": [
+   "MF0233",
+   "MF0991",
+   "MF1793",
+   "MF1794",
+   "MF1795",
+   "MF1796",
+   "MF1797",
+   "MF1798"
+  ],
+  "mp": [],
+  "nivel": 3,
+  "horas_mf": 690,
+  "horas_practicas": 40,
+  "horas_total": 730,
+  "real_decreto": "610/2013"
+ },
+ "ADGN0110": {
+  "denominacion": "GESTIÓN COMERCIAL Y TÉCNICA DE SEGUROS Y REASEGUROS PRIVADOS",
+  "mf": [
+   "MF0233",
+   "MF0991",
+   "MF0992",
+   "MF1796",
+   "MF2177",
+   "MF2178",
+   "MF2179",
+   "MF2180"
+  ],
+  "mp": [],
+  "nivel": 3,
+  "horas_mf": 690,
+  "horas_practicas": 40,
+  "horas_total": 730,
+  "real_decreto": "610/2013"
+ },
+ "AFDA0511": {
+  "denominacion": "OPERACIONES AUXILIARES EN LA ORGANIZACIÓN DE ACTIVIDADES Y FUNCIONAMIENTO DE INSTALACIONES DEPORTIVAS",
+  "mf": [
+   "MF1631",
+   "MF1632",
+   "MF1633"
+  ],
+  "mp": [
+   "MP0444"
+  ],
+  "nivel": 1,
+  "horas_mf": 180,
+  "horas_practicas": 80,
+  "horas_total": 260,
+  "real_decreto": "611/2013"
+ },
+ "AFDA0611": {
+  "denominacion": "GUÍA POR ITINERARIOS DE BAJA Y MEDIA MONTAÑA",
+  "mf": [
+   "MF0272",
+   "MF0505",
+   "MF0506",
+   "MF0507"
+  ],
+  "mp": [
+   "MP0473"
+  ],
+  "nivel": 2,
+  "horas_mf": 490,
+  "horas_practicas": 120,
+  "horas_total": 610,
+  "real_decreto": "611/2013"
+ },
+ "IMAQ0110": {
+  "denominacion": "INSTALACIÓN Y MANTENIMIENTO DE ASCENSORES Y OTROS EQUIPOS FIJOS DE ELEVACIÓN Y TRANSPORTE",
+  "mf": [
+   "MF1877",
+   "MF1878"
+  ],
+  "mp": [
+   "MP0315"
+  ],
+  "nivel": 2,
+  "horas_mf": 480,
+  "horas_practicas": 80,
+  "horas_total": 560,
+  "real_decreto": "1079/2012"
+ },
+ "IMAI0210": {
+  "denominacion": "GESTIÓN Y SUPERVISIÓN DEL MONTAJE Y EL MANTENIMIENTO DE SISTEMAS DE AISLAMIENTO TÉRMICO, ACÚSTICO Y CONTRA EL FUEGO.",
+  "mf": [
+   "MF1887",
+   "MF1888"
+  ],
+  "mp": [
+   "MP0383"
+  ],
+  "nivel": 3,
+  "horas_mf": 540,
+  "horas_practicas": 80,
+  "horas_total": 620,
+  "real_decreto": "1079/2012"
+ },
+ "IMAI0110": {
+  "denominacion": "INSTALACIÓN Y MANTENIMIENTO DE SISTEMAS DE AISLAMIENTO TÉRMICO, ACÚSTICO Y PROTECCIÓN PASIVA CONTRA EL FUEGO.",
+  "mf": [
+   "MF1879",
+   "MF1880",
+   "MF1881"
+  ],
+  "mp": [
+   "MP0382"
+  ],
+  "nivel": 2,
+  "horas_mf": 540,
+  "horas_practicas": 80,
+  "horas_total": 620,
+  "real_decreto": "1079/2012"
+ },
+ "IMAQ0210": {
+  "denominacion": "DESARROLLO DE PROYECTOS DE INSTALACIONES DE MANUTENCIÓN, ELEVACIÓN Y TRANSPORTE",
+  "mf": [
+   "MF1882",
+   "MF1883",
+   "MF1884",
+   "MF1885",
+   "MF1886"
+  ],
+  "mp": [
+   "MP0316"
+  ],
+  "nivel": 3,
+  "horas_mf": 540,
+  "horas_practicas": 80,
+  "horas_total": 620,
+  "real_decreto": "1079/2012"
+ },
+ "AFDA0411": {
+  "denominacion": "ANIMACIÓN FÍSICO-DEPORTIVA Y RECREATIVA PARA PERSONAS CON DISCAPACIDAD",
+  "mf": [
+   "MF0272",
+   "MF1658",
+   "MF1660",
+   "MF1661",
+   "MF1662"
+  ],
+  "mp": [
+   "MP0438"
+  ],
+  "nivel": 3,
+  "horas_mf": 620,
+  "horas_practicas": 120,
+  "horas_total": 740,
+  "real_decreto": "1076/2012"
+ },
+ "AFDP0211": {
+  "denominacion": "COORDINACIÓN DE SERVICIOS DE SOCORRISMO EN INSTALACIONES Y ESPACIOS NATURALES ACUÁTICOS",
+  "mf": [
+   "MF0269",
+   "MF0272",
+   "MF1762",
+   "MF1763",
+   "MF1764"
+  ],
+  "mp": [
+   "MP0365"
+  ],
+  "nivel": 3,
+  "horas_mf": 540,
+  "horas_practicas": 120,
+  "horas_total": 660,
+  "real_decreto": "1076/2012"
+ },
+ "AFDP0111": {
+  "denominacion": "BALIZAMIENTO DE PISTAS, SEÑALIZACIÓN Y SOCORRISMO EN ESPACIOS ESQUIABLES",
+  "mf": [
+   "MF0272",
+   "MF1634",
+   "MF1635",
+   "MF1636"
+  ],
+  "mp": [
+   "MP0402"
+  ],
+  "nivel": 2,
+  "horas_mf": 370,
+  "horas_practicas": 120,
+  "horas_total": 490,
+  "real_decreto": "1076/2012"
+ },
+ "AFDA0211": {
+  "denominacion": "ANIMACIÓN FÍSICO-DEPORTIVA Y RECREATIVA",
+  "mf": [
+   "MF0272",
+   "MF1095",
+   "MF1096",
+   "MF1658",
+   "MF1659"
+  ],
+  "mp": [
+   "MP0408"
+  ],
+  "nivel": 3,
+  "horas_mf": 470,
+  "horas_practicas": 120,
+  "horas_total": 590,
+  "real_decreto": "1076/2012"
+ },
+ "AFDA0111": {
+  "denominacion": "FITNESS ACUÁTICO E HIDROCINESIA",
+  "mf": [
+   "MF0272",
+   "MF0273",
+   "MF1663",
+   "MF1664",
+   "MF1665"
+  ],
+  "mp": [
+   "MP0364"
+  ],
+  "nivel": 3,
+  "horas_mf": 630,
+  "horas_practicas": 120,
+  "horas_total": 750,
+  "real_decreto": "1076/2012"
+ },
+ "AFDA0311": {
+  "denominacion": "INSTRUCCIÓN EN YOGA",
+  "mf": [
+   "MF0272",
+   "MF2038",
+   "MF2039",
+   "MF2040"
+  ],
+  "mp": [
+   "MP0403"
+  ],
+  "nivel": 3,
+  "horas_mf": 430,
+  "horas_practicas": 120,
+  "horas_total": 550,
+  "real_decreto": "1076/2012"
+ },
+ "ELEM0111": {
+  "denominacion": "MONTAJE Y MANTENIMIENTO DE SISTEMAS DOMÓTICOS E INMÓTICOS",
+  "mf": [
+   "MF1818",
+   "MF1819"
+  ],
+  "mp": [
+   "MP0414"
+  ],
+  "nivel": 2,
+  "horas_mf": 360,
+  "horas_practicas": 120,
+  "horas_total": 480,
+  "real_decreto": "1077/2012"
+ },
+ "ELES0211": {
+  "denominacion": "MONTAJE Y MANTENIMIENTO DE SISTEMAS DE PRODUCCIÓN AUDIOVISUAL Y DE RADIODIFUSIÓN",
+  "mf": [
+   "MF1566",
+   "MF1567"
+  ],
+  "mp": [
+   "MP0419"
+  ],
+  "nivel": 2,
+  "horas_mf": 360,
+  "horas_practicas": 80,
+  "horas_total": 440,
+  "real_decreto": "1077/2012"
+ },
+ "ELES0311": {
+  "denominacion": "GESTIÓN Y SUPERVISIÓN DEL MONTAJE Y MANTENIMIENTO DE SISTEMAS DE PRODUCCIÓN AUDIOVISUAL Y DE RADIODIFUSIÓN.",
+  "mf": [
+   "MF1578",
+   "MF1579",
+   "MF1580",
+   "MF1581"
+  ],
+  "mp": [
+   "MP0420"
+  ],
+  "nivel": 3,
+  "horas_mf": 600,
+  "horas_practicas": 80,
+  "horas_total": 680,
+  "real_decreto": "1077/2012"
+ },
+ "ELEQ0111": {
+  "denominacion": "OPERACIONES AUXILIARES DE MONTAJE Y MANTENIMIENTO DE EQUIPOS ELÉCTRICOS Y ELECTRÓNICOS",
+  "mf": [
+   "MF1559",
+   "MF1560",
+   "MF1561"
+  ],
+  "mp": [
+   "MP0417"
+  ],
+  "nivel": 1,
+  "horas_mf": 310,
+  "horas_practicas": 80,
+  "horas_total": 390,
+  "real_decreto": "1077/2012"
+ },
+ "ELES0111": {
+  "denominacion": "MONTAJE Y MANTENIMIENTO DE EQUIPAMIENTO DE RED Y ESTACIONES BASE DE TELEFONÍA",
+  "mf": [
+   "MF1562",
+   "MF1563",
+   "MF1564",
+   "MF1565"
+  ],
+  "mp": [
+   "MP0418"
+  ],
+  "nivel": 2,
+  "horas_mf": 510,
+  "horas_practicas": 80,
+  "horas_total": 590,
+  "real_decreto": "1077/2012"
+ },
+ "FMEA0211": {
+  "denominacion": "FABRICACIÓN DE ELEMENTOS AEROESPACIALES CON MATERIALES COMPUESTOS",
+  "mf": [
+   "MF1845",
+   "MF1846",
+   "MF1847",
+   "MF1848",
+   "MF1849"
+  ],
+  "mp": [
+   "MP0431"
+  ],
+  "nivel": 2,
+  "horas_mf": 580,
+  "horas_practicas": 80,
+  "horas_total": 660,
+  "real_decreto": "1078/2012"
+ },
+ "FMEA0111": {
+  "denominacion": "MONTAJE DE ESTRUCTURAS E INSTALACIÓN DE SISTEMAS Y EQUIPOS DE AERONAVES",
+  "mf": [
+   "MF1850",
+   "MF1851",
+   "MF1852"
+  ],
+  "mp": [
+   "MP0430"
+  ],
+  "nivel": 2,
+  "horas_mf": 500,
+  "horas_practicas": 80,
+  "horas_total": 580,
+  "real_decreto": "1078/2012"
+ },
+ "AGAN0211": {
+  "denominacion": "APICULTURA",
+  "mf": [
+   "MF1800",
+   "MF1801",
+   "MF1802",
+   "MF1803"
+  ],
+  "mp": [
+   "MP0427"
+  ],
+  "nivel": 2,
+  "horas_mf": 370,
+  "horas_practicas": 40,
+  "horas_total": 410,
+  "real_decreto": "1784/2011"
+ },
+ "AGAU0111": {
+  "denominacion": "MANEJO Y MANTENIMIENTO DE MAQUINARIA AGRÍCOLA",
+  "mf": [
+   "MF1804",
+   "MF1805",
+   "MF1806",
+   "MF1807",
+   "MF1808",
+   "MF1809"
+  ],
+  "mp": [
+   "MP0428"
+  ],
+  "nivel": 2,
+  "horas_mf": 590,
+  "horas_practicas": 40,
+  "horas_total": 630,
+  "real_decreto": "1784/2011"
+ },
+ "SEAG0211": {
+  "denominacion": "GESTIÓN AMBIENTAL",
+  "mf": [
+   "MF1971",
+   "MF1972",
+   "MF1973",
+   "MF1974"
+  ],
+  "mp": [
+   "MP0409"
+  ],
+  "nivel": 3,
+  "horas_mf": 420,
+  "horas_practicas": 80,
+  "horas_total": 500,
+  "real_decreto": "1785/2011"
+ },
+ "SEAG0111": {
+  "denominacion": "CONTROL DE LA CONTAMINACIÓN ATMOSFÉRICA",
+  "mf": [
+   "MF1613",
+   "MF1614",
+   "MF1615",
+   "MF1616"
+  ],
+  "mp": [
+   "MP0401"
+  ],
+  "nivel": 3,
+  "horas_mf": 490,
+  "horas_practicas": 80,
+  "horas_total": 570,
+  "real_decreto": "1785/2011"
+ },
+ "COMT0311": {
+  "denominacion": "CONTROL Y FORMACIÓN EN CONSUMO",
+  "mf": [
+   "MF0246",
+   "MF0998",
+   "MF0999"
+  ],
+  "mp": [
+   "MP0407"
+  ],
+  "nivel": 3,
+  "horas_mf": 460,
+  "horas_practicas": 80,
+  "horas_total": 540,
+  "real_decreto": "1694/2011"
+ },
+ "COMT0211": {
+  "denominacion": "ACTIVIDADES AUXILIARES DE COMERCIO",
+  "mf": [
+   "MF1326",
+   "MF1327",
+   "MF1328",
+   "MF1329"
+  ],
+  "mp": [
+   "MP0406"
+  ],
+  "nivel": 1,
+  "horas_mf": 230,
+  "horas_practicas": 40,
+  "horas_total": 270,
+  "real_decreto": "1694/2011"
+ },
+ "COMT0411": {
+  "denominacion": "GESTIÓN COMERCIAL DE VENTAS",
+  "mf": [
+   "MF0239",
+   "MF0503",
+   "MF1000",
+   "MF1001",
+   "MF1002"
+  ],
+  "mp": [
+   "MP0421"
+  ],
+  "nivel": 3,
+  "horas_mf": 530,
+  "horas_practicas": 80,
+  "horas_total": 610,
+  "real_decreto": "1694/2011"
+ },
+ "HOTJ0110": {
+  "denominacion": "ACTIVIDADES PARA EL JUEGO EN MESAS DE CASINOS",
+  "mf": [
+   "MF1768",
+   "MF1769",
+   "MF1770",
+   "MF1771",
+   "MF1772",
+   "MF1773",
+   "MF1774"
+  ],
+  "mp": [
+   "MP0355"
+  ],
+  "nivel": 2,
+  "horas_mf": 660,
+  "horas_practicas": 40,
+  "horas_total": 700,
+  "real_decreto": "1695/2011"
+ },
+ "HOTJ0111": {
+  "denominacion": "OPERACIONES PARA EL JUEGO EN ESTABLECIMIENTOS DE BINGO",
+  "mf": [
+   "MF1765",
+   "MF1766",
+   "MF1767",
+   "MF1768"
+  ],
+  "mp": [
+   "MP0425"
+  ],
+  "nivel": 1,
+  "horas_mf": 210,
+  "horas_practicas": 40,
+  "horas_total": 250,
+  "real_decreto": "1695/2011"
+ },
+ "HOTR0210": {
+  "denominacion": "DIRECCIÓN Y PRODUCCIÓN EN PASTELERÍA",
+  "mf": [
+   "MF0711",
+   "MF1775",
+   "MF1776",
+   "MF1777",
+   "MF1778",
+   "MF1779",
+   "MF1780",
+   "MF1781"
+  ],
+  "mp": [],
+  "nivel": 3,
+  "horas_mf": 790,
+  "horas_practicas": 80,
+  "horas_total": 870,
+  "real_decreto": "1695/2011"
+ },
+ "QUIA0110": {
+  "denominacion": "ORGANIZACIÓN Y CONTROL DE ENSAYOS NO DESTRUCTIVOS",
+  "mf": [
+   "MF0052",
+   "MF1545",
+   "MF1546",
+   "MF1547",
+   "MF1548",
+   "MF1549",
+   "MF1550"
+  ],
+  "mp": [
+   "MP0332"
+  ],
+  "nivel": 3,
+  "horas_mf": 760,
+  "horas_practicas": 120,
+  "horas_total": 880,
+  "real_decreto": "1696/2011"
+ },
+ "MAPN0111": {
+  "denominacion": "PESCA LOCAL",
+  "mf": [
+   "MF0735",
+   "MF0736",
+   "MF0737",
+   "MF0738",
+   "MF0739",
+   "MF0740"
+  ],
+  "mp": [
+   "MP0411"
+  ],
+  "nivel": 2,
+  "horas_mf": 350,
+  "horas_practicas": 40,
+  "horas_total": 390,
+  "real_decreto": "1774/2011"
+ },
+ "MAPN0710": {
+  "denominacion": "OBSERVACIÓN DE LA ACTIVIDAD Y CONTROL DE LAS CAPTURAS DE UN BUQUE PESQUERO",
+  "mf": [
+   "MF0010",
+   "MF0733",
+   "MF1899",
+   "MF1900",
+   "MF1901"
+  ],
+  "mp": [
+   "MP0321"
+  ],
+  "nivel": 3,
+  "horas_mf": 380,
+  "horas_practicas": 40,
+  "horas_total": 420,
+  "real_decreto": "1774/2011"
+ },
+ "MAPN0211": {
+  "denominacion": "OPERACIONES DE COORDINACIÓN EN CUBIERTA Y PARQUE DE PESCA",
+  "mf": [
+   "MF0010",
+   "MF0733",
+   "MF1894",
+   "MF1895"
+  ],
+  "mp": [
+   "MP0369"
+  ],
+  "nivel": 2,
+  "horas_mf": 280,
+  "horas_practicas": 40,
+  "horas_total": 320,
+  "real_decreto": "1774/2011"
+ },
+ "MAPN0610": {
+  "denominacion": "DOCUMENTACIÓN PESQUERA",
+  "mf": [
+   "MF0010",
+   "MF0733",
+   "MF1896",
+   "MF1897",
+   "MF1898"
+  ],
+  "mp": [
+   "MP0320"
+  ],
+  "nivel": 3,
+  "horas_mf": 410,
+  "horas_practicas": 40,
+  "horas_total": 450,
+  "real_decreto": "1774/2011"
+ },
+ "ARTU0111": {
+  "denominacion": "UTILERÍA PARA EL ESPECTÁCULO EN VIVO",
+  "mf": [
+   "MF1711",
+   "MF1719",
+   "MF1720",
+   "MF1721"
+  ],
+  "mp": [
+   "MP0422"
+  ],
+  "nivel": 3,
+  "horas_mf": 710,
+  "horas_practicas": 120,
+  "horas_total": 830,
+  "real_decreto": "1693/2011"
+ },
+ "ARTN0111": {
+  "denominacion": "MOLDES Y MATRICERÍAS ARTESANALES PARA CERÁMICA",
+  "mf": [
+   "MF1715",
+   "MF1716",
+   "MF1717",
+   "MF1718"
+  ],
+  "mp": [
+   "MP0429"
+  ],
+  "nivel": 3,
+  "horas_mf": 500,
+  "horas_practicas": 120,
+  "horas_total": 620,
+  "real_decreto": "1693/2011"
+ },
+ "ADGD0110": {
+  "denominacion": "ASISTENCIA EN LA GESTIÓN DE LOS PROCEDIMIENTOS TRIBUTARIOS",
+  "mf": [
+   "MF0233",
+   "MF1783",
+   "MF1784",
+   "MF1785",
+   "MF1786",
+   "MF1787"
+  ],
+  "mp": [
+   "MP0384"
+  ],
+  "nivel": 3,
+  "horas_mf": 700,
+  "horas_practicas": 40,
+  "horas_total": 740,
+  "real_decreto": "1692/2011"
+ },
+ "ADGD0210": {
+  "denominacion": "CREACIÓN Y GESTIÓN DE MICROEMPRESAS",
+  "mf": [
+   "MF1788",
+   "MF1789",
+   "MF1790",
+   "MF1791",
+   "MF1792"
+  ],
+  "mp": [
+   "MP0385"
+  ],
+  "nivel": 3,
+  "horas_mf": 480,
+  "horas_practicas": 40,
+  "horas_total": 520,
+  "real_decreto": "1692/2011"
+ },
+ "SSCB0110": {
+  "denominacion": "DINAMIZACIÓN, PROGRAMACIÓN Y DESARROLLO DE ACCIONES CULTURALES",
+  "mf": [
+   "MF1431",
+   "MF1432",
+   "MF1433"
+  ],
+  "mp": [
+   "MP0303"
+  ],
+  "nivel": 3,
+  "horas_mf": 400,
+  "horas_practicas": 80,
+  "horas_total": 480,
+  "real_decreto": "1697/2011"
+ },
+ "SSCE0110": {
+  "denominacion": "DOCENCIA DE LA FORMACIÓN PROFESIONAL PARA EL EMPLEO",
+  "mf": [
+   "MF1442",
+   "MF1443",
+   "MF1444",
+   "MF1445",
+   "MF1446"
+  ],
+  "mp": [
+   "MP0353"
+  ],
+  "nivel": 3,
+  "horas_mf": 340,
+  "horas_practicas": 40,
+  "horas_total": 380,
+  "real_decreto": "1697/2011"
+ },
+ "SSCG0111": {
+  "denominacion": "GESTIÓN DE LLAMADAS DE TELEASISTENCIA",
+  "mf": [
+   "MF1423",
+   "MF1424",
+   "MF1425"
+  ],
+  "mp": [
+   "MP0416"
+  ],
+  "nivel": 2,
+  "horas_mf": 230,
+  "horas_practicas": 80,
+  "horas_total": 310,
+  "real_decreto": "1697/2011"
+ },
+ "SSCB0211": {
+  "denominacion": "DIRECCIÓN Y COORDINACIÓN DE ACTIVIDADES DE TIEMPO LIBRE EDUCATIVO INFANTIL Y JUVENIL",
+  "mf": [
+   "MF1867",
+   "MF1868",
+   "MF1869",
+   "MF1870"
+  ],
+  "mp": [
+   "MP0410"
+  ],
+  "nivel": 3,
+  "horas_mf": 290,
+  "horas_practicas": 120,
+  "horas_total": 410,
+  "real_decreto": "1697/2011"
+ },
+ "SSCB0111": {
+  "denominacion": "PRESTACIÓN DE SERVICIOS BIBLIOTECARIOS",
+  "mf": [
+   "MF2022",
+   "MF2023",
+   "MF2024",
+   "MF2025"
+  ],
+  "mp": [
+   "MP0405"
+  ],
+  "nivel": 3,
+  "horas_mf": 420,
+  "horas_practicas": 120,
+  "horas_total": 540,
+  "real_decreto": "1697/2011"
+ },
+ "TMVU0110": {
+  "denominacion": "OPERACIONES AUXILIARES DE MANTENIMIENTO DE SISTEMAS Y EQUIPOS DE EMBARCACIONES DEPORTIVAS Y DE RECREO.",
+  "mf": [
+   "MF0620",
+   "MF1458",
+   "MF1459",
+   "MF1460"
+  ],
+  "mp": [
+   "MP0345"
+  ],
+  "nivel": 1,
+  "horas_mf": 350,
+  "horas_practicas": 40,
+  "horas_total": 390,
+  "real_decreto": "1539/2011"
+ },
+ "TMVI0108": {
+  "denominacion": "CONDUCCIÓN DE AUTOBUSES",
+  "mf": [
+   "MF1461",
+   "MF1462",
+   "MF1463",
+   "MF1464"
+  ],
+  "mp": [
+   "MP0100"
+  ],
+  "nivel": 2,
+  "horas_mf": 290,
+  "horas_practicas": 80,
+  "horas_total": 370,
+  "real_decreto": "1539/2011"
+ },
+ "TMVG0210": {
+  "denominacion": "MANTENIMIENTO DE SISTEMAS DE RODAJE Y TRANSMISIÓN DE MAQUINARIA AGRÍCOLA, DE INDUSTRIAS EXTRACTIVAS Y EDIFICACIÓN Y OBRA CIVIL, SUS EQUIPOS Y APEROS.",
+  "mf": [
+   "MF0849",
+   "MF0850",
+   "MF0851",
+   "MF0852"
+  ],
+  "mp": [
+   "MP0347"
+  ],
+  "nivel": 2,
+  "horas_mf": 600,
+  "horas_practicas": 80,
+  "horas_total": 680,
+  "real_decreto": "1539/2011"
+ },
+ "TMVG0110": {
+  "denominacion": "PLANIFICACIÓN Y CONTROL DEL ÁREA DE ELECTROMECÁNICA",
+  "mf": [
+   "MF0137",
+   "MF0138",
+   "MF0139",
+   "MF0140"
+  ],
+  "mp": [
+   "MP0327"
+  ],
+  "nivel": 3,
+  "horas_mf": 580,
+  "horas_practicas": 80,
+  "horas_total": 660,
+  "real_decreto": "1539/2011"
+ },
+ "TMVI0208": {
+  "denominacion": "CONDUCCIÓN DE VEHÍCULOS PESADOS DE TRANSPORTE DE MERCANCÍAS POR CARRETERA",
+  "mf": [
+   "MF1461",
+   "MF1462",
+   "MF1463",
+   "MF1465"
+  ],
+  "mp": [
+   "MP0101"
+  ],
+  "nivel": 2,
+  "horas_mf": 310,
+  "horas_practicas": 80,
+  "horas_total": 390,
+  "real_decreto": "1539/2011"
+ },
+ "TMVG0310": {
+  "denominacion": "MANTENIMIENTO DEL MOTOR Y DE LOS SISTEMAS ELÉCTRICOS, DE SEGURIDAD Y CONFORTABILIDAD DE MAQUINARIA AGRÍCOLA, DE INDUSTRIAS EXTRACTIVAS Y DE EDIFICACIÓN Y OBRA CIVIL.",
+  "mf": [
+   "MF0629",
+   "MF0853"
+  ],
+  "mp": [
+   "MP0348"
+  ],
+  "nivel": 2,
+  "horas_mf": 430,
+  "horas_practicas": 80,
+  "horas_total": 510,
+  "real_decreto": "1539/2011"
+ },
+ "TMVU0210": {
+  "denominacion": "OPERACIONES AUXILIARES DE MANTENIMIENTO DE ELEMENTOS ESTRUCTURALES Y DE RECUBRIMIENTO DE EMBARCACIONES DEPORTIVAS Y DE RECREO.",
+  "mf": [
+   "MF1455",
+   "MF1456",
+   "MF1457"
+  ],
+  "mp": [
+   "MP0346"
+  ],
+  "nivel": 1,
+  "horas_mf": 240,
+  "horas_practicas": 40,
+  "horas_total": 280,
+  "real_decreto": "1539/2011"
+ },
+ "VICF0411": {
+  "denominacion": "CONTROL DE MATERIALES, PROCESOS Y PRODUCTOS EN LABORATORIO CERÁMICO",
+  "mf": [
+   "MF0148",
+   "MF0149",
+   "MF0150"
+  ],
+  "mp": [
+   "MP0433"
+  ],
+  "nivel": 2,
+  "horas_mf": 480,
+  "horas_practicas": 40,
+  "horas_total": 520,
+  "real_decreto": "1775/2011"
+ },
+ "VICF0211": {
+  "denominacion": "ORGANIZACIÓN DE LA FABRICACIÓN DE PRODUCTOS CERÁMICOS",
+  "mf": [
+   "MF0664",
+   "MF0665",
+   "MF0666",
+   "MF0667",
+   "MF0668"
+  ],
+  "mp": [
+   "MP0413"
+  ],
+  "nivel": 3,
+  "horas_mf": 440,
+  "horas_practicas": 40,
+  "horas_total": 480,
+  "real_decreto": "1775/2011"
+ },
+ "VICF0311": {
+  "denominacion": "DESARROLLO DE COMPOSICIONES CERÁMICAS",
+  "mf": [
+   "MF0155",
+   "MF0156"
+  ],
+  "mp": [
+   "MP0415"
+  ],
+  "nivel": 3,
+  "horas_mf": 470,
+  "horas_practicas": 40,
+  "horas_total": 510,
+  "real_decreto": "1775/2011"
+ },
+ "VICF0111": {
+  "denominacion": "ORGANIZACIÓN DE LA FABRICACIÓN DE FRITAS, ESMALTES Y PIGMENTOS CERÁMICOS",
+  "mf": [
+   "MF0662",
+   "MF0663",
+   "MF0664",
+   "MF0665"
+  ],
+  "mp": [
+   "MP0412"
+  ],
+  "nivel": 3,
+  "horas_mf": 330,
+  "horas_practicas": 40,
+  "horas_total": 370,
+  "real_decreto": "1775/2011"
+ },
+ "AGAU0210": {
+  "denominacion": "GESTIÓN DE LA PRODUCCIÓN DE SEMILLAS Y PLANTAS EN VIVERO",
+  "mf": [
+   "MF1132",
+   "MF1492",
+   "MF1493",
+   "MF1494"
+  ],
+  "mp": [
+   "MP0373"
+  ],
+  "nivel": 3,
+  "horas_mf": 500,
+  "horas_practicas": 40,
+  "horas_total": 540,
+  "real_decreto": "1519/2011"
+ },
+ "AGAU0110": {
+  "denominacion": "PRODUCCIÓN DE SEMILLAS Y PLANTAS EN VIVERO",
+  "mf": [
+   "MF0525",
+   "MF0526",
+   "MF1479",
+   "MF1480",
+   "MF1481"
+  ],
+  "mp": [
+   "MP0372"
+  ],
+  "nivel": 2,
+  "horas_mf": 500,
+  "horas_practicas": 80,
+  "horas_total": 580,
+  "real_decreto": "1519/2011"
+ },
+ "AGAJ0208": {
+  "denominacion": "ARTE FLORAL Y GESTIÓN DE LAS ACTIVIDADES DE FLORISTERÍA",
+  "mf": [
+   "MF1482",
+   "MF1483",
+   "MF1484",
+   "MF1485"
+  ],
+  "mp": [
+   "MP0065"
+  ],
+  "nivel": 3,
+  "horas_mf": 560,
+  "horas_practicas": 40,
+  "horas_total": 600,
+  "real_decreto": "1519/2011"
+ },
+ "AGAN0110": {
+  "denominacion": "DOMA BÁSICA DEL CABALLO",
+  "mf": [
+   "MF1080",
+   "MF1122",
+   "MF1123",
+   "MF1124"
+  ],
+  "mp": [
+   "MP0300"
+  ],
+  "nivel": 2,
+  "horas_mf": 540,
+  "horas_practicas": 80,
+  "horas_total": 620,
+  "real_decreto": "1519/2011"
+ },
+ "AGAJ0110": {
+  "denominacion": "ACTIVIDADES DE FLORISTERIA",
+  "mf": [
+   "MF1468",
+   "MF1469",
+   "MF1470",
+   "MF1471"
+  ],
+  "mp": [
+   "MP0371"
+  ],
+  "nivel": 2,
+  "horas_mf": 440,
+  "horas_practicas": 40,
+  "horas_total": 480,
+  "real_decreto": "1519/2011"
+ },
+ "AGAR0110": {
+  "denominacion": "GESTIÓN DE APROVECHAMIENTOS FORESTALES",
+  "mf": [
+   "MF0730",
+   "MF1486",
+   "MF1487",
+   "MF1488"
+  ],
+  "mp": [
+   "MP0363"
+  ],
+  "nivel": 3,
+  "horas_mf": 550,
+  "horas_practicas": 80,
+  "horas_total": 630,
+  "real_decreto": "1519/2011"
+ },
+ "AGAN0210": {
+  "denominacion": "HERRADO DE EQUINOS",
+  "mf": [
+   "MF1136",
+   "MF1137",
+   "MF1138"
+  ],
+  "mp": [
+   "MP0324"
+  ],
+  "nivel": 3,
+  "horas_mf": 670,
+  "horas_practicas": 40,
+  "horas_total": 710,
+  "real_decreto": "1519/2011"
+ },
+ "ARTN0110": {
+  "denominacion": "REPRODUCCIONES DE MOLDES Y PIEZAS CERÁMICAS ARTESANALES",
+  "mf": [
+   "MF1684",
+   "MF1685"
+  ],
+  "mp": [
+   "MP0277"
+  ],
+  "nivel": 1,
+  "horas_mf": 260,
+  "horas_practicas": 40,
+  "horas_total": 300,
+  "real_decreto": "1521/2011"
+ },
+ "ARTN0210": {
+  "denominacion": "DECORACIÓN ARTESANAL DE VIDRIO MEDIANTE APLICACIÓN DE COLOR",
+  "mf": [
+   "MF1690",
+   "MF1691",
+   "MF1692",
+   "MF1693"
+  ],
+  "mp": [
+   "MP0344"
+  ],
+  "nivel": 2,
+  "horas_mf": 460,
+  "horas_practicas": 120,
+  "horas_total": 580,
+  "real_decreto": "1521/2011"
+ },
+ "ARTN0309": {
+  "denominacion": "TRANSFORMACIÓN ARTESANAL DE VIDRIO EN FRÍO",
+  "mf": [
+   "MF1690",
+   "MF1694",
+   "MF1702",
+   "MF1703",
+   "MF1704",
+   "MF1705"
+  ],
+  "mp": [
+   "MP0261"
+  ],
+  "nivel": 2,
+  "horas_mf": 590,
+  "horas_practicas": 80,
+  "horas_total": 670,
+  "real_decreto": "1521/2011"
+ },
+ "ARTN0109": {
+  "denominacion": "ELABORACIÓN ARTESANAL DE PRODUCTOS DE VIDRIO EN CALIENTE",
+  "mf": [
+   "MF1690",
+   "MF1694",
+   "MF1695",
+   "MF1696",
+   "MF1697"
+  ],
+  "mp": [
+   "MP0165"
+  ],
+  "nivel": 2,
+  "horas_mf": 580,
+  "horas_practicas": 80,
+  "horas_total": 660,
+  "real_decreto": "1521/2011"
+ },
+ "ARTU0110": {
+  "denominacion": "MAQUINARIA ESCÉNICA PARA EL ESPECTÁCULO EN VIVO",
+  "mf": [
+   "MF1711",
+   "MF1712",
+   "MF1713",
+   "MF1714"
+  ],
+  "mp": [
+   "MP0280"
+  ],
+  "nivel": 3,
+  "horas_mf": 710,
+  "horas_practicas": 120,
+  "horas_total": 830,
+  "real_decreto": "1521/2011"
+ },
+ "ARTN0209": {
+  "denominacion": "ALFARERÍA ARTESANAL",
+  "mf": [
+   "MF1686",
+   "MF1687",
+   "MF1688",
+   "MF1689",
+   "MF1690"
+  ],
+  "mp": [
+   "MP0260"
+  ],
+  "nivel": 2,
+  "horas_mf": 520,
+  "horas_practicas": 80,
+  "horas_total": 600,
+  "real_decreto": "1521/2011"
+ },
+ "COML0110": {
+  "denominacion": "ACTIVIDADES AUXILIARES DE ALMACÉN",
+  "mf": [
+   "MF0432",
+   "MF1325",
+   "MF1326"
+  ],
+  "mp": [
+   "MP0287"
+  ],
+  "nivel": 1,
+  "horas_mf": 170,
+  "horas_practicas": 40,
+  "horas_total": 210,
+  "real_decreto": "1522/2011"
+ },
+ "COML0210": {
+  "denominacion": "GESTIÓN Y CONTROL DEL APROVISIONAMIENTO",
+  "mf": [
+   "MF1003",
+   "MF1004",
+   "MF1005",
+   "MF1006"
+  ],
+  "mp": [
+   "MP0333"
+  ],
+  "nivel": 3,
+  "horas_mf": 370,
+  "horas_practicas": 80,
+  "horas_total": 450,
+  "real_decreto": "1522/2011"
+ },
+ "COMT0110": {
+  "denominacion": "ATENCIÓN AL CLIENTE, CONSUMIDOR O USUARIO",
+  "mf": [
+   "MF0241",
+   "MF0245",
+   "MF0246",
+   "MF1002"
+  ],
+  "mp": [
+   "MP0374"
+  ],
+  "nivel": 3,
+  "horas_mf": 420,
+  "horas_practicas": 40,
+  "horas_total": 460,
+  "real_decreto": "1522/2011"
+ },
+ "COMM0110": {
+  "denominacion": "MARKETING Y COMPRAVENTA INTERNACIONAL",
+  "mf": [
+   "MF1007",
+   "MF1008",
+   "MF1009",
+   "MF1010",
+   "MF1011"
+  ],
+  "mp": [
+   "MP0378"
+  ],
+  "nivel": 3,
+  "horas_mf": 710,
+  "horas_practicas": 40,
+  "horas_total": 750,
+  "real_decreto": "1522/2011"
+ },
+ "COMT0210": {
+  "denominacion": "GESTIÓN ADMINISTRATIVA Y FINANCIERA DEL COMERCIO INTERNACIONAL",
+  "mf": [
+   "MF0242",
+   "MF0243",
+   "MF0244",
+   "MF1010"
+  ],
+  "mp": [
+   "MP0375"
+  ],
+  "nivel": 3,
+  "horas_mf": 620,
+  "horas_practicas": 40,
+  "horas_total": 660,
+  "real_decreto": "1522/2011"
+ },
+ "ENAL0110": {
+  "denominacion": "GESTIÓN DE LA OPERACIÓN EN CENTRALES HIDROELÉCTRICAS",
+  "mf": [
+   "MF1200",
+   "MF1527",
+   "MF1528",
+   "MF1529",
+   "MF1530"
+  ],
+  "mp": [
+   "MP0376"
+  ],
+  "nivel": 3,
+  "horas_mf": 650,
+  "horas_practicas": 80,
+  "horas_total": 730,
+  "real_decreto": "1524/2011"
+ },
+ "ENAS0110": {
+  "denominacion": "MONTAJE, PUESTA EN SERVICIO, MANTENIMIENTO, INSPECCIÓN Y REVISIÓN DE INSTALACIONES RECEPTORAS Y APARATOS DE GAS.",
+  "mf": [
+   "MF1522",
+   "MF1523",
+   "MF1524",
+   "MF1525",
+   "MF1526"
+  ],
+  "mp": [
+   "MP0354"
+  ],
+  "nivel": 2,
+  "horas_mf": 460,
+  "horas_practicas": 80,
+  "horas_total": 540,
+  "real_decreto": "1524/2011"
+ },
+ "ENAL0210": {
+  "denominacion": "GESTIÓN DEL MONTAJE Y MANTENIMIENTO DE SUBESTACIONES ELÉCTRICAS",
+  "mf": [
+   "MF1530",
+   "MF1531",
+   "MF1532",
+   "MF1533"
+  ],
+  "mp": [
+   "MP0377"
+  ],
+  "nivel": 3,
+  "horas_mf": 540,
+  "horas_practicas": 80,
+  "horas_total": 620,
+  "real_decreto": "1524/2011"
+ },
+ "IFCT0410": {
+  "denominacion": "ADMINISTRACIÓN Y DISEÑO DE REDES DEPARTAMENTALES",
+  "mf": [
+   "MF0228",
+   "MF0229",
+   "MF0230"
+  ],
+  "mp": [
+   "MP0396"
+  ],
+  "nivel": 3,
+  "horas_mf": 530,
+  "horas_practicas": 80,
+  "horas_total": 610,
+  "real_decreto": "1531/2011"
+ },
+ "IFCM0110": {
+  "denominacion": "OPERACIÓN EN SISTEMAS DE COMUNICACIONES DE VOZ Y DATOS",
+  "mf": [
+   "MF0956",
+   "MF0960",
+   "MF0961"
+  ],
+  "mp": [
+   "MP0394"
+  ],
+  "nivel": 2,
+  "horas_mf": 510,
+  "horas_practicas": 40,
+  "horas_total": 550,
+  "real_decreto": "1531/2011"
+ },
+ "IFCD0210": {
+  "denominacion": "DESARROLLO DE APLICACIONES CON TECNOLOGÍAS WEB",
+  "mf": [
+   "MF0491",
+   "MF0492",
+   "MF0493"
+  ],
+  "mp": [
+   "MP0391"
+  ],
+  "nivel": 3,
+  "horas_mf": 510,
+  "horas_practicas": 80,
+  "horas_total": 590,
+  "real_decreto": "1531/2011"
+ },
+ "IFCM0210": {
+  "denominacion": "MANTENIMIENTO DE PRIMER NIVEL EN SISTEMAS DE RADIOCOMUNICACIONES",
+  "mf": [
+   "MF1210",
+   "MF1211",
+   "MF1212"
+  ],
+  "mp": [
+   "MP0392"
+  ],
+  "nivel": 2,
+  "horas_mf": 540,
+  "horas_practicas": 40,
+  "horas_total": 580,
+  "real_decreto": "1531/2011"
+ },
+ "IFCM0310": {
+  "denominacion": "GESTIÓN DE REDES DE VOZ Y DATOS",
+  "mf": [
+   "MF0228",
+   "MF0962",
+   "MF0963"
+  ],
+  "mp": [
+   "MP0395"
+  ],
+  "nivel": 3,
+  "horas_mf": 530,
+  "horas_practicas": 80,
+  "horas_total": 610,
+  "real_decreto": "1531/2011"
+ },
+ "IFCT0310": {
+  "denominacion": "ADMINISTRACIÓN DE BASES DE DATOS",
+  "mf": [
+   "MF0223",
+   "MF0224",
+   "MF0225"
+  ],
+  "mp": [
+   "MP0313"
+  ],
+  "nivel": 3,
+  "horas_mf": 570,
+  "horas_practicas": 80,
+  "horas_total": 650,
+  "real_decreto": "1531/2011"
+ },
+ "IFCT0610": {
+  "denominacion": "ADMINISTRACIÓN Y PROGRAMACIÓN EN SISTEMAS DE PLANIFICACIÓN DE RECURSOS EMPRESARIALES Y DE GESTIÓN DE RELACIONES CON CLIENTES.",
+  "mf": [
+   "MF1213",
+   "MF1214",
+   "MF1215"
+  ],
+  "mp": [
+   "MP0397"
+  ],
+  "nivel": 3,
+  "horas_mf": 570,
+  "horas_practicas": 80,
+  "horas_total": 650,
+  "real_decreto": "1531/2011"
+ },
+ "IFCT0110": {
+  "denominacion": "OPERACIÓN DE REDES DEPARTAMENTALES",
+  "mf": [
+   "MF0220",
+   "MF0955",
+   "MF0956"
+  ],
+  "mp": [
+   "MP0285"
+  ],
+  "nivel": 2,
+  "horas_mf": 490,
+  "horas_practicas": 40,
+  "horas_total": 530,
+  "real_decreto": "1531/2011"
+ },
+ "IFCM0410": {
+  "denominacion": "GESTIÓN Y SUPERVISIÓN DE ALARMAS EN REDES DE COMUNICACIONES",
+  "mf": [
+   "MF1216",
+   "MF1217",
+   "MF1218"
+  ],
+  "mp": [
+   "MP0393"
+  ],
+  "nivel": 3,
+  "horas_mf": 600,
+  "horas_practicas": 80,
+  "horas_total": 680,
+  "real_decreto": "1531/2011"
+ },
+ "IFCT0210": {
+  "denominacion": "OPERACIÓN DE SISTEMAS INFORMÁTICOS",
+  "mf": [
+   "MF0219",
+   "MF0957",
+   "MF0958",
+   "MF0959"
+  ],
+  "mp": [
+   "MP0286"
+  ],
+  "nivel": 2,
+  "horas_mf": 560,
+  "horas_practicas": 40,
+  "horas_total": 600,
+  "real_decreto": "1531/2011"
+ },
+ "IFCD0110": {
+  "denominacion": "CONFECCIÓN Y PUBLICACIÓN DE PÁGINAS WEB",
+  "mf": [
+   "MF0950",
+   "MF0951",
+   "MF0952"
+  ],
+  "mp": [
+   "MP0278"
+  ],
+  "nivel": 2,
+  "horas_mf": 480,
+  "horas_practicas": 80,
+  "horas_total": 560,
+  "real_decreto": "1531/2011"
+ },
+ "IFCT0510": {
+  "denominacion": "GESTIÓN DE SISTEMAS INFORMÁTICOS",
+  "mf": [
+   "MF0484",
+   "MF0485",
+   "MF0486"
+  ],
+  "mp": [
+   "MP0398"
+  ],
+  "nivel": 3,
+  "horas_mf": 420,
+  "horas_practicas": 80,
+  "horas_total": 500,
+  "real_decreto": "1531/2011"
+ },
+ "QUIM0110": {
+  "denominacion": "ORGANIZACIÓN Y CONTROL DE LA FABRICACIÓN DE PRODUCTOS FARMACÉUTICOS Y AFINES",
+  "mf": [
+   "MF0334",
+   "MF0335",
+   "MF0338",
+   "MF0339",
+   "MF0340"
+  ],
+  "mp": [
+   "MP0244"
+  ],
+  "nivel": 3,
+  "horas_mf": 580,
+  "horas_practicas": 80,
+  "horas_total": 660,
+  "real_decreto": "1534/2011"
+ },
+ "QUIO0110": {
+  "denominacion": "RECUPERACIÓN DE LEJÍAS NEGRAS Y ENERGÍA",
+  "mf": [
+   "MF0044",
+   "MF0773",
+   "MF0776",
+   "MF0777"
+  ],
+  "mp": [
+   "MP0296"
+  ],
+  "nivel": 2,
+  "horas_mf": 450,
+  "horas_practicas": 120,
+  "horas_total": 570,
+  "real_decreto": "1534/2011"
+ },
+ "QUIT0110": {
+  "denominacion": "ORGANIZACIÓN Y CONTROL DE LA TRANSFORMACIÓN DE POLÍMEROS TERMOESTABLES Y SUS COMPUESTOS",
+  "mf": [
+   "MF0778",
+   "MF0781",
+   "MF0783",
+   "MF0784",
+   "MF0785"
+  ],
+  "mp": [
+   "MP0281"
+  ],
+  "nivel": 3,
+  "horas_mf": 580,
+  "horas_practicas": 80,
+  "horas_total": 660,
+  "real_decreto": "1534/2011"
+ },
+ "QUIE0408": {
+  "denominacion": "OPERACIONES DE MOVIMIENTOS Y ENTREGA DE PRODUCTOS EN LA INDUSTRIA QUÍMICA",
+  "mf": [
+   "MF0048",
+   "MF1534",
+   "MF1535",
+   "MF1536"
+  ],
+  "mp": [
+   "MP0087"
+  ],
+  "nivel": 2,
+  "horas_mf": 380,
+  "horas_practicas": 80,
+  "horas_total": 460,
+  "real_decreto": "1534/2011"
+ },
+ "QUIM0210": {
+  "denominacion": "ORGANIZACIÓN Y CONTROL DEL ACONDICIONADO DE PRODUCTOS FARMACÉUTICOS Y AFINES",
+  "mf": [
+   "MF0334",
+   "MF0335",
+   "MF0336",
+   "MF0337",
+   "MF0338"
+  ],
+  "mp": [
+   "MP0289"
+  ],
+  "nivel": 3,
+  "horas_mf": 580,
+  "horas_practicas": 80,
+  "horas_total": 660,
+  "real_decreto": "1534/2011"
+ },
+ "INAD0110": {
+  "denominacion": "FABRICACIÓN DE PRODUCTOS DE CAFÉS Y SUCEDÁNEOS DE CAFÉ",
+  "mf": [
+   "MF0760",
+   "MF0763",
+   "MF0764"
+  ],
+  "mp": [
+   "MP0329"
+  ],
+  "nivel": 2,
+  "horas_mf": 150,
+  "horas_practicas": 80,
+  "horas_total": 230,
+  "real_decreto": "1529/2011"
+ },
+ "INAD0310": {
+  "denominacion": "FABRICACIÓN DE PRODUCTOS DE TUESTE Y DE APERITIVOS EXTRUSIONADOS",
+  "mf": [
+   "MF0760",
+   "MF0761",
+   "MF0762"
+  ],
+  "mp": [
+   "MP0362"
+  ],
+  "nivel": 2,
+  "horas_mf": 160,
+  "horas_practicas": 80,
+  "horas_total": 240,
+  "real_decreto": "1529/2011"
+ },
+ "INAK0110": {
+  "denominacion": "INDUSTRIAS DEL ACEITE Y GRASAS COMESTIBLES",
+  "mf": [
+   "MF0556",
+   "MF0557",
+   "MF0558",
+   "MF0568",
+   "MF0569",
+   "MF0570"
+  ],
+  "mp": [
+   "MP0330"
+  ],
+  "nivel": 3,
+  "horas_mf": 520,
+  "horas_practicas": 80,
+  "horas_total": 600,
+  "real_decreto": "1529/2011"
+ },
+ "INAD0210": {
+  "denominacion": "ELABORACIÓN DE PRODUCTOS PARA LA ALIMENTACIÓN ANIMAL",
+  "mf": [
+   "MF0754",
+   "MF0755",
+   "MF0756"
+  ],
+  "mp": [
+   "MP0328"
+  ],
+  "nivel": 2,
+  "horas_mf": 280,
+  "horas_practicas": 80,
+  "horas_total": 360,
+  "real_decreto": "1529/2011"
+ },
+ "INAE0110": {
+  "denominacion": "INDUSTRIAS LÁCTEAS",
+  "mf": [
+   "MF0556",
+   "MF0557",
+   "MF0558",
+   "MF0571",
+   "MF0572",
+   "MF0573"
+  ],
+  "mp": [
+   "MP0360"
+  ],
+  "nivel": 3,
+  "horas_mf": 480,
+  "horas_practicas": 120,
+  "horas_total": 600,
+  "real_decreto": "1529/2011"
+ },
+ "INAF0110": {
+  "denominacion": "INDUSTRIAS DE DERIVADOS DE CEREALES Y DE DULCES",
+  "mf": [
+   "MF0556",
+   "MF0557",
+   "MF0558",
+   "MF0562",
+   "MF0563",
+   "MF0564"
+  ],
+  "mp": [
+   "MP0359"
+  ],
+  "nivel": 3,
+  "horas_mf": 510,
+  "horas_practicas": 120,
+  "horas_total": 630,
+  "real_decreto": "1529/2011"
+ },
+ "INAH0110": {
+  "denominacion": "INDUSTRIAS DERIVADAS DE LA UVA Y DEL VINO",
+  "mf": [
+   "MF0314",
+   "MF0556",
+   "MF0557",
+   "MF0558",
+   "MF0768",
+   "MF0769"
+  ],
+  "mp": [
+   "MP0309"
+  ],
+  "nivel": 3,
+  "horas_mf": 450,
+  "horas_practicas": 80,
+  "horas_total": 530,
+  "real_decreto": "1529/2011"
+ },
+ "INAJ0110": {
+  "denominacion": "INDUSTRIAS DE PRODUCTOS DE LA PESCA Y DE LA ACUICULTURA",
+  "mf": [
+   "MF0556",
+   "MF0557",
+   "MF0558",
+   "MF0565",
+   "MF0566",
+   "MF0567"
+  ],
+  "mp": [
+   "MP0331"
+  ],
+  "nivel": 3,
+  "horas_mf": 480,
+  "horas_practicas": 120,
+  "horas_total": 600,
+  "real_decreto": "1529/2011"
+ },
+ "INAH0310": {
+  "denominacion": "ELABORACIÓN DE REFRESCOS Y AGUAS DE BEBIDA ENVASADAS",
+  "mf": [
+   "MF0314",
+   "MF0757",
+   "MF0758",
+   "MF0759"
+  ],
+  "mp": [
+   "MP0310"
+  ],
+  "nivel": 2,
+  "horas_mf": 200,
+  "horas_practicas": 40,
+  "horas_total": 240,
+  "real_decreto": "1529/2011"
+ },
+ "INAV0110": {
+  "denominacion": "INDUSTRIAS DE CONSERVAS Y JUGOS VEGETALES",
+  "mf": [
+   "MF0556",
+   "MF0557",
+   "MF0558",
+   "MF0559",
+   "MF0560",
+   "MF0561"
+  ],
+  "mp": [
+   "MP0361"
+  ],
+  "nivel": 3,
+  "horas_mf": 480,
+  "horas_practicas": 120,
+  "horas_total": 600,
+  "real_decreto": "1529/2011"
+ },
+ "INAH0210": {
+  "denominacion": "ELABORACIÓN DE CERVEZA",
+  "mf": [
+   "MF0311",
+   "MF0312",
+   "MF0313",
+   "MF0314"
+  ],
+  "mp": [
+   "MP0305"
+  ],
+  "nivel": 2,
+  "horas_mf": 230,
+  "horas_practicas": 80,
+  "horas_total": 310,
+  "real_decreto": "1529/2011"
+ },
+ "AFDA0310": {
+  "denominacion": "ACTIVIDADES DE NATACIÓN",
+  "mf": [
+   "MF0269",
+   "MF0271",
+   "MF0272",
+   "MF1084",
+   "MF1085",
+   "MF1086"
+  ],
+  "mp": [
+   "MP0368"
+  ],
+  "nivel": 3,
+  "horas_mf": 590,
+  "horas_practicas": 160,
+  "horas_total": 750,
+  "real_decreto": "1518/2011"
+ },
+ "AFDA0110": {
+  "denominacion": "ACONDICIONAMIENTO FÍSICO EN GRUPO CON SOPORTE MUSICAL",
+  "mf": [
+   "MF0272",
+   "MF0273",
+   "MF0515",
+   "MF0516"
+  ],
+  "mp": [
+   "MP0366"
+  ],
+  "nivel": 3,
+  "horas_mf": 470,
+  "horas_practicas": 120,
+  "horas_total": 590,
+  "real_decreto": "1518/2011"
+ },
+ "AFDA0210": {
+  "denominacion": "ACONDICIONAMIENTO FÍSICO EN SALA DE ENTRENAMIENTO POLIVALENTE",
+  "mf": [
+   "MF0272",
+   "MF0273",
+   "MF0274",
+   "MF0275"
+  ],
+  "mp": [
+   "MP0367"
+  ],
+  "nivel": 3,
+  "horas_mf": 470,
+  "horas_practicas": 120,
+  "horas_total": 590,
+  "real_decreto": "1518/2011"
+ },
+ "ELEE0110": {
+  "denominacion": "DESARROLLO DE PROYECTOS DE INSTALACIONES ELÉCTRICAS EN EL ENTORNO DE EDIFICIOS Y CON FINES ESPECIALES",
+  "mf": [
+   "MF0829",
+   "MF0830"
+  ],
+  "mp": [
+   "MP0283"
+  ],
+  "nivel": 3,
+  "horas_mf": 440,
+  "horas_practicas": 80,
+  "horas_total": 520,
+  "real_decreto": "1523/2011"
+ },
+ "ELEM0110": {
+  "denominacion": "DESARROLLO DE PROYECTOS DE SISTEMAS DE AUTOMATIZACIÓN INDUSTRIAL",
+  "mf": [
+   "MF1568",
+   "MF1569",
+   "MF1570"
+  ],
+  "mp": [
+   "MP0380"
+  ],
+  "nivel": 3,
+  "horas_mf": 550,
+  "horas_practicas": 80,
+  "horas_total": 630,
+  "real_decreto": "1523/2011"
+ },
+ "ELEE0510": {
+  "denominacion": "GESTIÓN Y SUPERVISIÓN DEL MONTAJE Y MANTENIMIENTO DE REDES ELÉCTRICAS SUBTERRÁNEAS DE ALTA TENSIÓN DE SEGUNDA Y TERCERA CATEGORÍA Y CENTROS DE TRANSFORMACIÓN DE INTERIOR.",
+  "mf": [
+   "MF1191",
+   "MF1192",
+   "MF1193"
+  ],
+  "mp": [
+   "MP0342"
+  ],
+  "nivel": 3,
+  "horas_mf": 560,
+  "horas_practicas": 80,
+  "horas_total": 640,
+  "real_decreto": "1523/2011"
+ },
+ "ELEE0610": {
+  "denominacion": "GESTIÓN Y SUPERVISIÓN DEL MONTAJE Y MANTENIMIENTO DE REDES ELÉCTRICAS DE BAJA TENSIÓN Y ALUMBRADO EXTERIOR.",
+  "mf": [
+   "MF1275",
+   "MF1276",
+   "MF1277"
+  ],
+  "mp": [
+   "MP0350"
+  ],
+  "nivel": 3,
+  "horas_mf": 540,
+  "horas_practicas": 80,
+  "horas_total": 620,
+  "real_decreto": "1523/2011"
+ },
+ "ELEE0410": {
+  "denominacion": "GESTIÓN Y SUPERVISIÓN DEL MONTAJE Y MANTENIMIENTO DE REDES ELÉCTRICAS AÉREAS DE ALTA TENSIÓN DE SEGUNDA Y TERCERA CATEGORÍA, Y CENTROS DE TRANSFORMACIÓN DE INTEMPERIE.",
+  "mf": [
+   "MF1188",
+   "MF1189",
+   "MF1190"
+  ],
+  "mp": [
+   "MP0308"
+  ],
+  "nivel": 3,
+  "horas_mf": 560,
+  "horas_practicas": 80,
+  "horas_total": 640,
+  "real_decreto": "1523/2011"
+ },
+ "ELEE0310": {
+  "denominacion": "GESTIÓN Y SUPERVISIÓN DEL MONTAJE Y MANTENIMIENTO DE INSTALACIONES ELÉCTRICAS EN EL ENTORNO DE EDIFICIOS",
+  "mf": [
+   "MF1180",
+   "MF1181",
+   "MF1182",
+   "MF1183"
+  ],
+  "mp": [
+   "MP0307"
+  ],
+  "nivel": 3,
+  "horas_mf": 620,
+  "horas_practicas": 80,
+  "horas_total": 700,
+  "real_decreto": "1523/2011"
+ },
+ "ELEM0210": {
+  "denominacion": "GESTIÓN Y SUPERVISIÓN DEL MONTAJE Y MANTENIMIENTO DE SISTEMAS DE AUTOMATIZACIÓN INDUSTRIAL",
+  "mf": [
+   "MF1575",
+   "MF1576",
+   "MF1577"
+  ],
+  "mp": [
+   "MP0381"
+  ],
+  "nivel": 3,
+  "horas_mf": 530,
+  "horas_practicas": 120,
+  "horas_total": 650,
+  "real_decreto": "1523/2011"
+ },
+ "ELES0110": {
+  "denominacion": "DESARROLLO DE PROYECTOS DE INFRAESTRUCTURAS DE TELECOMUNICACIÓN Y DE REDES DE VOZ Y DATOS EN EL ENTORNO DE EDIFICIOS.",
+  "mf": [
+   "MF0826",
+   "MF0827",
+   "MF0828"
+  ],
+  "mp": [
+   "MP0282"
+  ],
+  "nivel": 3,
+  "horas_mf": 420,
+  "horas_practicas": 80,
+  "horas_total": 500,
+  "real_decreto": "1523/2011"
+ },
+ "ELES0210": {
+  "denominacion": "GESTIÓN Y SUPERVISIÓN DEL MONTAJE Y MANTENIMIENTO DE LAS INFRAESTRUCTURAS DE TELECOMUNICACIÓN Y DE REDES DE VOZ Y DATOS EN EL ENTORNO DE EDIFICIOS.",
+  "mf": [
+   "MF1184",
+   "MF1185",
+   "MF1186",
+   "MF1187"
+  ],
+  "mp": [
+   "MP0284"
+  ],
+  "nivel": 3,
+  "horas_mf": 600,
+  "horas_practicas": 80,
+  "horas_total": 680,
+  "real_decreto": "1523/2011"
+ },
+ "ELEE0210": {
+  "denominacion": "DESARROLLO DE PROYECTOS DE REDES ELÉCTRICAS DE BAJA Y ALTA TENSIÓN",
+  "mf": [
+   "MF0831",
+   "MF0832",
+   "MF0833",
+   "MF0834"
+  ],
+  "mp": [
+   "MP0306"
+  ],
+  "nivel": 3,
+  "horas_mf": 610,
+  "horas_practicas": 80,
+  "horas_total": 690,
+  "real_decreto": "1523/2011"
+ },
+ "FMEH0110": {
+  "denominacion": "TRATAMIENTOS TÉRMICOS EN FABRICACIÓN MECÁNICA",
+  "mf": [
+   "MF0104",
+   "MF1266"
+  ],
+  "mp": [
+   "MP0389"
+  ],
+  "nivel": 2,
+  "horas_mf": 330,
+  "horas_practicas": 40,
+  "horas_total": 370,
+  "real_decreto": "1525/2011"
+ },
+ "FMEC0210": {
+  "denominacion": "SOLDADURA OXIGÁS Y SOLDADURA MIG/MAG",
+  "mf": [
+   "MF0098",
+   "MF0101"
+  ],
+  "mp": [
+   "MP0358"
+  ],
+  "nivel": 2,
+  "horas_mf": 560,
+  "horas_practicas": 40,
+  "horas_total": 600,
+  "real_decreto": "1525/2011"
+ },
+ "FMEC0110": {
+  "denominacion": "SOLDADURA CON ELECTRODO REVESTIDO Y TIG",
+  "mf": [
+   "MF0099",
+   "MF0100"
+  ],
+  "mp": [
+   "MP0349"
+  ],
+  "nivel": 2,
+  "horas_mf": 640,
+  "horas_practicas": 40,
+  "horas_total": 680,
+  "real_decreto": "1525/2011"
+ },
+ "IEXM0210": {
+  "denominacion": "EXCAVACIÓN SUBTERRÁNEA MECANIZADA DIRIGIDA DE PEQUEÑA SECCIÓN",
+  "mf": [
+   "MF0858",
+   "MF1384",
+   "MF1385",
+   "MF1386"
+  ],
+  "mp": [
+   "MP0339"
+  ],
+  "nivel": 2,
+  "horas_mf": 390,
+  "horas_practicas": 80,
+  "horas_total": 470,
+  "real_decreto": "1530/2011"
+ },
+ "IEXM0110": {
+  "denominacion": "EXCAVACIÓN SUBTERRÁNEA MECANIZADA DE ARRANQUE SELECTIVO",
+  "mf": [
+   "MF0864",
+   "MF1381",
+   "MF1382",
+   "MF1383"
+  ],
+  "mp": [
+   "MP0338"
+  ],
+  "nivel": 2,
+  "horas_mf": 520,
+  "horas_practicas": 80,
+  "horas_total": 600,
+  "real_decreto": "1530/2011"
+ },
+ "IEXM0310": {
+  "denominacion": "EXCAVACIÓN SUBTERRÁNEA MECANIZADA A SECCIÓN COMPLETA CON TUNELADORAS",
+  "mf": [
+   "MF0864",
+   "MF1394",
+   "MF1395"
+  ],
+  "mp": [
+   "MP0340"
+  ],
+  "nivel": 3,
+  "horas_mf": 470,
+  "horas_practicas": 120,
+  "horas_total": 590,
+  "real_decreto": "1530/2011"
+ },
+ "SSCE0109": {
+  "denominacion": "INFORMACIÓN JUVENIL",
+  "mf": [
+   "MF1023",
+   "MF1874",
+   "MF1875",
+   "MF1876"
+  ],
+  "mp": [
+   "MP0245"
+  ],
+  "nivel": 3,
+  "horas_mf": 360,
+  "horas_practicas": 120,
+  "horas_total": 480,
+  "real_decreto": "1537/2011"
+ },
+ "SSCB0209": {
+  "denominacion": "DINAMIZACIÓN DE ACTIVIDADES DE TIEMPO LIBRE EDUCATIVO INFANTIL Y JUVENIL",
+  "mf": [
+   "MF1866",
+   "MF1867",
+   "MF1868"
+  ],
+  "mp": [
+   "MP0270"
+  ],
+  "nivel": 2,
+  "horas_mf": 150,
+  "horas_practicas": 160,
+  "horas_total": 310,
+  "real_decreto": "1537/2011"
+ },
+ "TCPP0110": {
+  "denominacion": "OPERACIONES AUXILIARES DE PROCESOS TEXTILES",
+  "mf": [
+   "MF0431",
+   "MF0432",
+   "MF0433"
+  ],
+  "mp": [
+   "MP0379"
+  ],
+  "nivel": 1,
+  "horas_mf": 260,
+  "horas_practicas": 40,
+  "horas_total": 300,
+  "real_decreto": "1538/2011"
+ },
+ "TCPF0110": {
+  "denominacion": "OPERACIONES AUXILIARES DE GUARNICIONERÍA",
+  "mf": [
+   "MF1232",
+   "MF1233"
+  ],
+  "mp": [
+   "MP0343"
+  ],
+  "nivel": 1,
+  "horas_mf": 280,
+  "horas_practicas": 80,
+  "horas_total": 360,
+  "real_decreto": "1538/2011"
+ },
+ "TCPF0111": {
+  "denominacion": "OPERACIONES AUXILIARES DE CURTIDOS",
+  "mf": [
+   "MF0432",
+   "MF1228",
+   "MF1229"
+  ],
+  "mp": [
+   "MP0390"
+  ],
+  "nivel": 1,
+  "horas_mf": 290,
+  "horas_practicas": 40,
+  "horas_total": 330,
+  "real_decreto": "1538/2011"
+ },
+ "VICF0110": {
+  "denominacion": "OPERACIONES DE FABRICACIÓN DE FRITAS, ESMALTES Y PIGMENTOS CERÁMICOS",
+  "mf": [
+   "MF0653",
+   "MF0654",
+   "MF0655",
+   "MF0656"
+  ],
+  "mp": [
+   "MP0301"
+  ],
+  "nivel": 2,
+  "horas_mf": 260,
+  "horas_practicas": 40,
+  "horas_total": 300,
+  "real_decreto": "1540/2011"
+ },
+ "VICF0210": {
+  "denominacion": "OPERACIONES DE FABRICACIÓN DE PRODUCTOS CERÁMICOS CONFORMADOS",
+  "mf": [
+   "MF0657",
+   "MF0658",
+   "MF0659",
+   "MF0660",
+   "MF0661"
+  ],
+  "mp": [
+   "MP0302"
+  ],
+  "nivel": 2,
+  "horas_mf": 400,
+  "horas_practicas": 80,
+  "horas_total": 480,
+  "real_decreto": "1540/2011"
+ },
+ "VICI0110": {
+  "denominacion": "DECORACIÓN Y MOLDEADO DE VIDRIO",
+  "mf": [
+   "MF0144",
+   "MF0145",
+   "MF0146",
+   "MF0147"
+  ],
+  "mp": [
+   "MP0266"
+  ],
+  "nivel": 1,
+  "horas_mf": 400,
+  "horas_practicas": 80,
+  "horas_total": 480,
+  "real_decreto": "1540/2011"
+ },
+ "MAMA0310": {
+  "denominacion": "PREPARACIÓN DE LA MADERA",
+  "mf": [
+   "MF0432",
+   "MF0684",
+   "MF0685",
+   "MF0686"
+  ],
+  "mp": [
+   "MP0299"
+  ],
+  "nivel": 2,
+  "horas_mf": 270,
+  "horas_practicas": 80,
+  "horas_total": 350,
+  "real_decreto": "1532/2011"
+ },
+ "MAMB0210": {
+  "denominacion": "MONTAJE E INSTALACIÓN DE CONSTRUCCIONES DE MADERA",
+  "mf": [
+   "MF0167",
+   "MF1357",
+   "MF1358",
+   "MF1359",
+   "MF1360"
+  ],
+  "mp": [
+   "MP0304"
+  ],
+  "nivel": 2,
+  "horas_mf": 430,
+  "horas_practicas": 80,
+  "horas_total": 510,
+  "real_decreto": "1532/2011"
+ },
+ "MAMD0110": {
+  "denominacion": "ORGANIZACIÓN Y GESTIÓN DE LA PRODUCCIÓN EN INDUSTRIAS DEL MUEBLE Y DE CARPINTERÍA",
+  "mf": [
+   "MF1361",
+   "MF1362",
+   "MF1363",
+   "MF1364"
+  ],
+  "mp": [
+   "MP0297"
+  ],
+  "nivel": 3,
+  "horas_mf": 460,
+  "horas_practicas": 80,
+  "horas_total": 540,
+  "real_decreto": "1532/2011"
+ },
+ "MAMA0110": {
+  "denominacion": "OBTENCIÓN DE CHAPAS, TABLEROS CONTRACHAPADOS Y RECHAPADOS",
+  "mf": [
+   "MF0432",
+   "MF0678",
+   "MF0679",
+   "MF0680"
+  ],
+  "mp": [
+   "MP0275"
+  ],
+  "nivel": 2,
+  "horas_mf": 240,
+  "horas_practicas": 80,
+  "horas_total": 320,
+  "real_decreto": "1532/2011"
+ },
+ "MAMA0210": {
+  "denominacion": "FABRICACIÓN DE TABLEROS DE PARTÍCULAS Y FIBRAS DE MADERA",
+  "mf": [
+   "MF0432",
+   "MF0681",
+   "MF0682",
+   "MF0683"
+  ],
+  "mp": [
+   "MP0276"
+  ],
+  "nivel": 2,
+  "horas_mf": 270,
+  "horas_practicas": 80,
+  "horas_total": 350,
+  "real_decreto": "1532/2011"
+ },
+ "MAMB0110": {
+  "denominacion": "PROYECTOS DE INSTALACIÓN Y AMUEBLAMIENTO",
+  "mf": [
+   "MF1369",
+   "MF1370",
+   "MF1371"
+  ],
+  "mp": [
+   "MP0290"
+  ],
+  "nivel": 3,
+  "horas_mf": 340,
+  "horas_practicas": 80,
+  "horas_total": 420,
+  "real_decreto": "1532/2011"
+ },
+ "MAMD0210": {
+  "denominacion": "PLANIFICACIÓN Y GESTIÓN DE LA FABRICACIÓN EN INDUSTRIAS DE MADERA Y CORCHO",
+  "mf": [
+   "MF1364",
+   "MF1365",
+   "MF1366",
+   "MF1367",
+   "MF1368"
+  ],
+  "mp": [
+   "MP0323"
+  ],
+  "nivel": 3,
+  "horas_mf": 450,
+  "horas_practicas": 120,
+  "horas_total": 570,
+  "real_decreto": "1532/2011"
+ },
+ "MAPN0110": {
+  "denominacion": "ACTIVIDADES EN PESCA CON ARTES DE ENMALLE Y MARISQUEO, Y EN TRANSPORTE MARÍTIMO",
+  "mf": [
+   "MF0010",
+   "MF0011",
+   "MF0733",
+   "MF0734"
+  ],
+  "mp": [
+   "MP0317"
+  ],
+  "nivel": 1,
+  "horas_mf": 260,
+  "horas_practicas": 40,
+  "horas_total": 300,
+  "real_decreto": "1533/2011"
+ },
+ "MAPN0410": {
+  "denominacion": "OPERACIONES EN TRANSPORTE MARÍTIMO Y PESCA DE BAJURA",
+  "mf": [
+   "MF0537",
+   "MF0538",
+   "MF0539",
+   "MF0540",
+   "MF0541",
+   "MF0542"
+  ],
+  "mp": [
+   "MP0352"
+  ],
+  "nivel": 2,
+  "horas_mf": 590,
+  "horas_practicas": 40,
+  "horas_total": 630,
+  "real_decreto": "1533/2011"
+ },
+ "MAPU0210": {
+  "denominacion": "GESTIÓN DE LA PRODUCCIÓN DE ENGORDE EN ACUICULTURA",
+  "mf": [
+   "MF0744",
+   "MF0745",
+   "MF0746"
+  ],
+  "mp": [
+   "MP0295"
+  ],
+  "nivel": 3,
+  "horas_mf": 360,
+  "horas_practicas": 120,
+  "horas_total": 480,
+  "real_decreto": "1533/2011"
+ },
+ "MAPN0210": {
+  "denominacion": "ACTIVIDADES EN PESCA EN PALANGRE,ARRASTRE Y CERCO,Y EN TRANSPORTE MARÍTIMO",
+  "mf": [
+   "MF0010",
+   "MF0011",
+   "MF0012",
+   "MF0733"
+  ],
+  "mp": [
+   "MP0318"
+  ],
+  "nivel": 1,
+  "horas_mf": 280,
+  "horas_practicas": 40,
+  "horas_total": 320,
+  "real_decreto": "1533/2011"
+ },
+ "MAPN0510": {
+  "denominacion": "NAVEGACIÓN EN AGUAS INTERIORES Y PRÓXIMAS A LA COSTA",
+  "mf": [
+   "MF0537",
+   "MF0538",
+   "MF0539",
+   "MF0540",
+   "MF0541"
+  ],
+  "mp": [
+   "MP0351"
+  ],
+  "nivel": 2,
+  "horas_mf": 440,
+  "horas_practicas": 40,
+  "horas_total": 480,
+  "real_decreto": "1533/2011"
+ },
+ "MAPN0310": {
+  "denominacion": "AMARRE DE PUERTO Y MONOBOYAS",
+  "mf": [
+   "MF0733",
+   "MF1308",
+   "MF1309"
+  ],
+  "mp": [
+   "MP0319"
+  ],
+  "nivel": 1,
+  "horas_mf": 170,
+  "horas_practicas": 40,
+  "horas_total": 210,
+  "real_decreto": "1533/2011"
+ },
+ "MAPU0110": {
+  "denominacion": "PRODUCCIÓN EN CRIADERO DE ACUICULTURA",
+  "mf": [
+   "MF0285",
+   "MF0286",
+   "MF0287"
+  ],
+  "mp": [
+   "MP0356"
+  ],
+  "nivel": 2,
+  "horas_mf": 490,
+  "horas_practicas": 120,
+  "horas_total": 610,
+  "real_decreto": "1533/2011"
+ },
+ "SANP0108": {
+  "denominacion": "TANATOPRAXIA",
+  "mf": [
+   "MF1605",
+   "MF1606",
+   "MF1607",
+   "MF1608",
+   "MF1609"
+  ],
+  "mp": [
+   "MP0103"
+  ],
+  "nivel": 3,
+  "horas_mf": 360,
+  "horas_practicas": 160,
+  "horas_total": 520,
+  "real_decreto": "1535/2011"
+ },
+ "SEAG0210": {
+  "denominacion": "OPERACIÓN DE ESTACIONES DE TRATAMIENTO DE AGUAS",
+  "mf": [
+   "MF0073",
+   "MF0074",
+   "MF0075"
+  ],
+  "mp": [
+   "MP0357"
+  ],
+  "nivel": 2,
+  "horas_mf": 460,
+  "horas_practicas": 80,
+  "horas_total": 540,
+  "real_decreto": "1536/2011"
+ },
+ "SEAG0110": {
+  "denominacion": "SERVICIOS PARA EL CONTROL DE PLAGAS",
+  "mf": [
+   "MF0075",
+   "MF0078",
+   "MF0079"
+  ],
+  "mp": [
+   "MP0322"
+  ],
+  "nivel": 2,
+  "horas_mf": 290,
+  "horas_practicas": 80,
+  "horas_total": 370,
+  "real_decreto": "1536/2011"
+ },
+ "ARGI0210": {
+  "denominacion": "IMPRESIÓN EN HUECOGRABADO",
+  "mf": [
+   "MF0200",
+   "MF0201",
+   "MF1346",
+   "MF1347"
+  ],
+  "mp": [
+   "MP0325"
+  ],
+  "nivel": 2,
+  "horas_mf": 330,
+  "horas_practicas": 120,
+  "horas_total": 450,
+  "real_decreto": "1520/2011"
+ },
+ "ARGN0210": {
+  "denominacion": "ASISTENCIA A LA EDICIÓN",
+  "mf": [
+   "MF0931",
+   "MF0932",
+   "MF0933",
+   "MF0934"
+  ],
+  "mp": [
+   "MP0400"
+  ],
+  "nivel": 3,
+  "horas_mf": 490,
+  "horas_practicas": 80,
+  "horas_total": 570,
+  "real_decreto": "1520/2011"
+ },
+ "ARGC0110": {
+  "denominacion": "OPERACIONES DE ENCUADERNACIÓN INDUSTRIAL EN RÚSTICA Y TAPA DURA",
+  "mf": [
+   "MF0200",
+   "MF0691",
+   "MF1350",
+   "MF1351"
+  ],
+  "mp": [
+   "MP0293"
+  ],
+  "nivel": 2,
+  "horas_mf": 380,
+  "horas_practicas": 40,
+  "horas_total": 420,
+  "real_decreto": "1520/2011"
+ },
+ "ARGI0110": {
+  "denominacion": "IMPRESIÓN EN FLEXOGRAFÍA",
+  "mf": [
+   "MF0200",
+   "MF0201",
+   "MF1344",
+   "MF1345"
+  ],
+  "mp": [
+   "MP0291"
+  ],
+  "nivel": 2,
+  "horas_mf": 330,
+  "horas_practicas": 120,
+  "horas_total": 450,
+  "real_decreto": "1520/2011"
+ },
+ "ARGN0110": {
+  "denominacion": "DESARROLLO DE PRODUCTOS EDITORIALES MULTIMEDIA",
+  "mf": [
+   "MF0935",
+   "MF0936",
+   "MF0937",
+   "MF0938"
+  ],
+  "mp": [
+   "MP0341"
+  ],
+  "nivel": 3,
+  "horas_mf": 490,
+  "horas_practicas": 80,
+  "horas_total": 570,
+  "real_decreto": "1520/2011"
+ },
+ "ARGI0310": {
+  "denominacion": "IMPRESIÓN EN SERIGRAFÍA Y TAMPOGRAFÍA",
+  "mf": [
+   "MF0200",
+   "MF0201",
+   "MF1348",
+   "MF1349"
+  ],
+  "mp": [
+   "MP0326"
+  ],
+  "nivel": 2,
+  "horas_mf": 330,
+  "horas_practicas": 120,
+  "horas_total": 450,
+  "real_decreto": "1520/2011"
+ },
+ "ARGG0110": {
+  "denominacion": "DISEÑO DE PRODUCTOS GRÁFICOS",
+  "mf": [
+   "MF0696",
+   "MF0697",
+   "MF0698",
+   "MF0699"
+  ],
+  "mp": [
+   "MP0312"
+  ],
+  "nivel": 3,
+  "horas_mf": 560,
+  "horas_practicas": 40,
+  "horas_total": 600,
+  "real_decreto": "1520/2011"
+ },
+ "ARGP0110": {
+  "denominacion": "TRATAMIENTO Y MAQUETACIÓN DE ELEMENTOS GRÁFICOS EN PREIMPRESIÓN",
+  "mf": [
+   "MF0200",
+   "MF0928",
+   "MF0929",
+   "MF0930"
+  ],
+  "mp": [
+   "MP0292"
+  ],
+  "nivel": 2,
+  "horas_mf": 500,
+  "horas_practicas": 120,
+  "horas_total": 620,
+  "real_decreto": "1520/2011"
+ },
+ "ARGP0210": {
+  "denominacion": "IMPOSICIÓN Y OBTENCIÓN DE LA FORMA IMPRESORA",
+  "mf": [
+   "MF0200",
+   "MF0920",
+   "MF0921",
+   "MF0922",
+   "MF0923"
+  ],
+  "mp": [
+   "MP0311"
+  ],
+  "nivel": 2,
+  "horas_mf": 370,
+  "horas_practicas": 80,
+  "horas_total": 450,
+  "real_decreto": "1520/2011"
+ },
+ "ARGA0110": {
+  "denominacion": "GRABADO CALCOGRÁFICO Y XILOGRÁFICO",
+  "mf": [
+   "MF0687",
+   "MF0688",
+   "MF0689",
+   "MF0690"
+  ],
+  "mp": [
+   "MP0399"
+  ],
+  "nivel": 2,
+  "horas_mf": 400,
+  "horas_practicas": 80,
+  "horas_total": 480,
+  "real_decreto": "1520/2011"
+ },
+ "HOTR0110": {
+  "denominacion": "DIRECCIÓN Y PRODUCCIÓN EN COCINA",
+  "mf": [
+   "MF0711",
+   "MF1058",
+   "MF1059",
+   "MF1060",
+   "MF1061",
+   "MF1062",
+   "MF1063",
+   "MF1064"
+  ],
+  "mp": [],
+  "nivel": 3,
+  "horas_mf": 1030,
+  "horas_practicas": 80,
+  "horas_total": 1110,
+  "real_decreto": "1526/2011"
+ },
+ "IMPE0110": {
+  "denominacion": "MASAJES ESTÉTICOS Y TÉCNICAS SENSORIALES ASOCIADAS",
+  "mf": [
+   "MF0063",
+   "MF0789",
+   "MF0790",
+   "MF0791",
+   "MF0792"
+  ],
+  "mp": [
+   "MP0314"
+  ],
+  "nivel": 3,
+  "horas_mf": 450,
+  "horas_practicas": 120,
+  "horas_total": 570,
+  "real_decreto": "1527/2011"
+ },
+ "IMPE0210": {
+  "denominacion": "TRATAMIENTOS ESTÉTICOS",
+  "mf": [
+   "MF0063",
+   "MF0790",
+   "MF0796",
+   "MF0797",
+   "MF0798"
+  ],
+  "mp": [
+   "MP0294"
+  ],
+  "nivel": 3,
+  "horas_mf": 490,
+  "horas_practicas": 160,
+  "horas_total": 650,
+  "real_decreto": "1527/2011"
+ },
+ "IMST0110": {
+  "denominacion": "OPERACIONES DE PRODUCCION DE LABORATORIO DE IMAGEN",
+  "mf": [
+   "MF0928",
+   "MF1399",
+   "MF1400",
+   "MF1401"
+  ],
+  "mp": [
+   "MP0279"
+  ],
+  "nivel": 2,
+  "horas_mf": 430,
+  "horas_practicas": 80,
+  "horas_total": 510,
+  "real_decreto": "1528/2011"
+ },
+ "IMST0210": {
+  "denominacion": "PRODUCCIÓN EN LABORATORIO DE IMAGEN",
+  "mf": [
+   "MF1414",
+   "MF1415",
+   "MF1416"
+  ],
+  "mp": [
+   "MP0298"
+  ],
+  "nivel": 3,
+  "horas_mf": 370,
+  "horas_practicas": 80,
+  "horas_total": 450,
+  "real_decreto": "1528/2011"
+ },
+ "IMPQ0109": {
+  "denominacion": "PELUQUERÍA TÉCNICO-ARTÍSTICA",
+  "mf": [
+   "MF0348",
+   "MF0351",
+   "MF0793",
+   "MF0794",
+   "MF0795"
+  ],
+  "mp": [
+   "MP0170"
+  ],
+  "nivel": 3,
+  "horas_mf": 440,
+  "horas_practicas": 160,
+  "horas_total": 600,
+  "real_decreto": "716/2011"
+ },
+ "IMPQ0308": {
+  "denominacion": "TRATAMIENTOS CAPILARES ESTÉTICOS",
+  "mf": [
+   "MF0352",
+   "MF0795",
+   "MF1261",
+   "MF1262"
+  ],
+  "mp": [
+   "MP0116"
+  ],
+  "nivel": 3,
+  "horas_mf": 320,
+  "horas_practicas": 120,
+  "horas_total": 440,
+  "real_decreto": "716/2011"
+ },
+ "IMPE0109": {
+  "denominacion": "BRONCEADO, MAQUILLAJE Y DEPILACIÓN AVANZADA",
+  "mf": [
+   "MF0065",
+   "MF0067",
+   "MF0352",
+   "MF0580",
+   "MF0581"
+  ],
+  "mp": [
+   "MP0243"
+  ],
+  "nivel": 3,
+  "horas_mf": 470,
+  "horas_practicas": 120,
+  "horas_total": 590,
+  "real_decreto": "716/2011"
+ },
+ "IMPQ0208": {
+  "denominacion": "PELUQUERÍA",
+  "mf": [
+   "MF0058",
+   "MF0347",
+   "MF0348",
+   "MF0349",
+   "MF0350",
+   "MF0351",
+   "MF0352"
+  ],
+  "mp": [
+   "MP0115"
+  ],
+  "nivel": 2,
+  "horas_mf": 590,
+  "horas_practicas": 120,
+  "horas_total": 710,
+  "real_decreto": "716/2011"
+ },
+ "IMPE0209": {
+  "denominacion": "MAQUILLAJE INTEGRAL",
+  "mf": [
+   "MF0064",
+   "MF0065",
+   "MF0066",
+   "MF0067",
+   "MF0068"
+  ],
+  "mp": [
+   "MP0258"
+  ],
+  "nivel": 3,
+  "horas_mf": 540,
+  "horas_practicas": 120,
+  "horas_total": 660,
+  "real_decreto": "716/2011"
+ },
+ "SANT0108": {
+  "denominacion": "ATENCIÓN SANITARIA A MÚLTIPLES VÍCTIMAS Y CATÁSTROFES",
+  "mf": [
+   "MF0072",
+   "MF0360",
+   "MF0361",
+   "MF0362"
+  ],
+  "mp": [
+   "MP0139"
+  ],
+  "nivel": 2,
+  "horas_mf": 340,
+  "horas_practicas": 120,
+  "horas_total": 460,
+  "real_decreto": "710/2011"
+ },
+ "SANT0208": {
+  "denominacion": "TRANSPORTE SANITARIO",
+  "mf": [
+   "MF0069",
+   "MF0070",
+   "MF0071",
+   "MF0072"
+  ],
+  "mp": [
+   "MP0140"
+  ],
+  "nivel": 2,
+  "horas_mf": 400,
+  "horas_practicas": 160,
+  "horas_total": 560,
+  "real_decreto": "710/2011"
+ },
+ "IMSV0408": {
+  "denominacion": "ASISTENCIA A LA DIRECCIÓN CINEMATOGRÁFICA Y DE OBRAS AUDIOVISUALES",
+  "mf": [
+   "MF0700",
+   "MF0701",
+   "MF0702"
+  ],
+  "mp": [
+   "MP0138"
+  ],
+  "nivel": 3,
+  "horas_mf": 360,
+  "horas_practicas": 80,
+  "horas_total": 440,
+  "real_decreto": "725/2011"
+ },
+ "IMSV0109": {
+  "denominacion": "MONTAJE Y POSTPRODUCCIÓN DE AUDIOVISUALES",
+  "mf": [
+   "MF0919",
+   "MF0947",
+   "MF0948",
+   "MF0949"
+  ],
+  "mp": [
+   "MP0166"
+  ],
+  "nivel": 3,
+  "horas_mf": 430,
+  "horas_practicas": 80,
+  "horas_total": 510,
+  "real_decreto": "725/2011"
+ },
+ "IMST0109": {
+  "denominacion": "PRODUCCIÓN FOTOGRÁFICA",
+  "mf": [
+   "MF0928",
+   "MF1417",
+   "MF1418",
+   "MF1419"
+  ],
+  "mp": [
+   "MP0254"
+  ],
+  "nivel": 3,
+  "horas_mf": 550,
+  "horas_practicas": 80,
+  "horas_total": 630,
+  "real_decreto": "725/2011"
+ },
+ "IMSV0209": {
+  "denominacion": "DESARROLLO DE PRODUCTOS AUDIOVISUALES MULTIMEDIA INTERACTIVOS",
+  "mf": [
+   "MF0943",
+   "MF0944",
+   "MF0945",
+   "MF0946"
+  ],
+  "mp": [
+   "MP0262"
+  ],
+  "nivel": 3,
+  "horas_mf": 460,
+  "horas_practicas": 80,
+  "horas_total": 540,
+  "real_decreto": "725/2011"
+ },
+ "IMSV0308": {
+  "denominacion": "CÁMARA DE CINE, VÍDEO Y TELEVISIÓN",
+  "mf": [
+   "MF0939",
+   "MF0940",
+   "MF0941",
+   "MF0942"
+  ],
+  "mp": [
+   "MP0137"
+  ],
+  "nivel": 3,
+  "horas_mf": 510,
+  "horas_practicas": 120,
+  "horas_total": 630,
+  "real_decreto": "725/2011"
+ },
+ "QUIT0309": {
+  "denominacion": "OPERACIONES DE TRANSFORMACIÓN DE CAUCHO",
+  "mf": [
+   "MF0325",
+   "MF0326",
+   "MF0327",
+   "MF0328"
+  ],
+  "mp": [
+   "MP0154"
+  ],
+  "nivel": 2,
+  "horas_mf": 450,
+  "horas_practicas": 120,
+  "horas_total": 570,
+  "real_decreto": "719/2011"
+ },
+ "QUIT0409": {
+  "denominacion": "ORGANIZACIÓN Y CONTROL DE LA TRANSFORMACIÓN DE CAUCHO",
+  "mf": [
+   "MF0778",
+   "MF0779",
+   "MF0780",
+   "MF0781",
+   "MF0782"
+  ],
+  "mp": [
+   "MP0203"
+  ],
+  "nivel": 3,
+  "horas_mf": 580,
+  "horas_practicas": 80,
+  "horas_total": 660,
+  "real_decreto": "719/2011"
+ },
+ "QUIM0109": {
+  "denominacion": "ELABORACIÓN DE PRODUCTOS FARMACÉUTICOS Y AFINES",
+  "mf": [
+   "MF0049",
+   "MF0050",
+   "MF0051"
+  ],
+  "mp": [
+   "MP0151"
+  ],
+  "nivel": 2,
+  "horas_mf": 520,
+  "horas_practicas": 80,
+  "horas_total": 600,
+  "real_decreto": "719/2011"
+ },
+ "QUIT0509": {
+  "denominacion": "ORGANIZACIÓN Y CONTROL DE LA TRANSFORMACIÓN DE POLÍMEROS TERMOPLÁSTICOS",
+  "mf": [
+   "MF0778",
+   "MF0780",
+   "MF0781",
+   "MF0785",
+   "MF0786"
+  ],
+  "mp": [
+   "MP0204"
+  ],
+  "nivel": 3,
+  "horas_mf": 580,
+  "horas_practicas": 80,
+  "horas_total": 660,
+  "real_decreto": "719/2011"
+ },
+ "QUIM0309": {
+  "denominacion": "OPERACIONES DE ACONDICIONADO DE PRODUCTOS FARMACÉUTICOS Y AFINES",
+  "mf": [
+   "MF0050",
+   "MF0323",
+   "MF0324"
+  ],
+  "mp": [
+   "MP0251"
+  ],
+  "nivel": 2,
+  "horas_mf": 400,
+  "horas_practicas": 80,
+  "horas_total": 480,
+  "real_decreto": "719/2011"
+ },
+ "QUIT0209": {
+  "denominacion": "OPERACIONES DE TRANSFORMACIÓN DE POLÍMEROS TERMOPLÁSTICOS",
+  "mf": [
+   "MF0326",
+   "MF0329",
+   "MF0330",
+   "MF0331"
+  ],
+  "mp": [
+   "MP0153"
+  ],
+  "nivel": 2,
+  "horas_mf": 410,
+  "horas_practicas": 120,
+  "horas_total": 530,
+  "real_decreto": "719/2011"
+ },
+ "QUIE0308": {
+  "denominacion": "OPERACIONES AUXILIARES Y DE ALMACÉN EN INDUSTRIAS Y LABORATORIOS QUÍMICOS",
+  "mf": [
+   "MF1310",
+   "MF1311",
+   "MF1312"
+  ],
+  "mp": [
+   "MP0144"
+  ],
+  "nivel": 1,
+  "horas_mf": 220,
+  "horas_practicas": 80,
+  "horas_total": 300,
+  "real_decreto": "719/2011"
+ },
+ "QUIT0109": {
+  "denominacion": "OPERACIONES DE TRANSFORMACIÓN DE POLÍMEROS TERMOESTABLES Y SUS COMPUESTOS",
+  "mf": [
+   "MF0326",
+   "MF0331",
+   "MF0332",
+   "MF0333"
+  ],
+  "mp": [
+   "MP0152"
+  ],
+  "nivel": 2,
+  "horas_mf": 390,
+  "horas_practicas": 120,
+  "horas_total": 510,
+  "real_decreto": "719/2011"
+ },
+ "QUIO0109": {
+  "denominacion": "PREPARACIÓN DE PASTAS PAPELERAS",
+  "mf": [
+   "MF0043",
+   "MF0044",
+   "MF0774",
+   "MF0775"
+  ],
+  "mp": [
+   "MP0202"
+  ],
+  "nivel": 2,
+  "horas_mf": 460,
+  "horas_practicas": 80,
+  "horas_total": 540,
+  "real_decreto": "719/2011"
+ },
+ "QUIE0109": {
+  "denominacion": "ORGANIZACIÓN Y CONTROL DE LOS PROCESOS DE QUÍMICA TRANSFORMADORA",
+  "mf": [
+   "MF0574",
+   "MF0577",
+   "MF0579",
+   "MF0787",
+   "MF0788"
+  ],
+  "mp": [
+   "MP0201"
+  ],
+  "nivel": 3,
+  "horas_mf": 630,
+  "horas_practicas": 80,
+  "horas_total": 710,
+  "real_decreto": "719/2011"
+ },
+ "SEAG0309": {
+  "denominacion": "CONTROL Y PROTECCIÓN DEL MEDIO NATURAL",
+  "mf": [
+   "MF0083",
+   "MF0084",
+   "MF0085",
+   "MF0086"
+  ],
+  "mp": [
+   "MP0265"
+  ],
+  "nivel": 3,
+  "horas_mf": 470,
+  "horas_practicas": 120,
+  "horas_total": 590,
+  "real_decreto": "720/2011"
+ },
+ "SEAG0109": {
+  "denominacion": "INTERPRETACIÓN Y EDUCACIÓN AMBIENTAL",
+  "mf": [
+   "MF0803",
+   "MF0804",
+   "MF0805",
+   "MF0806"
+  ],
+  "mp": [
+   "MP0155"
+  ],
+  "nivel": 3,
+  "horas_mf": 420,
+  "horas_practicas": 80,
+  "horas_total": 500,
+  "real_decreto": "720/2011"
+ },
+ "SEAG0209": {
+  "denominacion": "LIMPIEZA EN ESPACIOS ABIERTOS E INSTALACIONES INDUSTRIALES",
+  "mf": [
+   "MF1313",
+   "MF1314"
+  ],
+  "mp": [
+   "MP0242"
+  ],
+  "nivel": 1,
+  "horas_mf": 130,
+  "horas_practicas": 80,
+  "horas_total": 210,
+  "real_decreto": "720/2011"
+ },
+ "SSCG0109": {
+  "denominacion": "INSERCIÓN LABORAL DE PERSONAS CON DISCAPACIDAD",
+  "mf": [
+   "MF1034",
+   "MF1035",
+   "MF1036",
+   "MF1037"
+  ],
+  "mp": [
+   "MP0164"
+  ],
+  "nivel": 3,
+  "horas_mf": 350,
+  "horas_practicas": 120,
+  "horas_total": 470,
+  "real_decreto": "721/2011"
+ },
+ "SSCG0209": {
+  "denominacion": "MEDIACIÓN COMUNITARIA",
+  "mf": [
+   "MF1026",
+   "MF1038",
+   "MF1039",
+   "MF1040",
+   "MF1041"
+  ],
+  "mp": [
+   "MP0169"
+  ],
+  "nivel": 3,
+  "horas_mf": 340,
+  "horas_practicas": 80,
+  "horas_total": 420,
+  "real_decreto": "721/2011"
+ },
+ "SSCI0109": {
+  "denominacion": "EMPLEO DOMÉSTICO",
+  "mf": [
+   "MF1330",
+   "MF1331",
+   "MF1332"
+  ],
+  "mp": [
+   "MP0141"
+  ],
+  "nivel": 1,
+  "horas_mf": 120,
+  "horas_practicas": 80,
+  "horas_total": 200,
+  "real_decreto": "721/2011"
+ },
+ "SSCB0109": {
+  "denominacion": "DINAMIZACIÓN COMUNITARIA",
+  "mf": [
+   "MF1020",
+   "MF1021",
+   "MF1022",
+   "MF1023",
+   "MF1024",
+   "MF1025",
+   "MF1026"
+  ],
+  "mp": [
+   "MP0142"
+  ],
+  "nivel": 3,
+  "horas_mf": 490,
+  "horas_practicas": 120,
+  "horas_total": 610,
+  "real_decreto": "721/2011"
+ },
+ "TCPC0109": {
+  "denominacion": "REPARACIÓN DE CALZADO Y MARROQUINERÍA",
+  "mf": [
+   "MF0438",
+   "MF0439",
+   "MF0440"
+  ],
+  "mp": [
+   "MP0214"
+  ],
+  "nivel": 1,
+  "horas_mf": 280,
+  "horas_practicas": 80,
+  "horas_total": 360,
+  "real_decreto": "722/2011"
+ },
+ "TCPF0309": {
+  "denominacion": "CORTINAJE Y COMPLEMENTOS DE DECORACIÓN",
+  "mf": [
+   "MF0177",
+   "MF0178",
+   "MF0179"
+  ],
+  "mp": [
+   "MP0212"
+  ],
+  "nivel": 1,
+  "horas_mf": 280,
+  "horas_practicas": 80,
+  "horas_total": 360,
+  "real_decreto": "722/2011"
+ },
+ "TCPN0109": {
+  "denominacion": "OPERACIONES AUXILIARES DE ENNOBLECIMIENTO TEXTIL",
+  "mf": [
+   "MF0432",
+   "MF0637",
+   "MF1230",
+   "MF1231"
+  ],
+  "mp": [
+   "MP0213"
+  ],
+  "nivel": 1,
+  "horas_mf": 220,
+  "horas_practicas": 80,
+  "horas_total": 300,
+  "real_decreto": "722/2011"
+ },
+ "TCPF0209": {
+  "denominacion": "OPERACIONES AUXILIARES DE TAPIZADO DE MOBILIARIO Y MURAL",
+  "mf": [
+   "MF0428",
+   "MF0429",
+   "MF0430"
+  ],
+  "mp": [
+   "MP0211"
+  ],
+  "nivel": 1,
+  "horas_mf": 240,
+  "horas_practicas": 80,
+  "horas_total": 320,
+  "real_decreto": "722/2011"
+ },
+ "TCPF0109": {
+  "denominacion": "ARREGLOS Y ADAPTACIONES DE PRENDAS Y ARTÍCULOS EN TEXTIL Y PIEL",
+  "mf": [
+   "MF1224",
+   "MF1225",
+   "MF1226",
+   "MF1227"
+  ],
+  "mp": [
+   "MP0210"
+  ],
+  "nivel": 1,
+  "horas_mf": 310,
+  "horas_practicas": 80,
+  "horas_total": 390,
+  "real_decreto": "722/2011"
+ },
+ "TMVG0109": {
+  "denominacion": "OPERACIONES AUXILIARES DE MANTENIMIENTO EN ELECTROMECÁNICA DE VEHÍCULOS",
+  "mf": [
+   "MF0620",
+   "MF0623",
+   "MF0624"
+  ],
+  "mp": [
+   "MP0189"
+  ],
+  "nivel": 1,
+  "horas_mf": 270,
+  "horas_practicas": 40,
+  "horas_total": 310,
+  "real_decreto": "723/2011"
+ },
+ "TMVL0409": {
+  "denominacion": "EMBELLECIMIENTO Y DECORACIÓN DE SUPERFICIES DE VEHÍCULOS",
+  "mf": [
+   "MF0123",
+   "MF0625"
+  ],
+  "mp": [
+   "MP0197"
+  ],
+  "nivel": 2,
+  "horas_mf": 500,
+  "horas_practicas": 40,
+  "horas_total": 540,
+  "real_decreto": "723/2011"
+ },
+ "TMVL0609": {
+  "denominacion": "PLANIFICACIÓN Y CONTROL DEL ÁREA DE CARROCERÍA",
+  "mf": [
+   "MF0134",
+   "MF0135",
+   "MF0136",
+   "MF0137"
+  ],
+  "mp": [
+   "MP0263"
+  ],
+  "nivel": 3,
+  "horas_mf": 620,
+  "horas_practicas": 40,
+  "horas_total": 660,
+  "real_decreto": "723/2011"
+ },
+ "TMVL0109": {
+  "denominacion": "OPERACIONES AUXILIARES DE MANTENIMIENTO DE CARROCERÍAS DE VEHÍCULOS",
+  "mf": [
+   "MF0620",
+   "MF0621",
+   "MF0622"
+  ],
+  "mp": [
+   "MP0188"
+  ],
+  "nivel": 1,
+  "horas_mf": 270,
+  "horas_practicas": 40,
+  "horas_total": 310,
+  "real_decreto": "723/2011"
+ },
+ "TMVL0509": {
+  "denominacion": "PINTURA DE VEHÍCULOS",
+  "mf": [
+   "MF0122",
+   "MF0123"
+  ],
+  "mp": [
+   "MP0198"
+  ],
+  "nivel": 2,
+  "horas_mf": 460,
+  "horas_practicas": 40,
+  "horas_total": 500,
+  "real_decreto": "723/2011"
+ },
+ "TMVG0409": {
+  "denominacion": "MANTENIMIENTO DEL MOTOR Y SUS SISTEMAS AUXILIARES",
+  "mf": [
+   "MF0132",
+   "MF0133"
+  ],
+  "mp": [
+   "MP0255"
+  ],
+  "nivel": 2,
+  "horas_mf": 440,
+  "horas_practicas": 80,
+  "horas_total": 520,
+  "real_decreto": "723/2011"
+ },
+ "TMVG0209": {
+  "denominacion": "MANTENIMIENTO DE LOS SISTEMAS ELÉCTRICOS Y ELECTRÓNICOS DE VEHÍCULOS",
+  "mf": [
+   "MF0626",
+   "MF0627",
+   "MF0628"
+  ],
+  "mp": [
+   "MP0230"
+  ],
+  "nivel": 2,
+  "horas_mf": 440,
+  "horas_practicas": 80,
+  "horas_total": 520,
+  "real_decreto": "723/2011"
+ },
+ "TMVL0309": {
+  "denominacion": "MANTENIMIENTO DE ESTRUCTURAS DE CARROCERÍAS DE VEHÍCULOS",
+  "mf": [
+   "MF0124",
+   "MF0125",
+   "MF0126"
+  ],
+  "mp": [
+   "MP0196"
+  ],
+  "nivel": 2,
+  "horas_mf": 520,
+  "horas_practicas": 40,
+  "horas_total": 560,
+  "real_decreto": "723/2011"
+ },
+ "TMVG0309": {
+  "denominacion": "MANTENIMIENTO DE SISTEMAS DE TRANSMISIÓN DE FUERZA Y TRENES DE RODAJE DE VEHÍCULOS AUTOMÓVILES",
+  "mf": [
+   "MF0130",
+   "MF0131"
+  ],
+  "mp": [
+   "MP0246"
+  ],
+  "nivel": 2,
+  "horas_mf": 400,
+  "horas_practicas": 80,
+  "horas_total": 480,
+  "real_decreto": "723/2011"
+ },
+ "TMVL0209": {
+  "denominacion": "MANTENIMIENTO DE ELEMENTOS NO ESTRUCTURALES DE CARROCERÍAS DE VEHÍCULOS",
+  "mf": [
+   "MF0127",
+   "MF0128",
+   "MF0129"
+  ],
+  "mp": [
+   "MP0190"
+  ],
+  "nivel": 2,
+  "horas_mf": 590,
+  "horas_practicas": 40,
+  "horas_total": 630,
+  "real_decreto": "723/2011"
+ },
+ "TMVO0109": {
+  "denominacion": "OPERACIONES AUXILIARES DE MANTENIMIENTO AERONÁUTICO",
+  "mf": [
+   "MF1315",
+   "MF1316"
+  ],
+  "mp": [
+   "MP0199"
+  ],
+  "nivel": 1,
+  "horas_mf": 330,
+  "horas_practicas": 80,
+  "horas_total": 410,
+  "real_decreto": "723/2011"
+ },
+ "IEXM0409": {
+  "denominacion": "EXCAVACIÓN SUBTERRÁNEA CON EXPLOSIVOS",
+  "mf": [
+   "MF0417",
+   "MF0418",
+   "MF0419",
+   "MF0420"
+  ],
+  "mp": [
+   "MP0160"
+  ],
+  "nivel": 2,
+  "horas_mf": 570,
+  "horas_practicas": 80,
+  "horas_total": 650,
+  "real_decreto": "713/2011"
+ },
+ "IEXM0109": {
+  "denominacion": "OPERACIONES AUXILIARES EN EXCAVACIONES SUBTERRÁNEAS Y A CIELO ABIERTO",
+  "mf": [
+   "MF0854",
+   "MF0855",
+   "MF0856",
+   "MF0857",
+   "MF0858"
+  ],
+  "mp": [
+   "MP0157"
+  ],
+  "nivel": 1,
+  "horas_mf": 340,
+  "horas_practicas": 80,
+  "horas_total": 420,
+  "real_decreto": "713/2011"
+ },
+ "IEXM0509": {
+  "denominacion": "OPERACIONES EN INSTALACIONES DE TRANSPORTE SUBTERRÁNEAS EN INDUSTRIAS EXTRACTIVAS",
+  "mf": [
+   "MF0861",
+   "MF0862",
+   "MF0863",
+   "MF0864"
+  ],
+  "mp": [
+   "MP0161"
+  ],
+  "nivel": 2,
+  "horas_mf": 430,
+  "horas_practicas": 80,
+  "horas_total": 510,
+  "real_decreto": "713/2011"
+ },
+ "IEXD0109": {
+  "denominacion": "DISEÑO Y COORDINACIÓN DE PROYECTOS EN PIEDRA NATURAL",
+  "mf": [
+   "MF0638",
+   "MF0865",
+   "MF0866",
+   "MF0867",
+   "MF0868"
+  ],
+  "mp": [
+   "MP0156"
+  ],
+  "nivel": 3,
+  "horas_mf": 650,
+  "horas_practicas": 80,
+  "horas_total": 730,
+  "real_decreto": "713/2011"
+ },
+ "IEXD0309": {
+  "denominacion": "DESARROLLO Y SUPERVISIÓN DE OBRAS DE RESTAURACIÓN EN PIEDRA NATURAL",
+  "mf": [
+   "MF1391",
+   "MF1392",
+   "MF1393"
+  ],
+  "mp": [
+   "MP0221"
+  ],
+  "nivel": 3,
+  "horas_mf": 430,
+  "horas_practicas": 80,
+  "horas_total": 510,
+  "real_decreto": "713/2011"
+ },
+ "IEXM0709": {
+  "denominacion": "MONTAJE Y MANTENIMIENTO MECÁNICO DE INSTALACIONES Y EQUIPOSSEMIMÓVILES EN EXCAVACIONES Y PLANTAS.",
+  "mf": [
+   "MF0116",
+   "MF0858",
+   "MF1319",
+   "MF1387",
+   "MF1388",
+   "MF1389",
+   "MF1390"
+  ],
+  "mp": [
+   "MP0238"
+  ],
+  "nivel": 2,
+  "horas_mf": 730,
+  "horas_practicas": 80,
+  "horas_total": 810,
+  "real_decreto": "713/2011"
+ },
+ "IEXD0409": {
+  "denominacion": "COLOCACIÓN DE PIEDRA NATURAL",
+  "mf": [
+   "MF0869",
+   "MF1360",
+   "MF1375",
+   "MF1376",
+   "MF1377"
+  ],
+  "mp": [
+   "MP0231"
+  ],
+  "nivel": 2,
+  "horas_mf": 560,
+  "horas_practicas": 80,
+  "horas_total": 640,
+  "real_decreto": "713/2011"
+ },
+ "IEXM0209": {
+  "denominacion": "SONDEOS",
+  "mf": [
+   "MF0414",
+   "MF0415",
+   "MF0416"
+  ],
+  "mp": [
+   "MP0158"
+  ],
+  "nivel": 2,
+  "horas_mf": 610,
+  "horas_practicas": 80,
+  "horas_total": 690,
+  "real_decreto": "713/2011"
+ },
+ "IEXM0609": {
+  "denominacion": "OPERACIONES AUXILIARES EN EL MONTAJE Y MANTENIMIENTO MECÁNICO DE INSTALACIONES Y EQUIPOS DE EXCAVACIONES Y PLANTAS.",
+  "mf": [
+   "MF0858",
+   "MF1317",
+   "MF1318",
+   "MF1319"
+  ],
+  "mp": [
+   "MP0237"
+  ],
+  "nivel": 1,
+  "horas_mf": 370,
+  "horas_practicas": 80,
+  "horas_total": 450,
+  "real_decreto": "713/2011"
+ },
+ "IEXD0209": {
+  "denominacion": "OBRAS DE ARTESANÍA Y RESTAURACIÓN EN PIEDRA NATURAL",
+  "mf": [
+   "MF1372",
+   "MF1373",
+   "MF1374"
+  ],
+  "mp": [
+   "MP0220"
+  ],
+  "nivel": 2,
+  "horas_mf": 520,
+  "horas_practicas": 80,
+  "horas_total": 600,
+  "real_decreto": "713/2011"
+ },
+ "IEXM0309": {
+  "denominacion": "TRATAMIENTO Y BENEFICIO DE MINERALES, ROCAS Y OTROS MATERIALES",
+  "mf": [
+   "MF0421",
+   "MF0422",
+   "MF0423",
+   "MF0424"
+  ],
+  "mp": [
+   "MP0159"
+  ],
+  "nivel": 2,
+  "horas_mf": 460,
+  "horas_practicas": 80,
+  "horas_total": 540,
+  "real_decreto": "713/2011"
+ },
+ "IEXM0809": {
+  "denominacion": "EXCAVACIÓN A CIELO ABIERTO CON EXPLOSIVOS",
+  "mf": [
+   "MF0420",
+   "MF0426",
+   "MF1378",
+   "MF1379",
+   "MF1380"
+  ],
+  "mp": [
+   "MP0239"
+  ],
+  "nivel": 2,
+  "horas_mf": 530,
+  "horas_practicas": 80,
+  "horas_total": 610,
+  "real_decreto": "713/2011"
+ },
+ "IMAQ0208": {
+  "denominacion": "PLANIFICACIÓN, GESTIÓN Y REALIZACIÓN DEL MANTENIMIENTO Y SUPERVISIÓN DEL MONTAJE DE MAQUINARIA, EQUIPO INDUSTRIAL Y LÍNEAS AUTOMATIZADAS DE PRODUCCIÓN.",
+  "mf": [
+   "MF1282",
+   "MF1283",
+   "MF1284",
+   "MF1285"
+  ],
+  "mp": [
+   "MP0131"
+  ],
+  "nivel": 3,
+  "horas_mf": 490,
+  "horas_practicas": 80,
+  "horas_total": 570,
+  "real_decreto": "715/2011"
+ },
+ "IMAR0209": {
+  "denominacion": "DESARROLLO DE PROYECTOS DE INSTALACIONES FRIGORÍFICAS",
+  "mf": [
+   "MF1161",
+   "MF1162",
+   "MF1167",
+   "MF1168"
+  ],
+  "mp": [
+   "MP0209"
+  ],
+  "nivel": 3,
+  "horas_mf": 490,
+  "horas_practicas": 80,
+  "horas_total": 570,
+  "real_decreto": "715/2011"
+ },
+ "IMAR0509": {
+  "denominacion": "PLANIFICACIÓN, GESTIÓN Y REALIZACIÓN DEL MANTENIMIENTO Y SUPERVISIÓN DEL MONTAJE DE INSTALACIONES CALORÍFICAS.",
+  "mf": [
+   "MF1169",
+   "MF1170",
+   "MF1171",
+   "MF1172"
+  ],
+  "mp": [
+   "MP0241"
+  ],
+  "nivel": 3,
+  "horas_mf": 460,
+  "horas_practicas": 80,
+  "horas_total": 540,
+  "real_decreto": "715/2011"
+ },
+ "IMAR0109": {
+  "denominacion": "DESARROLLO DE PROYECTOS DE INSTALACIONES DE CLIMATIZACIÓN Y VENTILACIÓN-EXTRACCIÓN",
+  "mf": [
+   "MF1161",
+   "MF1162",
+   "MF1164",
+   "MF1165",
+   "MF1166"
+  ],
+  "mp": [
+   "MP0185"
+  ],
+  "nivel": 3,
+  "horas_mf": 490,
+  "horas_practicas": 80,
+  "horas_total": 570,
+  "real_decreto": "715/2011"
+ },
+ "IMAR0409": {
+  "denominacion": "PLANIFICACIÓN, GESTIÓN Y REALIZACIÓN DEL MANTENIMIENTO Y SUPERVISIÓN DEL MONTAJE DE INSTALACIONES DE CLIMATIZACIÓN Y VENTILACIÓN-EXTRACCIÓN.",
+  "mf": [
+   "MF1169",
+   "MF1170",
+   "MF1173",
+   "MF1174"
+  ],
+  "mp": [
+   "MP0240"
+  ],
+  "nivel": 3,
+  "horas_mf": 460,
+  "horas_practicas": 80,
+  "horas_total": 540,
+  "real_decreto": "715/2011"
+ },
+ "IMAR0508": {
+  "denominacion": "DESARROLLO DE PROYECTOS DE INSTALACIONES CALORÍFICAS",
+  "mf": [
+   "MF1160",
+   "MF1161",
+   "MF1162",
+   "MF1163"
+  ],
+  "mp": [
+   "MP0129"
+  ],
+  "nivel": 3,
+  "horas_mf": 490,
+  "horas_practicas": 80,
+  "horas_total": 570,
+  "real_decreto": "715/2011"
+ },
+ "IMAQ0108": {
+  "denominacion": "MANTENIMIENTO Y MONTAJE MECÁNICO DE EQUIPO INDUSTRIAL",
+  "mf": [
+   "MF0116",
+   "MF0117"
+  ],
+  "mp": [
+   "MP0130"
+  ],
+  "nivel": 2,
+  "horas_mf": 510,
+  "horas_practicas": 80,
+  "horas_total": 590,
+  "real_decreto": "715/2011"
+ },
+ "IMAI0208": {
+  "denominacion": "PLANIFICACIÓN, GESTIÓN Y REALIZACIÓN DEL MANTENIMIENTO Y SUPERVISIÓN DEL MONTAJE DE REDES Y SISTEMAS DE DISTRIBUCIÓN DE FLUIDOS.",
+  "mf": [
+   "MF1286",
+   "MF1287",
+   "MF1288",
+   "MF1289"
+  ],
+  "mp": [
+   "MP0132"
+  ],
+  "nivel": 3,
+  "horas_mf": 500,
+  "horas_practicas": 80,
+  "horas_total": 580,
+  "real_decreto": "715/2011"
+ },
+ "IMAR0309": {
+  "denominacion": "PLANIFICACIÓN, GESTIÓN Y REALIZACIÓN DEL MANTENIMIENTO Y SUPERVISIÓN DEL MONTAJE DE INSTALACIONES FRIGORÍFICAS.",
+  "mf": [
+   "MF1169",
+   "MF1170",
+   "MF1175",
+   "MF1176"
+  ],
+  "mp": [
+   "MP0235"
+  ],
+  "nivel": 3,
+  "horas_mf": 460,
+  "horas_practicas": 80,
+  "horas_total": 540,
+  "real_decreto": "715/2011"
+ },
+ "IMAR0408": {
+  "denominacion": "MONTAJE Y MANTENIMIENTO DE INSTALACIONES CALORÍFICAS",
+  "mf": [
+   "MF1156",
+   "MF1157"
+  ],
+  "mp": [
+   "MP0128"
+  ],
+  "nivel": 2,
+  "horas_mf": 380,
+  "horas_practicas": 120,
+  "horas_total": 500,
+  "real_decreto": "715/2011"
+ },
+ "MAMA0109": {
+  "denominacion": "FABRICACIÓN DE TAPONES DE CORCHO",
+  "mf": [
+   "MF0157",
+   "MF0158",
+   "MF0159"
+  ],
+  "mp": [
+   "MP0174"
+  ],
+  "nivel": 1,
+  "horas_mf": 320,
+  "horas_practicas": 40,
+  "horas_total": 360,
+  "real_decreto": "717/2011"
+ },
+ "MAMD0209": {
+  "denominacion": "TRABAJOS DE CARPINTERÍA Y MUEBLE",
+  "mf": [
+   "MF0162",
+   "MF0173",
+   "MF0882"
+  ],
+  "mp": [
+   "MP0056"
+  ],
+  "nivel": 1,
+  "horas_mf": 220,
+  "horas_practicas": 80,
+  "horas_total": 300,
+  "real_decreto": "717/2011"
+ },
+ "MAMD0309": {
+  "denominacion": "PROYECTOS DE CARPINTERÍA Y MUEBLE",
+  "mf": [
+   "MF0174",
+   "MF0175",
+   "MF0176"
+  ],
+  "mp": [
+   "MP0249"
+  ],
+  "nivel": 3,
+  "horas_mf": 510,
+  "horas_practicas": 80,
+  "horas_total": 590,
+  "real_decreto": "717/2011"
+ },
+ "MAMD0109": {
+  "denominacion": "APLICACIÓN DE BARNICES Y LACAS EN ELEMENTOS DE CARPINTERÍA Y MUEBLE",
+  "mf": [
+   "MF0167",
+   "MF0880",
+   "MF0881"
+  ],
+  "mp": [
+   "MP0178"
+  ],
+  "nivel": 1,
+  "horas_mf": 170,
+  "horas_practicas": 40,
+  "horas_total": 210,
+  "real_decreto": "717/2011"
+ },
+ "MAMA0309": {
+  "denominacion": "FABRICACIÓN DE OBJETOS DE CORCHO",
+  "mf": [
+   "MF0675",
+   "MF0676",
+   "MF0677"
+  ],
+  "mp": [
+   "MP0149"
+  ],
+  "nivel": 1,
+  "horas_mf": 220,
+  "horas_practicas": 40,
+  "horas_total": 260,
+  "real_decreto": "717/2011"
+ },
+ "MAMA0209": {
+  "denominacion": "ASERRADO DE MADERA",
+  "mf": [
+   "MF0169",
+   "MF0170"
+  ],
+  "mp": [
+   "MP0150"
+  ],
+  "nivel": 2,
+  "horas_mf": 330,
+  "horas_practicas": 80,
+  "horas_total": 410,
+  "real_decreto": "717/2011"
+ },
+ "MAPN0109": {
+  "denominacion": "ACTIVIDADES AUXILIARES Y DE APOYO AL BUQUE EN PUERTO",
+  "mf": [
+   "MF1296",
+   "MF1297",
+   "MF1298"
+  ],
+  "mp": [
+   "MP0163"
+  ],
+  "nivel": 1,
+  "horas_mf": 180,
+  "horas_practicas": 40,
+  "horas_total": 220,
+  "real_decreto": "718/2011"
+ },
+ "MAPN0209": {
+  "denominacion": "ORGANIZACIÓN DE LONJAS",
+  "mf": [
+   "MF0288",
+   "MF0289",
+   "MF0290"
+  ],
+  "mp": [
+   "MP0168"
+  ],
+  "nivel": 3,
+  "horas_mf": 380,
+  "horas_practicas": 80,
+  "horas_total": 460,
+  "real_decreto": "718/2011"
+ },
+ "MAPU0109": {
+  "denominacion": "ENGORDE DE MOLUSCOS BIVALVOS",
+  "mf": [
+   "MF0283",
+   "MF0284"
+  ],
+  "mp": [
+   "MP0173"
+  ],
+  "nivel": 2,
+  "horas_mf": 340,
+  "horas_practicas": 80,
+  "horas_total": 420,
+  "real_decreto": "718/2011"
+ },
+ "MAPU0209": {
+  "denominacion": "ACTIVIDADES DE ENGORDE DE ESPECIES ACUÍCOLAS",
+  "mf": [
+   "MF1305",
+   "MF1306",
+   "MF1307"
+  ],
+  "mp": [
+   "MP0216"
+  ],
+  "nivel": 1,
+  "horas_mf": 240,
+  "horas_practicas": 80,
+  "horas_total": 320,
+  "real_decreto": "718/2011"
+ },
+ "MAPU0409": {
+  "denominacion": "PRODUCCIÓN DE ALIMENTO VIVO",
+  "mf": [
+   "MF0017",
+   "MF0018"
+  ],
+  "mp": [
+   "MP0256"
+  ],
+  "nivel": 2,
+  "horas_mf": 280,
+  "horas_practicas": 80,
+  "horas_total": 360,
+  "real_decreto": "718/2011"
+ },
+ "MAPU0309": {
+  "denominacion": "ACTIVIDADES DE CULTIVO DE PLANCTON Y CRÍA DE ESPECIES ACUÍCOLAS",
+  "mf": [
+   "MF1302",
+   "MF1303",
+   "MF1304"
+  ],
+  "mp": [
+   "MP0217"
+  ],
+  "nivel": 1,
+  "horas_mf": 270,
+  "horas_practicas": 80,
+  "horas_total": 350,
+  "real_decreto": "718/2011"
+ },
+ "FMEC0208": {
+  "denominacion": "DISEÑO DE CALDERERÍA Y ESTRUCTURAS METÁLICAS",
+  "mf": [
+   "MF1145",
+   "MF1146",
+   "MF1147",
+   "MF1148"
+  ],
+  "mp": [
+   "MP0127"
+  ],
+  "nivel": 3,
+  "horas_mf": 620,
+  "horas_practicas": 40,
+  "horas_total": 660,
+  "real_decreto": "684/2011"
+ },
+ "FMEH0409": {
+  "denominacion": "MECANIZADO POR ABRASIÓN,ELECTROEROSIÓN Y PROCEDIMIENTOS ESPECIALES",
+  "mf": [
+   "MF0092",
+   "MF0093",
+   "MF0094"
+  ],
+  "mp": [
+   "MP0207"
+  ],
+  "nivel": 2,
+  "horas_mf": 540,
+  "horas_practicas": 80,
+  "horas_total": 620,
+  "real_decreto": "684/2011"
+ },
+ "FMEM0409": {
+  "denominacion": "DISEÑO DE MOLDES Y MODELOS PARA FUNDICIÓN O FORJA",
+  "mf": [
+   "MF0111",
+   "MF0112",
+   "MF0113"
+  ],
+  "mp": [
+   "MP0123"
+  ],
+  "nivel": 3,
+  "horas_mf": 610,
+  "horas_practicas": 80,
+  "horas_total": 690,
+  "real_decreto": "684/2011"
+ },
+ "FMEH0209": {
+  "denominacion": "MECANIZADO POR CORTE Y CONFORMADO",
+  "mf": [
+   "MF0095",
+   "MF0096",
+   "MF0097"
+  ],
+  "mp": [
+   "MP0125"
+  ],
+  "nivel": 2,
+  "horas_mf": 540,
+  "horas_practicas": 80,
+  "horas_total": 620,
+  "real_decreto": "684/2011"
+ },
+ "FMEH0109": {
+  "denominacion": "MECANIZADO POR ARRANQUE DE VIRUTA",
+  "mf": [
+   "MF0089",
+   "MF0090",
+   "MF0091"
+  ],
+  "mp": [
+   "MP0182"
+  ],
+  "nivel": 2,
+  "horas_mf": 540,
+  "horas_practicas": 80,
+  "horas_total": 620,
+  "real_decreto": "684/2011"
+ },
+ "FMEM0109": {
+  "denominacion": "GESTIÓN DE LA PRODUCCIÓN EN FABRICACIÓN MECÁNICA",
+  "mf": [
+   "MF1267",
+   "MF1268"
+  ],
+  "mp": [
+   "MP0234"
+  ],
+  "nivel": 3,
+  "horas_mf": 310,
+  "horas_practicas": 40,
+  "horas_total": 350,
+  "real_decreto": "684/2011"
+ },
+ "FMEM0209": {
+  "denominacion": "PRODUCCIÓN EN MECANIZADO, CONFORMADO Y MONTAJE MECÁNICO",
+  "mf": [
+   "MF0591",
+   "MF0592",
+   "MF0593",
+   "MF0594",
+   "MF0595",
+   "MF0596"
+  ],
+  "mp": [
+   "MP0233"
+  ],
+  "nivel": 3,
+  "horas_mf": 520,
+  "horas_practicas": 80,
+  "horas_total": 600,
+  "real_decreto": "684/2011"
+ },
+ "FMEC0209": {
+  "denominacion": "DISEÑO DE TUBERÍA INDUSTRIAL",
+  "mf": [
+   "MF1148",
+   "MF1149",
+   "MF1150"
+  ],
+  "mp": [
+   "MP0181"
+  ],
+  "nivel": 3,
+  "horas_mf": 440,
+  "horas_practicas": 40,
+  "horas_total": 480,
+  "real_decreto": "684/2011"
+ },
+ "FMEC0309": {
+  "denominacion": "DISEÑO EN LA INDUSTRIA NAVAL",
+  "mf": [
+   "MF0812",
+   "MF0813",
+   "MF0814",
+   "MF0815"
+  ],
+  "mp": [
+   "MP0208"
+  ],
+  "nivel": 3,
+  "horas_mf": 600,
+  "horas_practicas": 40,
+  "horas_total": 640,
+  "real_decreto": "684/2011"
+ },
+ "FMEM0309": {
+  "denominacion": "DISEÑO DE ÚTILES DE PROCESADO DE CHAPA",
+  "mf": [
+   "MF0108",
+   "MF0109",
+   "MF0110"
+  ],
+  "mp": [
+   "MP0124"
+  ],
+  "nivel": 3,
+  "horas_mf": 600,
+  "horas_practicas": 80,
+  "horas_total": 680,
+  "real_decreto": "684/2011"
+ },
+ "FMEH0309": {
+  "denominacion": "TRATAMIENTOS SUPERFICIALES",
+  "mf": [
+   "MF0102",
+   "MF0103",
+   "MF0104"
+  ],
+  "mp": [
+   "MP0126"
+  ],
+  "nivel": 2,
+  "horas_mf": 450,
+  "horas_practicas": 80,
+  "horas_total": 530,
+  "real_decreto": "684/2011"
+ },
+ "FMEC0109": {
+  "denominacion": "PRODUCCIÓN EN CONSTRUCCIONES METÁLICAS",
+  "mf": [
+   "MF0592",
+   "MF1151",
+   "MF1152",
+   "MF1153"
+  ],
+  "mp": [
+   "MP0180"
+  ],
+  "nivel": 3,
+  "horas_mf": 410,
+  "horas_practicas": 80,
+  "horas_total": 490,
+  "real_decreto": "684/2011"
+ },
+ "AFDP0109": {
+  "denominacion": "SOCORRISMO EN INSTALACIONES ACUÁTICAS",
+  "mf": [
+   "MF0269",
+   "MF0270",
+   "MF0271",
+   "MF0272"
+  ],
+  "mp": [
+   "MP0186"
+  ],
+  "nivel": 2,
+  "horas_mf": 290,
+  "horas_practicas": 80,
+  "horas_total": 370,
+  "real_decreto": "711/2011"
+ },
+ "AFDA0209": {
+  "denominacion": "GUÍA POR ITINERARIOS ECUESTRES EN EL MEDIO NATURAL",
+  "mf": [
+   "MF0272",
+   "MF0719",
+   "MF1079",
+   "MF1080",
+   "MF1081"
+  ],
+  "mp": [
+   "MP0172"
+  ],
+  "nivel": 2,
+  "horas_mf": 500,
+  "horas_practicas": 80,
+  "horas_total": 580,
+  "real_decreto": "711/2011"
+ },
+ "AFDP0209": {
+  "denominacion": "SOCORRISMO EN ESPACIOS ACUÁTICOS NATURALES",
+  "mf": [
+   "MF0269",
+   "MF0272",
+   "MF1082",
+   "MF1083"
+  ],
+  "mp": [
+   "MP0187"
+  ],
+  "nivel": 2,
+  "horas_mf": 340,
+  "horas_practicas": 80,
+  "horas_total": 420,
+  "real_decreto": "711/2011"
+ },
+ "ARGC0209": {
+  "denominacion": "OPERACIONES EN TRENES DE COSIDO",
+  "mf": [
+   "MF0200",
+   "MF0691",
+   "MF0926",
+   "MF0927"
+  ],
+  "mp": [
+   "MP0271"
+  ],
+  "nivel": 2,
+  "horas_mf": 360,
+  "horas_practicas": 120,
+  "horas_total": 480,
+  "real_decreto": "712/2011"
+ },
+ "ARGI0109": {
+  "denominacion": "IMPRESIÓN EN OFFSET",
+  "mf": [
+   "MF0200",
+   "MF0201",
+   "MF0202",
+   "MF0203"
+  ],
+  "mp": [
+   "MP0058"
+  ],
+  "nivel": 2,
+  "horas_mf": 440,
+  "horas_practicas": 120,
+  "horas_total": 560,
+  "real_decreto": "712/2011"
+ },
+ "ARGT0109": {
+  "denominacion": "TROQUELADO",
+  "mf": [
+   "MF0200",
+   "MF0694",
+   "MF0695"
+  ],
+  "mp": [
+   "MP0272"
+  ],
+  "nivel": 2,
+  "horas_mf": 250,
+  "horas_practicas": 80,
+  "horas_total": 330,
+  "real_decreto": "712/2011"
+ },
+ "ARGI0309": {
+  "denominacion": "REPROGRAFÍA",
+  "mf": [
+   "MF1322",
+   "MF1323",
+   "MF1324"
+  ],
+  "mp": [
+   "MP0228"
+  ],
+  "nivel": 1,
+  "horas_mf": 220,
+  "horas_practicas": 80,
+  "horas_total": 300,
+  "real_decreto": "712/2011"
+ },
+ "ARGC0109": {
+  "denominacion": "GUILLOTINADO Y PLEGADO",
+  "mf": [
+   "MF0200",
+   "MF0691",
+   "MF0692",
+   "MF0693"
+  ],
+  "mp": [
+   "MP0273"
+  ],
+  "nivel": 2,
+  "horas_mf": 330,
+  "horas_practicas": 120,
+  "horas_total": 450,
+  "real_decreto": "712/2011"
+ },
+ "VICF0109": {
+  "denominacion": "OPERACIONES BÁSICAS CON EQUIPOS AUTOMÁTICOS EN PLANTA CERÁMICA",
+  "mf": [
+   "MF0646",
+   "MF0647",
+   "MF0648"
+  ],
+  "mp": [
+   "MP0222"
+  ],
+  "nivel": 1,
+  "horas_mf": 280,
+  "horas_practicas": 80,
+  "horas_total": 360,
+  "real_decreto": "714/2011"
+ },
+ "VICF0209": {
+  "denominacion": "OPERACIONES DE REPRODUCCIÓN MANUAL O SEMIAUTOMÁTICA DE PRODUCTOS CERÁMICOS",
+  "mf": [
+   "MF0649",
+   "MF0650",
+   "MF0651",
+   "MF0652"
+  ],
+  "mp": [
+   "MP0223"
+  ],
+  "nivel": 1,
+  "horas_mf": 380,
+  "horas_practicas": 40,
+  "horas_total": 420,
+  "real_decreto": "714/2011"
+ },
+ "VICI0109": {
+  "denominacion": "FABRICACIÓN Y TRANSFORMACIÓN MANUAL Y SEMIAUTOMÁTICA DE PRODUCTOS DE VIDRIO",
+  "mf": [
+   "MF0643",
+   "MF0644",
+   "MF0645"
+  ],
+  "mp": [
+   "MP0259"
+  ],
+  "nivel": 1,
+  "horas_mf": 280,
+  "horas_practicas": 80,
+  "horas_total": 360,
+  "real_decreto": "714/2011"
+ },
+ "IFCT0209": {
+  "denominacion": "SISTEMAS MICROINFORMÁTICOS",
+  "mf": [
+   "MF0219",
+   "MF0220",
+   "MF0221",
+   "MF0222"
+  ],
+  "mp": [
+   "MP0177"
+  ],
+  "nivel": 2,
+  "horas_mf": 560,
+  "horas_practicas": 40,
+  "horas_total": 600,
+  "real_decreto": "686/2011"
+ },
+ "IFCT0409": {
+  "denominacion": "IMPLANTACIÓN Y GESTIÓN DE ELEMENTOS INFORMÁTICOS EN SISTEMAS DOMÓTICOS/INMÓTICOS, DE CONTROL DE ACCESOS Y PRESENCIA, Y DE VIDEOVIGILANCIA.",
+  "mf": [
+   "MF0490",
+   "MF1219",
+   "MF1220"
+  ],
+  "mp": [
+   "MP0236"
+  ],
+  "nivel": 3,
+  "horas_mf": 460,
+  "horas_practicas": 80,
+  "horas_total": 540,
+  "real_decreto": "686/2011"
+ },
+ "IFCT0609": {
+  "denominacion": "PROGRAMACIÓN DE SISTEMAS INFORMÁTICOS",
+  "mf": [
+   "MF0490",
+   "MF0964",
+   "MF0965"
+  ],
+  "mp": [
+   "MP0274"
+  ],
+  "nivel": 3,
+  "horas_mf": 510,
+  "horas_practicas": 80,
+  "horas_total": 590,
+  "real_decreto": "686/2011"
+ },
+ "IFCT0309": {
+  "denominacion": "MONTAJE Y REPARACIÓN DE SISTEMAS MICROINFORMÁTICOS",
+  "mf": [
+   "MF0219",
+   "MF0953",
+   "MF0954"
+  ],
+  "mp": [
+   "MP0179"
+  ],
+  "nivel": 2,
+  "horas_mf": 470,
+  "horas_practicas": 40,
+  "horas_total": 510,
+  "real_decreto": "686/2011"
+ },
+ "IFCT0109": {
+  "denominacion": "SEGURIDAD INFORMÁTICA",
+  "mf": [
+   "MF0486",
+   "MF0487",
+   "MF0488",
+   "MF0489",
+   "MF0490"
+  ],
+  "mp": [
+   "MP0175"
+  ],
+  "nivel": 3,
+  "horas_mf": 420,
+  "horas_practicas": 80,
+  "horas_total": 500,
+  "real_decreto": "686/2011"
+ },
+ "IFCT0509": {
+  "denominacion": "ADMINISTRACIÓN DE SERVICIOS DE INTERNET",
+  "mf": [
+   "MF0490",
+   "MF0495",
+   "MF0496",
+   "MF0497"
+  ],
+  "mp": [
+   "MP0267"
+  ],
+  "nivel": 3,
+  "horas_mf": 510,
+  "horas_practicas": 80,
+  "horas_total": 590,
+  "real_decreto": "686/2011"
+ },
+ "AGAR0309": {
+  "denominacion": "ACTIVIDADES AUXILIARES EN CONSERVACIÓN Y MEJORA DE MONTES",
+  "mf": [
+   "MF1293",
+   "MF1294",
+   "MF1295"
+  ],
+  "mp": [
+   "MP0215"
+  ],
+  "nivel": 1,
+  "horas_mf": 230,
+  "horas_practicas": 40,
+  "horas_total": 270,
+  "real_decreto": "682/2011"
+ },
+ "AGAN0109": {
+  "denominacion": "CUIDADOS Y MANEJO DEL CABALLO",
+  "mf": [
+   "MF0006",
+   "MF0719",
+   "MF0720",
+   "MF0721",
+   "MF0722"
+  ],
+  "mp": [
+   "MP0108"
+  ],
+  "nivel": 2,
+  "horas_mf": 510,
+  "horas_practicas": 80,
+  "horas_total": 590,
+  "real_decreto": "682/2011"
+ },
+ "AGAR0109": {
+  "denominacion": "GESTIÓN DE REPOBLACIONES FORESTALES Y DE TRATAMIENTOS SILVÍCOLAS",
+  "mf": [
+   "MF0727",
+   "MF0728",
+   "MF0729",
+   "MF0730"
+  ],
+  "mp": [
+   "MP0145"
+  ],
+  "nivel": 3,
+  "horas_mf": 530,
+  "horas_practicas": 80,
+  "horas_total": 610,
+  "real_decreto": "682/2011"
+ },
+ "AGAJ0109": {
+  "denominacion": "GESTIÓN Y MANTENIMIENTO DE ÁRBOLES Y PALMERAS ORNAMENTALES",
+  "mf": [
+   "MF1119",
+   "MF1133",
+   "MF1134",
+   "MF1135"
+  ],
+  "mp": [
+   "MP0146"
+  ],
+  "nivel": 3,
+  "horas_mf": 430,
+  "horas_practicas": 80,
+  "horas_total": 510,
+  "real_decreto": "682/2011"
+ },
+ "AGAR0208": {
+  "denominacion": "REPOBLACIONES FORESTALES Y TRATAMIENTOS SILVÍCOLAS",
+  "mf": [
+   "MF1121",
+   "MF1125",
+   "MF1126"
+  ],
+  "mp": [
+   "MP0109"
+  ],
+  "nivel": 2,
+  "horas_mf": 410,
+  "horas_practicas": 80,
+  "horas_total": 490,
+  "real_decreto": "682/2011"
+ },
+ "AGAR0209": {
+  "denominacion": "ACTIVIDADES AUXILIARES EN APROVECHAMIENTOS FORESTALES",
+  "mf": [
+   "MF1290",
+   "MF1291",
+   "MF1292"
+  ],
+  "mp": [
+   "MP0200"
+  ],
+  "nivel": 1,
+  "horas_mf": 230,
+  "horas_practicas": 40,
+  "horas_total": 270,
+  "real_decreto": "682/2011"
+ },
+ "ELES0208": {
+  "denominacion": "OPERACIONES AUXILIARES DE MONTAJE DE INSTALACIONES ELECTROTÉCNICAS Y DE TELECOMUNICACIONES EN EDIFICIOS.",
+  "mf": [
+   "MF0816",
+   "MF0817"
+  ],
+  "mp": [
+   "MP0118"
+  ],
+  "nivel": 1,
+  "horas_mf": 300,
+  "horas_practicas": 80,
+  "horas_total": 380,
+  "real_decreto": "683/2011"
+ },
+ "ELEE0109": {
+  "denominacion": "MONTAJE Y MANTENIMIENTO DE INSTALACIONES ELÉCTRICAS DE BAJA TENSIÓN",
+  "mf": [
+   "MF0820",
+   "MF0821",
+   "MF0822",
+   "MF0823",
+   "MF0824",
+   "MF0825"
+  ],
+  "mp": [
+   "MP0183"
+  ],
+  "nivel": 2,
+  "horas_mf": 840,
+  "horas_practicas": 80,
+  "horas_total": 920,
+  "real_decreto": "683/2011"
+ },
+ "ELEE0209": {
+  "denominacion": "MONTAJE Y MANTENIMIENTO DE REDES ELÉCTRICAS DE ALTA TENSIÓN DE SEGUNDA Y TERCERA CATEGORÍA Y CENTROS DE TRANSFORMACIÓN",
+  "mf": [
+   "MF1177",
+   "MF1178",
+   "MF1179"
+  ],
+  "mp": [
+   "MP0205"
+  ],
+  "nivel": 2,
+  "horas_mf": 410,
+  "horas_practicas": 80,
+  "horas_total": 490,
+  "real_decreto": "683/2011"
+ },
+ "ELEQ0208": {
+  "denominacion": "GESTIÓN Y SUPERVISIÓN DE LA INSTALACIÓN Y MANTENIMIENTO DE SISTEMAS DE ELECTROMEDICINA",
+  "mf": [
+   "MF1271",
+   "MF1272",
+   "MF1273",
+   "MF1274"
+  ],
+  "mp": [
+   "MP0119"
+  ],
+  "nivel": 3,
+  "horas_mf": 620,
+  "horas_practicas": 80,
+  "horas_total": 700,
+  "real_decreto": "683/2011"
+ },
+ "ELES0209": {
+  "denominacion": "MONTAJE Y MANTENIMIENTO DE SISTEMAS DE TELEFONÍA E INFRAESTRUCTURAS DE REDES LOCALES DE DATOS",
+  "mf": [
+   "MF0599",
+   "MF0600"
+  ],
+  "mp": [
+   "MP0232"
+  ],
+  "nivel": 2,
+  "horas_mf": 340,
+  "horas_practicas": 80,
+  "horas_total": 420,
+  "real_decreto": "683/2011"
+ },
+ "ELES0109": {
+  "denominacion": "MONTAJE Y MANTENIMIENTO DE INSTALACIONES DE MEGAFONÍA, SONORIZACIÓN DE LOCALES Y CIRCUITO CERRADO DE TELEVISIÓN.",
+  "mf": [
+   "MF0597",
+   "MF0598"
+  ],
+  "mp": [
+   "MP0184"
+  ],
+  "nivel": 2,
+  "horas_mf": 270,
+  "horas_practicas": 80,
+  "horas_total": 350,
+  "real_decreto": "683/2011"
+ },
+ "HOTR0509": {
+  "denominacion": "REPOSTERÍA",
+  "mf": [
+   "MF0306",
+   "MF0709",
+   "MF0710",
+   "MF0711"
+  ],
+  "mp": [
+   "MP0229"
+  ],
+  "nivel": 2,
+  "horas_mf": 420,
+  "horas_practicas": 80,
+  "horas_total": 500,
+  "real_decreto": "685/2011"
+ },
+ "HOTR0109": {
+  "denominacion": "OPERACIONES BÁSICAS DE PASTELERÍA",
+  "mf": [
+   "MF1333",
+   "MF1334"
+  ],
+  "mp": [
+   "MP0167"
+  ],
+  "nivel": 1,
+  "horas_mf": 330,
+  "horas_practicas": 80,
+  "horas_total": 410,
+  "real_decreto": "685/2011"
+ },
+ "HOTR0209": {
+  "denominacion": "SUMILLERÍA",
+  "mf": [
+   "MF0711",
+   "MF1106",
+   "MF1107",
+   "MF1108",
+   "MF1109",
+   "MF1110",
+   "MF1111"
+  ],
+  "mp": [
+   "MP0176"
+  ],
+  "nivel": 3,
+  "horas_mf": 650,
+  "horas_practicas": 80,
+  "horas_total": 730,
+  "real_decreto": "685/2011"
+ },
+ "HOTR0409": {
+  "denominacion": "GESTIÓN DE PROCESOS DE SERVICIO EN RESTAURACIÓN",
+  "mf": [
+   "MF0711",
+   "MF1047",
+   "MF1048",
+   "MF1051",
+   "MF1098",
+   "MF1103",
+   "MF1104",
+   "MF1105"
+  ],
+  "mp": [],
+  "nivel": 3,
+  "horas_mf": 530,
+  "horas_practicas": 80,
+  "horas_total": 610,
+  "real_decreto": "685/2011"
+ },
+ "HOTR0309": {
+  "denominacion": "DIRECCIÓN EN RESTAURACIÓN",
+  "mf": [
+   "MF1051",
+   "MF1064",
+   "MF1097",
+   "MF1098",
+   "MF1099",
+   "MF1100",
+   "MF1101",
+   "MF1102"
+  ],
+  "mp": [],
+  "nivel": 3,
+  "horas_mf": 750,
+  "horas_practicas": 80,
+  "horas_total": 830,
+  "real_decreto": "685/2011"
+ },
+ "HOTU0109": {
+  "denominacion": "ALOJAMIENTO RURAL",
+  "mf": [
+   "MF0711",
+   "MF1042",
+   "MF1043",
+   "MF1044",
+   "MF1045"
+  ],
+  "mp": [
+   "MP0143"
+  ],
+  "nivel": 2,
+  "horas_mf": 540,
+  "horas_practicas": 40,
+  "horas_total": 580,
+  "real_decreto": "685/2011"
+ },
+ "AGAO0308M": {
+  "denominacion": "JARDINERÍA Y RESTAURACIÓN DEL PAISAJE",
+  "mf": [
+   "MF0007",
+   "MF0008",
+   "MF0009",
+   "MF0727"
+  ],
+  "mp": [
+   "MP0008"
+  ],
+  "nivel": 3,
+  "horas_mf": 540,
+  "horas_practicas": 80,
+  "horas_total": 620,
+  "real_decreto": "1375/2008"
+ },
+ "ADGG0308": {
+  "denominacion": "ASISTENCIA DOCUMENTAL Y DE GESTIÓN EN DESPACHOS Y OFICINAS",
+  "mf": [
+   "MF0979",
+   "MF0980",
+   "MF0982",
+   "MF0986",
+   "MF0987",
+   "MF0988"
+  ],
+  "mp": [
+   "MP0113"
+  ],
+  "nivel": 3,
+  "horas_mf": 670,
+  "horas_practicas": 80,
+  "horas_total": 750,
+  "real_decreto": "645/2011"
+ },
+ "ADGG0408": {
+  "denominacion": "OPERACIONES AUXILIARES DE SERVICIOS ADMINISTRATIVOS Y GENERALES",
+  "mf": [
+   "MF0969",
+   "MF0970",
+   "MF0971"
+  ],
+  "mp": [
+   "MP0112"
+  ],
+  "nivel": 1,
+  "horas_mf": 390,
+  "horas_practicas": 40,
+  "horas_total": 430,
+  "real_decreto": "645/2011"
+ },
+ "ADGG0508": {
+  "denominacion": "OPERACIONES DE GRABACIÓN Y TRATAMIENTO DE DATOS Y DOCUMENTOS",
+  "mf": [
+   "MF0971",
+   "MF0973",
+   "MF0974"
+  ],
+  "mp": [
+   "MP0110"
+  ],
+  "nivel": 1,
+  "horas_mf": 360,
+  "horas_practicas": 80,
+  "horas_total": 440,
+  "real_decreto": "645/2011"
+ },
+ "ADGD0308": {
+  "denominacion": "ACTIVIDADES DE GESTIÓN ADMINISTRATIVA",
+  "mf": [
+   "MF0233",
+   "MF0973",
+   "MF0976",
+   "MF0978",
+   "MF0979",
+   "MF0980",
+   "MF0981"
+  ],
+  "mp": [
+   "MP0111"
+  ],
+  "nivel": 2,
+  "horas_mf": 800,
+  "horas_practicas": 80,
+  "horas_total": 880,
+  "real_decreto": "645/2011"
+ },
+ "ADGN0208": {
+  "denominacion": "COMERCIALIZACIÓN Y ADMINISTRACIÓN DE PRODUCTOS Y SERVICIOS FINANCIEROS",
+  "mf": [
+   "MF0233",
+   "MF0989",
+   "MF0990",
+   "MF0991",
+   "MF0992"
+  ],
+  "mp": [
+   "MP0114"
+  ],
+  "nivel": 3,
+  "horas_mf": 720,
+  "horas_practicas": 80,
+  "horas_total": 800,
+  "real_decreto": "645/2011"
+ },
+ "COML0209": {
+  "denominacion": "ORGANIZACIÓN DEL TRANSPORTE Y LA DISTRIBUCIÓN",
+  "mf": [
+   "MF1005",
+   "MF1006",
+   "MF1012",
+   "MF1013"
+  ],
+  "mp": [
+   "MP0192"
+  ],
+  "nivel": 3,
+  "horas_mf": 340,
+  "horas_practicas": 80,
+  "horas_total": 420,
+  "real_decreto": "642/2011"
+ },
+ "COML0109": {
+  "denominacion": "TRÁFICO DE MERCANCÍAS POR CARRETERA",
+  "mf": [
+   "MF0247",
+   "MF0248",
+   "MF1006"
+  ],
+  "mp": [
+   "MP0191"
+  ],
+  "nivel": 3,
+  "horas_mf": 440,
+  "horas_practicas": 80,
+  "horas_total": 520,
+  "real_decreto": "642/2011"
+ },
+ "COML0309": {
+  "denominacion": "ORGANIZACIÓN Y GESTIÓN DE ALMACENES",
+  "mf": [
+   "MF1005",
+   "MF1014",
+   "MF1015"
+  ],
+  "mp": [
+   "MP0193"
+  ],
+  "nivel": 3,
+  "horas_mf": 310,
+  "horas_practicas": 80,
+  "horas_total": 390,
+  "real_decreto": "642/2011"
+ },
+ "ENAL0108": {
+  "denominacion": "GESTIÓN DE LA OPERACIÓN EN CENTRALES TERMOELÉCTRICAS",
+  "mf": [
+   "MF1198",
+   "MF1199",
+   "MF1200",
+   "MF1201"
+  ],
+  "mp": [
+   "MP0121"
+  ],
+  "nivel": 3,
+  "horas_mf": 670,
+  "horas_practicas": 80,
+  "horas_total": 750,
+  "real_decreto": "643/2011"
+ },
+ "ENAS0208": {
+  "denominacion": "GESTIÓN DEL MONTAJE Y MANTENIMIENTO DE REDES DE GAS",
+  "mf": [
+   "MF1202",
+   "MF1203",
+   "MF1204",
+   "MF1205",
+   "MF1206"
+  ],
+  "mp": [
+   "MP0120"
+  ],
+  "nivel": 3,
+  "horas_mf": 440,
+  "horas_practicas": 80,
+  "horas_total": 520,
+  "real_decreto": "643/2011"
+ },
+ "ENAC0108": {
+  "denominacion": "EFICIENCIA ENERGÉTICA DE EDIFICIOS",
+  "mf": [
+   "MF0842",
+   "MF1194",
+   "MF1195",
+   "MF1196",
+   "MF1197"
+  ],
+  "mp": [
+   "MP0122"
+  ],
+  "nivel": 3,
+  "horas_mf": 800,
+  "horas_practicas": 120,
+  "horas_total": 920,
+  "real_decreto": "643/2011"
+ },
+ "ENAA0109": {
+  "denominacion": "ORGANIZACIÓN Y CONTROL DEL MONTAJE Y MANTENIMIENTO DE REDES E INSTALACIONES DE AGUA Y SANEAMIENTO.",
+  "mf": [
+   "MF0838",
+   "MF0839",
+   "MF0840",
+   "MF0841"
+  ],
+  "mp": [
+   "MP0206"
+  ],
+  "nivel": 3,
+  "horas_mf": 430,
+  "horas_practicas": 80,
+  "horas_total": 510,
+  "real_decreto": "643/2011"
+ },
+ "EOCB0209": {
+  "denominacion": "OPERACIONES AUXILIARES DE ACABADOS RÍGIDOS Y URBANIZACIÓN",
+  "mf": [
+   "MF0276",
+   "MF0869",
+   "MF0871",
+   "MF1320",
+   "MF1321"
+  ],
+  "mp": [
+   "MP0219"
+  ],
+  "nivel": 1,
+  "horas_mf": 300,
+  "horas_practicas": 40,
+  "horas_total": 340,
+  "real_decreto": "644/2011"
+ },
+ "EOCB0208": {
+  "denominacion": "OPERACIONES AUXILIARES DE ALBAÑILERÍA DE FÁBRICAS Y CUBIERTAS",
+  "mf": [
+   "MF0142",
+   "MF0276",
+   "MF0869",
+   "MF0870"
+  ],
+  "mp": [
+   "MP0133"
+  ],
+  "nivel": 1,
+  "horas_mf": 280,
+  "horas_practicas": 40,
+  "horas_total": 320,
+  "real_decreto": "644/2011"
+ },
+ "EOCB0109": {
+  "denominacion": "OPERACIONES AUXILIARES DE REVESTIMIENTOS CONTINUOS EN CONSTRUCCIÓN",
+  "mf": [
+   "MF0276",
+   "MF0869",
+   "MF0871",
+   "MF0872",
+   "MF0873"
+  ],
+  "mp": [
+   "MP0134"
+  ],
+  "nivel": 1,
+  "horas_mf": 360,
+  "horas_practicas": 80,
+  "horas_total": 440,
+  "real_decreto": "644/2011"
+ },
+ "EOCE0109": {
+  "denominacion": "LEVANTAMIENTOS Y REPLANTEOS",
+  "mf": [
+   "MF0877",
+   "MF0878",
+   "MF0879"
+  ],
+  "mp": [
+   "MP0136"
+  ],
+  "nivel": 3,
+  "horas_mf": 480,
+  "horas_practicas": 120,
+  "horas_total": 600,
+  "real_decreto": "644/2011"
+ },
+ "EOCO0109": {
+  "denominacion": "CONTROL DE PROYECTOS Y OBRAS DE CONSTRUCCIÓN",
+  "mf": [
+   "MF0874",
+   "MF0875",
+   "MF0876"
+  ],
+  "mp": [
+   "MP0135"
+  ],
+  "nivel": 3,
+  "horas_mf": 430,
+  "horas_practicas": 120,
+  "horas_total": 550,
+  "real_decreto": "644/2011"
+ },
+ "INAD0109": {
+  "denominacion": "ELABORACIÓN DE AZÚCAR",
+  "mf": [
+   "MF0299",
+   "MF0300",
+   "MF0301"
+  ],
+  "mp": [
+   "MP0247"
+  ],
+  "nivel": 2,
+  "horas_mf": 330,
+  "horas_practicas": 120,
+  "horas_total": 450,
+  "real_decreto": "646/2011"
+ },
+ "INAE0209": {
+  "denominacion": "ELABORACIÓN DE LECHES DE CONSUMO Y PRODUCTOS LÁCTEOS",
+  "mf": [
+   "MF0027",
+   "MF0302",
+   "MF0303",
+   "MF0304"
+  ],
+  "mp": [
+   "MP0269"
+  ],
+  "nivel": 2,
+  "horas_mf": 480,
+  "horas_practicas": 80,
+  "horas_total": 560,
+  "real_decreto": "646/2011"
+ },
+ "INAF0109": {
+  "denominacion": "PASTELERÍA Y CONFITERÍA",
+  "mf": [
+   "MF0305",
+   "MF0306",
+   "MF0307",
+   "MF0308",
+   "MF0309",
+   "MF0310"
+  ],
+  "mp": [
+   "MP0218"
+  ],
+  "nivel": 2,
+  "horas_mf": 500,
+  "horas_practicas": 80,
+  "horas_total": 580,
+  "real_decreto": "646/2011"
+ },
+ "INAJ0109": {
+  "denominacion": "PESCADERÍA Y ELABORACIÓN DE PRODUCTOS DE LA PESCA Y ACUICULTURA",
+  "mf": [
+   "MF0315",
+   "MF0316",
+   "MF0317",
+   "MF0318",
+   "MF0319"
+  ],
+  "mp": [
+   "MP0257"
+  ],
+  "nivel": 2,
+  "horas_mf": 460,
+  "horas_practicas": 80,
+  "horas_total": 540,
+  "real_decreto": "646/2011"
+ },
+ "INAV0109": {
+  "denominacion": "FABRICACIÓN DE CONSERVAS VEGETALES",
+  "mf": [
+   "MF0291",
+   "MF0292",
+   "MF0293",
+   "MF0294"
+  ],
+  "mp": [
+   "MP0268"
+  ],
+  "nivel": 2,
+  "horas_mf": 400,
+  "horas_practicas": 80,
+  "horas_total": 480,
+  "real_decreto": "646/2011"
+ },
+ "INAD0108": {
+  "denominacion": "OPERACIONES AUXILIARES DE ELABORACIÓN EN LA INDUSTRIA ALIMENTARIA",
+  "mf": [
+   "MF0432",
+   "MF0543",
+   "MF0544",
+   "MF0545"
+  ],
+  "mp": [
+   "MP0148"
+  ],
+  "nivel": 1,
+  "horas_mf": 260,
+  "horas_practicas": 40,
+  "horas_total": 300,
+  "real_decreto": "646/2011"
+ },
+ "INAE0109": {
+  "denominacion": "QUESERÍA",
+  "mf": [
+   "MF0027",
+   "MF0028"
+  ],
+  "mp": [
+   "MP0248"
+  ],
+  "nivel": 2,
+  "horas_mf": 310,
+  "horas_practicas": 80,
+  "horas_total": 390,
+  "real_decreto": "646/2011"
+ },
+ "INAK0109": {
+  "denominacion": "OBTENCIÓN DE ACEITES DE OLIVA",
+  "mf": [
+   "MF0029",
+   "MF0030"
+  ],
+  "mp": [
+   "MP0224"
+  ],
+  "nivel": 2,
+  "horas_mf": 270,
+  "horas_practicas": 120,
+  "horas_total": 390,
+  "real_decreto": "646/2011"
+ },
+ "INAI0208": {
+  "denominacion": "SACRIFICIO, FAENADO Y DESPIECE DE ANIMALES",
+  "mf": [
+   "MF0031",
+   "MF0032",
+   "MF0033"
+  ],
+  "mp": [
+   "MP0147"
+  ],
+  "nivel": 2,
+  "horas_mf": 390,
+  "horas_practicas": 80,
+  "horas_total": 470,
+  "real_decreto": "646/2011"
+ },
+ "INAK0209": {
+  "denominacion": "OBTENCIÓN DE ACEITES DE SEMILLAS Y GRASAS",
+  "mf": [
+   "MF0552",
+   "MF0553",
+   "MF0554",
+   "MF0555"
+  ],
+  "mp": [
+   "MP0225"
+  ],
+  "nivel": 2,
+  "horas_mf": 360,
+  "horas_practicas": 120,
+  "horas_total": 480,
+  "real_decreto": "646/2011"
+ },
+ "INAI0109": {
+  "denominacion": "INDUSTRIAS CÁRNICAS",
+  "mf": [
+   "MF0556",
+   "MF0557",
+   "MF0558",
+   "MF0765",
+   "MF0766",
+   "MF0767"
+  ],
+  "mp": [
+   "MP0171"
+  ],
+  "nivel": 3,
+  "horas_mf": 480,
+  "horas_practicas": 120,
+  "horas_total": 600,
+  "real_decreto": "646/2011"
+ },
+ "INAH0109": {
+  "denominacion": "ELABORACIÓN DE VINOS Y LICORES",
+  "mf": [
+   "MF0314",
+   "MF0548",
+   "MF0549",
+   "MF0550",
+   "MF0551"
+  ],
+  "mp": [
+   "MP0194"
+  ],
+  "nivel": 2,
+  "horas_mf": 520,
+  "horas_practicas": 80,
+  "horas_total": 600,
+  "real_decreto": "646/2011"
+ },
+ "INAH0209": {
+  "denominacion": "ENOTECNIA",
+  "mf": [
+   "MF0037",
+   "MF0038",
+   "MF0039",
+   "MF0040"
+  ],
+  "mp": [
+   "MP0195"
+  ],
+  "nivel": 3,
+  "horas_mf": 540,
+  "horas_practicas": 120,
+  "horas_total": 660,
+  "real_decreto": "646/2011"
+ },
+ "INAF0108": {
+  "denominacion": "PANADERÍA Y BOLLERÍA",
+  "mf": [
+   "MF0034",
+   "MF0035",
+   "MF0036"
+  ],
+  "mp": [
+   "MP0068"
+  ],
+  "nivel": 2,
+  "horas_mf": 450,
+  "horas_practicas": 80,
+  "horas_total": 530,
+  "real_decreto": "1380/2009"
+ },
+ "INAQ0108": {
+  "denominacion": "OPERACIONES AUXILIARES DE MANTENIMIENTO Y TRANSPORTE INTERNO EN LA INDUSTRIA ALIMENTARIA",
+  "mf": [
+   "MF0432",
+   "MF0546",
+   "MF0547"
+  ],
+  "mp": [
+   "MP0067"
+  ],
+  "nivel": 1,
+  "horas_mf": 200,
+  "horas_practicas": 40,
+  "horas_total": 240,
+  "real_decreto": "1380/2009"
+ },
+ "INAI0108": {
+  "denominacion": "CARNICERÍA Y ELABORACIÓN DE PRODUCTOS CÁRNICOS",
+  "mf": [
+   "MF0295",
+   "MF0296",
+   "MF0297",
+   "MF0298"
+  ],
+  "mp": [
+   "MP0080"
+  ],
+  "nivel": 2,
+  "horas_mf": 430,
+  "horas_practicas": 80,
+  "horas_total": 510,
+  "real_decreto": "1380/2009"
+ },
+ "IMAR0108": {
+  "denominacion": "MONTAJE Y MANTENIMIENTO DE INSTALACIONES FRIGORÍFICAS",
+  "mf": [
+   "MF0114",
+   "MF0115"
+  ],
+  "mp": [
+   "MP0091"
+  ],
+  "nivel": 2,
+  "horas_mf": 420,
+  "horas_practicas": 120,
+  "horas_total": 540,
+  "real_decreto": "1375/2009"
+ },
+ "IMAR0308": {
+  "denominacion": "DESARROLLO DE PROYECTOS DE REDES Y SISTEMAS DE DISTRIBUCIÓN DE FLUIDOS",
+  "mf": [
+   "MF1278",
+   "MF1279",
+   "MF1280",
+   "MF1281"
+  ],
+  "mp": [
+   "MP0099"
+  ],
+  "nivel": 3,
+  "horas_mf": 510,
+  "horas_practicas": 120,
+  "horas_total": 630,
+  "real_decreto": "1375/2009"
+ },
+ "IMAR0208": {
+  "denominacion": "MONTAJE Y MANTENIMIENTO DE INSTALACIONES DE CLIMATIZACIÓN Y VENTILACIÓN-EXTRACCIÓN",
+  "mf": [
+   "MF1158",
+   "MF1159"
+  ],
+  "mp": [
+   "MP0092"
+  ],
+  "nivel": 2,
+  "horas_mf": 380,
+  "horas_practicas": 120,
+  "horas_total": 500,
+  "real_decreto": "1375/2009"
+ },
+ "IMAI0108": {
+  "denominacion": "OPERACIONES DE FONTANERÍA Y CALEFACCIÓN-CLIMATIZACIÓN DOMÉSTICA",
+  "mf": [
+   "MF1154",
+   "MF1155"
+  ],
+  "mp": [
+   "MP0090"
+  ],
+  "nivel": 1,
+  "horas_mf": 320,
+  "horas_practicas": 160,
+  "horas_total": 480,
+  "real_decreto": "1375/2009"
+ },
+ "ADGG0108": {
+  "denominacion": "ASISTENCIA A LA DIRECCIÓN",
+  "mf": [
+   "MF0982",
+   "MF0983",
+   "MF0984",
+   "MF0985",
+   "MF0986"
+  ],
+  "mp": [
+   "MP0076"
+  ],
+  "nivel": 3,
+  "horas_mf": 530,
+  "horas_practicas": 80,
+  "horas_total": 610,
+  "real_decreto": "1210/2009"
+ },
+ "ADGN0108": {
+  "denominacion": "FINANCIACIÓN DE EMPRESAS",
+  "mf": [
+   "MF0233",
+   "MF0498",
+   "MF0499",
+   "MF0500"
+  ],
+  "mp": [
+   "MP0077"
+  ],
+  "nivel": 3,
+  "horas_mf": 550,
+  "horas_practicas": 80,
+  "horas_total": 630,
+  "real_decreto": "1210/2009"
+ },
+ "ADGD0108": {
+  "denominacion": "GESTIÓN CONTABLE Y GESTIÓN ADMINISTRATIVA PARA AUDITORÍA",
+  "mf": [
+   "MF0231",
+   "MF0232",
+   "MF0233"
+  ],
+  "mp": [
+   "MP0075"
+  ],
+  "nivel": 3,
+  "horas_mf": 550,
+  "horas_practicas": 80,
+  "horas_total": 630,
+  "real_decreto": "1210/2009"
+ },
+ "ADGD0208": {
+  "denominacion": "GESTIÓN INTEGRADA DE RECURSOS HUMANOS",
+  "mf": [
+   "MF0233",
+   "MF0237",
+   "MF0238",
+   "MF0987"
+  ],
+  "mp": [
+   "MP0078"
+  ],
+  "nivel": 3,
+  "horas_mf": 670,
+  "horas_practicas": 120,
+  "horas_total": 790,
+  "real_decreto": "1210/2009"
+ },
+ "ADGG0208": {
+  "denominacion": "ACTIVIDADES ADMINISTRATIVAS EN LA RELACIÓN CON EL CLIENTE",
+  "mf": [
+   "MF0233",
+   "MF0973",
+   "MF0975",
+   "MF0976",
+   "MF0977",
+   "MF0978"
+  ],
+  "mp": [
+   "MP0079"
+  ],
+  "nivel": 2,
+  "horas_mf": 680,
+  "horas_practicas": 120,
+  "horas_total": 800,
+  "real_decreto": "1210/2009"
+ },
+ "IMPE0108": {
+  "denominacion": "SERVICIOS AUXILIARES DE ESTÉTICA",
+  "mf": [
+   "MF0343",
+   "MF0344",
+   "MF0345",
+   "MF0346"
+  ],
+  "mp": [
+   "MP0070"
+  ],
+  "nivel": 1,
+  "horas_mf": 240,
+  "horas_practicas": 120,
+  "horas_total": 360,
+  "real_decreto": "1379/2009"
+ },
+ "IMPQ0108": {
+  "denominacion": "SERVICIOS AUXILIARES DE PELUQUERÍA",
+  "mf": [
+   "MF0058",
+   "MF0059",
+   "MF0060"
+  ],
+  "mp": [
+   "MP0069"
+  ],
+  "nivel": 1,
+  "horas_mf": 210,
+  "horas_practicas": 120,
+  "horas_total": 330,
+  "real_decreto": "1379/2009"
+ },
+ "SEAG0108": {
+  "denominacion": "GESTIÓN DE RESIDUOS URBANOS E INDUSTRIALES",
+  "mf": [
+   "MF0075",
+   "MF0076",
+   "MF0077"
+  ],
+  "mp": [
+   "MP0066"
+  ],
+  "nivel": 2,
+  "horas_mf": 270,
+  "horas_practicas": 120,
+  "horas_total": 390,
+  "real_decreto": "1377/2009"
+ },
+ "MAPN0108": {
+  "denominacion": "CONFECCIÓN Y MANTENIMIENTO DE ARTES Y APAREJOS",
+  "mf": [
+   "MF0013",
+   "MF0014"
+  ],
+  "mp": [
+   "MP0085"
+  ],
+  "nivel": 2,
+  "horas_mf": 290,
+  "horas_practicas": 40,
+  "horas_total": 330,
+  "real_decreto": "1376/2009"
+ },
+ "MAPU0108": {
+  "denominacion": "ENGORDE DE PECES, CRUSTÁCEOS Y CEFALÓPODOS",
+  "mf": [
+   "MF0019",
+   "MF0020"
+  ],
+  "mp": [
+   "MP0062"
+  ],
+  "nivel": 2,
+  "horas_mf": 340,
+  "horas_practicas": 80,
+  "horas_total": 420,
+  "real_decreto": "1376/2009"
+ },
+ "IMSV0208": {
+  "denominacion": "ASISTENCIA A LA PRODUCCIÓN EN TELEVISIÓN",
+  "mf": [
+   "MF0207",
+   "MF0208",
+   "MF0209"
+  ],
+  "mp": [
+   "MP0082"
+  ],
+  "nivel": 3,
+  "horas_mf": 430,
+  "horas_practicas": 80,
+  "horas_total": 510,
+  "real_decreto": "1374/2009"
+ },
+ "IMSV0108": {
+  "denominacion": "ASISTENCIA A LA PRODUCCIÓN CINEMATOGRÁFICA Y DE OBRAS AUDIOVISUALES",
+  "mf": [
+   "MF0703",
+   "MF0704",
+   "MF0705"
+  ],
+  "mp": [
+   "MP0081"
+  ],
+  "nivel": 3,
+  "horas_mf": 410,
+  "horas_practicas": 80,
+  "horas_total": 490,
+  "real_decreto": "1374/2009"
+ },
+ "SSCM0108": {
+  "denominacion": "LIMPIEZA DE SUPERFICIES Y MOBILIARIO EN EDIFICIOS Y LOCALES",
+  "mf": [
+   "MF0972",
+   "MF0996",
+   "MF1087",
+   "MF1088"
+  ],
+  "mp": [
+   "MP0102"
+  ],
+  "nivel": 1,
+  "horas_mf": 150,
+  "horas_practicas": 80,
+  "horas_total": 230,
+  "real_decreto": "1378/2009"
+ },
+ "ELEQ0108": {
+  "denominacion": "INSTALACIÓN Y MANTENIMIENTO DE SISTEMAS DE ELECTROMEDICINA",
+  "mf": [
+   "MF1269",
+   "MF1270"
+  ],
+  "mp": [
+   "MP0086"
+  ],
+  "nivel": 2,
+  "horas_mf": 480,
+  "horas_practicas": 120,
+  "horas_total": 600,
+  "real_decreto": "1214/2009"
+ },
+ "ELES0108": {
+  "denominacion": "MONTAJE Y MANTENIMIENTO DE INFRAESTRUCTURAS DE TELECOMUNICACIONES EN EDIFICIOS",
+  "mf": [
+   "MF0120",
+   "MF0121"
+  ],
+  "mp": [
+   "MP0093"
+  ],
+  "nivel": 2,
+  "horas_mf": 330,
+  "horas_practicas": 120,
+  "horas_total": 450,
+  "real_decreto": "1214/2009"
+ },
+ "ELEE0108": {
+  "denominacion": "OPERACIONES AUXILIARES DE MONTAJE DE REDES ELÉCTRICAS",
+  "mf": [
+   "MF0818",
+   "MF0819"
+  ],
+  "mp": [
+   "MP0088"
+  ],
+  "nivel": 1,
+  "horas_mf": 140,
+  "horas_practicas": 80,
+  "horas_total": 220,
+  "real_decreto": "1214/2009"
+ },
+ "HOTR0508": {
+  "denominacion": "SERVICIOS DE BAR Y CAFETERÍA",
+  "mf": [
+   "MF0711",
+   "MF1046",
+   "MF1047",
+   "MF1048",
+   "MF1049",
+   "MF1050",
+   "MF1051"
+  ],
+  "mp": [
+   "MP0057"
+  ],
+  "nivel": 2,
+  "horas_mf": 560,
+  "horas_practicas": 80,
+  "horas_total": 640,
+  "real_decreto": "1256/2009"
+ },
+ "HOTR0608": {
+  "denominacion": "SERVICIOS DE RESTAURANTE",
+  "mf": [
+   "MF0711",
+   "MF1048",
+   "MF1051",
+   "MF1052",
+   "MF1053",
+   "MF1054"
+  ],
+  "mp": [
+   "MP0061"
+  ],
+  "nivel": 2,
+  "horas_mf": 500,
+  "horas_practicas": 80,
+  "horas_total": 580,
+  "real_decreto": "1256/2009"
+ },
+ "IEXD0308": {
+  "denominacion": "OPERACIONES AUXILIARES EN PLANTAS DE ELABORACIÓN DE PIEDRA NATURAL Y DE TRATAMIENTO Y BENEFICIO DE MINERALES Y ROCAS.",
+  "mf": [
+   "MF0432",
+   "MF0637",
+   "MF0859",
+   "MF0860"
+  ],
+  "mp": [
+   "MP0106"
+  ],
+  "nivel": 1,
+  "horas_mf": 260,
+  "horas_practicas": 80,
+  "horas_total": 340,
+  "real_decreto": "1217/2009"
+ },
+ "IEXD0108": {
+  "denominacion": "ELABORACIÓN DE LA PIEDRA NATURAL",
+  "mf": [
+   "MF0432",
+   "MF0634",
+   "MF0635",
+   "MF0636",
+   "MF0637"
+  ],
+  "mp": [
+   "MP0104"
+  ],
+  "nivel": 2,
+  "horas_mf": 560,
+  "horas_practicas": 80,
+  "horas_total": 640,
+  "real_decreto": "1217/2009"
+ },
+ "IEXD0208": {
+  "denominacion": "EXTRACCIÓN DE LA PIEDRA NATURAL",
+  "mf": [
+   "MF0425",
+   "MF0426",
+   "MF0427"
+  ],
+  "mp": [
+   "MP0105"
+  ],
+  "nivel": 2,
+  "horas_mf": 370,
+  "horas_practicas": 80,
+  "horas_total": 450,
+  "real_decreto": "1217/2009"
+ },
+ "FMEE0208": {
+  "denominacion": "MONTAJE Y PUESTA EN MARCHA DE BIENES DE EQUIPO Y MAQUINARIA INDUSTRIAL",
+  "mf": [
+   "MF1263",
+   "MF1264",
+   "MF1265"
+  ],
+  "mp": [
+   "MP0097"
+  ],
+  "nivel": 2,
+  "horas_mf": 610,
+  "horas_practicas": 80,
+  "horas_total": 690,
+  "real_decreto": "1216/2009"
+ },
+ "FMEC0108": {
+  "denominacion": "FABRICACIÓN Y MONTAJE DE INSTALACIONES DE TUBERÍA INDUSTRIAL",
+  "mf": [
+   "MF1142",
+   "MF1143",
+   "MF1144"
+  ],
+  "mp": [
+   "MP0107"
+  ],
+  "nivel": 2,
+  "horas_mf": 450,
+  "horas_practicas": 80,
+  "horas_total": 530,
+  "real_decreto": "1216/2009"
+ },
+ "FMEE0108": {
+  "denominacion": "OPERACIONES AUXILIARES DE FABRICACIÓN MECÁNICA",
+  "mf": [
+   "MF0087",
+   "MF0088"
+  ],
+  "mp": [
+   "MP0095"
+  ],
+  "nivel": 1,
+  "horas_mf": 400,
+  "horas_practicas": 40,
+  "horas_total": 440,
+  "real_decreto": "1216/2009"
+ },
+ "FMEE0308": {
+  "denominacion": "DISEÑO DE PRODUCTOS DE FABRICACIÓN MECÁNICA",
+  "mf": [
+   "MF0105",
+   "MF0106",
+   "MF0107"
+  ],
+  "mp": [
+   "MP0096"
+  ],
+  "nivel": 3,
+  "horas_mf": 600,
+  "horas_practicas": 80,
+  "horas_total": 680,
+  "real_decreto": "1216/2009"
+ },
+ "ENAE0508": {
+  "denominacion": "ORGANIZACIÓN Y PROYECTOS DE INSTALACIONES SOLARES FOTOVOLTÁICAS",
+  "mf": [
+   "MF0842",
+   "MF0843",
+   "MF0844",
+   "MF0845"
+  ],
+  "mp": [
+   "MP0089"
+  ],
+  "nivel": 3,
+  "horas_mf": 470,
+  "horas_practicas": 160,
+  "horas_total": 630,
+  "real_decreto": "1215/2009"
+ },
+ "ARGI0209": {
+  "denominacion": "IMPRESIÓN DIGITAL",
+  "mf": [
+   "MF0200",
+   "MF0482",
+   "MF0483"
+  ],
+  "mp": [
+   "MP0059"
+  ],
+  "nivel": 2,
+  "horas_mf": 320,
+  "horas_practicas": 120,
+  "horas_total": 440,
+  "real_decreto": "1213/2009"
+ },
+ "ARGN0109": {
+  "denominacion": "PRODUCCIÓN EDITORIAL",
+  "mf": [
+   "MF0204",
+   "MF0205",
+   "MF0206"
+  ],
+  "mp": [
+   "MP0060"
+  ],
+  "nivel": 3,
+  "horas_mf": 380,
+  "horas_practicas": 160,
+  "horas_total": 540,
+  "real_decreto": "1213/2009"
+ },
+ "EOCB0108": {
+  "denominacion": "FABRICAS DE ALBAÑILERÍA",
+  "mf": [
+   "MF0141",
+   "MF0142",
+   "MF0143",
+   "MF0869"
+  ],
+  "mp": [
+   "MP0072"
+  ],
+  "nivel": 2,
+  "horas_mf": 410,
+  "horas_practicas": 80,
+  "horas_total": 490,
+  "real_decreto": "1212/2009"
+ },
+ "EOCO0208": {
+  "denominacion": "REPRESENTACIÓN DE PROYECTOS DE OBRA CIVIL",
+  "mf": [
+   "MF0638",
+   "MF0641",
+   "MF0642"
+  ],
+  "mp": [
+   "MP0074"
+  ],
+  "nivel": 3,
+  "horas_mf": 480,
+  "horas_practicas": 120,
+  "horas_total": 600,
+  "real_decreto": "1212/2009"
+ },
+ "EOCO0108": {
+  "denominacion": "REPRESENTACIÓN DE PROYECTOS DE EDIFICACIÓN",
+  "mf": [
+   "MF0638",
+   "MF0639",
+   "MF0640"
+  ],
+  "mp": [
+   "MP0073"
+  ],
+  "nivel": 3,
+  "horas_mf": 480,
+  "horas_practicas": 120,
+  "horas_total": 600,
+  "real_decreto": "1212/2009"
+ },
+ "AGAR0108": {
+  "denominacion": "APROVECHAMIENTOS FORESTALES",
+  "mf": [
+   "MF1116",
+   "MF1117",
+   "MF1118",
+   "MF1119",
+   "MF1120",
+   "MF1121"
+  ],
+  "mp": [
+   "MP0063"
+  ],
+  "nivel": 2,
+  "horas_mf": 520,
+  "horas_practicas": 80,
+  "horas_total": 600,
+  "real_decreto": "1211/2009"
+ },
+ "AGAJ0308": {
+  "denominacion": "GESTIÓN DE LA INSTALACIÓN Y MANTENIMIENTO DE CÉSPEDES EN CAMPOS DEPORTIVOS",
+  "mf": [
+   "MF0009",
+   "MF0727",
+   "MF1127",
+   "MF1128"
+  ],
+  "mp": [
+   "MP0094"
+  ],
+  "nivel": 3,
+  "horas_mf": 440,
+  "horas_practicas": 80,
+  "horas_total": 520,
+  "real_decreto": "1211/2009"
+ },
+ "AGAJ0108": {
+  "denominacion": "ACTIVIDADES AUXILIARES EN FLORISTERÍA",
+  "mf": [
+   "MF1112",
+   "MF1113",
+   "MF1114",
+   "MF1115"
+  ],
+  "mp": [
+   "MP0064"
+  ],
+  "nivel": 1,
+  "horas_mf": 310,
+  "horas_practicas": 80,
+  "horas_total": 390,
+  "real_decreto": "1211/2009"
+ },
+ "AGAN0208": {
+  "denominacion": "CRÍA DE CABALLOS",
+  "mf": [
+   "MF0533",
+   "MF0534",
+   "MF0535",
+   "MF0536"
+  ],
+  "mp": [
+   "MP0083"
+  ],
+  "nivel": 3,
+  "horas_mf": 630,
+  "horas_practicas": 40,
+  "horas_total": 670,
+  "real_decreto": "1211/2009"
+ },
+ "AGAU0208": {
+  "denominacion": "GESTIÓN DE LA PRODUCCIÓN AGRÍCOLA",
+  "mf": [
+   "MF1129",
+   "MF1130",
+   "MF1131",
+   "MF1132"
+  ],
+  "mp": [
+   "MP0084"
+  ],
+  "nivel": 3,
+  "horas_mf": 780,
+  "horas_practicas": 40,
+  "horas_total": 820,
+  "real_decreto": "1211/2009"
+ },
+ "AFDA0109": {
+  "denominacion": "GUIA POR ITINERARIOS EN BICICLETA",
+  "mf": [
+   "MF0272",
+   "MF0353",
+   "MF0508",
+   "MF0509"
+  ],
+  "mp": [
+   "MP0071"
+  ],
+  "nivel": 2,
+  "horas_mf": 340,
+  "horas_practicas": 80,
+  "horas_total": 420,
+  "real_decreto": "1209/2009"
+ },
+ "IFCT0108": {
+  "denominacion": "OPERACIONES AUXILIARES DE MONTAJE Y MANTENIMIENTO DE SISTEMAS MICROINFORMÁTICOS",
+  "mf": [
+   "MF1207",
+   "MF1208",
+   "MF1209"
+  ],
+  "mp": [
+   "MP0098"
+  ],
+  "nivel": 1,
+  "horas_mf": 290,
+  "horas_practicas": 80,
+  "horas_total": 370,
+  "real_decreto": "1218/2009"
+ },
+ "EOCH0108": {
+  "denominacion": "OPERACIONES DE HORMIGÓN",
+  "mf": [
+   "MF0276",
+   "MF0277",
+   "MF0278",
+   "MF0869"
+  ],
+  "mp": [
+   "MP0046"
+  ],
+  "nivel": 1,
+  "horas_mf": 220,
+  "horas_practicas": 40,
+  "horas_total": 260,
+  "real_decreto": "1966/2008"
+ },
+ "QUIA0108": {
+  "denominacion": "ENSAYOS FÍSICOS Y FISICOQUÍMICOS",
+  "mf": [
+   "MF0052",
+   "MF0053",
+   "MF0056",
+   "MF0057"
+  ],
+  "mp": [
+   "MP0051"
+  ],
+  "nivel": 3,
+  "horas_mf": 420,
+  "horas_practicas": 80,
+  "horas_total": 500,
+  "real_decreto": "1970/2008"
+ },
+ "QUIE0208": {
+  "denominacion": "OPERACIONES EN INSTALACIONES DE ENERGÍA Y DE SERVICIOS AUXILIARES",
+  "mf": [
+   "MF0048",
+   "MF0320",
+   "MF0321",
+   "MF0322"
+  ],
+  "mp": [
+   "MP0054"
+  ],
+  "nivel": 2,
+  "horas_mf": 450,
+  "horas_practicas": 80,
+  "horas_total": 530,
+  "real_decreto": "1970/2008"
+ },
+ "QUIA0208": {
+  "denominacion": "ENSAYOS MICROBIOLÓGICOS Y BIOTECNOLÓGICOS",
+  "mf": [
+   "MF0052",
+   "MF0053",
+   "MF0054",
+   "MF0055"
+  ],
+  "mp": [
+   "MP0052"
+  ],
+  "nivel": 3,
+  "horas_mf": 440,
+  "horas_practicas": 80,
+  "horas_total": 520,
+  "real_decreto": "1970/2008"
+ },
+ "QUIE0108": {
+  "denominacion": "OPERACIONES BÁSICAS EN PLANTA QUÍMICA",
+  "mf": [
+   "MF0045",
+   "MF0046",
+   "MF0047",
+   "MF0048"
+  ],
+  "mp": [
+   "MP0053"
+  ],
+  "nivel": 2,
+  "horas_mf": 530,
+  "horas_practicas": 80,
+  "horas_total": 610,
+  "real_decreto": "1970/2008"
+ },
+ "ENAE0408": {
+  "denominacion": "GESTIÓN DEL MONTAJE Y MANTENIMIENTO DE PARQUES EÓLICOS",
+  "mf": [
+   "MF0615",
+   "MF0616",
+   "MF0617",
+   "MF0618",
+   "MF0619"
+  ],
+  "mp": [
+   "MP0050"
+  ],
+  "nivel": 3,
+  "horas_mf": 460,
+  "horas_practicas": 160,
+  "horas_total": 620,
+  "real_decreto": "1967/2008"
+ },
+ "ENAS0108": {
+  "denominacion": "MONTAJE Y MANTENIMIENTO DE REDES DE GAS",
+  "mf": [
+   "MF0610",
+   "MF0611",
+   "MF0612",
+   "MF0613",
+   "MF0614"
+  ],
+  "mp": [
+   "MP0044"
+  ],
+  "nivel": 2,
+  "horas_mf": 370,
+  "horas_practicas": 80,
+  "horas_total": 450,
+  "real_decreto": "1967/2008"
+ },
+ "ENAE0208": {
+  "denominacion": "MONTAJE Y MANTENIMIENTO DE INSTALACIONES SOLARES TÉRMICAS",
+  "mf": [
+   "MF0601",
+   "MF0602",
+   "MF0603",
+   "MF0604",
+   "MF0605"
+  ],
+  "mp": [
+   "MP0043"
+  ],
+  "nivel": 2,
+  "horas_mf": 420,
+  "horas_practicas": 160,
+  "horas_total": 580,
+  "real_decreto": "1967/2008"
+ },
+ "ENAE0308": {
+  "denominacion": "ORGANIZACIÓN Y PROYECTOS DE INSTALACIONES SOLARES TÉRMICAS",
+  "mf": [
+   "MF0842",
+   "MF0846",
+   "MF0847",
+   "MF0848"
+  ],
+  "mp": [
+   "MP0049"
+  ],
+  "nivel": 3,
+  "horas_mf": 470,
+  "horas_practicas": 160,
+  "horas_total": 630,
+  "real_decreto": "1967/2008"
+ },
+ "FMEF0208": {
+  "denominacion": "MOLDEO Y MACHERÍA",
+  "mf": [
+   "MF0587",
+   "MF0588"
+  ],
+  "mp": [
+   "MP0039"
+  ],
+  "nivel": 2,
+  "horas_mf": 320,
+  "horas_practicas": 80,
+  "horas_total": 400,
+  "real_decreto": "1969/2008"
+ },
+ "FMEF0108": {
+  "denominacion": "FUSIÓN Y COLADA",
+  "mf": [
+   "MF0586",
+   "MF0587"
+  ],
+  "mp": [
+   "MP0038"
+  ],
+  "nivel": 2,
+  "horas_mf": 320,
+  "horas_practicas": 80,
+  "horas_total": 400,
+  "real_decreto": "1969/2008"
+ },
+ "FMEF0308": {
+  "denominacion": "PRODUCCIÓN EN FUNDICIÓN Y PULVIMETALURGIA",
+  "mf": [
+   "MF0589",
+   "MF0590",
+   "MF0591",
+   "MF0592"
+  ],
+  "mp": [
+   "MP0040"
+  ],
+  "nivel": 3,
+  "horas_mf": 440,
+  "horas_practicas": 120,
+  "horas_total": 560,
+  "real_decreto": "1969/2008"
+ },
+ "MAMR0208": {
+  "denominacion": "ACABADO DE CARPINTERÍA Y MUEBLE",
+  "mf": [
+   "MF0166",
+   "MF0167",
+   "MF0168"
+  ],
+  "mp": [
+   "MP0041"
+  ],
+  "nivel": 2,
+  "horas_mf": 410,
+  "horas_practicas": 80,
+  "horas_total": 490,
+  "real_decreto": "1968/2008"
+ },
+ "MAMR0408": {
+  "denominacion": "INSTALACIÓN DE MUEBLES",
+  "mf": [
+   "MF0163",
+   "MF0164",
+   "MF0165"
+  ],
+  "mp": [
+   "MP0045"
+  ],
+  "nivel": 2,
+  "horas_mf": 470,
+  "horas_practicas": 80,
+  "horas_total": 550,
+  "real_decreto": "1968/2008"
+ },
+ "MAMR0308": {
+  "denominacion": "MECANIZADO DE MADERA Y DERIVADOS",
+  "mf": [
+   "MF0160",
+   "MF0161",
+   "MF0162"
+  ],
+  "mp": [
+   "MP0055"
+  ],
+  "nivel": 2,
+  "horas_mf": 400,
+  "horas_practicas": 120,
+  "horas_total": 520,
+  "real_decreto": "1968/2008"
+ },
+ "MAMR0108": {
+  "denominacion": "MONTAJE DE MUEBLES Y ELEMENTOS DE CARPINTERÍA",
+  "mf": [
+   "MF0171",
+   "MF0172",
+   "MF0173"
+  ],
+  "mp": [
+   "MP0042"
+  ],
+  "nivel": 2,
+  "horas_mf": 380,
+  "horas_practicas": 80,
+  "horas_total": 460,
+  "real_decreto": "1968/2008"
+ },
+ "AGAN0108": {
+  "denominacion": "GANADERÍA ECOLÓGICA",
+  "mf": [
+   "MF0006",
+   "MF0725",
+   "MF0726"
+  ],
+  "mp": [
+   "MP0047"
+  ],
+  "nivel": 2,
+  "horas_mf": 410,
+  "horas_practicas": 80,
+  "horas_total": 490,
+  "real_decreto": "1965/2008"
+ },
+ "AGAU0108": {
+  "denominacion": "AGRICULTURA ECOLÓGICA",
+  "mf": [
+   "MF0526",
+   "MF0717",
+   "MF0718"
+  ],
+  "mp": [
+   "MP0048"
+  ],
+  "nivel": 2,
+  "horas_mf": 450,
+  "horas_practicas": 40,
+  "horas_total": 490,
+  "real_decreto": "1965/2008"
+ },
+ "COMV0108": {
+  "denominacion": "ACTIVIDADES DE VENTA",
+  "mf": [
+   "MF0239",
+   "MF0240",
+   "MF0241",
+   "MF1002"
+  ],
+  "mp": [
+   "MP0009"
+  ],
+  "nivel": 2,
+  "horas_mf": 510,
+  "horas_practicas": 80,
+  "horas_total": 590,
+  "real_decreto": "1377/2008"
+ },
+ "COMP0108": {
+  "denominacion": "IMPLANTACIÓN Y ANIMACIÓN DE ESPACIOS COMERCIALES",
+  "mf": [
+   "MF0501",
+   "MF0502",
+   "MF0503",
+   "MF0504"
+  ],
+  "mp": [
+   "MP0010"
+  ],
+  "nivel": 3,
+  "horas_mf": 310,
+  "horas_practicas": 80,
+  "horas_total": 390,
+  "real_decreto": "1377/2008"
+ },
+ "ENAT0108": {
+  "denominacion": "MONTAJE Y MANTENIMIENTO DE REDES DE AGUA",
+  "mf": [
+   "MF0606",
+   "MF0607",
+   "MF0608",
+   "MF0609"
+  ],
+  "mp": [
+   "MP0030"
+  ],
+  "nivel": 2,
+  "horas_mf": 370,
+  "horas_practicas": 80,
+  "horas_total": 450,
+  "real_decreto": "1381/2008"
+ },
+ "ENAE0108": {
+  "denominacion": "MONTAJE Y MANTENIMIENTO DE INSTALACIONES SOLARES FOTOVOLTAICAS",
+  "mf": [
+   "MF0835",
+   "MF0836",
+   "MF0837"
+  ],
+  "mp": [
+   "MP0032"
+  ],
+  "nivel": 2,
+  "horas_mf": 420,
+  "horas_practicas": 120,
+  "horas_total": 540,
+  "real_decreto": "1381/2008"
+ },
+ "IMSD0108": {
+  "denominacion": "ASISTENCIA A LA REALIZACIÓN EN TELEVISIÓN",
+  "mf": [
+   "MF0216",
+   "MF0217",
+   "MF0218"
+  ],
+  "mp": [
+   "MP0024"
+  ],
+  "nivel": 3,
+  "horas_mf": 450,
+  "horas_practicas": 80,
+  "horas_total": 530,
+  "real_decreto": "1380/2008"
+ },
+ "SSCS0208": {
+  "denominacion": "ATENCIÓN SOCIOSANITARIA A PERSONAS DEPENDIENTES EN INSTITUCIONES SOCIALES",
+  "mf": [
+   "MF1016",
+   "MF1017",
+   "MF1018",
+   "MF1019"
+  ],
+  "mp": [
+   "MP0029"
+  ],
+  "nivel": 2,
+  "horas_mf": 370,
+  "horas_practicas": 80,
+  "horas_total": 450,
+  "real_decreto": "1379/2008"
+ },
+ "SSCS0108": {
+  "denominacion": "ATENCIÓN SOCIOSANITARIA A PERSONAS EN EL DOMICILIO",
+  "mf": [
+   "MF0249",
+   "MF0250",
+   "MF0251"
+  ],
+  "mp": [
+   "MP0028"
+  ],
+  "nivel": 2,
+  "horas_mf": 480,
+  "horas_practicas": 120,
+  "horas_total": 600,
+  "real_decreto": "1379/2008"
+ },
+ "MAMS0108": {
+  "denominacion": "INSTALACIÓN DE ELEMENTOS DE CARPINTERÍA",
+  "mf": [
+   "MF0883",
+   "MF0884",
+   "MF0885",
+   "MF0886"
+  ],
+  "mp": [
+   "MP0025"
+  ],
+  "nivel": 2,
+  "horas_mf": 420,
+  "horas_practicas": 80,
+  "horas_total": 500,
+  "real_decreto": "1378/2008"
+ },
+ "HOTR0308": {
+  "denominacion": "OPERACIONES BÁSICAS DE CATERING",
+  "mf": [
+   "MF1089",
+   "MF1090"
+  ],
+  "mp": [
+   "MP0016"
+  ],
+  "nivel": 1,
+  "horas_mf": 210,
+  "horas_practicas": 40,
+  "horas_total": 250,
+  "real_decreto": "1376/2008"
+ },
+ "HOTG0208": {
+  "denominacion": "VENTA DE PRODUCTOS Y SERVICIOS TURÍSTICOS",
+  "mf": [
+   "MF0266",
+   "MF0267",
+   "MF0268",
+   "MF1057"
+  ],
+  "mp": [
+   "MP0019"
+  ],
+  "nivel": 3,
+  "horas_mf": 550,
+  "horas_practicas": 120,
+  "horas_total": 670,
+  "real_decreto": "1376/2008"
+ },
+ "HOTI0108": {
+  "denominacion": "PROMOCIÓN TURÍSTICA LOCAL E INFORMACIÓN AL VISITANTE",
+  "mf": [
+   "MF0268",
+   "MF1057",
+   "MF1074",
+   "MF1075"
+  ],
+  "mp": [
+   "MP0020"
+  ],
+  "nivel": 3,
+  "horas_mf": 570,
+  "horas_practicas": 120,
+  "horas_total": 690,
+  "real_decreto": "1376/2008"
+ },
+ "HOTA0108": {
+  "denominacion": "OPERACIONES BÁSICAS DE PISOS EN ALOJAMIENTOS",
+  "mf": [
+   "MF0706",
+   "MF0707",
+   "MF0708"
+  ],
+  "mp": [
+   "MP0011"
+  ],
+  "nivel": 1,
+  "horas_mf": 300,
+  "horas_practicas": 80,
+  "horas_total": 380,
+  "real_decreto": "1376/2008"
+ },
+ "HOTR0108": {
+  "denominacion": "OPERACIONES BÁSICAS DE COCINA",
+  "mf": [
+   "MF0255",
+   "MF0256"
+  ],
+  "mp": [
+   "MP0014"
+  ],
+  "nivel": 1,
+  "horas_mf": 270,
+  "horas_practicas": 80,
+  "horas_total": 350,
+  "real_decreto": "1376/2008"
+ },
+ "HOTR0208": {
+  "denominacion": "OPERACIONES BÁSICAS DE RESTAURANTE Y BAR",
+  "mf": [
+   "MF0257",
+   "MF0258"
+  ],
+  "mp": [
+   "MP0015"
+  ],
+  "nivel": 1,
+  "horas_mf": 210,
+  "horas_practicas": 80,
+  "horas_total": 290,
+  "real_decreto": "1376/2008"
+ },
+ "HOTA0308": {
+  "denominacion": "RECEPCIÓN EN ALOJAMIENTOS",
+  "mf": [
+   "MF0263",
+   "MF0264",
+   "MF0265",
+   "MF1057"
+  ],
+  "mp": [
+   "MP0013"
+  ],
+  "nivel": 3,
+  "horas_mf": 510,
+  "horas_practicas": 120,
+  "horas_total": 630,
+  "real_decreto": "1376/2008"
+ },
+ "HOTG0108": {
+  "denominacion": "CREACIÓN Y GESTIÓN DE VIAJES COMBINADOS Y EVENTOS",
+  "mf": [
+   "MF0268",
+   "MF1055",
+   "MF1056",
+   "MF1057"
+  ],
+  "mp": [
+   "MP0018"
+  ],
+  "nivel": 3,
+  "horas_mf": 510,
+  "horas_practicas": 160,
+  "horas_total": 670,
+  "real_decreto": "1376/2008"
+ },
+ "HOTA0208": {
+  "denominacion": "GESTIÓN DE PISOS Y LIMPIEZA EN ALOJAMIENTOS",
+  "mf": [
+   "MF0265",
+   "MF1067",
+   "MF1068"
+  ],
+  "mp": [
+   "MP0012"
+  ],
+  "nivel": 3,
+  "horas_mf": 400,
+  "horas_practicas": 80,
+  "horas_total": 480,
+  "real_decreto": "1376/2008"
+ },
+ "HOTR0408": {
+  "denominacion": "COCINA",
+  "mf": [
+   "MF0259",
+   "MF0260",
+   "MF0261",
+   "MF0262",
+   "MF0711"
+  ],
+  "mp": [
+   "MP0017"
+  ],
+  "nivel": 2,
+  "horas_mf": 730,
+  "horas_practicas": 80,
+  "horas_total": 810,
+  "real_decreto": "1376/2008"
+ },
+ "AGAG0208": {
+  "denominacion": "PRODUCCIÓN CUNÍCULA INTENSIVA",
+  "mf": [
+   "MF0006",
+   "MF0282"
+  ],
+  "mp": [
+   "MP0005"
+  ],
+  "nivel": 2,
+  "horas_mf": 180,
+  "horas_practicas": 40,
+  "horas_total": 220,
+  "real_decreto": "1375/2008"
+ },
+ "AGAX0108": {
+  "denominacion": "ACTIVIDADES AUXILIARES EN GANADERÍA",
+  "mf": [
+   "MF0712",
+   "MF0713",
+   "MF0714",
+   "MF0715"
+  ],
+  "mp": [
+   "MP0034"
+  ],
+  "nivel": 1,
+  "horas_mf": 390,
+  "horas_practicas": 120,
+  "horas_total": 510,
+  "real_decreto": "1375/2008"
+ },
+ "AGAC0108": {
+  "denominacion": "CULTIVOS HERBÁCEOS",
+  "mf": [
+   "MF0523",
+   "MF0524",
+   "MF0525",
+   "MF0526"
+  ],
+  "mp": [
+   "MP0001"
+  ],
+  "nivel": 2,
+  "horas_mf": 560,
+  "horas_practicas": 40,
+  "horas_total": 600,
+  "real_decreto": "1375/2008"
+ },
+ "AGAF0108": {
+  "denominacion": "FRUTICULTURA",
+  "mf": [
+   "MF0525",
+   "MF0526",
+   "MF0527",
+   "MF0528"
+  ],
+  "mp": [
+   "MP0002"
+  ],
+  "nivel": 2,
+  "horas_mf": 560,
+  "horas_practicas": 40,
+  "horas_total": 600,
+  "real_decreto": "1375/2008"
+ },
+ "AGAO0108": {
+  "denominacion": "ACTIVIDADES AUXILIARES EN VIVEROS, JARDINES Y CENTROS DE JARDINERÍA",
+  "mf": [
+   "MF0520",
+   "MF0521",
+   "MF0522"
+  ],
+  "mp": [
+   "MP0006"
+  ],
+  "nivel": 1,
+  "horas_mf": 250,
+  "horas_practicas": 80,
+  "horas_total": 330,
+  "real_decreto": "1375/2008"
+ },
+ "AGAG0108": {
+  "denominacion": "PRODUCCIÓN AVÍCOLA INTENSIVA",
+  "mf": [
+   "MF0006",
+   "MF0281"
+  ],
+  "mp": [
+   "MP0004"
+  ],
+  "nivel": 2,
+  "horas_mf": 210,
+  "horas_practicas": 40,
+  "horas_total": 250,
+  "real_decreto": "1375/2008"
+ },
+ "AGAH0108": {
+  "denominacion": "HORTICULTURA Y FLORICULTURA",
+  "mf": [
+   "MF0525",
+   "MF0526",
+   "MF0529",
+   "MF0530"
+  ],
+  "mp": [
+   "MP0003"
+  ],
+  "nivel": 2,
+  "horas_mf": 560,
+  "horas_practicas": 40,
+  "horas_total": 600,
+  "real_decreto": "1375/2008"
+ },
+ "AGAP0108": {
+  "denominacion": "PRODUCCIÓN PORCINA DE REPRODUCCIÓN Y CRÍA",
+  "mf": [
+   "MF0004",
+   "MF0006"
+  ],
+  "mp": [
+   "MP0036"
+  ],
+  "nivel": 2,
+  "horas_mf": 240,
+  "horas_practicas": 40,
+  "horas_total": 280,
+  "real_decreto": "1375/2008"
+ },
+ "AGAP0208": {
+  "denominacion": "PRODUCCIÓN PORCINA DE RECRÍA Y CEBO",
+  "mf": [
+   "MF0005",
+   "MF0006"
+  ],
+  "mp": [
+   "MP0037"
+  ],
+  "nivel": 2,
+  "horas_mf": 210,
+  "horas_practicas": 40,
+  "horas_total": 250,
+  "real_decreto": "1375/2008"
+ },
+ "AGAO0208": {
+  "denominacion": "INSTALACIÓN Y MANTENIMIENTO DE JARDINES Y ZONAS VERDES",
+  "mf": [
+   "MF0525",
+   "MF0531",
+   "MF0532"
+  ],
+  "mp": [
+   "MP0007"
+  ],
+  "nivel": 2,
+  "horas_mf": 390,
+  "horas_practicas": 80,
+  "horas_total": 470,
+  "real_decreto": "1375/2008"
+ },
+ "AGAX0208": {
+  "denominacion": "ACTIVIDADES AUXILIARES EN AGRICULTURA",
+  "mf": [
+   "MF0517",
+   "MF0518",
+   "MF0519"
+  ],
+  "mp": [
+   "MP0035"
+  ],
+  "nivel": 1,
+  "horas_mf": 330,
+  "horas_practicas": 40,
+  "horas_total": 370,
+  "real_decreto": "1375/2008"
+ },
+ "IMPP0108": {
+  "denominacion": "CUIDADOS ESTÉTICOS DE MANOS Y PIES",
+  "mf": [
+   "MF0356",
+   "MF0357",
+   "MF0358",
+   "MF0359"
+  ],
+  "mp": [
+   "MP0021"
+  ],
+  "nivel": 2,
+  "horas_mf": 280,
+  "horas_practicas": 80,
+  "horas_total": 360,
+  "real_decreto": "1373/2008"
+ },
+ "IMPP0208": {
+  "denominacion": "SERVICIOS ESTÉTICOS DE HIGIENE, DEPILACIÓN Y MAQUILLAJE",
+  "mf": [
+   "MF0065",
+   "MF0345",
+   "MF0352",
+   "MF0354",
+   "MF0355"
+  ],
+  "mp": [
+   "MP0022"
+  ],
+  "nivel": 2,
+  "horas_mf": 480,
+  "horas_practicas": 160,
+  "horas_total": 640,
+  "real_decreto": "1373/2008"
+ },
+ "IMPP0308": {
+  "denominacion": "HIDROTERMAL",
+  "mf": [
+   "MF0061",
+   "MF0062",
+   "MF0063",
+   "MF1260"
+  ],
+  "mp": [
+   "MP0023"
+  ],
+  "nivel": 3,
+  "horas_mf": 450,
+  "horas_practicas": 120,
+  "horas_total": 570,
+  "real_decreto": "1373/2008"
+ },
+ "QUIL0108": {
+  "denominacion": "ANÁLISIS QUÍMICO",
+  "mf": [
+   "MF0052",
+   "MF0053",
+   "MF0341",
+   "MF0342"
+  ],
+  "mp": [
+   "MP0026"
+  ],
+  "nivel": 3,
+  "horas_mf": 570,
+  "horas_practicas": 120,
+  "horas_total": 690,
+  "real_decreto": "1374/2008"
+ },
+ "QUIB0108": {
+  "denominacion": "GESTIÓN Y CONTROL DE PLANTA QUÍMICA",
+  "mf": [
+   "MF0574",
+   "MF0575",
+   "MF0576",
+   "MF0577",
+   "MF0578",
+   "MF0579"
+  ],
+  "mp": [
+   "MP0027"
+  ],
+  "nivel": 3,
+  "horas_mf": 760,
+  "horas_practicas": 80,
+  "horas_total": 840,
+  "real_decreto": "1374/2008"
+ }
+}

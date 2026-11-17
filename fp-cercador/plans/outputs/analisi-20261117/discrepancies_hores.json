@@ -1,0 +1,122 @@
+[
+ {
+  "cp": "MAPN0712",
+  "grausfp": 530,
+  "sepe": 850,
+  "annex": 530
+ },
+ {
+  "cp": "ARGT0112",
+  "grausfp": 520,
+  "sepe": 630,
+  "annex": 630
+ },
+ {
+  "cp": "AGAN0411",
+  "grausfp": 400,
+  "sepe": 450,
+  "annex": 450
+ },
+ {
+  "cp": "ADGN0210",
+  "grausfp": 600,
+  "sepe": 730,
+  "annex": 730
+ },
+ {
+  "cp": "ADGN0110",
+  "grausfp": 690,
+  "sepe": 730,
+  "annex": 730
+ },
+ {
+  "cp": "AFDA0311",
+  "grausfp": 610,
+  "sepe": 550,
+  "annex": 550
+ },
+ {
+  "cp": "MAPN0111",
+  "grausfp": 440,
+  "sepe": 390,
+  "annex": null
+ },
+ {
+  "cp": "AFDA0210",
+  "grausfp": 620,
+  "sepe": 590,
+  "annex": 590
+ },
+ {
+  "cp": "MAPN0210",
+  "grausfp": 310,
+  "sepe": 320,
+  "annex": 310
+ },
+ {
+  "cp": "MAPN0310",
+  "grausfp": 230,
+  "sepe": 210,
+  "annex": 230
+ },
+ {
+  "cp": "ARGC0110",
+  "grausfp": 380,
+  "sepe": 420,
+  "annex": 420
+ },
+ {
+  "cp": "IMSV0408",
+  "grausfp": 630,
+  "sepe": 440,
+  "annex": 440
+ },
+ {
+  "cp": "IMSV0308",
+  "grausfp": 540,
+  "sepe": 630,
+  "annex": 630
+ },
+ {
+  "cp": "ARGT0109",
+  "grausfp": 420,
+  "sepe": 330,
+  "annex": 330
+ },
+ {
+  "cp": "AGAR0109",
+  "grausfp": 640,
+  "sepe": 610,
+  "annex": 610
+ },
+ {
+  "cp": "COML0109",
+  "grausfp": 550,
+  "sepe": 520,
+  "annex": 520
+ },
+ {
+  "cp": "COML0309",
+  "grausfp": 420,
+  "sepe": 390,
+  "annex": 390
+ },
+ {
+  "cp": "EOCB0208",
+  "grausfp": 360,
+  "sepe": 320,
+  "annex": 320
+ },
+ {
+  "cp": "EOCE0109",
+  "grausfp": 780,
+  "sepe": 600,
+  "annex": 600
+ },
+ {
+  "cp": "ENAT0108",
+  "grausfp": 480,
+  "sepe": 450,
+  "annex": null
+ }
+]

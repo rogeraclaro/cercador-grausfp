@@ -1,0 +1,158 @@
+[
+ {
+  "cp": "SSCI0412",
+  "denominacion": "OPERACIONES EN SERVICIOS FUNERARIOS",
+  "mf": [
+   "MF1607",
+   "MF2011",
+   "MF2012",
+   "MF2013",
+   "MF2014",
+   "MF2015"
+  ],
+  "mp": [
+   "MP0509"
+  ],
+  "nivel": 2,
+  "horas_mf": 370,
+  "horas_practicas": 80,
+  "horas_total": 450,
+  "real_decreto": "990/2013"
+ },
+ {
+  "cp": "SSCI0312",
+  "denominacion": "ATENCIÓN AL CLIENTE Y ORGANIZACIÓN DE ACTOS DE PROTOCOLO EN SERVICIOS FUNERARIOS",
+  "mf": [
+   "MF2008",
+   "MF2009",
+   "MF2010"
+  ],
+  "mp": [
+   "MP0508"
+  ],
+  "nivel": 2,
+  "horas_mf": 240,
+  "horas_practicas": 40,
+  "horas_total": 280,
+  "real_decreto": "990/2013"
+ },
+ {
+  "cp": "SEAG0212",
+  "denominacion": "MANTENIMIENTO HIGIÉNICO-SANITARIO DE INSTALACIONES SUSCEPTIBLES DE PROLIFERACIÓN DE MICROORGANISMOS NOCIVOS Y SU DISEMINACIÓN POR AEROSOLIZACIÓN",
+  "mf": [
+   "MF1610",
+   "MF1611",
+   "MF1612"
+  ],
+  "mp": [
+   "MP0500"
+  ],
+  "nivel": 2,
+  "horas_mf": 250,
+  "horas_practicas": 80,
+  "horas_total": 330,
+  "real_decreto": "624/2013"
+ },
+ {
+  "cp": "IMAQ0110",
+  "denominacion": "INSTALACIÓN Y MANTENIMIENTO DE ASCENSORES Y OTROS EQUIPOS FIJOS DE ELEVACIÓN Y TRANSPORTE",
+  "mf": [
+   "MF1877",
+   "MF1878"
+  ],
+  "mp": [
+   "MP0315"
+  ],
+  "nivel": 2,
+  "horas_mf": 480,
+  "horas_practicas": 80,
+  "horas_total": 560,
+  "real_decreto": "1079/2012"
+ },
+ {
+  "cp": "SSCE0110",
+  "denominacion": "DOCENCIA DE LA FORMACIÓN PROFESIONAL PARA EL EMPLEO",
+  "mf": [
+   "MF1442",
+   "MF1443",
+   "MF1444",
+   "MF1445",
+   "MF1446"
+  ],
+  "mp": [
+   "MP0353"
+  ],
+  "nivel": 3,
+  "horas_mf": 340,
+  "horas_practicas": 40,
+  "horas_total": 380,
+  "real_decreto": "1697/2011"
+ },
+ {
+  "cp": "FMEC0210",
+  "denominacion": "SOLDADURA OXIGÁS Y SOLDADURA MIG/MAG",
+  "mf": [
+   "MF0098",
+   "MF0101"
+  ],
+  "mp": [
+   "MP0358"
+  ],
+  "nivel": 2,
+  "horas_mf": 560,
+  "horas_practicas": 40,
+  "horas_total": 600,
+  "real_decreto": "1525/2011"
+ },
+ {
+  "cp": "FMEC0110",
+  "denominacion": "SOLDADURA CON ELECTRODO REVESTIDO Y TIG",
+  "mf": [
+   "MF0099",
+   "MF0100"
+  ],
+  "mp": [
+   "MP0349"
+  ],
+  "nivel": 2,
+  "horas_mf": 640,
+  "horas_practicas": 40,
+  "horas_total": 680,
+  "real_decreto": "1525/2011"
+ },
+ {
+  "cp": "SEAG0110",
+  "denominacion": "SERVICIOS PARA EL CONTROL DE PLAGAS",
+  "mf": [
+   "MF0075",
+   "MF0078",
+   "MF0079"
+  ],
+  "mp": [
+   "MP0322"
+  ],
+  "nivel": 2,
+  "horas_mf": 290,
+  "horas_practicas": 80,
+  "horas_total": 370,
+  "real_decreto": "1536/2011"
+ },
+ {
+  "cp": "AGAO0308M",
+  "denominacion": "JARDINERÍA Y RESTAURACIÓN DEL PAISAJE",
+  "mf": [
+   "MF0007",
+   "MF0008",
+   "MF0009",
+   "MF0727"
+  ],
+  "mp": [
+   "MP0008"
+  ],
+  "nivel": 3,
+  "horas_mf": 540,
+  "horas_practicas": 80,
+  "horas_total": 620,
+  "real_decreto": "1375/2008"
+ }
+]
