@@ -58,9 +58,30 @@ La primera vegada, `--discover` triga ~20 min; després va de la memòria cau.
     codis per certificat i amb 8 es tracta com a possiblement tallada; `--dry-run` ja no escriu el fitxer.
   - Per al 091: en uns 19 certificats el número del MF i el de la UC de l'annex no coincideixen (ADGN0110:
     MF2180_2 amb UC1445_2). `bc_loe.json` desa el número del MF.
-- La correspondència UC ↔ mòdul professional és als annexos V A i V B dels decrets dels títols (XML del
-  BOE). Viable per a 142 dels 161 cicles de grau mitjà i superior; cal aplicar els RD 498–500/2024, que
-  substitueixen annexos. Plans 091 (dades) i 092 (web), **TODO**.
+- **Pla 091: fet el 2026-11-17, no desplegat.** `backend/data/d_uc_corr.json` (no viatja amb el git) porta
+  la correspondència oficial UC ↔ mòdul de 182 dels 195 cicles D, per `ref`: 34 de 34 bàsics, 63 de 67
+  mitjans i 85 de 94 superiors. Es genera amb `python3 scripts/build_d_uc_corr.py [--cache DIR]` (manual,
+  fora del refresc setmanal; ~10 min sense memòria cau). Informe: `plans/outputs/audit_d_uc_corr.md`.
+  - API: `GET /api/correspondencia?cicle=<ref>` i `GET /api/correspondencia?cp=<codi>` (certificat LOE).
+    Regla a `backend/uc_corr.py`: una fila només convalida quan el certificat en té totes les UC.
+  - 92 cicles tenen la taula vigent en un decret posterior al seu: RD 498/2024 (34 bàsics, apartat «6 bis»),
+    499/2024 (27), 500/2024 (27) i els d'«actualización» del 2023 (290, 401, 403 i 404/2023; 6 cicles), que
+    el pla no preveia.
+  - **Decisió presa en executar (revisable):** els decrets del 2024 canvien els codis d'UC (ELEE0109 porta
+    UC0820_2…UC0825_2 i la taula vigent del cicle d'Instal·lacions Elèctriques parla d'UC2340_2…UC2345_2).
+    L'índex desa també la taula original a `convalida_anterior` (57 cicles) i l'API hi recorre només quan cap
+    UC del certificat surt a la vigent, marcant-ho amb `derogada: true` i `substituida_per`. Afecta 12
+    certificats; el pla 092 ha de dir-ho a la pantalla. L'equivalència entre UC antigues i noves no és a
+    les taules (és als decrets de les qualificacions) i no s'ha tocat.
+  - 13 cicles sense taula: 5 anteriors al sistema d'UC, 5 d'aeronàutica sense UC al decret i 3 del 2007
+    (Mecanizado, Panadería, Educación Infantil) amb els annexos publicats com a imatge a l'XML: per a
+    aquests tres caldria llegir el PDF.
+  - Els números de mòdul no s'han escrit a `d_modulos.json`: l'API els omple en llegir (1.210 mòduls casen
+    pel nom). Fer-ho servir a la resta de l'aplicació és una decisió a part.
+  - Pendent conegut: els ~19 certificats on `bc_loe.json` desa el número del MF i no el de la UC (vegeu
+    090) poden no casar amb les taules. Graus E fora (19 dels 38 tenen taula al decret propi).
+  - Per desplegar: `git pull`, reiniciar (endpoint nou) i copiar `backend/data/d_uc_corr.json` al VPS.
+- Pla 092 (web), **TODO**.
 - Exportació relacional (093) i revisions menors (094), **TODO**.
 - Materials de l'anàlisi (scripts de prova, llistes d'errors, instantània del SEPE):
   `plans/outputs/analisi-20261117/`. Cap codi tocat; res desplegat.

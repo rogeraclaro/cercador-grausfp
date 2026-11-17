@@ -127,6 +127,7 @@ None yet.
 | 261108-say | Pla 081: scraper catàleg SEPE + enriquiment FPO | 2026-11-08 | 7d46fee | — | [261108-say-pla-081-scraper-cat-leg-sepe-enriquiment](./quick/261108-say-pla-081-scraper-cat-leg-sepe-enriquiment/) |
 | 261114-ekq | Auditoria completa: correccions verificades (alertes, tokens de baixa, refresc de centres, observatori, errors del frontend) | 2026-11-14 | — | — | [261114-ekq-audit-fixes-verified-low-risk-defects-fr](./quick/261114-ekq-audit-fixes-verified-low-risk-defects-fr/) |
 | 261117-ew2 | Pla 090: bc_loe.json sense UC d'altres annexos (140 certificats corregits) | 2026-11-17 | 75f556d | — | [261117-ew2-plan-090-fix-bc-loe-json-contamination](./quick/261117-ew2-plan-090-fix-bc-loe-json-contamination/) |
+| 261117-u6p | Pla 091: correspondència UC ↔ mòdul des del BOE (d_uc_corr.json, 182 de 195 cicles) i /api/correspondencia | 2026-11-17 | fefa45e | — | [261117-u6p-plan-091-uc-module-correspondence-boe](./quick/261117-u6p-plan-091-uc-module-correspondence-boe/) |
 
 ### Blockers/Concerns
 
