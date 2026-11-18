@@ -112,7 +112,7 @@ La primera vegada, `--discover` triga ~20 min; després va de la memòria cau.
   (una fila per UF amb hores i transversal; LOMLOE per A de cada B) o cicles (mòdul, UC que el convaliden,
   certificats LOE). Botons a l'itinerari i al cercador (filtre C o D, ≤50). Dades: `scripts/generate_c_loe_estructura.py`
   (necessita `pdftotext`) → `backend/data/c_loe_estructura.json` (gitignored, copiat al VPS): 556 de 580 certificats (els 24 restants, amb annex escanejat o amb MF que no quadren amb `bc_loe.json`, cauen a les UC sense hores); les hores incoherents es buiden. La comprovació local va destapar errades d'impremta als annexos (`MF0121-2`, `UF425`, `Código MF…`), ja tolerades. Codis de mòdul de cicle escrits com a `="0237"` perquè Excel no n'esborri el zero. Provat a Excel (Mac, regió en_US, separador forçat) i a producció; **no** provat amb regió ca/es. ELEE0109: 6 MF, 920 h. Pendent: provar-ho amb l'Excel.
-- **Pla 094: fet el 2026-11-18, NO desplegat.** Informe: `plans/outputs/audit_cp_loe_20261117.md`.
+- **Pla 094: fet i desplegat el 2026-11-18** (prod `750ad2d`; `c_loe_estructura.json` copiat al VPS, còpia anterior a `/root/c_loe_estructura.json.bak-20261118-pre094`; refresc manual fet, 20 de 20 hores corregides a producció). Informe: `plans/outputs/audit_cp_loe_20261117.md`.
   - Hores: 26 certificats on les fonts no quadren. En 17 s'equivoca el buscador de certificats; en 3
     (MAPN0210, MAPN0310, MAPN0712) hi ha un decret modificador i té raó el SEPE; en 6 ja ho teníem bé i el
     desfasat és l'annex de todofp, que és el text original sense consolidar. Corregit amb
@@ -127,12 +127,9 @@ La primera vegada, `--discover` triga ~20 min; després va de la memòria cau.
     `backend/data/c_loe_estructura.json.bak-pre094`.
   - Absents: els 8 certificats de la llista del SEPE que no tenim han estat substituïts al Buscador de
     Graus pels Graus C nous, que sí que tenim. Cap acció.
-  - **Per desplegar**: push + `git pull` + reinici, copiar `c_loe_estructura.json` al VPS i llançar el
-    refresc tot seguit (les hores corregides només entren a `ofertes.json` amb el refresc; fins llavors el
-    CSV donaria malament 17 certificats).
 - Materials de l'anàlisi (scripts de prova, llistes d'errors, instantània del SEPE):
   `plans/outputs/analisi-20261117/`. Cap codi tocat; res desplegat.
-- Pendent del propietari: contestar l'usuari.
+- Resposta a l'usuari enviada el 2026-11-18 (inclou la pregunta de quina IA va fer servir per a les pestanyes `MANT_*`).
 
 ### Dels plans 078–080 (C LOMLOE)
 - **SEA_C_004_5B i SEA_C_006_5B, mòdul 1782.** Probablement associat a UC1970_2 (PRL en incendis
