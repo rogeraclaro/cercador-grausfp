@@ -386,3 +386,68 @@ def fetch_entitats(id_sepe: int, session=None) -> list:
                         files={k: (None, v) for k, v in fields.items()}, timeout=POST_TIMEOUT)
     resp.raise_for_status()
     return parse_entitats(resp.content.decode('utf-8', errors='replace'))
+
+
+# ---------------------------------------------------------------------------
+# Ocupacions i programa per a la descàrrega completa — Pla 100
+# ---------------------------------------------------------------------------
+
+_OCU_TBODY = 'id="formulario:modalOcupaciones:ocupacionesSeleccionadasTable:tbody_element"'
+_RE_OCU_ROW = re.compile(
+    r'<tr class="rows">\s*<td>.*?codOcupacion">\s*([^<]*?)\s*</span>.*?</td>\s*<td>(.*?)</td>\s*</tr>', re.S)
+
+
+def parse_ocupacions(page: str) -> list:
+    """[{codi, nom}] del modal «Ocupaciones» del cercador. Sense ocupacions → [].
+
+    Sense la taula del modal → SepeDataError (no es confon amb «no en té cap»):
+    una especialitat sense ocupacions té un tbody de fila buida (`<tr><td></td></tr>`).
+    El nom es desa tal com el dona el SEPE (en majúscules).
+    """
+    start = page.find(_OCU_TBODY)
+    end = page.find('</tbody>', start) if start >= 0 else -1
+    if end < 0:
+        raise SepeDataError("Ocupacions: no hi ha la taula del modal")
+    body = page[page.find('>', start) + 1:end]
+    files = _RE_OCU_ROW.findall(body)
+    if not files:
+        if _RE_WS.sub('', body) not in ('', '<tr><td></td></tr>'):
+            raise SepeDataError("Ocupacions: files amb format desconegut")
+        return []
+    ocupacions = []
+    for codi, nom in files:
+        nom = _text(nom)
+        if not nom:
+            raise SepeDataError("Ocupacions: fila sense denominació")
+        ocupacions.append({'codi': _text(codi) or None, 'nom': nom})
+    return ocupacions
+
+
+def _post_boto(session, id_sepe: int, boto: str):
+    fields = {
+        'formulario_SUBMIT': '1',
+        'javax.faces.ViewState': 'e1s1',
+        'formulario:codigoPropuesta': str(int(id_sepe)),
+        boto: '',
+    }
+    resp = session.post(f'{BASE}/flows/main?execution=e1s1',
+                        files={k: (None, v) for k, v in fields.items()}, timeout=POST_TIMEOUT)
+    resp.raise_for_status()
+    return resp
+
+
+def fetch_programa_i_ocupacions(id_sepe: int, session=None) -> tuple:
+    """(PDF del programa o None, [{codi, nom}]) amb una sola sessió: GET + dos POST.
+
+    Per a scripts/sepe_descarrega_programes.py. Comprovat el 2026-11-26: la mateixa
+    sessió accepta els dos botons seguits amb `execution=e1s1`. Errors de xarxa i HTTP
+    es propaguen; un modal d'ocupacions irreconeixible → SepeDataError.
+    """
+    session = session or _new_session()
+    resp = session.get(f'{BASE}/flows/main', timeout=TIMEOUT)
+    resp.raise_for_status()
+    resp = _post_boto(session, id_sepe, 'formulario:invisibleClickTargetProgramaFormativoEspecialidad')
+    pdf = resp.content if ('pdf' in resp.headers.get('Content-Type', '').lower()
+                           and resp.content.startswith(b'%PDF-')) else None
+    resp = _post_boto(session, id_sepe, 'formulario:invisibleClickTargetShowOcupaciones')
+    return pdf, parse_ocupacions(resp.content.decode('utf-8', errors='replace'))

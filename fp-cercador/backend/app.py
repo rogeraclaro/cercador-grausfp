@@ -117,6 +117,7 @@ SOC_CENTRES_PATH = os.path.join(_DATA_DIR, "soc_centres.json")  # Pla 059: centr
 SEPE_ESPECS_PATH = os.path.join(_DATA_DIR, "sepe_especs.json")  # Pla 081: catàleg d'especialitats del SEPE
 SEPE_PROGRAMES_DIR = os.path.join(_DATA_DIR, "sepe_programes")  # Pla 082: cache dels PDF de programa
 SEPE_ENTITATS_DIR = os.path.join(_DATA_DIR, "sepe_entitats")  # Pla 099: cache de les entitats per especialitat
+SEPE_PROGRAMES_PATH = os.path.join(_DATA_DIR, "sepe_programes.json")  # Pla 100: programes i ocupacions extrets
 EXT_CURSOS_PATH = os.path.join(_DATA_DIR, "ext_cursos.json")   # Pla 062: cursos FPO de PIMEC i Foment
 _SOC_STALE_DAYS = 7  # llindar per avisar de dades FPO velles
 OCUPACIONES_PATH = os.path.join(_DATA_DIR, "ocupaciones.json")
@@ -295,7 +296,8 @@ def _needs_auth_cors(path):
             or path.startswith("/api/admin/title-overrides") or path.startswith("/api/admin/search-terms")
             or path.startswith("/api/admin/empty-searches")
             or path.startswith("/api/held") or path.startswith("/api/lists")
-            or path.startswith("/api/sepe/entitats"))   # Pla 099: l'admin hi envia la sessió
+            or path.startswith("/api/sepe/entitats")    # Pla 099: l'admin hi envia la sessió
+            or path.startswith("/api/admin/sepe-programes"))
 
 
 @app.before_request
@@ -2232,6 +2234,130 @@ def api_sepe_entitats(codi):
     resp = jsonify({'entitats': entitats, 'actualitzat': data.get('actualitzat'), 'total': len(entitats)})
     resp.headers['Cache-Control'] = 'private, no-store'   # la resposta depèn de qui la demana
     return resp
+
+
+# ---------------------------------------------------------------------------
+# Pla 100 — Programes formatius i ocupacions extrets (scripts/sepe_descarrega_programes.py)
+# ---------------------------------------------------------------------------
+
+_sepe_programes_cache: dict = {"mtime": None, "data": None}
+# Camps del programa que surten a l'API (moduls_ok/moduls_error són per a l'informe).
+_SEPE_PROGRAMA_PUBLIC = ('format', 'objectiu', 'moduls', 'requisits_acces', 'tutories_presencials_h',
+                         'vinculacions', 'hores_presencial', 'hores_teleformacio')
+_SEPE_PROGRAMES_AVIS_DIES = 122       # ~4 mesos sense repassada completa → avís al panell
+_SEPE_PROGRAMES_AVIS_PENDENTS = 100
+_SEPE_PROGRAMES_REMOT = '/home/masellas-grausfp/htdocs/grausfp.masellas.info/fp-cercador/backend/data/'
+
+
+def _get_sepe_programes() -> dict:
+    """{codi: {versio, baixat, programa, ocupacions, sense_pdf}}. {} si falta o és corrupte.
+    Cache per mtime: el fitxer es copia des de l'ordinador del propietari sense reiniciar."""
+    if not os.path.exists(SEPE_PROGRAMES_PATH):
+        return {}
+    mtime = os.path.getmtime(SEPE_PROGRAMES_PATH)
+    if _sepe_programes_cache["mtime"] == mtime and _sepe_programes_cache["data"] is not None:
+        return _sepe_programes_cache["data"]
+    try:
+        with open(SEPE_PROGRAMES_PATH, encoding='utf-8') as f:
+            data = json.load(f)
+    except (OSError, ValueError) as exc:
+        logger.warning("_get_sepe_programes: error llegint %s: %s", SEPE_PROGRAMES_PATH, exc)
+        return {}
+    if not isinstance(data, dict):
+        logger.warning("_get_sepe_programes: %s no és un objecte — s'ignora", SEPE_PROGRAMES_PATH)
+        return {}
+    _sepe_programes_cache.update(mtime=mtime, data=data)
+    return data
+
+
+def _sepe_programa_public(programa):
+    if not isinstance(programa, dict):
+        return None
+    out = {k: programa.get(k) for k in _SEPE_PROGRAMA_PUBLIC}
+    if isinstance(out['moduls'], list):   # el SEPE els dona en majúscules
+        out['moduls'] = [{'nom': titols.display_title(m.get('nom') or ''), 'hores': m.get('hores')}
+                         for m in out['moduls'] if isinstance(m, dict)]
+    return out
+
+
+@app.route('/api/sepe/especialitat/<path:codi>')
+def api_sepe_especialitat(codi):
+    """Pla 100: detall d'una especialitat — catàleg + programa extret + ocupacions.
+    El programa i les ocupacions només si són de la versió vigent del catàleg."""
+    sepe = _sepe_lookup(codi)
+    if not sepe:
+        return jsonify({'error': 'no_trobat'}), 404
+    codi = sepe['codi']
+    entry = _get_sepe_programes().get(codi)
+    vigent = isinstance(entry, dict) and entry.get('versio') == sepe.get('versio')
+    ocupacions = entry.get('ocupacions') if vigent else None
+    return jsonify({
+        'especialitat': {k: sepe.get(k) for k in (
+            'codi', 'codiAntic', 'sufix', 'titol_es', 'titol_mostra', 'versio', 'familia_es', 'area_es',
+            'competenciaTransversal', 'nivell', 'modalitat', 'hores', 'vigenciaInici', 'vigenciaFi')},
+        'programa': _sepe_programa_public(entry.get('programa')) if vigent else None,
+        'ocupacions': [{'codi': o.get('codi'), 'nom': titols.display_title(o.get('nom') or '')}
+                       for o in (ocupacions if isinstance(ocupacions, list) else []) if isinstance(o, dict)],
+        'baixat': entry.get('baixat') if vigent else None,
+        'programaUrl': f'/api/sepe/programa/{codi}' if sepe.get('idSepe') else None,
+    })
+
+
+def _sepe_programes_ordres() -> dict:
+    avui = datetime.now().date().isoformat()
+    scp = f'scp backend/data/sepe_programes.json contabo:{_SEPE_PROGRAMES_REMOT}'
+    return {
+        'completa': f'caffeinate -i python3 scripts/sepe_descarrega_programes.py --des-de {avui}',
+        'canvis': 'caffeinate -i python3 scripts/sepe_descarrega_programes.py --nomes-canvis',
+        'copia': scp,
+        'propietari': f'ssh contabo chown masellas-grausfp: {_SEPE_PROGRAMES_REMOT}sepe_programes.json',
+    }
+
+
+@app.route('/api/admin/sepe-programes-status')
+def admin_sepe_programes_status():
+    """Pla 100: estat de la descàrrega dels programes del SEPE i, si cal, què s'ha de fer."""
+    if not _check_admin(request):
+        return jsonify({"error": "Unauthorized"}), 401
+    programes = _get_sepe_programes()
+    cataleg = [r for r in _sepe_index().values() if r.get('idSepe')]
+    pendents = sense_programa = 0
+    baixats = []
+    for r in cataleg:
+        entry = programes.get(r['codi'])
+        if not isinstance(entry, dict) or entry.get('versio') != r.get('versio'):
+            pendents += 1
+            continue
+        if entry.get('baixat'):
+            baixats.append(entry['baixat'])
+        if not entry.get('programa'):
+            sense_programa += 1
+    # La més antiga de les vigents = quan va començar l'última passada que les va tocar totes.
+    repassada = min(baixats) if baixats else None
+    vella = True
+    if repassada:
+        try:
+            vella = (datetime.now(timezone.utc) - datetime.fromisoformat(repassada)).days > _SEPE_PROGRAMES_AVIS_DIES
+        except ValueError:
+            vella = True
+    motiu = None
+    if not programes:
+        motiu = 'cap'
+    elif vella:
+        motiu = 'antiga'
+    elif pendents > _SEPE_PROGRAMES_AVIS_PENDENTS:
+        motiu = 'pendents'
+    return jsonify({
+        'total': len(cataleg),
+        'pendents': pendents,
+        'senseProgramaLlegit': sense_programa,
+        'darreraDescarrega': max(baixats) if baixats else None,
+        'repassadaCompleta': repassada,
+        'fitxer': (datetime.fromtimestamp(os.path.getmtime(SEPE_PROGRAMES_PATH), tz=timezone.utc).isoformat()
+                   if os.path.exists(SEPE_PROGRAMES_PATH) else None),
+        'avis': motiu,
+        'ordres': _sepe_programes_ordres(),
+    })
 
 
 _fpo_agenda_cache: dict = {}   # {dies: (clau, agenda)}

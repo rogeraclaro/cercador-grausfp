@@ -297,6 +297,17 @@
       <div id="fpo-status"></div>
     </section>
 
+    <!-- ── Secció: Programes del SEPE (Pla 100) ── -->
+    <section class="section" id="section-sepe-programes">
+      <h2>Programes del SEPE</h2>
+      <p style="color: var(--warm); font-size: 13px; margin-bottom: 12px;">
+        Objectiu, mòduls, requisits i ocupacions de cada especialitat del catàleg del SEPE, extrets dels
+        programes formatius. No es baixen des del servidor: l'script <code>scripts/sepe_descarrega_programes.py</code>
+        s'executa a l'ordinador del propietari i el fitxer es copia aquí. Cal repassar-los cada pocs mesos.
+      </p>
+      <div id="sepe-programes-status"></div>
+    </section>
+
     <!-- ── Secció 2: Refresh periòdic ── -->
 
     <section class="section" id="section-scheduler">
@@ -791,6 +802,43 @@
     });
 
     pollFpoOnce();
+
+    // ── Programes del SEPE (Pla 100) ─────────────────────────
+    async function loadSepeProgrames() {
+      const el = document.getElementById('sepe-programes-status');
+      const data = (iso) => iso ? new Date(iso).toLocaleString('ca-ES') : '(cap)';
+      try {
+        const res = await fetch(API_BASE + '/api/admin/sepe-programes-status', { credentials: 'include' });
+        if (res.status === 401) {
+          el.innerHTML = '<div class="status-msg info">Cal iniciar sessió com a administrador per veure l\'estat.</div>';
+          return;
+        }
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const s = await res.json();
+        let html = `<strong>Última descàrrega:</strong> ${escapeHtml(data(s.darreraDescarrega))}`
+          + `<br><strong>Última repassada completa:</strong> ${escapeHtml(data(s.repassadaCompleta))}`
+          + `<br>${s.total.toLocaleString('ca-ES')} especialitats al catàleg · `
+          + `<strong>${s.pendents.toLocaleString('ca-ES')}</strong> sense baixar o amb versió nova · `
+          + `${s.senseProgramaLlegit.toLocaleString('ca-ES')} sense programa llegit (sense PDF o PDF il·legible)`;
+        const o = s.ordres;
+        const pre = (cmd) => `<pre style="white-space: pre-wrap; margin: 6px 0;"><code>${escapeHtml(cmd)}</code></pre>`;
+        if (s.avis) {
+          const motiu = s.avis === 'cap' ? 'Encara no hi ha cap descàrrega en aquest servidor.'
+            : s.avis === 'antiga' ? 'Fa més de 4 mesos de l\'última repassada completa.'
+            : `Hi ha més de 100 especialitats pendents.`;
+          const ordre = s.avis === 'pendents' ? o.canvis : o.completa;
+          html += `<br><br><strong>Cal tornar a baixar-los.</strong> ${escapeHtml(motiu)}`
+            + '<br>1. A l\'ordinador del propietari, des de la carpeta <code>fp-cercador</code> del repositori '
+            + '(dura hores; si s\'atura, la mateixa ordre la repren):' + pre(ordre)
+            + '2. Copiar el fitxer al servidor (no cal reiniciar: es llegeix sol):' + pre(o.copia + '\n' + o.propietari);
+        }
+        el.innerHTML = `<div class="status-msg ${s.avis ? 'error' : 'info'}">${html}</div>`;
+      } catch (e) {
+        el.innerHTML = '<div class="status-msg error">Error de connexió en consultar l\'estat dels programes.</div>';
+      }
+    }
+
+    loadSepeProgrames();
 
     // ── Gestió d'usuaris ──────────────────────────────────────
     const usersLoadBtn = document.getElementById('users-load-btn');

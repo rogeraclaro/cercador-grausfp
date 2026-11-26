@@ -395,3 +395,74 @@ def test_entitats_correu_nomes_per_a_admin_i_mai_nif(client, ent_calls, fpo_data
     for r in (anonim, admin):
         assert b'B12345678' not in r.data and b'TITULAR SL' not in r.data
         assert set(r.get_json()['entitats'][0]) <= set(app_module._SEPE_ENTITAT_PUBLIC) | {'email'}
+
+
+# --- Pla 100: detall d'una especialitat (programa extret + ocupacions) ---
+
+PROGRAMA = {'format': 'modern', 'objectiu': 'Adquirir…', 'moduls': [{'nom': 'EVALUACIÓN DEL APRENDIZAJE', 'hores': 50}],
+            'moduls_ok': True, 'moduls_error': None, 'requisits_acces': [{'tipus': 'experiencia', 'text': 'No se requiere'}],
+            'tutories_presencials_h': 0, 'vinculacions': None, 'hores_presencial': None, 'hores_teleformacio': None}
+
+
+@pytest.fixture
+def programes(client, fpo_data, monkeypatch):  # noqa: F811
+    path = fpo_data / 'sepe_programes.json'
+    monkeypatch.setattr(app_module, 'SEPE_PROGRAMES_PATH', str(path))
+    monkeypatch.setattr(app_module, '_sepe_programes_cache', {'mtime': None, 'data': None})
+    monkeypatch.setattr(app_module, 'ADMIN_TOKEN', 'test-token')
+    data = {'SSCE22': {'versio': 1, 'baixat': '2026-11-26T10:00:00+00:00', 'programa': PROGRAMA,
+                       'ocupacions': [{'codi': '23291010', 'nom': 'FORMADORES DE FORMACIÓN NO REGLADA'}],
+                       'sense_pdf': False},
+            # Versió antiga (el catàleg és a la 2): no s'ha de servir
+            'IFCD0112': {'versio': 1, 'baixat': '2026-11-26T10:00:00+00:00', 'programa': PROGRAMA,
+                         'ocupacions': [{'codi': '1', 'nom': 'X'}], 'sense_pdf': False}}
+    path.write_text(json.dumps(data), encoding='utf-8')
+    return path
+
+
+def test_especialitat_amb_programa(client, programes):
+    r = client.get('/api/sepe/especialitat/SSCE22')
+    assert r.status_code == 200
+    d = r.get_json()
+    assert d['especialitat']['codi'] == 'SSCE22' and d['especialitat']['hores'] == 50.0
+    assert 'idSepe' not in d['especialitat']
+    assert d['programa']['objectiu'] == 'Adquirir…'
+    assert d['programa']['moduls'] == [{'nom': 'Evaluación del aprendizaje', 'hores': 50}]
+    assert 'moduls_ok' not in d['programa'] and 'moduls_error' not in d['programa']
+    assert d['ocupacions'] == [{'codi': '23291010', 'nom': 'Formadores de formación no reglada'}]
+    assert d['baixat'] and d['programaUrl'] == '/api/sepe/programa/SSCE22'
+
+
+def test_especialitat_amb_versio_antiga_no_serveix_el_programa(client, programes):
+    d = client.get('/api/sepe/especialitat/IFCD0112').get_json()
+    assert d['programa'] is None and d['ocupacions'] == [] and d['baixat'] is None
+    assert d['especialitat']['versio'] == 2
+
+
+def test_especialitat_sense_fitxer_de_programes(client, programes):
+    os.remove(programes)
+    d = client.get('/api/sepe/especialitat/SSCE22').get_json()
+    assert d['programa'] is None and d['ocupacions'] == []
+
+
+def test_especialitat_desconeguda_404(client, programes):
+    assert client.get('/api/sepe/especialitat/NOEXISTEIX').status_code == 404
+
+
+def test_estat_programes_nomes_admin(client, programes):
+    assert client.get('/api/admin/sepe-programes-status').status_code == 401
+
+
+def test_estat_programes(client, programes):
+    r = client.get('/api/admin/sepe-programes-status', headers={'Authorization': 'Bearer test-token'})
+    d = r.get_json()
+    assert d['total'] == 2 and d['pendents'] == 1 and d['senseProgramaLlegit'] == 0
+    assert d['darreraDescarrega'] == d['repassadaCompleta'] == '2026-11-26T10:00:00+00:00'
+    assert 'scp backend/data/sepe_programes.json contabo:' in d['ordres']['copia']
+    assert '--nomes-canvis' in d['ordres']['canvis'] and '--des-de' in d['ordres']['completa']
+
+
+def test_estat_programes_avisa_si_no_n_hi_ha(client, programes):
+    os.remove(programes)
+    d = client.get('/api/admin/sepe-programes-status', headers={'Authorization': 'Bearer test-token'}).get_json()
+    assert d['avis'] == 'cap' and d['pendents'] == 2

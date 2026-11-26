@@ -1,0 +1,32 @@
+<html><body><form id="formulario">
+<div id="formulario:modalOcupaciones" style="" class="modal componenteCesp ccModal fade " data-backdrop="static" data-keyboard="static">
+				<div class="modal-dialog" style="width : 1000px">
+					<div class="modal-content"><div class="modal-header "><span class="modal-title font-weight-bold modal_confirmacion_cabecera">
+									Ocupaciones
+								</span></div>
+						
+						<div class="modal-body"><table id="formulario:modalOcupaciones:ocupacionesSeleccionadasTable" class="tablaSede dataTable no-footer"><thead><tr><th scope="col">Código Ocupación</th><th scope="col">Denominación</th></tr></thead><tbody id="formulario:modalOcupaciones:ocupacionesSeleccionadasTable:tbody_element"><tr class="rows"><td>
+                            <div style="text-align: center;" class="center"><span id="formulario:modalOcupaciones:ocupacionesSeleccionadasTable:0:codOcupacion">23291029</span></div></td><td>
+                            FORMADORES DE FORMACIÓN PARA EL EMPLEO
+                        </td></tr><tr class="rows"><td>
+                            <div style="text-align: center;" class="center"><span id="formulario:modalOcupaciones:ocupacionesSeleccionadasTable:1:codOcupacion">23291010</span></div></td><td>
+                            FORMADORES DE FORMACIÓN NO REGLADA
+                        </td></tr><tr class="rows"><td>
+                            <div style="text-align: center;" class="center"><span id="formulario:modalOcupaciones:ocupacionesSeleccionadasTable:2:codOcupacion">23211034</span></div></td><td>
+                            FORMADORES DE FORMADORES
+                        </td></tr></tbody></table>
+						</div><div class="modal-footer">
+                        <div class="floatR botonera"><a href="#" onclick="jsf.util.chain(this, event,'jsf.ajax.request(this,event,{\'javax.faces.behavior.event\':\'action\'})'); return false;" id="formulario:modalOcupaciones:btnAceptarAvisoPermiso" name="formulario:modalOcupaciones:btnAceptarAvisoPermiso" type="button" class="btn btn-primary btnCerrarModal">Aceptar</a>
+                        </div></div>
+
+					</div>
+				</div>
+			</div><script type="text/javascript">
+                    mostrarAvisoAjaxCargando('ocultar');
+                    $('[id$=modalOcupaciones]').modal({
+                        backdrop : "static",
+                        keyboard : false,
+                        show : true
+                    });
+                </script>
+</form></body></html>

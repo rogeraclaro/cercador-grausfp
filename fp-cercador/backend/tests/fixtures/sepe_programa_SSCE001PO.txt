@@ -1,0 +1,60 @@
+PROGRAMA FORMATIVO DE LA ESPECIALIDAD FORMATIVA
+TELEFORMACIÓN PARA DOCENTES
+SSCE001PO
+PROGRAMAS DE FORMACIÓN DIRIGIDOS PRIORITARIAMENTE A TRABAJADORES OCUPADOS
+Noviembre 2018
+PROGRAMAS DE FORMACIÓN DIRIGIDOS PRIORITARIAMENTE A TRABAJADORES OCUPADOS
+PROGRAMA DE LA ESPECIALIDAD FORMATIVA:
+TELEFORMACIÓN PARA DOCENTES
+DATOS GENERALES DE LA ESPECIALIDAD FORMATIVA
+1. Familia Profesional:SERVICIOS SOCIOCULTURALES Y A LA COMUNIDAD
+Área Profesional:FORMACIÓN Y EDUCACIÓN
+2. Denominación: TELEFORMACIÓN PARA DOCENTES
+3. Código: SSCE001PO
+4. Objetivo General: Adquirir las habilidades y competencias necesarias para la impartición de acciones
+formativas en modalidad teleformación utilizando técnicas, estrategias y recursos
+didácticos.
+5. Número de participantes: Según normativa, el número máximo de participantes en modalidad presencial es
+de 30.
+6. Duración:
+Horas totales: 50 Modalidad: Teleformación
+Distribución de horas:
+Presencial:................. 0
+Teleformación:........... 50
+7. Requisitos mínimos de espacios, instalaciones y equipamiento:
+7.1 Espacio formativo:
+Cada espacio estará equipado con mobiliario docente adecuado al número de alumnos, así mismo
+constará de las instalaciones y equipos de trabajo suficientes para el desarrollo del curso.
+7.2 Equipamientos:
+Se entregará a los participantes los manuales y el material didáctico necesarios para el adecuado desarrollo
+de la acción formativa
+Las instalaciones y equipamientos deberán cumplir con la normativa industrial e higiénico sanitaria
+correspondiente y responderán a medidas de accesibilidad universal y seguridad de los participantes.
+En el caso de que la formación se dirija a personas con discapacidad se realizarán las adaptaciones y los
+ajustes razonables para asegurar su participación en condiciones de igualdad.
+7.2.1 En el caso de formación en modalidad teleformación, se requiere el siguiente equipamiento:
+Requisitos técnicos de la plataforma de teleformación y del contenido virtual de aprendizaje para
+especialidades formativas no dirigidas a la obtención de certificados de profesionalidad en la
+modalidad de teleformación
+1. Requisitos técnicos de la plataforma de teleformación
+La plataforma de teleformación que se utilice para impartir acciones formativas no conducentes a la
+obtención de certificados de profesionalidad deberá reunir los siguientes requisitos técnicos:
+–Compatibilidad con los estándares SCORM e IMS.
+–Rendimiento, entendido como número de alumnos que soporte la plataforma, velocidad de respuesta del
+servidor a los usuarios, y tiempo de carga de las páginas Web o de descarga de archivos, que permita:
+– Soportar un número de alumnos equivalente al número total de participantes en las acciones formativas
+que esté impartiendo el centro o entidad de formación, garantizando un hospedaje mínimo igual al total del
+alumnado de dichas acciones, considerando un número de usuarios concurrentes del 40% de ese
+alumnado.
+– Disponer de la capacidad de transferencia necesaria para que no se produzca efecto retardo en la
+comunicación audiovisual en tiempo real, debiendo tener el servidor en el que se aloja la plataforma un
+ancho de banda mínimo de 100Mbps, suficiente en bajada y subida.
+–Funcionamiento 24 horas al día, los 7 días de la semana.
+– Compatibilidad tecnológica y posibilidades de integración con cualquier infraestructura informática o
+sistema operativo, base de datos, navegador de Internet de entre los más usuales o servidor web,
+debiendo ser posible utilizar las funciones de la plataforma con complementos (plug-in) y visualizadores
+compatibles. Si se requiriese la instalación adicional de algún soporte para funcionalidades avanzadas, la
+plataforma debe facilitar el acceso al mismo sin coste.
+– Integración de herramientas y recursos necesarios para gestionar, administrar, organizar, diseñar,
+impartir y evaluar acciones formativas a través de Internet, disponiendo, específicamente, de las
+siguientes:

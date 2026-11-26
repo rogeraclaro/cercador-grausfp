@@ -657,6 +657,14 @@
     .sepe-ent-list li span { display: block; color: var(--warm); }
     .sepe-ent-list a { color: var(--dark); }
     #sepe-h:focus-visible { outline: 2px solid var(--dark); outline-offset: 4px; }
+    /* Pla 100: programa extret del PDF del SEPE */
+    .sepe-prog { display: flex; flex-direction: column; gap: 8px; max-width: 75ch; }
+    .sepe-prog .detall-ciclos-d { margin-top: 0; }
+    .sepe-prog-text { margin: 4px 0 0; white-space: pre-line; line-height: 1.5; font-size: var(--fs-small); }
+    .sepe-prog-list { margin: 4px 0 0; padding-left: 20px; display: flex; flex-direction: column; gap: 2px; }
+    .sepe-prog-req { margin: 4px 0 0; display: flex; flex-direction: column; gap: 6px; }
+    .sepe-prog-req dt { font-weight: 600; font-size: var(--fs-small); }
+    .sepe-prog-req dd { margin: 0; }
 
     /* ── Representació toggle (targetes/taula) ── */
     .repr-toggle {
@@ -2501,7 +2509,7 @@
     }
   </style>
 
-  <script src="i18n.js?v=20261201"></script>
+  <script src="i18n.js?v=20261202"></script>
   <script src="auth.js?v=20261117b"></script>
   <script src="held.js?v=1"></script>
   <script src="ics.js?v=1"></script>
@@ -2578,6 +2586,7 @@
         sepeExpanded: {},
         sepePage: 1,
         sepeEnt: {},             // Pla 099 — { codi: {open, state, entitats, prov, tipus} } entitats del SEPE
+        sepeDet: {},             // Pla 100 — { codi: {state, programa, ocupacions} } programa extret i ocupacions
         // Pla 097 — filtres i ordre propis de la pestanya «Especialitats SEPE»
         filterSepeMod: '',       // '' | dist | part | pres (vegeu SEPE_MOD)
         filterSepeHores: '',     // '' | h30 | h100 | h300 | hmes (vegeu SEPE_HORES)
@@ -3447,6 +3456,42 @@
           } catch (e) {
             ent.state = 'error';
           }
+        },
+
+        // Pla 100: en desplegar una especialitat es demana el detall (programa extret i ocupacions)
+        // un sol cop. Un error no es mostra: la fitxa queda com abans, amb el botó del PDF.
+        toggleSepeRow(codi) {
+          this.sepeExpanded[codi] = !this.sepeExpanded[codi];
+          if (this.sepeExpanded[codi]) this.loadSepeDet(codi);
+        },
+
+        async loadSepeDet(codi) {
+          const cur = this.sepeDet[codi];
+          if (cur && (cur.state === 'loading' || cur.state === 'ready')) return;
+          this.sepeDet[codi] = { state: 'loading', programa: null, ocupacions: [], baixat: null };
+          const det = this.sepeDet[codi];
+          try {
+            const res = await fetch(API_BASE + '/api/sepe/especialitat/' + encodeURIComponent(codi));
+            if (!res.ok) { det.state = 'error'; return; }
+            const data = await res.json();
+            det.programa = data.programa || null;
+            det.ocupacions = Array.isArray(data.ocupacions) ? data.ocupacions : [];
+            det.baixat = data.baixat || null;
+            det.state = 'ready';
+          } catch (e) {
+            det.state = 'error';
+          }
+        },
+
+        sepeDetHas(codi) {
+          const det = this.sepeDet[codi];
+          return !!(det && det.state === 'ready' && (det.programa || det.ocupacions.length));
+        },
+
+        sepeProg(codi) { return (this.sepeDet[codi] && this.sepeDet[codi].programa) || {}; },
+
+        sepeReqLabel(tipus) {
+          return ['titulacio', 'experiencia', 'altres'].includes(tipus) ? t('sepe.det.req.' + tipus) : '';
         },
 
         sepeEntProvs(codi) {
@@ -5596,9 +5641,9 @@
             <template x-for="e in pagedSepe" :key="e.c">
               <tbody :class="{ 'row-open': sepeExpanded[e.c] }">
                 <tr class="row-link" tabindex="0" :aria-expanded="String(!!sepeExpanded[e.c])"
-                  @click="sepeExpanded[e.c] = !sepeExpanded[e.c]"
-                  @keydown.enter.self="sepeExpanded[e.c] = !sepeExpanded[e.c]"
-                  @keydown.space.self.prevent="sepeExpanded[e.c] = !sepeExpanded[e.c]">
+                  @click="toggleSepeRow(e.c)"
+                  @keydown.enter.self="toggleSepeRow(e.c)"
+                  @keydown.space.self.prevent="toggleSepeRow(e.c)">
                   <td class="col-nom">
                     <span x-text="sepeTitol(e)"></span>
                     <span class="fpo-badge" :title="t('fpo.tooltip.formacioTreball')" x-text="t('sepe.badge')"></span>
@@ -5624,6 +5669,55 @@
                       </p>
                       <p class="fpo-avis" x-text="t('sepe.vigencia', {inici: sepeData(e.vi), fi: sepeData(e.vf)})"></p>
                       <p class="fpo-avis" x-show="e.ca" x-text="e.ca ? t('sepe.codiAntic', {codi: e.ca}) : ''"></p>
+                      <!-- Pla 100: programa extret i ocupacions (text del SEPE, sempre com a text pla) -->
+                      <p class="results-count" role="status" x-show="sepeDet[e.c] && sepeDet[e.c].state === 'loading'"
+                        x-text="t('sepe.det.loading')"></p>
+                      <template x-if="sepeDetHas(e.c)">
+                        <div class="sepe-prog">
+                          <p class="fpo-avis" x-text="t('sepe.det.font', {data: sepeData((sepeDet[e.c].baixat || '').slice(0, 10) || null)})"></p>
+                          <div class="detall-ciclos-d" x-show="sepeProg(e.c).objectiu">
+                            <strong x-text="t('sepe.det.objectiu')"></strong>
+                            <p class="sepe-prog-text" x-text="sepeProg(e.c).objectiu || ''"></p>
+                          </div>
+                          <div class="detall-ciclos-d" x-show="(sepeProg(e.c).moduls || []).length">
+                            <strong x-text="t('sepe.det.moduls')"></strong>
+                            <ol class="sepe-prog-list">
+                              <template x-for="(m, i) in (sepeProg(e.c).moduls || [])" :key="i">
+                                <li><span x-text="m.nom"></span> <span class="detall-hores" x-text="t('sepe.det.hores', {n: m.hores})"></span></li>
+                              </template>
+                            </ol>
+                          </div>
+                          <p class="fpo-avis" x-show="sepeProg(e.c).tutories_presencials_h != null"
+                            x-text="t('sepe.det.tutories', {n: sepeProg(e.c).tutories_presencials_h})"></p>
+                          <p class="fpo-avis" x-show="sepeProg(e.c).hores_presencial != null"
+                            x-text="t('sepe.det.presencial', {n: sepeProg(e.c).hores_presencial})"></p>
+                          <p class="fpo-avis" x-show="sepeProg(e.c).hores_teleformacio != null"
+                            x-text="t('sepe.det.teleformacio', {n: sepeProg(e.c).hores_teleformacio})"></p>
+                          <div class="detall-ciclos-d" x-show="(sepeProg(e.c).requisits_acces || []).length">
+                            <strong x-text="t('sepe.det.requisits')"></strong>
+                            <dl class="sepe-prog-req">
+                              <template x-for="(r, i) in (sepeProg(e.c).requisits_acces || [])" :key="i">
+                                <div>
+                                  <dt x-show="sepeReqLabel(r.tipus)" x-text="sepeReqLabel(r.tipus)"></dt>
+                                  <dd class="sepe-prog-text" x-text="r.text"></dd>
+                                </div>
+                              </template>
+                            </dl>
+                          </div>
+                          <div class="detall-ciclos-d" x-show="sepeProg(e.c).vinculacions">
+                            <strong x-text="t('sepe.det.vinculacions')"></strong>
+                            <p class="sepe-prog-text" x-text="sepeProg(e.c).vinculacions || ''"></p>
+                          </div>
+                          <div class="detall-ciclos-d" x-show="sepeDet[e.c].ocupacions.length">
+                            <strong x-text="t('sepe.det.ocupacions')"></strong>
+                            <ul class="sepe-prog-list">
+                              <template x-for="(o, i) in sepeDet[e.c].ocupacions" :key="i">
+                                <li x-text="o.codi ? o.nom + ' (' + o.codi + ')' : o.nom"></li>
+                              </template>
+                            </ul>
+                          </div>
+                        </div>
+                      </template>
                       <div class="detall-btns">
                         <a class="btn-doc" target="_blank" rel="noopener"
                           :href="sepeProgramaUrl(e.c)" x-text="t('sepe.programa')"></a>
