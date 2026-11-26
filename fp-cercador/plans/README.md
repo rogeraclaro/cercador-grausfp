@@ -108,6 +108,16 @@ amb quins prerequisits i quins passos manuals calen al servidor.
 | 092 | Correspondència certificat ↔ mòduls de cicle a la web (itinerari, fitxa, «Què em falta?») | P2 | M | 090, 091 | DONE i desplegat el 2026-11-17 (prod `56f54ed`) |
 | 093 | Exportació relacional: certificat–MF–UF amb hores i cicle–mòdul–UC | P2 | M | 090 (cicles: 091) | DONE i desplegat el 2026-11-17 (prod `f925907`); pendent només provar-ho en un Excel ca/es |
 | 094 | Revisions de dades dels certificats LOE: hores, UF i certificats absents | P3 | S | — (millor després de 090) | DONE i desplegat el 2026-11-18 (prod `750ad2d` + `c_loe_estructura.json` al VPS + refresc manual) |
+| 095 | Refresc robust: reintents de xarxa, segon intent, fase a l'error, avisos que no marquen «caigut» a Kuma, correu en fallar i estat al panell | P1 | M | — | TODO |
+| 096 | Dades SEPE netes: codi i codi antic separats (arregla el creuament amb el SOC de 216 especialitats), interrogants, majúscules dels títols i sufixos | P1 | M | — | TODO |
+| 097 | Filtres i presentació SEPE al cercador: nivell 1–5, modalitat, durada, família «Competències transversals», bloc SEPE visible, textos i «Volies dir…» | P2 | M | 096 | TODO |
+| 098 | Correccions de títols i equivalències de cerca des del panell d'administració; cerques sense resultat; «avisa d'un error» a les especialitats | P2 | M | 096 | TODO |
+| 099 | Entitats que imparteixen cada especialitat SEPE (a demanda, cache 7 dies; correu només per a l'administrador), també al mode FPO | P2 | M | 096 | TODO |
+| 100 | Descàrrega completa dels programes formatius i les ocupacions del SEPE (des de l'ordinador del propietari, amb validacions, informe i avís de repetició) | P2 | L | 096 | TODO |
+| 101 | Pàgina pública per especialitat SEPE (`/especialitat/<codi>`), amb `noindex` si no té programa llegit | P2 | L | 096, 099, 100 | TODO |
+| 102 | Favorits, alertes (cursos a Catalunya i entitats noves) i exportació CSV per a les especialitats SEPE | P3 | M | 096 (099 per a l'alerta d'entitats) | TODO |
+| 103 | Cerca per ocupació amb especialitats SEPE i prova dels «graus relacionats» (decidir amb números) | P3 | S–M | 100 | TODO |
+| 104 | Investigació: fonts de cursos programats fora de Catalunya (SEPE–FUNDAE, comunitats grans) | P3 | S | — | TODO |
 
 Valors de Status: `TODO` | `IN PROGRESS` | `DONE` | `BLOCKED (motiu en una línia)` | `REJECTED (motiu en una línia)`
 

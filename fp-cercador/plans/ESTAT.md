@@ -323,6 +323,12 @@ La primera vegada, `--discover` triga ~20 min; després va de la memòria cau.
 ### Catàleg d'Especialitats Formatives del SEPE (plans 081–082)
 - 081: **fet** (commits f0a99b0, a54b18c, 7d46fee): scraper + `sepe_especs.json` + badges i filtre a l'FPO.
 - 082: **fet i desplegat 2026-11-26**. Canvi de decisió: les especialitats SEPE surten al cercador principal (pestanya «Especialitats SEPE» + bloc sota els resultats), no en una pàgina a part. Proxy del PDF del programa amb cache. Docs a per-que-grausfp.html#sepe i fonts.html#sepe. Pendent: parlar de com diferenciar-les visualment.
+- **Plans 095–104 escrits el 2026-11-26** (sessió de 21 idees discutides una per una amb el propietari; un pla per sessió):
+  095 refresc robust (P1, el refresc del 22-nov va fallar en silenci) · 096 dades SEPE netes (P1, arregla 216 especialitats mal creuades amb el SOC) ·
+  097 filtres i presentació · 098 correccions des del panell · 099 entitats per especialitat · 100 descàrrega de programes i ocupacions ·
+  101 pàgina pública per especialitat · 102 favorits/alertes/CSV · 103 cerca per ocupació · 104 investigació de cursos fora de Catalunya.
+  Ordre recomanat: 095, 096, 097, 098, 099, 100, 101, 102, 103, 104. Idea descartada: l'avís «Requisits E» (es va resoldre sol).
+- Refresc manual del 2026-11-26: OK (12.989 registres, 7.557 especialitats SEPE, 94 min). Kuma torna a estar en «correcte».
 - Clau: el catàleg és formació en el treball (RD 438/2024 art. 24), no Grados A–E; els CP ja no hi són.
 
 ### Fora del git a la carpeta arrel (no pujat; cal decidir-ho)
