@@ -6,7 +6,9 @@
   /* Paràmetres de l'adreça que pertanyen a la cerca per nom. */
   var PARAMS = ['q', 'grado', 'familia', 'nivel', 'pla', 'favs', 'ordre', 'dir', 'p', 'mod', 'hores'];
   /* Pla 097: filtres propis de la pestanya «Especialitats SEPE» (grado=SEPE). */
-  var SEPE_MOD = ['dist', 'part', 'pres'];
+  /* Pla 105: tele = teleformació, av = aula virtual. Els valors antics es tradueixen. */
+  var SEPE_MOD = ['tele', 'av', 'part', 'pres'];
+  var SEPE_MOD_ANTICS = { dist: 'tele' };
   var SEPE_HORES = ['h30', 'h100', 'h300', 'hmes'];
   var MAX_QUERY = 200;
 
@@ -25,6 +27,7 @@
       // Al catàleg del SEPE l'escala arriba al 5 i hi ha especialitats sense nivell («none»)
       if (/^([45]|none)$/.test(nivel)) state.filterNivel = nivel;
       var mod = params.get('mod');
+      if (Object.prototype.hasOwnProperty.call(SEPE_MOD_ANTICS, mod)) mod = SEPE_MOD_ANTICS[mod];
       if (SEPE_MOD.indexOf(mod) >= 0) state.filterSepeMod = mod;
       var hores = params.get('hores');
       if (SEPE_HORES.indexOf(hores) >= 0) state.filterSepeHores = hores;

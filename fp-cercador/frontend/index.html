@@ -2509,11 +2509,11 @@
     }
   </style>
 
-  <script src="i18n.js?v=20261202"></script>
+  <script src="i18n.js?v=20261203"></script>
   <script src="auth.js?v=20261117b"></script>
   <script src="held.js?v=1"></script>
   <script src="ics.js?v=1"></script>
-  <script src="search-tools.js?v=3"></script>
+  <script src="search-tools.js?v=4"></script>
   <script>
     const API_BASE = window.location.hostname === 'localhost'
       ? 'http://localhost:5001'
@@ -2588,7 +2588,7 @@
         sepeEnt: {},             // Pla 099 — { codi: {open, state, entitats, prov, tipus} } entitats del SEPE
         sepeDet: {},             // Pla 100 — { codi: {state, programa, ocupacions} } programa extret i ocupacions
         // Pla 097 — filtres i ordre propis de la pestanya «Especialitats SEPE»
-        filterSepeMod: '',       // '' | dist | part | pres (vegeu SEPE_MOD)
+        filterSepeMod: '',       // '' | tele | av | part | pres (vegeu SEPE_MOD)
         filterSepeHores: '',     // '' | h30 | h100 | h300 | hmes (vegeu SEPE_HORES)
         sepeSortCol: '',         // '' | titol | codi | hores
         sepeSortDir: 0,
@@ -3302,11 +3302,15 @@
         // graus (només les primeres) quan hi ha text de cerca. No porten favorits, alertes ni centres.
         SEPE_PREVIEW: 10,
         SEPE_CTR: 'CTR',   // Pla 096: família virtual «Activitats i competències transversals» (ACT, RD 69/2025) (només pestanya SEPE)
-        // Pla 097: valors literals de la modalitat del catàleg agrupats en tres opcions
+        // Pla 097 + 105: valors literals de la modalitat del catàleg i aula virtual (e.av) en quatre
+        // opcions. m = modalitats acceptades; av = cal aula virtual; senseAv = s'exclou si en té.
+        // Una especialitat pot sortir a «tele» i a «av» alhora. Amb e.av null (dades d'abans del
+        // pla 105) «part» i «pres» es comporten com abans.
         SEPE_MOD: {
-          dist: ['Teleformación', 'Presencial y teleformación'],
-          part: ['Mixta', 'Presencial y mixta'],
-          pres: ['Presencial'],
+          tele: { m: ['Teleformación', 'Presencial y teleformación'] },
+          av: { av: true },
+          part: { m: ['Mixta', 'Presencial y mixta'], senseAv: true },
+          pres: { m: ['Presencial'], senseAv: true },
         },
         // Pla 097: trams de durada (hores), interval (mín, màx]
         SEPE_HORES: { h30: [0, 30], h100: [30, 100], h300: [100, 300], hmes: [300, Infinity] },
@@ -3392,7 +3396,8 @@
             if (this.filterFamilia && e.familia !== this.filterFamilia) return false;
             // Pla 097: «none» = nivell sense especificar (només a la pestanya SEPE)
             if (this.filterNivel === 'none' ? e.n : (this.filterNivel && e.n !== parseInt(this.filterNivel))) return false;
-            if (mod && !mod.includes(e.m)) return false;
+            if (mod && ((mod.m && !mod.m.includes(e.m)) || (mod.av && e.av !== true)
+              || (mod.senseAv && e.av === true))) return false;
             if (hores && !(e.h > hores[0] && e.h <= hores[1])) return false;
             if (q) {
               const hit = groups ? groups.every(g => g.some(v => e._normT.includes(v))) : e._normT.includes(q);
@@ -3443,7 +3448,7 @@
         async toggleSepeEnt(codi) {
           const cur = this.sepeEnt[codi];
           if (cur && cur.state !== 'error' && cur.state !== 'rate') { cur.open = !cur.open; return; }
-          this.sepeEnt[codi] = { open: true, state: 'loading', entitats: [], prov: '', tipus: '' };
+          this.sepeEnt[codi] = { open: true, state: 'loading', entitats: [], prov: '', tipus: '', nom: '', av: false };
           const ent = this.sepeEnt[codi];
           try {
             // Només l'admin necessita la sessió (per rebre el correu); la resta, petició sense galetes.
@@ -3451,7 +3456,8 @@
               { credentials: this.isAdmin ? 'include' : 'same-origin' });
             if (!res.ok) { ent.state = res.status === 429 ? 'rate' : 'error'; return; }
             const data = await res.json();
-            ent.entitats = (data.entitats || []).map(en => ({ ...en, web: safeHttpUrl(en.web) }));
+            ent.entitats = (data.entitats || []).map(en => ({ ...en, web: safeHttpUrl(en.web), _normNom: this.sepeNorm(en.nom) }));
+            ent.av = data.av === true;   // Pla 105: l'especialitat admet aula virtual
             ent.state = 'ready';
           } catch (e) {
             ent.state = 'error';
@@ -3511,7 +3517,24 @@
         sepeEntFiltered(codi) {
           const ent = this.sepeEnt[codi];
           if (!ent) return [];
-          return ent.entitats.filter(en => (!ent.prov || en.provincia === ent.prov) && (!ent.tipus || en.tipus === ent.tipus));
+          const nom = this.sepeNorm(ent.nom).trim();   // Pla 105: cerca per nom, sense accents ni majúscules
+          return ent.entitats.filter(en => (!ent.prov || en.provincia === ent.prov) && (!ent.tipus || en.tipus === ent.tipus)
+            && (!nom || en._normNom.includes(nom)));
+        },
+
+        sepeNorm(text) { return String(text || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase(); },
+
+        // Pla 105: «Com es pot cursar» a partir del literal de modalitat del SEPE i de l'aula virtual.
+        // Un literal desconegut es mostra tal qual.
+        SEPE_COM: {
+          'Presencial': ['pres'], 'Teleformación': ['tele'], 'Presencial y teleformación': ['pres', 'tele'],
+          'Mixta': ['mixta'], 'Presencial y mixta': ['pres', 'mixta'],
+        },
+        sepeComCursar(e) {
+          const formes = (this.SEPE_COM[e.m] || []).map(k => t('sepe.com.' + k));
+          if (!this.SEPE_COM[e.m] && e.m) formes.push(e.m);
+          if (e.av === true) formes.push(t('sepe.com.av'));
+          return formes.length ? t('sepe.com', { formes: formes.join(' · ') }) : '';
         },
 
         sepeEntCount(codi) {
@@ -4681,7 +4704,8 @@
       <select id="filter-sepe-mod" x-model="filterSepeMod" @change="resetPage()" x-show="filterGrado === 'SEPE'"
         :title="t('sepe.mod.note')">
         <option value="" x-text="t('sepe.filter.modAll')"></option>
-        <option value="dist" x-text="t('sepe.filter.mod.dist')"></option>
+        <option value="tele" x-text="t('sepe.filter.mod.tele')"></option>
+        <option value="av" x-text="t('sepe.filter.mod.av')"></option>
         <option value="part" x-text="t('sepe.filter.mod.part')"></option>
         <option value="pres" x-text="t('sepe.filter.mod.pres')"></option>
       </select>
@@ -5651,6 +5675,8 @@
                       x-text="sepeSufix(e) ? t('sepe.sufix.' + sepeSufix(e)) : ''"></span>
                     <span class="fpo-badge" x-show="e.nc > 0"
                       x-text="e.nc === 1 ? t('sepe.cursos.one') : t('sepe.cursos.many', {n: e.nc})"></span>
+                    <!-- Pla 105 -->
+                    <span class="fpo-badge" x-show="e.av === true" :title="t('sepe.av.help')" x-text="t('sepe.av.badge')"></span>
                   </td>
                   <td class="col-codi" x-text="e.c"></td>
                   <td class="col-fam" x-text="sepeFamilia(e)"></td>
@@ -5669,6 +5695,9 @@
                       </p>
                       <p class="fpo-avis" x-text="t('sepe.vigencia', {inici: sepeData(e.vi), fi: sepeData(e.vf)})"></p>
                       <p class="fpo-avis" x-show="e.ca" x-text="e.ca ? t('sepe.codiAntic', {codi: e.ca}) : ''"></p>
+                      <!-- Pla 105: com es pot cursar (modalitat del catàleg + aula virtual) -->
+                      <p class="fpo-avis" x-show="sepeComCursar(e)" x-text="sepeComCursar(e)"></p>
+                      <p class="fpo-avis" x-show="e.av === true" x-text="t('sepe.av.help')"></p>
                       <!-- Pla 100: programa extret i ocupacions (text del SEPE, sempre com a text pla) -->
                       <p class="results-count" role="status" x-show="sepeDet[e.c] && sepeDet[e.c].state === 'loading'"
                         x-text="t('sepe.det.loading')"></p>
@@ -5740,6 +5769,9 @@
                       <template x-if="sepeEnt[e.c]">
                         <div class="sepe-ent" x-show="sepeEnt[e.c].open">
                           <p class="fpo-avis" x-text="t('sepe.ent.note')"></p>
+                          <!-- Pla 105: límits de la llista del SEPE -->
+                          <p class="fpo-avis" x-text="t('sepe.ent.notaLlista')"></p>
+                          <p class="fpo-avis" x-show="sepeEnt[e.c].av" x-text="t('sepe.ent.notaAv')"></p>
                           <p class="results-count" role="status" x-show="sepeEnt[e.c].state === 'loading'" x-text="t('sepe.ent.loading')"></p>
                           <p class="results-count" role="alert" x-show="sepeEnt[e.c].state === 'error'" x-text="t('sepe.ent.error')"></p>
                           <p class="results-count" role="alert" x-show="sepeEnt[e.c].state === 'rate'" x-text="t('sepe.ent.rate')"></p>
@@ -5748,6 +5780,9 @@
                           <p class="results-count" role="status" x-show="sepeEnt[e.c].state === 'ready' && sepeEnt[e.c].entitats.length"
                             x-text="sepeEntCount(e.c)"></p>
                           <div class="sepe-ent-filters" x-show="sepeEnt[e.c].state === 'ready' && sepeEnt[e.c].entitats.length > 1">
+                            <label><span x-text="t('sepe.ent.nom')"></span>
+                              <input type="search" x-model="sepeEnt[e.c].nom" maxlength="100" autocomplete="off">
+                            </label>
                             <label><span x-text="t('sepe.ent.prov')"></span>
                               <select x-model="sepeEnt[e.c].prov">
                                 <option value="" x-text="t('sepe.ent.prov.totes')"></option>
@@ -5958,6 +5993,9 @@
                     <template x-if="esp.vinculacio === 'sepe' && sepeEnt[esp.codi]">
                       <div class="sepe-ent" x-show="sepeEnt[esp.codi].open">
                         <p class="fpo-avis" x-text="t('sepe.ent.note')"></p>
+                        <!-- Pla 105: límits de la llista del SEPE -->
+                        <p class="fpo-avis" x-text="t('sepe.ent.notaLlista')"></p>
+                        <p class="fpo-avis" x-show="sepeEnt[esp.codi].av" x-text="t('sepe.ent.notaAv')"></p>
                         <p class="results-count" role="status" x-show="sepeEnt[esp.codi].state === 'loading'" x-text="t('sepe.ent.loading')"></p>
                         <p class="results-count" role="alert" x-show="sepeEnt[esp.codi].state === 'error'" x-text="t('sepe.ent.error')"></p>
                         <p class="results-count" role="alert" x-show="sepeEnt[esp.codi].state === 'rate'" x-text="t('sepe.ent.rate')"></p>
@@ -5966,6 +6004,9 @@
                         <p class="results-count" role="status" x-show="sepeEnt[esp.codi].state === 'ready' && sepeEnt[esp.codi].entitats.length"
                           x-text="sepeEntCount(esp.codi)"></p>
                         <div class="sepe-ent-filters" x-show="sepeEnt[esp.codi].state === 'ready' && sepeEnt[esp.codi].entitats.length > 1">
+                          <label><span x-text="t('sepe.ent.nom')"></span>
+                            <input type="search" x-model="sepeEnt[esp.codi].nom" maxlength="100" autocomplete="off">
+                          </label>
                           <label><span x-text="t('sepe.ent.prov')"></span>
                             <select x-model="sepeEnt[esp.codi].prov">
                               <option value="" x-text="t('sepe.ent.prov.totes')"></option>

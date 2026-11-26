@@ -42,11 +42,11 @@ test('els valors invàlids s\'ignoren en silenci', () => {
 });
 
 test('pla 097: nivells 4, 5 i «none», modalitat i durada només a la pestanya SEPE', () => {
-  const state = { ...DEFAULTS, filterGrado: 'SEPE', filterNivel: 'none', filterSepeMod: 'dist', filterSepeHores: 'h100' };
+  const state = { ...DEFAULTS, filterGrado: 'SEPE', filterNivel: 'none', filterSepeMod: 'tele', filterSepeHores: 'h100' };
   const text = query(paramsFromState(state));
-  assert.strictEqual(text, 'grado=SEPE&nivel=none&mod=dist&hores=h100');
+  assert.strictEqual(text, 'grado=SEPE&nivel=none&mod=tele&hores=h100');
   assert.deepStrictEqual(parse(text),
-    { filterGrado: 'SEPE', filterNivel: 'none', filterSepeMod: 'dist', filterSepeHores: 'h100' });
+    { filterGrado: 'SEPE', filterNivel: 'none', filterSepeMod: 'tele', filterSepeHores: 'h100' });
   assert.deepStrictEqual(parse('grado=SEPE&nivel=5'), { filterGrado: 'SEPE', filterNivel: '5' });
   // Fora de la pestanya SEPE no valen
   assert.deepStrictEqual(parse('grado=D&nivel=4&mod=dist&hores=h30'), { filterGrado: 'D' });
@@ -54,6 +54,20 @@ test('pla 097: nivells 4, 5 i «none», modalitat i durada només a la pestanya 
   assert.deepStrictEqual(paramsFromState({ ...DEFAULTS, filterGrado: 'D', filterSepeMod: 'dist' }), [['grado', 'D']]);
   // Valors inventats
   assert.deepStrictEqual(parse('grado=SEPE&nivel=6&mod=online&hores=h50'), { filterGrado: 'SEPE' });
+});
+
+test('pla 105: quatre opcions de modalitat i els valors antics es tradueixen', () => {
+  for (const mod of ['tele', 'av', 'part', 'pres']) {
+    const text = query(paramsFromState({ ...DEFAULTS, filterGrado: 'SEPE', filterSepeMod: mod }));
+    assert.strictEqual(text, 'grado=SEPE&mod=' + mod);
+    assert.deepStrictEqual(parse(text), { filterGrado: 'SEPE', filterSepeMod: mod });
+  }
+  // Enllaços d'abans del pla 105: «dist» (es pot fer a distància) = teleformació
+  assert.deepStrictEqual(parse('grado=SEPE&mod=dist'), { filterGrado: 'SEPE', filterSepeMod: 'tele' });
+  assert.deepStrictEqual(parse('grado=SEPE&mod=part'), { filterGrado: 'SEPE', filterSepeMod: 'part' });
+  assert.deepStrictEqual(parse('grado=D&mod=av'), { filterGrado: 'D' });
+  assert.deepStrictEqual(parse('grado=SEPE&mod=toString'), { filterGrado: 'SEPE' });
+  assert.deepStrictEqual(parse('grado=SEPE&mod=AV'), { filterGrado: 'SEPE' });
 });
 
 test('q es retalla a 200 caràcters, també en escriure', () => {

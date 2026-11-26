@@ -72,7 +72,8 @@ def _new_session() -> requests.Session:
     return s
 
 
-def _request_body(start: int, length: int) -> dict:
+def _request_body(start: int, length: int, filtres: dict | None = None) -> dict:
+    """Cos del POST de paginació. `filtres`: {nom del wrapper: valor}; la resta, '000' (tots)."""
     columns = [{'data': i, 'name': '', 'searchable': True, 'orderable': i not in (0, 10),
                 'search': {'value': '', 'regex': False}} for i in range(_N_CELLS)]
     filtro = [
@@ -83,7 +84,7 @@ def _request_body(start: int, length: int) -> dict:
     for name in _FILTER_WRAPPERS:
         filtro.append({
             'name': f'formulario:acordeonPrincipal:tabOpcionesAvanzadas:{name}Wrapper:{name}',
-            'value': '000',
+            'value': (filtres or {}).get(name, '000'),
         })
     return {
         'dtInfo': [
@@ -101,16 +102,19 @@ def _request_body(start: int, length: int) -> dict:
     }
 
 
-def _fetch_raw_rows(session) -> list:
-    """Totes les files crues (llistes d'11 cel·les) del catàleg."""
-    resp = session.get(f'{BASE}/flows/main', timeout=TIMEOUT)
-    resp.raise_for_status()
+def _fetch_raw_rows(session, filtres: dict | None = None, bootstrap: bool = True) -> list:
+    """Totes les files crues (llistes d'11 cel·les) del catàleg, o les que passen `filtres`.
+
+    `bootstrap=False` reaprofita les cookies d'una crida anterior amb la mateixa sessió."""
+    if bootstrap:
+        resp = session.get(f'{BASE}/flows/main', timeout=TIMEOUT)
+        resp.raise_for_status()
 
     length = PAGE_LENGTH  # llegit en temps de crida: els tests el poden parchejar
     rows: list = []
     for page in range(MAX_PAGES):
         resp = session.post(f'{BASE}/rest/paginacionEspecialidades',
-                            json=_request_body(page * length, length), timeout=POST_TIMEOUT)
+                            json=_request_body(page * length, length, filtres), timeout=POST_TIMEOUT)
         resp.raise_for_status()
         try:
             payload = json.loads(resp.content.decode('latin-1'))
@@ -227,11 +231,42 @@ def validate_rows(rows: list) -> None:
 # Orquestració
 # ---------------------------------------------------------------------------
 
+# Pla 105: filtres avançats del cercador que són una propietat de cada especialitat.
+# Camp desat → wrapper del formulari. Només es consulta el «SI»; el «NO» es dedueix.
+_FILTRES_SI = (('aulaVirtual', 'aulaVirtualSeleccionada'),
+               ('tutoriaPresencial', 'tutoriaPresencial'))
+
+
+def _codis_si(session, wrapper: str, total: int):
+    """Codis de les especialitats amb el filtre `wrapper` a «SI», o None si no es pot saber.
+
+    No fatal: un error de xarxa o de format deixa el camp a None i el refresc continua.
+    0 codis o tots els del catàleg es tracta com a error de format (el filtre no s'ha aplicat).
+    """
+    try:
+        raw = _fetch_raw_rows(session, {wrapper: 'SI'}, bootstrap=False)
+        codis = {_split_codi(_text(cells[1]))[0] for cells in raw
+                 if isinstance(cells, list) and len(cells) == _N_CELLS}
+    except (requests.RequestException, SepeDataError) as exc:
+        logger.warning('sepe: filtre %s=SI no disponible: %s', wrapper, exc)
+        return None
+    if not codis or len(codis) >= total:
+        logger.warning('sepe: filtre %s=SI amb %d de %d especialitats: format inesperat, es deixa buit',
+                       wrapper, len(codis), total)
+        return None
+    return codis
+
+
 def build_sepe_data(session=None) -> list:
     """Totes les especialitats del catàleg, parsejades i validades."""
     session = session or _new_session()
     rows = [parse_row(cells) for cells in _fetch_raw_rows(session)]
     validate_rows(rows)
+    for camp, wrapper in _FILTRES_SI:
+        codis = _codis_si(session, wrapper, len(rows))
+        for row in rows:
+            row[camp] = None if codis is None else row['codi'] in codis
+        logger.info('sepe: %s=SI → %s especialitats', wrapper, 'desconegut' if codis is None else len(codis))
     logger.info('sepe: %d especialitats del catàleg', len(rows))
     return rows
 

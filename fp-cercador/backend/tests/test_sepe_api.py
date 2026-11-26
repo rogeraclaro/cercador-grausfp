@@ -67,7 +67,7 @@ def test_llistat_format_compacte(client):
                     'tm': 'Tutorizacion en teleformación', 'ca': None, 'sx': None,
                     'f': 'SSC', 'a': 'SSCE', 'n': None, 'm': 'Presencial y teleformación',
                     'h': 50.0, 'ct': 'Digitales', 'v': 1, 'vi': '2025-04-25', 'vf': '2030-04-25',
-                    'nc': 0}
+                    'nc': 0, 'av': None, 'tp': None}   # dades d'abans del pla 105
     assert d['actualitzat']
     assert 'warning' not in d
 
@@ -466,3 +466,34 @@ def test_estat_programes_avisa_si_no_n_hi_ha(client, programes):
     os.remove(programes)
     d = client.get('/api/admin/sepe-programes-status', headers={'Authorization': 'Bearer test-token'}).get_json()
     assert d['avis'] == 'cap' and d['pendents'] == 2
+
+
+# --- Pla 105: aula virtual i tutoria presencial ---
+
+@pytest.fixture
+def client_av(client, fpo_data):  # noqa: F811
+    rows = [dict(SEPE_ROWS[0], aulaVirtual=True, tutoriaPresencial=False),
+            dict(SEPE_ROWS[1], aulaVirtual=False, tutoriaPresencial=True)]
+    (fpo_data / 'sepe_especs.json').write_text(json.dumps(rows), encoding='utf-8')
+    return client
+
+
+def test_llistat_av_tp(client_av):
+    by_codi = {e['c']: e for e in client_av.get('/api/sepe/especialitats').get_json()['especialitats']}
+    assert (by_codi['IFCD0112']['av'], by_codi['IFCD0112']['tp']) == (True, False)
+    assert (by_codi['SSCE22']['av'], by_codi['SSCE22']['tp']) == (False, True)
+
+
+def test_detall_av_tp(client_av):
+    esp = client_av.get('/api/sepe/especialitat/IFCD0112').get_json()['especialitat']
+    assert esp['aulaVirtual'] is True and esp['tutoriaPresencial'] is False
+
+
+def test_detall_av_tp_sense_dada(client):
+    esp = client.get('/api/sepe/especialitat/SSCE22').get_json()['especialitat']
+    assert esp['aulaVirtual'] is None and esp['tutoriaPresencial'] is None
+
+
+def test_entitats_porta_av(client_av, ent_calls):
+    assert client_av.get('/api/sepe/entitats/IFCD0112').get_json()['av'] is True
+    assert client_av.get('/api/sepe/entitats/SSCE22').get_json()['av'] is False

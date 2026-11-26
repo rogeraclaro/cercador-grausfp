@@ -9,6 +9,7 @@ import json
 import os
 
 import pytest
+import requests
 
 from scrapers import sepe_scraper as sepe
 
@@ -31,15 +32,18 @@ class FakeResponse:
 
     def raise_for_status(self):
         if self.status_code >= 400:
-            raise RuntimeError(f'HTTP {self.status_code}')
+            raise requests.HTTPError(f'HTTP {self.status_code}')
 
 
 class FakeSession:
     """Serveix les files de la fixture paginant segons start/length del cos."""
 
-    def __init__(self, rows=None, post_content=None):
+    def __init__(self, rows=None, post_content=None, si=None, fail=()):
         self.rows = rows if rows is not None else _fixture_rows()
         self.post_content = post_content
+        self.si = si or {}        # Pla 105: {wrapper: [índexs de files amb «SI»]}
+        self.fail = set(fail)     # wrappers que fallen amb HTTP 500
+        self.filtres = []         # filtres «SI» de cada POST
         self.calls = []  # (mètode, url, start)
         self.headers = {}
 
@@ -52,10 +56,19 @@ class FakeSession:
         self.calls.append(('POST', url, dt['start']))
         if self.post_content is not None:
             return FakeResponse(self.post_content)
+        prefix = 'formulario:acordeonPrincipal:tabOpcionesAvanzadas:'
+        si = [f['name'][len(prefix):].split('Wrapper')[0] for f in json['filtro']
+              if f['name'].startswith(prefix) and f['value'] == 'SI']
+        self.filtres.append(si)
+        rows = self.rows
+        if si:
+            if si[0] in self.fail:
+                return FakeResponse(b'', status_code=500)
+            rows = [self.rows[i] for i in self.si.get(si[0], range(len(self.rows)))]
         start, length = dt['start'], dt['length']
-        page = self.rows[start:start + length]
+        page = rows[start:start + length]
         body = {'draw': 1, 'recordsTotal': len(self.rows),
-                'recordsFiltered': len(self.rows), 'data': page}
+                'recordsFiltered': len(rows), 'data': page}
         return FakeResponse(sepe_dumps(body))
 
 
@@ -241,6 +254,61 @@ def test_build_with_patched_min_rows(monkeypatch):
     monkeypatch.setattr(sepe, 'MIN_ROWS', 2)
     got = sepe.build_sepe_data(FakeSession())
     assert [r['codi'] for r in got] == ['ADGA12DCP', 'ADGD0073', 'FCOE001PO']
+
+
+# --- Pla 105: aula virtual i tutoria presencial ---
+
+def test_request_body_filtres_si():
+    body = sepe._request_body(0, 2000, {'aulaVirtualSeleccionada': 'SI'})
+    filtro = {item['name']: item['value'] for item in body['filtro']}
+    pre = 'formulario:acordeonPrincipal:tabOpcionesAvanzadas:'
+    assert filtro[pre + 'aulaVirtualSeleccionadaWrapper:aulaVirtualSeleccionada'] == 'SI'
+    assert filtro[pre + 'tutoriaPresencialWrapper:tutoriaPresencial'] == '000'
+
+
+def test_build_aula_virtual_i_tutoria(monkeypatch):
+    monkeypatch.setattr(sepe, 'MIN_ROWS', 2)
+    session = FakeSession(si={'aulaVirtualSeleccionada': [0], 'tutoriaPresencial': [1, 2]})
+    got = {r['codi']: r for r in sepe.build_sepe_data(session)}
+    assert got['ADGA12DCP']['aulaVirtual'] is True
+    assert got['ADGD0073']['aulaVirtual'] is False
+    assert got['FCOE001PO']['aulaVirtual'] is False
+    assert got['ADGA12DCP']['tutoriaPresencial'] is False
+    assert got['FCOE001PO']['tutoriaPresencial'] is True
+    # una sola sessió: un GET i, després, el llistat complet i una consulta «SI» per filtre
+    assert [m for m, _u, _s in session.calls] == ['GET', 'POST', 'POST', 'POST']
+    assert session.filtres == [[], ['aulaVirtualSeleccionada'], ['tutoriaPresencial']]
+
+
+def test_build_filtre_que_falla_deixa_none(monkeypatch, caplog):
+    monkeypatch.setattr(sepe, 'MIN_ROWS', 2)
+    session = FakeSession(si={'tutoriaPresencial': [1]}, fail={'aulaVirtualSeleccionada'})
+    rows = sepe.build_sepe_data(session)
+    assert len(rows) == 3
+    assert all(r['aulaVirtual'] is None for r in rows)
+    assert [r['tutoriaPresencial'] for r in rows] == [False, True, False]
+    assert 'aulaVirtualSeleccionada' in caplog.text
+
+
+def test_build_filtre_amb_resposta_no_json_deixa_none(monkeypatch):
+    monkeypatch.setattr(sepe, 'MIN_ROWS', 2)
+
+    class HtmlSession(FakeSession):
+        def post(self, url, json=None, **kwargs):  # noqa: A002
+            resp = super().post(url, json=json, **kwargs)
+            return FakeResponse(b'<html>error</html>') if self.filtres[-1] else resp
+
+    rows = sepe.build_sepe_data(HtmlSession(si={'aulaVirtualSeleccionada': [0]}))
+    assert all(r['aulaVirtual'] is None and r['tutoriaPresencial'] is None for r in rows)
+
+
+@pytest.mark.parametrize('si', [[], [0, 1, 2]])
+def test_build_filtre_amb_0_o_tots_es_error_de_format(monkeypatch, caplog, si):
+    monkeypatch.setattr(sepe, 'MIN_ROWS', 2)
+    rows = sepe.build_sepe_data(FakeSession(si={'aulaVirtualSeleccionada': si, 'tutoriaPresencial': [2]}))
+    assert all(r['aulaVirtual'] is None for r in rows)
+    assert [r['tutoriaPresencial'] for r in rows] == [False, False, True]
+    assert 'format inesperat' in caplog.text
 
 
 def _rows(n: int) -> list:

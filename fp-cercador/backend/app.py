@@ -2103,6 +2103,8 @@ def _sepe_llista() -> dict:
             'ct': r.get('competenciaTransversal'), 'v': r.get('versio'),
             'vi': r.get('vigenciaInici'), 'vf': r.get('vigenciaFi'),
             'nc': len(cursos_by_espec.get(codi, [])),
+            # Pla 105: admet aula virtual / tutoria presencial (None = dada no disponible)
+            'av': r.get('aulaVirtual'), 'tp': r.get('tutoriaPresencial'),
         })
     families[_SEPE_TRANSVERSAL] = dict(_SEPE_TRANSVERSAL_DESC)
     # Només es retornen les famílies i àrees que surten al catàleg SEPE.
@@ -2231,7 +2233,9 @@ def api_sepe_entitats(codi):
             _write_atomic(path, json.dumps(data, ensure_ascii=False).encode('utf-8'))
     camps = _SEPE_ENTITAT_PUBLIC + (('email',) if _check_admin(request) else ())
     entitats = [{k: e.get(k) for k in camps} for e in data['entitats'] if isinstance(e, dict)]
-    resp = jsonify({'entitats': entitats, 'actualitzat': data.get('actualitzat'), 'total': len(entitats)})
+    # Pla 105: si l'especialitat admet aula virtual (per a la nota del panell al mode FPO)
+    resp = jsonify({'entitats': entitats, 'actualitzat': data.get('actualitzat'), 'total': len(entitats),
+                    'av': sepe.get('aulaVirtual')})
     resp.headers['Cache-Control'] = 'private, no-store'   # la resposta depèn de qui la demana
     return resp
 
@@ -2294,7 +2298,8 @@ def api_sepe_especialitat(codi):
     return jsonify({
         'especialitat': {k: sepe.get(k) for k in (
             'codi', 'codiAntic', 'sufix', 'titol_es', 'titol_mostra', 'versio', 'familia_es', 'area_es',
-            'competenciaTransversal', 'nivell', 'modalitat', 'hores', 'vigenciaInici', 'vigenciaFi')},
+            'competenciaTransversal', 'nivell', 'modalitat', 'hores', 'vigenciaInici', 'vigenciaFi',
+            'aulaVirtual', 'tutoriaPresencial')},
         'programa': _sepe_programa_public(entry.get('programa')) if vigent else None,
         'ocupacions': [{'codi': o.get('codi'), 'nom': titols.display_title(o.get('nom') or '')}
                        for o in (ocupacions if isinstance(ocupacions, list) else []) if isinstance(o, dict)],
