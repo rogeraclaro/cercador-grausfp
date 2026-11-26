@@ -6,6 +6,29 @@ Depèn de: **081 fases 1–2** (`backend/data/sepe_especs.json`). Llegir la secc
 "Diagnosi tècnica" del pla 081: no es repeteixen aquí.
 Executable per un agent sense context.
 
+## Canvi de decisió (2026-11-26) — DONE, no desplegat
+
+El propietari vol que **tots els codis surtin al cercador principal**, no en una pàgina a part. D1 queda
+substituïda; la resta de l'API (fase 1) es manté tal com s'havia previst.
+
+Fet:
+- `GET /api/sepe/especialitats` (format compacte + `families`/`arees` + `actualitzat`) i
+  `GET /api/sepe/programa/<codi>` (proxy amb cache en disc a `backend/data/sepe_programes/`, 30 dies; marcador
+  `.nopdf` 7 dies; 10 descàrregues no cachejades per IP i minut; 502 si el SEPE falla, amb PDF caducat si n'hi ha).
+  `sepe_scraper.fetch_programa_pdf()` fa el POST JSF. Tests: `backend/tests/test_sepe_api.py`.
+- `api_fpo_especialitat`: `programaSepeUrl` quan el SOC no dona `programaUrl` (botó al panell FPO).
+- `index.html`, mode per nom: pestanya «Especialitats SEPE» (`?grado=SEPE`, paginada a 50) i bloc
+  «També al catàleg estatal del SEPE (N)» sota els graus quan hi ha ≥2 caràcters de cerca (10 primers +
+  «Veure les N especialitats»). Càrrega mandrosa del JSON (~1,8 MB sense gzip). Filtres de família (nom
+  normalitzat + àlies) i nivell; sense favorits, alertes ni centres. Enllaç «Veure els cursos a Catalunya»
+  → `?mode=fpo&esp=<codi>` (paràmetre que ja existia).
+- Documentació: `per-que-grausfp.html#sepe` (+ FAQ 7) i `docs/per-que-grausfp.md`; `fonts.html#sepe` amb
+  la font i la freqüència d'actualització.
+
+Pendent de parlar amb el propietari: com diferenciar visualment les especialitats SEPE dels graus (ara: etiqueta
+«Especialitat SEPE» + bloc separat). Al VPS cal que `backend/data/sepe_programes/` sigui escrivible per
+l'usuari del site (el codi el crea si pot).
+
 ## Decisions (preses a la sessió; el propietari les pot revisar)
 
 | # | Decisió |

@@ -322,7 +322,7 @@ La primera vegada, `--discover` triga ~20 min; després va de la memòria cau.
 
 ### Catàleg d'Especialitats Formatives del SEPE (plans 081–082)
 - 081: **fet** (commits f0a99b0, a54b18c, 7d46fee): scraper + `sepe_especs.json` + badges i filtre a l'FPO.
-- 082: pàgina a part `cataleg-especialitats.html` + proxy del PDF del programa. Depèn de 081 f1–2.
+- 082: **fet 2026-11-26, no desplegat**. Canvi de decisió: les especialitats SEPE surten al cercador principal (pestanya «Especialitats SEPE» + bloc sota els resultats), no en una pàgina a part. Proxy del PDF del programa amb cache. Docs a per-que-grausfp.html#sepe i fonts.html#sepe. Pendent: parlar de com diferenciar-les visualment.
 - Clau: el catàleg és formació en el treball (RD 438/2024 art. 24), no Grados A–E; els CP ja no hi són.
 
 ### Fora del git a la carpeta arrel (no pujat; cal decidir-ho)

@@ -34,6 +34,16 @@ Tot el sistema. Tot a la vegada.
 
 ---
 
+## I les especialitats formatives del SEPE?
+
+A més dels Graus A–E, el cercador inclou el **catàleg estatal d'especialitats formatives** del SEPE: unes 7.500 especialitats de formació en el treball (Llei 3/2023 d'Ocupació i Reial decret 438/2024). Un exemple és *Tutorització en teleformació* (codi SSCE22), de 50 hores, pensada per a qui ha de fer de tutor de cursos en línia.
+
+**No són graus de FP.** No donen cap títol ni certificat oficial i no s'acumulen per obtenir-ne cap: són cursos per actualitzar-se o especialitzar-se, que imparteixen entitats acreditades a tot l'Estat, sovint dins de programes subvencionats o de formació bonificada per les empreses. Per això el cercador les mostra a part, amb l'etiqueta «Especialitat SEPE».
+
+Com trobar-les: escriu el nom o el codi al cercador i, sota els graus, apareix el bloc «També al catàleg estatal del SEPE». Per veure-les totes, fes servir la pestanya «Especialitats SEPE», que també es pot filtrar per família i nivell. Cada especialitat té el programa formatiu oficial en PDF i, si n'hi ha cursos programats a Catalunya, un enllaç per veure'ls al mode «Cursos FPO (Catalunya)».
+
+---
+
 ## Funcionalitats per a cada perfil
 
 ### Si ets estudiant
@@ -109,7 +119,7 @@ El registre dona accés a: favorits, alertes, seguiment de centres i exportació
 ## Preguntes freqüents
 
 **Les dades són oficials?**
-Sí. Totes les dades provenen de les fonts oficials del Ministeri d'Educació (todofp.es) i dels PDFs normatius publicats al BOE. El sistema s'actualitza automàticament quan el ministeri publica canvis.
+Sí. Totes les dades provenen de les fonts oficials del Ministeri d'Educació (todofp.es) i dels PDFs normatius publicats al BOE; les especialitats formatives, del catàleg del SEPE. El sistema s'actualitza automàticament quan el ministeri publica canvis.
 
 **Cobreix totes les comunitats autònomes?**
 Sí, l'oferta recollida abasta tot el territori estatal. Les competències educatives estan transferides, però el catàleg de títols és nacional.
@@ -122,6 +132,9 @@ Sí, la interfície és responsiva i funciona correctament en telèfons i taulet
 
 **Quant costa?**
 Res. Ni ara ni en el futur previsible. La plataforma és un projecte sense ànim de lucre orientat al servei públic educatiu.
+
+**Per què surten cursos que no són graus?**
+Perquè volem que trobis tota la formació professional oficial en un sol lloc. Les especialitats del catàleg del SEPE i els cursos FPO són formació per a l'ocupació: sempre porten una etiqueta que les distingeix i mai no es barregen amb els Graus A–E.
 
 ---
 
