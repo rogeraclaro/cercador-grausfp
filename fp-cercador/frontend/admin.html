@@ -349,6 +349,78 @@
       <button id="feedback-load-btn">Carregar comentaris</button>
       <div id="feedback-container" style="margin-top: 16px;"></div>
     </section>
+
+    <!-- ── Secció 6: Correccions de títol d'especialitats (Pla 098) ── -->
+    <section class="section" id="section-corrections">
+      <h2>Correccions</h2>
+      <p style="color: var(--warm); font-size: 13px; margin-bottom: 12px;">
+        Títols d'especialitats del SEPE i de l'FPO corregits a mà. Substitueixen el de la font al cercador i a
+        l'FPO; un camp buit deixa aquell idioma tal com ve. «Ja no cal» vol dir que la font ja dona el mateix
+        títol: la correcció es pot desfer.
+      </p>
+      <form id="corr-form" novalidate>
+        <div class="form-row">
+          <div style="flex:0 0 140px;">
+            <label for="corr-codi">Codi</label>
+            <input id="corr-codi" type="text" maxlength="20" autocomplete="off">
+          </div>
+          <div>
+            <label for="corr-ca">Títol en català</label>
+            <input id="corr-ca" type="text" maxlength="300">
+          </div>
+          <div>
+            <label for="corr-es">Títol en castellà</label>
+            <input id="corr-es" type="text" maxlength="300">
+          </div>
+        </div>
+        <p id="corr-orig" style="color: var(--warm); font-size: 13px; margin-top: 8px;"></p>
+        <button type="submit" id="corr-save-btn">Desa la correcció</button>
+      </form>
+      <div id="corr-status"></div>
+      <button id="corr-load-btn" style="background: var(--warm);">Carregar correccions</button>
+      <div id="corr-container" style="margin-top: 16px;"></div>
+    </section>
+
+    <!-- ── Secció 7: Equivalències de cerca català → castellà (Pla 098) ── -->
+    <section class="section" id="section-terms">
+      <h2>Equivalències de cerca</h2>
+      <p style="color: var(--warm); font-size: 13px; margin-bottom: 12px;">
+        Quan algú cerca la paraula catalana, el cercador també busca la castellana (els títols i els oficis
+        són en castellà). Es desen en minúscules i sense accents. La catalana ha de ser una sola paraula.
+        Els canvis arriben als navegadors en uns minuts.
+      </p>
+      <form id="terms-form" novalidate>
+        <div class="form-row">
+          <div>
+            <label for="terms-ca">Paraula en català</label>
+            <input id="terms-ca" type="text" maxlength="40" autocomplete="off">
+          </div>
+          <div>
+            <label for="terms-es">Equivalència en castellà</label>
+            <input id="terms-es" type="text" maxlength="60" autocomplete="off">
+          </div>
+        </div>
+        <button type="submit" id="terms-save-btn">Desa l'equivalència</button>
+      </form>
+      <div id="terms-status"></div>
+      <button id="terms-load-btn" style="background: var(--warm);">Carregar equivalències</button>
+      <div id="terms-filter-row" style="display:none; margin-top: 16px;">
+        <label for="terms-filter">Filtra</label>
+        <input id="terms-filter" type="search" autocomplete="off">
+      </div>
+      <div id="terms-container" style="margin-top: 16px;"></div>
+    </section>
+
+    <!-- ── Secció 8: Cerques sense resultat (Pla 098) ── -->
+    <section class="section" id="section-misses">
+      <h2>Cerques sense resultat</h2>
+      <p style="color: var(--warm); font-size: 13px; margin-bottom: 12px;">
+        Cerques de 4 lletres o més que no han trobat cap grau ni especialitat (o cap ofici), les més freqüents
+        primer. Es desen agregades i anònimes: només el text normalitzat, quantes vegades i el darrer dia.
+      </p>
+      <button id="misses-load-btn">Carregar cerques</button>
+      <div id="misses-container" style="margin-top: 16px;"></div>
+    </section>
   </main>
 
   <script>
@@ -831,7 +903,9 @@
           <td>${escapeHtml(FEEDBACK_KINDS[f.kind] || f.kind)}</td>
           <td class="feedback-msg">${f.oferta
             ? `<a href="${escapeHtml(f.oferta.url)}" target="_blank" rel="noopener">Grau ${escapeHtml(f.oferta.grado)} · ${escapeHtml(f.oferta.denominacion)}</a><br>`
-            : (f.oferta_ref ? `<span style="color:var(--warm);font-size:12px;">Grau ${escapeHtml(f.oferta_ref)} (ja no és al catàleg)</span><br>` : '')}${escapeHtml(f.message)}</td>
+            : (f.oferta_ref ? `<span style="color:var(--warm);font-size:12px;">Grau ${escapeHtml(f.oferta_ref)} (ja no és al catàleg)</span><br>` : '')}${f.espec
+            ? `Especialitat ${escapeHtml(f.espec.codi)} · ${escapeHtml(f.espec.titol)} · <a href="#section-corrections" class="fb-fix-link" data-codi="${escapeHtml(f.espec.codi)}">Corregeix el títol</a><br>`
+            : (f.espec_codi ? `<span style="color:var(--warm);font-size:12px;">Especialitat ${escapeHtml(f.espec_codi)} (ja no és al catàleg)</span><br>` : '')}${escapeHtml(f.message)}</td>
           <td><a href="mailto:${encodeURIComponent(f.email)}">${escapeHtml(f.email)}</a>${f.user_id ? '' : ' <span style="color:var(--warm);font-size:12px;">(anònim)</span>'}</td>
           <td style="font-family:'Geist Mono',monospace;font-size:12px;">${escapeHtml(page)}${f.context.lang ? ' · ' + escapeHtml(f.context.lang) : ''}</td>
           <td>
@@ -857,6 +931,10 @@
             <tbody>${rows}</tbody>
           </table>
         </div>`;
+      // Pla 098: des d'un avís sobre una especialitat, directe al formulari de correccions
+      feedbackContainer.querySelectorAll('.fb-fix-link').forEach(a => {
+        a.addEventListener('click', ev => { ev.preventDefault(); editCorrection(a.dataset.codi); });
+      });
     }
 
     feedbackLoadBtn.addEventListener('click', async () => {
@@ -896,10 +974,278 @@
         btn.disabled = false;
       }
     }
+
+    // ── Pla 098: correccions, equivalències i cerques sense resultat ──
+    async function adminFetch(path, opts = {}) {
+      const init = { credentials: 'include', ...opts };
+      if (opts.body !== undefined) {
+        init.headers = { 'Content-Type': 'application/json' };
+        init.body = JSON.stringify(opts.body);
+      }
+      const res = await fetch(API_BASE + path, init);
+      let data = null;
+      try { data = await res.json(); } catch (_) { /* sense cos */ }
+      return { ok: res.ok, status: res.status, data };
+    }
+
+    function errorText(r) {
+      if (r.status === 401) return 'No autoritzat.';
+      return (r.data && r.data.error) ? r.data.error : 'Error HTTP ' + r.status;
+    }
+
+    function showMsg(el, text, kind) {
+      el.innerHTML = text ? `<div class="status-msg ${kind}">${escapeHtml(text)}</div>` : '';
+    }
+
+    // Correccions
+    const corrForm = document.getElementById('corr-form');
+    const corrCodi = document.getElementById('corr-codi');
+    const corrCa = document.getElementById('corr-ca');
+    const corrEs = document.getElementById('corr-es');
+    const corrOrig = document.getElementById('corr-orig');
+    const corrStatus = document.getElementById('corr-status');
+    const corrLoadBtn = document.getElementById('corr-load-btn');
+    const corrContainer = document.getElementById('corr-container');
+
+    async function editCorrection(codi) {
+      document.getElementById('section-corrections').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      corrCodi.value = codi;
+      await loadCorrectionOriginals();
+      corrCa.focus();
+    }
+
+    async function loadCorrectionOriginals() {
+      const codi = corrCodi.value.trim();
+      corrOrig.textContent = '';
+      if (!codi) return;
+      const r = await adminFetch('/api/admin/title-overrides/' + encodeURIComponent(codi));
+      if (!r.ok) { corrOrig.textContent = r.status === 404 ? 'Aquest codi no és al catàleg del SEPE ni del SOC.' : errorText(r); return; }
+      const ov = r.data.override;
+      corrOrig.textContent = `Original — CA: ${r.data.original_ca || '—'} · ES: ${r.data.original_es || '—'}`;
+      corrCa.value = ov && ov.titol_ca ? ov.titol_ca : '';
+      corrEs.value = ov && ov.titol_es ? ov.titol_es : '';
+    }
+
+    corrCodi.addEventListener('change', loadCorrectionOriginals);
+
+    corrForm.addEventListener('submit', async ev => {
+      ev.preventDefault();
+      const codi = corrCodi.value.trim();
+      if (!codi) { showMsg(corrStatus, 'Escriu el codi de l\'especialitat.', 'error'); return; }
+      const r = await adminFetch('/api/admin/title-overrides/' + encodeURIComponent(codi), {
+        method: 'PUT', body: { titol_ca: corrCa.value, titol_es: corrEs.value },
+      });
+      if (!r.ok) { showMsg(corrStatus, r.status === 404 ? 'Aquest codi no és al catàleg del SEPE ni del SOC.' : errorText(r), 'error'); return; }
+      showMsg(corrStatus, `Correcció de ${codi} desada.`, 'success');
+      loadCorrections();
+    });
+
+    function renderCorrections(items) {
+      if (!items.length) {
+        corrContainer.innerHTML = '<p style="color:var(--warm);font-size:13px;">Encara no hi ha cap correcció.</p>';
+        return;
+      }
+      const both = (ca, es) => `CA: ${escapeHtml(ca || '—')}<br>ES: ${escapeHtml(es || '—')}`;
+      const rows = items.map(c => `
+        <tr>
+          <td style="font-family:'Geist Mono',monospace;font-size:12px;">${escapeHtml(c.codi)}</td>
+          <td class="feedback-msg">${c.al_cataleg ? both(c.actual_ca, c.actual_es)
+            : both(c.original_ca, c.original_es) + '<br><span style="color:var(--warm);font-size:12px;">(ja no és al catàleg)</span>'}</td>
+          <td class="feedback-msg">${both(c.titol_ca, c.titol_es)}${c.ja_no_cal
+            ? '<br><strong style="font-size:12px;">Ja no cal: la font ja ho dona així</strong>' : ''}</td>
+          <td style="font-family:'Geist Mono',monospace;font-size:12px;white-space:nowrap;">${escapeHtml(c.updated_at || '')}<br>${escapeHtml(c.updated_by || '')}</td>
+          <td style="white-space:nowrap;">
+            <button class="corr-edit-btn" data-codi="${escapeHtml(c.codi)}"
+              style="margin-top:0;padding:6px 12px;font-size:12px;background:var(--warm);">Edita</button>
+            <button class="corr-undo-btn" data-codi="${escapeHtml(c.codi)}"
+              style="margin-top:0;margin-left:6px;padding:6px 12px;font-size:12px;background:#dc2626;">Desfés</button>
+          </td>
+        </tr>`).join('');
+      corrContainer.innerHTML = `
+        <div class="table-wrap">
+          <table class="by-grado-table feedback-table">
+            <thead><tr><th>Codi</th><th>Original (font)</th><th>Corregit</th><th>Data</th><th></th></tr></thead>
+            <tbody>${rows}</tbody>
+          </table>
+        </div>`;
+      corrContainer.querySelectorAll('.corr-edit-btn').forEach(btn => {
+        btn.addEventListener('click', () => editCorrection(btn.dataset.codi));
+      });
+      corrContainer.querySelectorAll('.corr-undo-btn').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const codi = btn.dataset.codi;
+          if (!confirm(`Desfer la correcció de ${codi}? Tornarà el títol de la font.`)) return;
+          const r = await adminFetch('/api/admin/title-overrides/' + encodeURIComponent(codi), { method: 'DELETE' });
+          if (!r.ok) { alert(errorText(r)); return; }
+          loadCorrections();
+        });
+      });
+    }
+
+    async function loadCorrections() {
+      corrLoadBtn.disabled = true;
+      corrContainer.innerHTML = '<span class="spinner"></span> Carregant…';
+      try {
+        const r = await adminFetch('/api/admin/title-overrides');
+        if (!r.ok) { showMsg(corrContainer, errorText(r), 'error'); return; }
+        renderCorrections(r.data);
+      } catch (e) {
+        showMsg(corrContainer, 'Error de connexió.', 'error');
+      } finally {
+        corrLoadBtn.disabled = false;
+      }
+    }
+
+    corrLoadBtn.addEventListener('click', loadCorrections);
+
+    // Equivalències de cerca
+    const termsForm = document.getElementById('terms-form');
+    const termsCa = document.getElementById('terms-ca');
+    const termsEs = document.getElementById('terms-es');
+    const termsStatus = document.getElementById('terms-status');
+    const termsLoadBtn = document.getElementById('terms-load-btn');
+    const termsContainer = document.getElementById('terms-container');
+    const termsFilterRow = document.getElementById('terms-filter-row');
+    const termsFilter = document.getElementById('terms-filter');
+    let termsItems = [];
+
+    function renderTerms() {
+      const f = termsFilter.value.trim().toLowerCase();
+      const items = f ? termsItems.filter(x => x.ca.includes(f) || x.es.includes(f)) : termsItems;
+      if (!items.length) {
+        termsContainer.innerHTML = '<p style="color:var(--warm);font-size:13px;">Cap equivalència.</p>';
+        return;
+      }
+      const rows = items.map(x => `
+        <tr>
+          <td>${escapeHtml(x.ca)}</td>
+          <td>${escapeHtml(x.es)}</td>
+          <td style="font-family:'Geist Mono',monospace;font-size:12px;white-space:nowrap;">${escapeHtml(x.updated_at || '')}</td>
+          <td style="white-space:nowrap;">
+            <button class="terms-edit-btn" data-ca="${escapeHtml(x.ca)}" data-es="${escapeHtml(x.es)}"
+              style="margin-top:0;padding:6px 12px;font-size:12px;background:var(--warm);">Edita</button>
+            <button class="terms-del-btn" data-ca="${escapeHtml(x.ca)}"
+              style="margin-top:0;margin-left:6px;padding:6px 12px;font-size:12px;background:#dc2626;">Esborra</button>
+          </td>
+        </tr>`).join('');
+      termsContainer.innerHTML = `
+        <p style="color:var(--warm);font-size:13px;">${items.length} de ${termsItems.length}</p>
+        <div class="table-wrap">
+          <table class="by-grado-table">
+            <thead><tr><th>Català</th><th>Castellà</th><th>Data</th><th></th></tr></thead>
+            <tbody>${rows}</tbody>
+          </table>
+        </div>`;
+      termsContainer.querySelectorAll('.terms-edit-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          termsCa.value = btn.dataset.ca;
+          termsEs.value = btn.dataset.es;
+          termsForm.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          termsEs.focus();
+        });
+      });
+      termsContainer.querySelectorAll('.terms-del-btn').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const ca = btn.dataset.ca;
+          if (!confirm(`Esborrar l'equivalència «${ca}»?`)) return;
+          const r = await adminFetch('/api/admin/search-terms/' + encodeURIComponent(ca), { method: 'DELETE' });
+          if (!r.ok) { alert(errorText(r)); return; }
+          termsItems = termsItems.filter(x => x.ca !== ca);
+          renderTerms();
+        });
+      });
+    }
+
+    async function loadTerms() {
+      termsLoadBtn.disabled = true;
+      termsContainer.innerHTML = '<span class="spinner"></span> Carregant…';
+      try {
+        const r = await adminFetch('/api/admin/search-terms');
+        if (!r.ok) { showMsg(termsContainer, errorText(r), 'error'); return; }
+        termsItems = r.data;
+        termsFilterRow.style.display = '';
+        renderTerms();
+      } catch (e) {
+        showMsg(termsContainer, 'Error de connexió.', 'error');
+      } finally {
+        termsLoadBtn.disabled = false;
+      }
+    }
+
+    termsLoadBtn.addEventListener('click', loadTerms);
+    termsFilter.addEventListener('input', renderTerms);
+
+    termsForm.addEventListener('submit', async ev => {
+      ev.preventDefault();
+      const ca = termsCa.value.trim();
+      if (!ca || !termsEs.value.trim()) { showMsg(termsStatus, 'Cal la paraula en català i l\'equivalència.', 'error'); return; }
+      const r = await adminFetch('/api/admin/search-terms/' + encodeURIComponent(ca), {
+        method: 'PUT', body: { es: termsEs.value },
+      });
+      if (!r.ok) { showMsg(termsStatus, errorText(r), 'error'); return; }
+      showMsg(termsStatus, `Desat: ${r.data.ca} → ${r.data.es}`, 'success');
+      termsCa.value = '';
+      termsEs.value = '';
+      if (termsItems.length) {
+        termsItems = termsItems.filter(x => x.ca !== r.data.ca).concat([r.data]).sort((a, b) => a.ca.localeCompare(b.ca));
+        renderTerms();
+      }
+    });
+
+    // Cerques sense resultat
+    const missesLoadBtn = document.getElementById('misses-load-btn');
+    const missesContainer = document.getElementById('misses-container');
+
+    function renderMisses(items) {
+      if (!items.length) {
+        missesContainer.innerHTML = '<p style="color:var(--warm);font-size:13px;">Encara no n\'hi ha cap.</p>';
+        return;
+      }
+      const rows = items.map(m => `
+        <tr>
+          <td>${escapeHtml(m.q)}</td>
+          <td style="font-family:'Geist Mono',monospace;font-size:12px;">${Number(m.n) || 0}</td>
+          <td style="font-family:'Geist Mono',monospace;font-size:12px;white-space:nowrap;">${escapeHtml(m.last_seen || '')}</td>
+          <td style="white-space:nowrap;">
+            <button class="miss-term-btn" data-q="${escapeHtml(m.q)}"
+              style="margin-top:0;padding:6px 12px;font-size:12px;">Afegeix equivalència</button>
+          </td>
+        </tr>`).join('');
+      missesContainer.innerHTML = `
+        <div class="table-wrap">
+          <table class="by-grado-table">
+            <thead><tr><th>Cerca</th><th>Vegades</th><th>Darrer dia</th><th></th></tr></thead>
+            <tbody>${rows}</tbody>
+          </table>
+        </div>`;
+      missesContainer.querySelectorAll('.miss-term-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          // Una equivalència és d'una sola paraula: es proposa la primera de la cerca
+          termsCa.value = btn.dataset.q.split(' ')[0];
+          termsEs.value = '';
+          document.getElementById('section-terms').scrollIntoView({ behavior: 'smooth', block: 'start' });
+          termsEs.focus();
+        });
+      });
+    }
+
+    missesLoadBtn.addEventListener('click', async () => {
+      missesLoadBtn.disabled = true;
+      missesContainer.innerHTML = '<span class="spinner"></span> Carregant…';
+      try {
+        const r = await adminFetch('/api/admin/empty-searches');
+        if (!r.ok) { showMsg(missesContainer, errorText(r), 'error'); return; }
+        renderMisses(r.data);
+      } catch (e) {
+        showMsg(missesContainer, 'Error de connexió.', 'error');
+      } finally {
+        missesLoadBtn.disabled = false;
+      }
+    });
   </script>
   <footer class="site-footer" id="site-footer"></footer>
   <script src="footer.js?v=3"></script>
-  <script src="feedback.js?v=5"></script>
+  <script src="feedback.js?v=6"></script>
 </body>
 
 </html>

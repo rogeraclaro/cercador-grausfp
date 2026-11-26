@@ -1979,6 +1979,14 @@
       font-size: var(--fs-small);
     }
 
+    /* Pla 098: quadre «Corregeix el títol» (només admins) */
+    .centres-modal.tfix-modal { max-width: 460px; text-align: left; }
+    .tfix-note { font-size: var(--fs-small); color: var(--warm); margin: 8px 0 12px; line-height: 1.4; }
+    .tfix-label { display: block; font-size: var(--fs-small); font-weight: 600; color: var(--dark); margin-top: 12px; }
+    .tfix-orig { font-size: var(--fs-small); color: var(--warm); margin: 2px 0 4px; overflow-wrap: anywhere; }
+    .tfix-input { width: 100%; padding: 8px 10px; border: 1px solid var(--border); border-radius: 6px; font: inherit; }
+    .tfix-error { font-size: var(--fs-small); color: var(--alert-ink); margin-top: 10px; }
+
     /* Gating centres — modal + separator + upsell */
     .centres-modal-overlay {
       position: fixed;
@@ -2485,7 +2493,7 @@
     }
   </style>
 
-  <script src="i18n.js?v=20261128"></script>
+  <script src="i18n.js?v=20261129"></script>
   <script src="auth.js?v=20261117b"></script>
   <script src="held.js?v=1"></script>
   <script src="ics.js?v=1"></script>
@@ -2595,6 +2603,10 @@
 
         loggedIn: false,
         centresModalVisible: false,
+        isAdmin: false,             // Pla 098: només decideix si es veu «Corregeix el títol»; el backend ho torna a comprovar
+        // Pla 098: quadre «Corregeix el títol» d'una especialitat (SEPE/FPO)
+        titleFix: { open: false, codi: '', loading: false, saving: false, error: '',
+                    originalCa: '', originalEs: '', ca: '', es: '', exists: false },
         alertModalVisible: false,
         alertSaveError: '',
         alertSaving: false,
@@ -2606,6 +2618,7 @@
         ocupQuery: '',
         caEs: null,           // taules d'expansió CA→ES (/api/ca-es-terms); null = cerca només literal
         ocupResults: [],            // resultados de /api/ocupaciones
+        ocupResultsFor: '',         // Pla 098: la cerca a què corresponen els ocupResults
         ocupLoading: false,
         ocupTimer: null,
         reprOcup: (localStorage.getItem('reprOcup') === 'taula' ? 'taula' : 'targetes'),
@@ -2777,6 +2790,9 @@
           try {
             const authRes = await fetch(API_BASE + '/api/auth/me', { credentials: 'include' }).catch(() => ({ ok: false }));
             this.loggedIn = authRes.ok;
+            if (authRes.ok) {
+              try { this.isAdmin = !!(await authRes.json()).is_admin; } catch (e) { /* sense JSON: no és admin */ }
+            }
             GFPHeld.init(this.loggedIn).then(refs => { this.heldRefs = refs; });
             const _params = new URLSearchParams(location.search);
             if (_params.get('mode') === 'ocupacio') {
@@ -2864,6 +2880,7 @@
               }
             }
             this.watchSearchUrl();
+            this.watchSearchMiss();
             this.loadCompare(linkParams.get('compara'));
             if (linkParams.get('compara')) {
               // Un sol ús: es treu de l'adreça perquè recarregar no torni a afegir-los.
@@ -2951,6 +2968,99 @@
         hasFeedback() { return !!window.grausfpFeedback; },
         reportRow(row) {
           window.grausfpFeedback.open({ ref: row.ref, label: (row.codigo ? row.codigo + ' · ' : '') + row.denominacion });
+        },
+        // Pla 098: el mateix, sobre una especialitat del SEPE o de l'FPO (codi validat al backend)
+        reportEspec(codi, titol) {
+          window.grausfpFeedback.open({ espec: codi, label: codi + ' · ' + (titol || '') });
+        },
+
+        // Pla 098 — «Corregeix el títol» (només admins; els endpoints passen per _check_admin)
+        async openTitleFix(codi) {
+          this.titleFix = { open: true, codi, loading: true, saving: false, error: '',
+                            originalCa: '', originalEs: '', ca: '', es: '', exists: false };
+          try {
+            const r = await fetch(API_BASE + '/api/admin/title-overrides/' + encodeURIComponent(codi),
+              { credentials: 'include' });
+            if (!r.ok) throw new Error('HTTP ' + r.status);
+            const d = await r.json();
+            const ov = d.override || {};
+            Object.assign(this.titleFix, { loading: false, originalCa: d.original_ca || '', originalEs: d.original_es || '',
+              ca: ov.titol_ca || d.original_ca || '', es: ov.titol_es || d.original_es || '', exists: !!d.override });
+          } catch (e) {
+            Object.assign(this.titleFix, { loading: false, error: t('tfix.err.load') });
+          }
+        },
+
+        async saveTitleFix(undo) {
+          const fix = this.titleFix;
+          // El que coincideix amb l'original no es corregeix; si no queda res, és com desfer-la
+          const ca = fix.ca.trim() === fix.originalCa ? '' : fix.ca;
+          const es = fix.es.trim() === fix.originalEs ? '' : fix.es;
+          if (!ca.trim() && !es.trim()) {
+            if (!fix.exists) { fix.open = false; return; }
+            undo = true;
+          }
+          fix.saving = true;
+          fix.error = '';
+          try {
+            const url = API_BASE + '/api/admin/title-overrides/' + encodeURIComponent(fix.codi);
+            const r = undo
+              ? await fetch(url, { method: 'DELETE', credentials: 'include' })
+              : await fetch(url, { method: 'PUT', credentials: 'include', headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ titol_ca: ca, titol_es: es }) });
+            if (!r.ok) throw new Error('HTTP ' + r.status);
+            fix.open = false;
+            this.reloadAfterTitleFix(fix.codi);
+          } catch (e) {
+            fix.error = t('tfix.err');
+          } finally {
+            fix.saving = false;
+          }
+        },
+
+        reloadAfterTitleFix(codi) {
+          if (this.sepeState === 'ready' || this.sepeState === 'error') { this.sepeState = 'idle'; this.ensureSepe(); }
+          if (this.fpoDetall[codi]) {
+            const { [codi]: _old, ...rest } = this.fpoDetall;
+            this.fpoDetall = rest;
+            if (this.fpoExpanded[codi]) { this.fpoExpanded = { ...this.fpoExpanded, [codi]: false }; this.toggleFpoDetall(codi); }
+          }
+          if (this.fpoLoaded) this.fetchFpoEspecs();
+        },
+
+        // Pla 098 — cerques sense cap resultat (ni graus ni SEPE; o al mode ocupació): el text normalitzat
+        // quan n'hi ha una, '' si no. S'envia a /api/search-miss després d'1,5 s sense canvis.
+        get searchMissQuery() {
+          const letters = q => (q.match(/\p{L}/gu) || []).length >= 4;
+          let q = '';
+          if (this.searchMode === 'nom') {
+            q = this.search.trim();
+            if (!letters(q) || this.state !== 'ready' || this.filterGrado || this.filterFamilia || this.filterNivel
+                || this.filterOld !== 'all' || this.filterFavs) return '';
+            if (this.sepeState !== 'ready' && this.sepeState !== 'error') return '';
+            if (this.filteredCount !== 0 || this.filteredSepe.length) return '';
+          } else if (this.searchMode === 'ocupacio') {
+            q = this.ocupQuery.trim();
+            if (!letters(q) || this.ocupLoading || this.ocupResultsFor !== q || this.ocupResults.length) return '';
+          } else {
+            return '';
+          }
+          return q.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/\s+/g, ' ').slice(0, 80);
+        },
+
+        watchSearchMiss() {
+          let timer = null;
+          const sent = new Set();   // una vegada per cerca i visita
+          this.$watch(() => this.searchMissQuery, q => {
+            clearTimeout(timer);
+            if (!q || sent.has(q)) return;
+            timer = setTimeout(() => {
+              if (this.searchMissQuery !== q) return;
+              sent.add(q);
+              fetch(API_BASE + '/api/search-miss', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ q }), keepalive: true }).catch(() => {});
+            }, 1500);
+          });
         },
 
         // Estat de la llista abans d'anar a l'itinerari (sessionStorage: només dura la pestanya).
@@ -4218,6 +4328,7 @@
           } catch (e) { }
           if (seq !== this._ocupSeq) return;
           this.ocupResults = results;
+          this.ocupResultsFor = q;
           this.ocupLoading = false;
         },
 
@@ -5464,7 +5575,14 @@
                           x-text="t('sepe.veureCursos')"></a>
                         <a class="btn-doc" target="_blank" rel="noopener"
                           href="https://sede.sepe.gob.es/FOET_CATALOGO_EEFF_SEDE/flows/main" x-text="t('sepe.cercadorSepe')"></a>
+                        <!-- Pla 098: només admins (el backend ho comprova igualment) -->
+                        <button type="button" class="btn-doc" x-show="isAdmin" @click.stop="openTitleFix(e.c)"
+                          x-text="t('tfix.btn')"></button>
                       </div>
+                      <p x-show="hasFeedback()">
+                        <button type="button" class="fb-report-link" @click.stop="reportEspec(e.c, sepeTitol(e))"
+                          x-text="t('index.report')"></button>
+                      </p>
                     </div>
                   </td>
                 </tr>
@@ -5633,7 +5751,14 @@
                         :class="{ 'btn-fav--active': fpoFavSet.has(esp.codi) }"
                         @click="toggleFpoFav(esp.codi)" :disabled="fpoFavBusy"
                         x-text="fpoFavSet.has(esp.codi) ? '★ ' + t('fpo.fav.saved') : '☆ ' + t('fpo.fav.save')"></button>
+                      <!-- Pla 098: correcció del títol (només admins) i avís d'error; no per als cursos externs -->
+                      <button type="button" class="btn-doc" x-show="isAdmin && (esp.font || 'soc') === 'soc'"
+                        @click="openTitleFix(esp.codi)" x-text="t('tfix.btn')"></button>
                     </div>
+                    <p x-show="hasFeedback() && (esp.font || 'soc') === 'soc'">
+                      <button type="button" class="fb-report-link"
+                        @click="reportEspec(esp.codi, (esp.titol || {})[fpoLang()])" x-text="t('index.report')"></button>
+                    </p>
 
                     <template x-if="fpoDetall[esp.codi]">
                       <div style="display:flex;flex-direction:column;gap:8px;">
@@ -5900,6 +6025,38 @@
       </div>
     </div>
 
+    <!-- Pla 098: «Corregeix el títol» d'una especialitat (només admins). Text pla: tot amb x-text / x-model -->
+    <div x-show="titleFix.open" @click="titleFix.open = false"
+      @keydown.escape.window="titleFix.open && (titleFix.open = false)"
+      x-effect="if (titleFix.open) { $data._prevFocusTfix = document.activeElement; $nextTick(() => $refs.tfixClose && $refs.tfixClose.focus()); } else if ($data._prevFocusTfix) { $data._prevFocusTfix.focus(); $data._prevFocusTfix = null; }"
+      class="centres-modal-overlay" x-cloak role="dialog" aria-modal="true" aria-labelledby="tfix-title"
+      x-transition:enter.opacity.duration.150ms x-transition:leave.opacity.duration.100ms>
+      <div class="centres-modal tfix-modal" @click.stop>
+        <button class="centres-modal-close" x-ref="tfixClose" @click="titleFix.open = false"
+          data-i18n-aria="modal.close.aria" aria-label="Tanca"><span aria-hidden="true">✕</span></button>
+        <h2 class="gate-modal-title" id="tfix-title" x-text="t('tfix.title', {codi: titleFix.codi})"></h2>
+        <p class="tfix-note" x-text="t('tfix.note')"></p>
+        <p class="tfix-note" x-show="titleFix.loading" x-text="t('tfix.loading')"></p>
+        <form x-show="!titleFix.loading" @submit.prevent="saveTitleFix(false)">
+          <label class="tfix-label" for="tfix-ca" x-text="t('tfix.ca')"></label>
+          <p class="tfix-orig"><span x-text="t('tfix.original') + ': '"></span><span x-text="titleFix.originalCa || '—'"></span></p>
+          <input id="tfix-ca" class="tfix-input" type="text" maxlength="300" x-model="titleFix.ca">
+          <label class="tfix-label" for="tfix-es" x-text="t('tfix.es')"></label>
+          <p class="tfix-orig"><span x-text="t('tfix.original') + ': '"></span><span x-text="titleFix.originalEs || '—'"></span></p>
+          <input id="tfix-es" class="tfix-input" type="text" maxlength="300" x-model="titleFix.es">
+          <p class="tfix-error" role="alert" x-show="titleFix.error" x-text="titleFix.error"></p>
+          <div class="centres-modal-actions" style="margin-top:16px;">
+            <button type="submit" class="centres-modal-btn centres-modal-btn--primary" :disabled="titleFix.saving"
+              x-text="t('tfix.save')"></button>
+            <button type="button" class="centres-modal-btn centres-modal-btn--secondary" x-show="titleFix.exists"
+              :disabled="titleFix.saving" @click="saveTitleFix(true)" x-text="t('tfix.undo')"></button>
+            <button type="button" class="centres-modal-btn centres-modal-btn--secondary" @click="titleFix.open = false"
+              x-text="t('tfix.cancel')"></button>
+          </div>
+        </form>
+      </div>
+    </div>
+
     <!-- Modal gating centres -->
     <div x-show="centresModalVisible" @click="centresModalVisible = false"
       @keydown.escape.window="centresModalVisible && (centresModalVisible = false)"
@@ -5933,7 +6090,7 @@
 
   <footer class="site-footer" id="site-footer"></footer>
   <script src="footer.js?v=3"></script>
-  <script src="feedback.js?v=5"></script>
+  <script src="feedback.js?v=6"></script>
 </body>
 
 </html>

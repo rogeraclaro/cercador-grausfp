@@ -36,6 +36,7 @@
     'fb.err.send': "No s'ha pogut enviar. Torna-ho a provar.",
     'fb.about': 'Sobre:',
     'fb.about.remove': 'No és sobre aquest grau',
+    'fb.about.remove.espec': 'No és sobre aquesta especialitat',
     'index.report': 'Hi ha un error en aquesta fitxa?'
   };
   var KINDS = ['error', 'idea', 'data', 'other'];
@@ -81,7 +82,8 @@
             tr('fb.kind.' + k) + '</button>';
         }).join('') +
       '</div>' +
-      /* Plan 089: the grado the comment is about (set by grausfpFeedback.open({ref, label})) */
+      /* Plan 089: the grado the comment is about (set by grausfpFeedback.open({ref, label}));
+         plan 098: or the specialty (open({espec, label})) */
       '<p class="fb-about" id="fb-about" hidden>' +
         '<span>' + tr('fb.about') + ' <em id="fb-about-label"></em></span>' +
         '<button type="button" class="fb-about-remove" id="fb-about-remove" aria-label="' + tr('fb.about.remove') + '">✕</button>' +
@@ -124,14 +126,18 @@
   var submitBtn = dialog.querySelector('#fb-submit');
   var aboutEl = dialog.querySelector('#fb-about');
   var aboutLabel = dialog.querySelector('#fb-about-label');
+  var removeBtn = dialog.querySelector('#fb-about-remove');
   var kind = 'other';
-  var about = null;    /* {ref, label} when the comment is about one grado (plan 089) */
+  var about = null;    /* {ref|espec, label}: about one grado (plan 089) or specialty (plan 098) */
   var signedIn = null; /* unknown until the first open */
 
   function setAbout(next) {
-    about = next && next.ref ? { ref: String(next.ref), label: String(next.label || next.ref) } : null;
+    var key = next && (next.ref || next.espec);
+    about = key ? { ref: next.ref ? String(next.ref) : null, espec: next.ref ? null : String(next.espec),
+                    label: String(next.label || key) } : null;
     aboutLabel.textContent = about ? about.label : '';
     aboutEl.hidden = !about;
+    removeBtn.setAttribute('aria-label', tr(about && about.espec ? 'fb.about.remove.espec' : 'fb.about.remove'));
   }
 
   function setKind(next) {
@@ -153,15 +159,16 @@
       .catch(function () { return false; });
   }
 
-  /* opts (optional): {kind, ref, label}. With a ref, the comment is about that grado and
-     "Dades incorrectes" is preselected. */
+  /* opts (optional): {kind, ref, label} or {kind, espec, label}. With a ref (grado) or an
+     espec (specialty code, plan 098), the comment is about it and "Dades incorrectes" is
+     preselected. */
   function open(opts) {
     opts = opts || {};
     form.hidden = false;
     sent.hidden = true;
     text.value = '';
     honeypot.value = '';
-    setAbout(opts.ref ? opts : null);
+    setAbout(opts.ref || opts.espec ? opts : null);
     setKind(KINDS.indexOf(opts.kind) >= 0 ? opts.kind : (about ? 'data' : 'other'));
     showError(null);
     submitBtn.disabled = false;
@@ -177,7 +184,8 @@
     var message = text.value.trim();
     if (!message) { showError('fb.err.empty'); text.focus(); return; }
     var body = { kind: kind, message: message, context: pageContext(), website: honeypot.value };
-    if (about) body.ref = about.ref;
+    if (about && about.ref) body.ref = about.ref;
+    if (about && about.espec) body.espec = about.espec;
     if (!emailRow.hidden) {
       var address = email.value.trim();
       if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(address)) { showError('fb.err.email'); email.focus(); return; }
@@ -209,7 +217,7 @@
   }
 
   tab.addEventListener('click', function () { open(); });
-  dialog.querySelector('#fb-about-remove').addEventListener('click', function () { setAbout(null); text.focus(); });
+  removeBtn.addEventListener('click', function () { setAbout(null); text.focus(); });
   form.addEventListener('submit', send);
   dialog.addEventListener('click', function (event) {
     var kindBtn = event.target.closest('.fb-kind');

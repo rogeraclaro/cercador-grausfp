@@ -76,7 +76,7 @@ def test_taula_feedback_te_les_columnes_i_estat_per_defecte():
     try:
         cols = {r["name"] for r in conn.execute("PRAGMA table_info(feedback)")}
         assert cols == {"id", "user_id", "email", "kind", "message", "context",
-                        "status", "admin_note", "created_at", "updated_at", "oferta_ref"}
+                        "status", "admin_note", "created_at", "updated_at", "oferta_ref", "espec_codi"}
         conn.execute("INSERT INTO feedback (email, kind, message) VALUES ('a@b.cat', 'idea', 'Hola')")
         row = conn.execute("SELECT status, created_at, updated_at FROM feedback").fetchone()
         assert row["status"] == "new"

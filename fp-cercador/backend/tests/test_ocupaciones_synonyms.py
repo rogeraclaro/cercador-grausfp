@@ -6,6 +6,19 @@ en català.
 """
 import pytest
 
+import app as app_module
+import db
+
+
+@pytest.fixture(autouse=True)
+def _bd_sembrada(tmp_path, monkeypatch):
+    """Pla 098: les equivalències surten de la taula search_terms; cada test, una BD nova
+    sembrada per la migració 017 (mai la BD local)."""
+    test_db = str(tmp_path / "test.db")
+    monkeypatch.setenv("DB_PATH", test_db)
+    db.init_db(db_path=test_db)
+    monkeypatch.setattr(app_module, "_search_terms_cache", {"key": None, "data": None})
+
 
 def test_expand_token_suffix_acio():
     from app import _expand_token
@@ -93,10 +106,15 @@ def test_ca_es_terms_endpoint_shape():
 
 
 def test_ca_es_terms_endpoint_matches_backend_tables():
-    """Una sola font de veritat: l'endpoint exposa exactament les taules de app.py."""
-    from app import _CA_ES_TERMS, _CA_ES_SUFFIXES
+    """Una sola font de veritat: l'endpoint exposa la taula search_terms (Pla 098), que la
+    migració sembra amb el diccionari de partida, i els sufixos de app.py."""
+    from app import _CA_ES_SUFFIXES
+    from ca_es_terms import SEED_TERMS
     data = _client().get('/api/ca-es-terms').get_json()
-    assert data['terms'] == _CA_ES_TERMS
+    conn = db.get_db()
+    taula = {r['ca']: r['es'] for r in conn.execute('SELECT ca, es FROM search_terms')}
+    conn.close()
+    assert data['terms'] == taula == SEED_TERMS
     assert [tuple(p) for p in data['suffixes']] == list(_CA_ES_SUFFIXES)
 
 

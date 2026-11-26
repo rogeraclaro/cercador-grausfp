@@ -52,8 +52,19 @@ def run_migrations(conn):
         conn.executescript(sql)
         if version == 12:
             _backfill_refs_from_catalog(conn)
+        if version == 17:
+            seed_search_terms(conn)
 
     conn.commit()
+
+
+def seed_search_terms(conn):
+    """Pla 098: primera càrrega de search_terms amb el diccionari que abans era al codi.
+    Només en aplicar la migració 017: després, el que s'esborri des del panell no torna."""
+    from ca_es_terms import SEED_TERMS
+
+    conn.executemany("INSERT OR IGNORE INTO search_terms (ca, es) VALUES (?, ?)",
+                     list(SEED_TERMS.items()))
 
 
 # ---------------------------------------------------------------------------

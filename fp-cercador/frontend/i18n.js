@@ -27,6 +27,19 @@
       'sepe.cercadorSepe': 'Cercador del SEPE',
       'sepe.veureTotes': 'Veure les {n} especialitats',
       'sepe.mainEmpty': 'Cap grau A–E coincideix amb la cerca.',
+      // Pla 098: correcció del títol d'una especialitat (només administradors)
+      'tfix.btn': 'Corregeix el títol',
+      'tfix.title': 'Corregeix el títol de {codi}',
+      'tfix.note': "Ho veu només qui administra el web. La correcció substitueix el títol de la font al cercador i als cursos FPO. Deixa un camp buit per no tocar aquell idioma.",
+      'tfix.original': 'Original',
+      'tfix.ca': 'Títol en català',
+      'tfix.es': 'Títol en castellà',
+      'tfix.loading': 'Carregant…',
+      'tfix.save': 'Desa la correcció',
+      'tfix.undo': 'Desfés la correcció',
+      'tfix.cancel': 'Cancel·la',
+      'tfix.err': "No s'ha pogut desar la correcció.",
+      'tfix.err.load': "No s'ha pogut carregar l'especialitat.",
       // Pla 096: codi anterior, família virtual de les transversals i sufixos del codi
       'sepe.codiAntic': 'Codi anterior: {codi}',
       'sepe.fam.transversal': 'Competències transversals',
@@ -62,6 +75,7 @@
       /* Pla 089: reporta un error en una fitxa */
       'fb.about': 'Sobre:',
       'fb.about.remove': 'No és sobre aquest grau',
+      'fb.about.remove.espec': 'No és sobre aquesta especialitat',
       'index.report': 'Hi ha un error en aquesta fitxa?',
       /* Pla 087: «Volies dir…» */
       'index.didyoumean.lead': 'Volies dir',
@@ -1107,6 +1121,19 @@
       'sepe.cercadorSepe': 'Buscador del SEPE',
       'sepe.veureTotes': 'Ver las {n} especialidades',
       'sepe.mainEmpty': 'Ningún grado A–E coincide con la búsqueda.',
+      // Pla 098: corrección del título de una especialidad (solo administradores)
+      'tfix.btn': 'Corregir el título',
+      'tfix.title': 'Corregir el título de {codi}',
+      'tfix.note': 'Solo lo ve quien administra la web. La corrección sustituye el título de la fuente en el buscador y en los cursos FPO. Deja un campo vacío para no tocar ese idioma.',
+      'tfix.original': 'Original',
+      'tfix.ca': 'Título en catalán',
+      'tfix.es': 'Título en castellano',
+      'tfix.loading': 'Cargando…',
+      'tfix.save': 'Guardar la corrección',
+      'tfix.undo': 'Deshacer la corrección',
+      'tfix.cancel': 'Cancelar',
+      'tfix.err': 'No se ha podido guardar la corrección.',
+      'tfix.err.load': 'No se ha podido cargar la especialidad.',
       // Pla 096
       'sepe.codiAntic': 'Código anterior: {codi}',
       'sepe.fam.transversal': 'Competencias transversales',
@@ -1139,6 +1166,7 @@
       /* Pla 089: reporta un error en una fitxa */
       'fb.about': 'Sobre:',
       'fb.about.remove': 'No es sobre este grado',
+      'fb.about.remove.espec': 'No es sobre esta especialidad',
       'index.report': '¿Hay un error en esta ficha?',
       /* Pla 087: «Volies dir…» */
       'index.didyoumean.lead': '¿Querías decir',

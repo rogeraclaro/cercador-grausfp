@@ -55,6 +55,7 @@ from dotenv import load_dotenv
 from flask import Flask, Response, jsonify, redirect, request
 from flask_cors import CORS
 
+import ca_es_terms
 import cd_lomloe
 import export_estructura
 import compare
@@ -290,6 +291,8 @@ def _needs_auth_cors(path):
             or path.startswith("/api/fpo/favorites") or path.startswith("/api/fpo/alerts")
             or path.startswith("/api/alerts") or path.startswith("/api/centres-watch")
             or path.startswith("/api/feedback") or path.startswith("/api/admin/feedback")
+            or path.startswith("/api/admin/title-overrides") or path.startswith("/api/admin/search-terms")
+            or path.startswith("/api/admin/empty-searches")
             or path.startswith("/api/held") or path.startswith("/api/lists"))
 
 
@@ -1783,6 +1786,65 @@ def _sepe_lookup(codi: str):
     return next((r for r in idx.values() if r.get('codiAntic') == codi), None)
 
 
+# ---------------------------------------------------------------------------
+# Pla 098 — correccions de títol d'especialitats (taula title_overrides)
+# ---------------------------------------------------------------------------
+
+# Puja a cada canvi des del panell; forma part de la clau de cache de les funcions que
+# apliquen les correccions (_soc_espec_index, _sepe_llista). gunicorn corre amb 1 worker.
+_title_overrides_version = 0
+_title_overrides_cache: dict = {"key": None, "data": None}
+_TITLE_OVERRIDE_MAX_CHARS = 300
+
+
+def _title_overrides_key() -> tuple:
+    # DB_PATH entra a la clau perquè cada test fa servir la seva BD.
+    return (_title_overrides_version, os.environ.get("DB_PATH"))
+
+
+def _title_overrides() -> dict:
+    """{codi: {'ca': str|None, 'es': str|None}}. {} si la taula no hi és (fail-soft)."""
+    key = _title_overrides_key()
+    if _title_overrides_cache["key"] == key and _title_overrides_cache["data"] is not None:
+        return _title_overrides_cache["data"]
+    import db as _db
+    import sqlite3
+    try:
+        conn = _db.get_db()
+        try:
+            rows = _db.query_all(conn, "SELECT codi, titol_ca, titol_es FROM title_overrides")
+        finally:
+            conn.close()
+        data = {r["codi"]: {"ca": r["titol_ca"], "es": r["titol_es"]} for r in rows}
+    except sqlite3.Error as exc:
+        logger.warning("_title_overrides: no es poden llegir les correccions: %s", exc)
+        data = {}
+    _title_overrides_cache.update(key=key, data=data)
+    return data
+
+
+def _titol_corregit(codi: str, titol: dict | None) -> dict:
+    """El títol {'ca','es'} amb la correcció del panell aplicada, si n'hi ha."""
+    titol = titol if isinstance(titol, dict) else {'ca': '', 'es': ''}
+    ov = _title_overrides().get(codi)
+    if not ov:
+        return titol
+    return {**titol, 'ca': ov['ca'] or titol.get('ca', ''), 'es': ov['es'] or titol.get('es', '')}
+
+
+def _titols_originals(codi: str) -> dict | None:
+    """Títols tal com venen de les fonts, sense correccions: CA del SOC; ES com es mostra
+    al SEPE (titol_mostra) o, si no hi és, el del SOC. None si el codi no és a cap índex."""
+    soc = next((e for e in _get_soc_especs() if isinstance(e, dict) and e.get('codi') == codi), None)
+    sepe = _sepe_index().get(codi)
+    if not soc and not sepe:
+        return None
+    soc_t = (soc or {}).get('titol') or {}
+    es = ((sepe.get('titol_mostra') or titols.display_title(sepe.get('titol_es') or ''))
+          if sepe else '') or soc_t.get('es') or ''
+    return {'ca': soc_t.get('ca') or '', 'es': es}
+
+
 def _fpo_today() -> str:
     """Data d'avui (ISO). Funció a part perquè els tests la puguin fixar (Pla 063)."""
     return date.today().isoformat()
@@ -1840,7 +1902,7 @@ def _soc_espec_index() -> dict:
     def _mt(path):
         return os.path.getmtime(path) if os.path.exists(path) else None
 
-    key = (_mt(SOC_CURSOS_PATH), _mt(SOC_ESPECS_PATH), _mt(SEPE_ESPECS_PATH))
+    key = (_mt(SOC_CURSOS_PATH), _mt(SOC_ESPECS_PATH), _mt(SEPE_ESPECS_PATH), _title_overrides_key())
     if _soc_espec_index_cache["key"] == key and _soc_espec_index_cache["data"] is not None:
         return _soc_espec_index_cache["data"]
 
@@ -1868,7 +1930,7 @@ def _soc_espec_index() -> dict:
             vinculacio = None  # sense catàleg SEPE no podem distingir 'sepe' de 'propiaSoc'
         llista.append({
             'codi': codi,
-            'titol': e.get('titol', {'ca': '', 'es': ''}),
+            'titol': _titol_corregit(codi, e.get('titol', {'ca': '', 'es': ''})),   # Pla 098
             'familia': e.get('familia', {}),
             'area': e.get('area', {}),
             'nivell': e.get('nivell', 0),
@@ -1947,7 +2009,7 @@ def api_fpo_especialitat(codi):
 
     resp = {
         'codi': codi,
-        'descripcio': espec.get('titol', {'ca': '', 'es': ''}),
+        'descripcio': _titol_corregit(codi, espec.get('titol', {'ca': '', 'es': ''})),   # Pla 098
         'queAprendras': _first_nonempty('queAprendras'),
         'requisits': _first_nonempty('requisits'),
         'sortides': _first_nonempty('sortides'),
@@ -1984,12 +2046,13 @@ def _sepe_llista() -> dict:
     def _mt(path):
         return os.path.getmtime(path) if os.path.exists(path) else None
 
-    key = (_mt(SEPE_ESPECS_PATH), _mt(SOC_ESPECS_PATH), _mt(SOC_CURSOS_PATH))
+    key = (_mt(SEPE_ESPECS_PATH), _mt(SOC_ESPECS_PATH), _mt(SOC_CURSOS_PATH), _title_overrides_key())
     if _sepe_llista_cache["key"] == key and _sepe_llista_cache["data"] is not None:
         return _sepe_llista_cache["data"]
 
     soc_by_codi = {e['codi']: e for e in _get_soc_especs() if isinstance(e, dict) and e.get('codi')}
     cursos_by_espec = _soc_espec_index()['cursos_by_espec']
+    overrides = _title_overrides()
     families: dict = {}
     arees: dict = {}
     for e in soc_by_codi.values():
@@ -2014,9 +2077,16 @@ def _sepe_llista() -> dict:
         tca = ((soc_by_codi.get(codi) or {}).get('titol') or {}).get('ca') or None
         if tca and tca == tca.upper():      # el SOC també en té alguns en majúscules
             tca = titols.display_title(tca)
+        t_es = r.get('titol_es') or ''
+        tm = r.get('titol_mostra') or titols.display_title(t_es)
+        ov = overrides.get(codi)            # Pla 098: correcció des del panell
+        if ov:
+            tca = ov['ca'] or tca
+            if ov['es']:
+                t_es = tm = ov['es']
         especialitats.append({
-            'c': codi, 't': r.get('titol_es') or '', 'tca': tca,
-            'tm': r.get('titol_mostra') or titols.display_title(r.get('titol_es') or ''),
+            'c': codi, 't': t_es, 'tca': tca,
+            'tm': tm,
             'ca': r.get('codiAntic'), 'sx': r.get('sufix'),
             'f': familia, 'a': r.get('area_codi'), 'n': r.get('nivell'),
             'm': r.get('modalitat') or '', 'h': r.get('hores'),
@@ -2195,95 +2265,9 @@ import re as _re_ocup
 import unicodedata as _ud_ocup
 
 # Diccionari CA→ES per a arrels divergents (termes comuns del domini FP).
-# Claus i valors ja estan en forma normalitzada (minúscules, sense accents).
-_CA_ES_TERMS: dict[str, str] = {
-    # Alimentació i hoteleria
-    'cuina': 'cocina', 'cuiner': 'cocinero', 'cuinera': 'cocinera',
-    'pastisseria': 'pasteleria', 'hostaleria': 'hosteleria',
-    'turisme': 'turismo',
-    # Artesania i fusta
-    'fusteria': 'carpinteria', 'fuster': 'carpintero',
-    'cuir': 'cuero', 'vidre': 'vidrio',
-    # Bellesa i imatge personal
-    'perruqueria': 'peluqueria', 'bellesa': 'belleza',
-    # Construcció i instal·lacions
-    'paleta': 'albanil',
-    # Comerç i màrqueting
-    'comerc': 'comercio',  # comerç normalitzat: comerc (ç→c)
-    'vendes': 'ventas', 'venda': 'venta',
-    'publicitat': 'publicidad',
-    # Educació i serveis socials
-    'infermeria': 'enfermeria', 'infermer': 'enfermero', 'infermera': 'enfermera',
-    # Esport i activitats físiques
-    'esport': 'deporte', 'esports': 'deportes',
-    # Finances i assegurances
-    'assegurances': 'seguros', 'asseguranca': 'seguro',  # ç→c
-    'inmobiliaria': 'inmobiliaria',  # immobiliària→inmobiliaria (doble m→m)
-    # Imatge i so
-    'imatge': 'imagen',
-    # Seguretat i emergències
-    'bombers': 'bomberos',
-    # Arts i espectacle
-    'dansa': 'danza', 'teatre': 'teatro', 'cinema': 'cine',
-    'arts': 'artes', 'art': 'arte',
-    'grafic': 'grafico',  # gràfic→grafic
-    # Transport
-    'transport': 'transporte',
-    # Muntatge i instal·lació
-    'muntatge': 'montaje', 'muntador': 'montador',
-    # Pla 097: paraules freqüents dels títols de les especialitats del SEPE (només les que la
-    # forma catalana no ja troba sola, com a part de la castellana o amb les regles de sufix)
-    'operacions': 'operaciones', 'disseny': 'diseno', 'dissenyador': 'disenador', 'tecniques': 'tecnicas',
-    'desenvolupament': 'desarrollo', 'nivell': 'nivel', 'sistemes': 'sistemas',
-    'instal·lacions': 'instalaciones', 'instal·lacio': 'instalacion', 'instalacions': 'instalaciones',
-    'instal·lador': 'instalador', 'aplicacions': 'aplicaciones', 'productes': 'productos',
-    'producte': 'producto', 'dades': 'datos', 'avancat': 'avanzado', 'avancada': 'avanzada',
-    'avancats': 'avanzados', 'avancades': 'avanzadas', 'persones': 'personas', 'projectes': 'proyectos',
-    'projecte': 'proyecto', 'fonaments': 'fundamentos', 'fonament': 'fundamento', 'riscos': 'riesgos',
-    'risc': 'riesgo', 'eines': 'herramientas', 'eina': 'herramienta', 'basiques': 'basicas',
-    'treballs': 'trabajos', 'treball': 'trabajo', 'treballador': 'trabajador', 'treballadors': 'trabajadores',
-    'digitals': 'digitales', 'auxiliars': 'auxiliares', 'activitats': 'actividades', 'serveis': 'servicios',
-    'servei': 'servicio', 'xarxes': 'redes', 'xarxa': 'redes', 'processos': 'procesos',
-    'laborals': 'laborales', 'equips': 'equipos', 'socials': 'sociales', 'qualitat': 'calidad',
-    'intel·ligencia': 'inteligencia', 'intelligencia': 'inteligencia', 'professional': 'profesional',
-    'professionals': 'profesionales', 'professio': 'profesion', 'vehicles': 'vehiculos', 'vehicle': 'vehiculo',
-    'tecnologies': 'tecnologias', 'mercaderies': 'mercancias', 'mercaderia': 'mercancia', 'neteja': 'limpieza',
-    'empreses': 'empresas', 'maneig': 'manejo', 'competencies': 'competencias', 'cures': 'cuidados',
-    'materials': 'materiales', 'centres': 'centros', 'centre': 'centro', 'programari': 'software',
-    'conductors': 'conductores', 'organitzacio': 'organizacion', 'salut': 'salud', 'entorns': 'entornos',
-    'angles': 'ingles', 'mobils': 'moviles', 'mobil': 'movil', 'tractament': 'tratamiento',
-    'estrategies': 'estrategias', 'edificis': 'edificios', 'industrials': 'industriales',
-    'procediments': 'procedimientos', 'llengua': 'lengua', 'llengues': 'lenguas', 'viatgers': 'viajeros',
-    'calcat': 'calzado', 'drons': 'drones', 'modelatge': 'modelado', 'aprenentatge': 'aprendizaje',
-    'actualitzacio': 'actualizacion', 'especials': 'especiales', 'residus': 'residuos',
-    'automatitzacio': 'automatizacion', 'maquines': 'maquinas', 'aigua': 'agua', 'aigues': 'aguas',
-    'estructures': 'estructuras', 'mitjancant': 'mediante', 'elevadores': 'elevadoras', 'noves': 'nuevas',
-    'sensibilitzacio': 'sensibilizacion', 'avaluacio': 'evaluacion', 'electriques': 'electricas',
-    'electrics': 'electricos', 'continguts': 'contenidos', 'fusta': 'madera', 'carrega': 'carga',
-    'especialitzacio': 'especializacion', 'situacions': 'situaciones', 'mitjans': 'medios',
-    'dispositius': 'dispositivos', 'estacions': 'estaciones', 'digitalitzacio': 'digitalizacion',
-    'millora': 'mejora', 'models': 'modelos', 'comercialitzacio': 'comercializacion', 'impressio': 'impresion',
-    'materies': 'materias', 'cooperatives': 'cooperativas', 'ordinador': 'ordenador',
-    'ordinadors': 'ordenadores', 'aplicades': 'aplicadas', 'aplicat': 'aplicado', 'aplicats': 'aplicados',
-    'virtuals': 'virtuales', 'assessorament': 'asesoramiento', 'incendis': 'incendios',
-    'climatitzacio': 'climatizacion', 'ensenyament': 'ensenanza', 'optimitzacio': 'optimizacion',
-    'esdeveniments': 'eventos', 'carretons': 'carretillas', 'carreto': 'carretilla', 'aliments': 'alimentos',
-    'plataformes': 'plataformas', 'derivats': 'derivados', 'operaris': 'operarios',
-    'infraestructures': 'infraestructuras', 'personals': 'personales', 'videojocs': 'videojuegos',
-    'tall': 'corte', 'audiovisuals': 'audiovisuales', 'perilloses': 'peligrosas', 'perillosos': 'peligrosos',
-    'financer': 'financiero', 'financera': 'financiera', 'pagines': 'paginas', 'certificat': 'certificado',
-    'benestar': 'bienestar', 'plantes': 'plantas', 'solucions': 'soluciones', 'joieria': 'joyeria',
-    'comercials': 'comerciales', 'comptabilitat': 'contabilidad', 'entitats': 'entidades',
-    'enginyeria': 'ingenieria', 'clients': 'clientes', 'suport': 'apoyo', 'comunitats': 'comunidades',
-    'auxilis': 'auxilios', 'primers': 'primeros', 'formigo': 'hormigon', 'lampisteria': 'fontaneria',
-    'lampista': 'fontanero', 'cambrer': 'camarero', 'cambrera': 'camarera', 'magatzem': 'almacen',
-    'emmagatzematge': 'almacenaje', 'dependent': 'dependiente', 'caixer': 'cajero',
-    'carnisseria': 'carniceria', 'peixateria': 'pescaderia', 'forn': 'horno', 'fleca': 'panaderia',
-    'ramaderia': 'ganaderia', 'muntanya': 'montana', 'xapa': 'chapa', 'guix': 'yeso', 'ferro': 'hierro',
-    'metall': 'metal', 'metal·lic': 'metalico', 'metallic': 'metalico', 'alemany': 'aleman',
-    'seguretat': 'seguridad', 'ciberseguretat': 'ciberseguridad', 'igualtat': 'igualdad',
-    'habilitats': 'habilidades',
-}
+# Pla 098: la font de veritat és la taula search_terms (editable al panell); aquest
+# diccionari és la sembra inicial i la reserva si la BD no respon (ca_es_terms.py).
+_CA_ES_TERMS: dict[str, str] = ca_es_terms.SEED_TERMS
 
 # Regles de sufix CA→ES (sobre text ja normalitzat, en ordre d'aplicació).
 # Exemple: 'comunicacio' → 'comunicacion', 'electricitat' → 'electricidad'.
@@ -2295,6 +2279,32 @@ _CA_ES_SUFFIXES: list[tuple[str, str]] = [
 ]
 
 
+# Pla 098: equivalències vives (taula search_terms), amb cache en memòria que es refà quan
+# canvien des del panell (versió) o quan canvia la BD (tests).
+_search_terms_version = 0
+_search_terms_cache: dict = {"key": None, "data": None}
+
+
+def _search_terms() -> dict:
+    """{ca: es} de la taula search_terms; el diccionari de partida si la BD no respon."""
+    key = (_search_terms_version, os.environ.get("DB_PATH"))
+    if _search_terms_cache["key"] == key and _search_terms_cache["data"] is not None:
+        return _search_terms_cache["data"]
+    import db as _db
+    import sqlite3
+    try:
+        conn = _db.get_db()
+        try:
+            data = {r["ca"]: r["es"] for r in _db.query_all(conn, "SELECT ca, es FROM search_terms ORDER BY ca")}
+        finally:
+            conn.close()
+    except sqlite3.Error as exc:
+        logger.warning("_search_terms: no es poden llegir les equivalències: %s", exc)
+        return dict(_CA_ES_TERMS)   # no es cacheja: es torna a provar a la propera
+    _search_terms_cache.update(key=key, data=data)
+    return data
+
+
 def _expand_token(t: str) -> list[str]:
     """Retorna [t] + variants ES si t sembla un terme en català.
 
@@ -2302,8 +2312,9 @@ def _expand_token(t: str) -> list[str]:
     Si es troba coincidència al diccionari, NO s'apliquen les regles de sufix
     (evita dobles transformacions).
     """
-    if t in _CA_ES_TERMS:
-        es = _CA_ES_TERMS[t]
+    terms = _search_terms()
+    if t in terms:
+        es = terms[t]
         return [t, es] if es != t else [t]
     for ca_sfx, es_sfx in _CA_ES_SUFFIXES:
         if t.endswith(ca_sfx) and len(t) > len(ca_sfx) + 2:
@@ -2317,13 +2328,14 @@ def api_ca_es_terms():
     """Taules d'expansió CA→ES (mateixa font que la cerca d'ocupació).
 
     El frontend les fa servir perquè la cerca de la taula principal accepti
-    termes en català. Contingut estàtic: es pot cachejar al navegador.
+    termes en català. Pla 098: els termes surten de la taula search_terms (editable al
+    panell); cache curta perquè un canvi es vegi aviat.
     """
     resp = jsonify({
-        'terms': _CA_ES_TERMS,
+        'terms': _search_terms(),
         'suffixes': [list(p) for p in _CA_ES_SUFFIXES],
     })
-    resp.headers['Cache-Control'] = 'public, max-age=3600'
+    resp.headers['Cache-Control'] = 'public, max-age=300'
     return resp
 
 
@@ -4836,7 +4848,20 @@ def _feedback_oferta(ref) -> dict | None:
             "url": grau_page.grau_path(rec["ref"])}
 
 
-def _notify_feedback(email: str, kind: str, message: str, context: dict, oferta: dict | None = None) -> None:
+def _feedback_espec(codi) -> dict | None:
+    """Pla 098: l'especialitat d'un comentari ({codi, titol}), o None si el codi no és a
+    l'índex SEPE ni al del SOC. El títol, amb la correcció del panell si n'hi ha."""
+    if not isinstance(codi, str) or not _ESPEC_CODI_RE.match(codi):
+        return None
+    originals = _titols_originals(codi)
+    if not originals:
+        return None
+    titol = _titol_corregit(codi, originals)
+    return {"codi": codi, "titol": titol.get("ca") or titol.get("es") or codi}
+
+
+def _notify_feedback(email: str, kind: str, message: str, context: dict, oferta: dict | None = None,
+                     espec: dict | None = None) -> None:
     """Avís opcional al propietari. Mai bloqueja ni fa fallar el comentari."""
     notify_to = os.environ.get("FEEDBACK_NOTIFY_EMAIL", "").strip()
     if not notify_to:
@@ -4844,6 +4869,8 @@ def _notify_feedback(email: str, kind: str, message: str, context: dict, oferta:
     page = (context.get("path", "") + context.get("query", "")) or "—"
     grau = (f"Grau: {oferta['denominacion']} (Grado {oferta['grado']})\n{SITE_URL}{oferta['url']}\n"
             if oferta else "")
+    if espec:
+        grau += f"Especialitat: {espec['codi']} · {espec['titol']}\n"
     body = (f"{email} ha deixat un comentari ({_FEEDBACK_KIND_LABELS.get(kind, kind)}).\n"
             f"Pàgina: {page}\n{grau}\n{message}\n")
 
@@ -4877,6 +4904,8 @@ def feedback_create():
     # Pla 089: grau sobre el qual es comenta. Un ref invàlid s'ignora; no és motiu per rebutjar res.
     oferta = _feedback_oferta(data.get("ref"))
     ref = data["ref"] if oferta else None
+    # Pla 098: o sobre una especialitat (SEPE/SOC). Un codi invàlid també s'ignora.
+    espec = _feedback_espec(data.get("espec"))
 
     user_id = _get_session_user(request)
     conn = _db.get_db()
@@ -4890,22 +4919,24 @@ def feedback_create():
             if not _feedback_rate_ok(_client_ip(request)):
                 return jsonify({"error": "Massa comentaris. Torna-ho a provar d'aquí a una estona."}), 429
         cur = conn.execute(
-            "INSERT INTO feedback (user_id, email, kind, message, context, oferta_ref) VALUES (?, ?, ?, ?, ?, ?)",
-            (user_id, email, kind, message, json.dumps(context, ensure_ascii=False), ref),
+            "INSERT INTO feedback (user_id, email, kind, message, context, oferta_ref, espec_codi) "
+            "VALUES (?, ?, ?, ?, ?, ?, ?)",
+            (user_id, email, kind, message, json.dumps(context, ensure_ascii=False), ref,
+             espec["codi"] if espec else None),
         )
         conn.commit()
         feedback_id = cur.lastrowid
     finally:
         conn.close()
 
-    _notify_feedback(email, kind, message, context, oferta)
+    _notify_feedback(email, kind, message, context, oferta, espec)
     return jsonify({"id": feedback_id}), 201
 
 
 _FEEDBACK_STATUSES = {"new", "in_progress", "done", "discarded"}
 _FEEDBACK_NOTE_MAX_CHARS = 1000
 _FEEDBACK_ADMIN_COLUMNS = ("id, user_id, email, kind, message, context, status, admin_note, created_at, "
-                           "updated_at, oferta_ref")
+                           "updated_at, oferta_ref, espec_codi")
 
 
 def _feedback_row(row) -> dict:
@@ -4915,6 +4946,7 @@ def _feedback_row(row) -> dict:
     except ValueError:
         item["context"] = {}
     item["oferta"] = _feedback_oferta(item.get("oferta_ref"))   # Pla 089: grau del comentari, si en té
+    item["espec"] = _feedback_espec(item.get("espec_codi"))     # Pla 098: o especialitat
     return item
 
 
@@ -4969,6 +5001,272 @@ def admin_feedback_update(feedback_id):
         return jsonify(_feedback_row(row)), 200
     finally:
         conn.close()
+
+
+# ---------------------------------------------------------------------------
+# Pla 098 — correccions de títol i equivalències de cerca des del panell;
+# cerques sense resultat (agregades i anònimes)
+# ---------------------------------------------------------------------------
+
+_ESPEC_CODI_RE = re.compile(r"^[A-Za-z0-9]{2,20}$")
+_SEARCH_TERM_CA_MAX = 40
+_SEARCH_TERM_ES_MAX = 60
+_SEARCH_MISS_MAX_CHARS = 80
+_SEARCH_MISS_MIN_CHARS = 4
+_SEARCH_MISS_RATE_LIMIT = 30       # per IP i hora (en memòria, amb _auth_rate_ok)
+_SEARCH_MISS_RATE_WINDOW = 3600
+_SEARCH_MISS_MAX_ROWS = 5000       # sostre de la taula: una cerca nova no hi entra si és plena
+_SEARCH_MISS_LIST_LIMIT = 200
+
+
+def _plain_text(value, max_chars: int):
+    """(text, error). Text pla d'una línia: espais col·lapsats, sense caràcters de control.
+    None (o buit) → (None, None)."""
+    if value is None:
+        return None, None
+    if not isinstance(value, str):
+        return None, "Ha de ser text"
+    text = " ".join(value.split())
+    if any(ord(c) < 32 or ord(c) == 127 for c in text):
+        return None, "Caràcters no vàlids"
+    if len(text) > max_chars:
+        return None, f"Massa llarg (màxim {max_chars} caràcters)"
+    return (text or None), None
+
+
+def _admin_actor(req) -> str:
+    """Qui fa el canvi: l'email de l'admin amb sessió o, per a scripts, el token."""
+    import db as _db
+    user_id = _get_session_user(req)
+    if not user_id:
+        return "ADMIN_TOKEN"
+    conn = _db.get_db()
+    try:
+        row = _db.query_one(conn, "SELECT email FROM users WHERE id = ?", (user_id,))
+        return row["email"] if row else "ADMIN_TOKEN"
+    finally:
+        conn.close()
+
+
+def _title_override_row(row) -> dict:
+    item = dict(row)
+    actual = _titols_originals(item["codi"])
+    item["actual_ca"] = actual["ca"] if actual else None
+    item["actual_es"] = actual["es"] if actual else None
+    item["al_cataleg"] = actual is not None
+    # «Ja no cal»: cada idioma corregit ja coincideix amb el que dona la font. No s'esborra sola.
+    camps = [(item["titol_ca"], item["actual_ca"]), (item["titol_es"], item["actual_es"])]
+    item["ja_no_cal"] = bool(actual) and all(t == a for t, a in camps if t)
+    return item
+
+
+def _bump_title_overrides():
+    global _title_overrides_version
+    _title_overrides_version += 1
+
+
+def _bump_search_terms():
+    global _search_terms_version
+    _search_terms_version += 1
+
+
+@app.route("/api/admin/title-overrides", methods=["GET"])
+def admin_title_overrides_list():
+    """Correccions de títol, més recents primer, amb el títol actual de la font."""
+    if not _check_admin(request):
+        return jsonify({"error": "Unauthorized"}), 401
+    import db as _db
+    conn = _db.get_db()
+    try:
+        rows = _db.query_all(conn, "SELECT * FROM title_overrides ORDER BY updated_at DESC, codi")
+    finally:
+        conn.close()
+    return jsonify([_title_override_row(r) for r in rows]), 200
+
+
+@app.route("/api/admin/title-overrides/<codi>", methods=["GET"])
+def admin_title_override_get(codi):
+    """Títols originals d'una especialitat i la correcció que tingui (per al quadre d'edició)."""
+    if not _check_admin(request):
+        return jsonify({"error": "Unauthorized"}), 401
+    import db as _db
+    originals = _titols_originals(codi) if _ESPEC_CODI_RE.match(codi) else None
+    if not originals:
+        return jsonify({"error": "Especialitat no trobada"}), 404
+    conn = _db.get_db()
+    try:
+        row = _db.query_one(conn, "SELECT * FROM title_overrides WHERE codi = ?", (codi,))
+    finally:
+        conn.close()
+    return jsonify({"codi": codi, "original_ca": originals["ca"], "original_es": originals["es"],
+                    "override": _title_override_row(row) if row else None}), 200
+
+
+@app.route("/api/admin/title-overrides/<codi>", methods=["PUT"])
+def admin_title_override_put(codi):
+    """Desa (o canvia) la correcció d'una especialitat del SEPE o del SOC."""
+    if not _check_admin(request):
+        return jsonify({"error": "Unauthorized"}), 401
+    import db as _db
+    originals = _titols_originals(codi) if _ESPEC_CODI_RE.match(codi) else None
+    if not originals:
+        return jsonify({"error": "Especialitat no trobada"}), 404
+    body = request.get_json(silent=True)
+    if not isinstance(body, dict):
+        return jsonify({"error": "Cos JSON no vàlid"}), 400
+    titol_ca, err_ca = _plain_text(body.get("titol_ca"), _TITLE_OVERRIDE_MAX_CHARS)
+    titol_es, err_es = _plain_text(body.get("titol_es"), _TITLE_OVERRIDE_MAX_CHARS)
+    if err_ca or err_es:
+        return jsonify({"error": err_ca or err_es}), 400
+    if not titol_ca and not titol_es:
+        return jsonify({"error": "Cal un títol en català o en castellà"}), 400
+    actor = _admin_actor(request)
+    conn = _db.get_db()
+    try:
+        conn.execute(
+            """INSERT INTO title_overrides (codi, titol_ca, titol_es, original_ca, original_es, updated_at, updated_by)
+               VALUES (?, ?, ?, ?, ?, datetime('now'), ?)
+               ON CONFLICT(codi) DO UPDATE SET titol_ca = excluded.titol_ca, titol_es = excluded.titol_es,
+                 original_ca = excluded.original_ca, original_es = excluded.original_es,
+                 updated_at = excluded.updated_at, updated_by = excluded.updated_by""",
+            (codi, titol_ca, titol_es, originals["ca"] or None, originals["es"] or None, actor),
+        )
+        conn.commit()
+        row = _db.query_one(conn, "SELECT * FROM title_overrides WHERE codi = ?", (codi,))
+    finally:
+        conn.close()
+    _bump_title_overrides()
+    return jsonify(_title_override_row(row)), 200
+
+
+@app.route("/api/admin/title-overrides/<codi>", methods=["DELETE"])
+def admin_title_override_delete(codi):
+    """Desfà una correcció: torna el títol de la font."""
+    if not _check_admin(request):
+        return jsonify({"error": "Unauthorized"}), 401
+    import db as _db
+    conn = _db.get_db()
+    try:
+        deleted = conn.execute("DELETE FROM title_overrides WHERE codi = ?", (codi,)).rowcount
+        conn.commit()
+    finally:
+        conn.close()
+    if not deleted:
+        return jsonify({"error": "Correcció no trobada"}), 404
+    _bump_title_overrides()
+    return jsonify({"ok": True}), 200
+
+
+@app.route("/api/admin/search-terms", methods=["GET"])
+def admin_search_terms_list():
+    """Equivalències de cerca català → castellà, per ordre alfabètic."""
+    if not _check_admin(request):
+        return jsonify({"error": "Unauthorized"}), 401
+    import db as _db
+    conn = _db.get_db()
+    try:
+        rows = _db.query_all(conn, "SELECT ca, es, updated_at FROM search_terms ORDER BY ca")
+    finally:
+        conn.close()
+    return jsonify([dict(r) for r in rows]), 200
+
+
+@app.route("/api/admin/search-terms/<path:ca>", methods=["PUT"])
+def admin_search_term_put(ca):
+    """Afegeix o canvia una equivalència. Les dues formes es normalitzen com la cerca
+    (minúscules, sense accents); la catalana ha de ser una sola paraula."""
+    if not _check_admin(request):
+        return jsonify({"error": "Unauthorized"}), 401
+    import db as _db
+    body = request.get_json(silent=True)
+    if not isinstance(body, dict):
+        return jsonify({"error": "Cos JSON no vàlid"}), 400
+    ca_raw, err_ca = _plain_text(ca, _SEARCH_TERM_CA_MAX)
+    es_raw, err_es = _plain_text(body.get("es"), _SEARCH_TERM_ES_MAX)
+    if err_ca or err_es:
+        return jsonify({"error": err_ca or err_es}), 400
+    ca_norm, es_norm = _norm_ocup(ca_raw or ""), _norm_ocup(es_raw or "")
+    if len(ca_norm) < 2 or " " in ca_norm:
+        return jsonify({"error": "La paraula en català ha de ser una sola paraula (mínim 2 lletres)"}), 400
+    if not es_norm:
+        return jsonify({"error": "Cal l'equivalència en castellà"}), 400
+    conn = _db.get_db()
+    try:
+        conn.execute(
+            """INSERT INTO search_terms (ca, es, updated_at) VALUES (?, ?, datetime('now'))
+               ON CONFLICT(ca) DO UPDATE SET es = excluded.es, updated_at = excluded.updated_at""",
+            (ca_norm, es_norm),
+        )
+        conn.commit()
+        row = _db.query_one(conn, "SELECT ca, es, updated_at FROM search_terms WHERE ca = ?", (ca_norm,))
+    finally:
+        conn.close()
+    _bump_search_terms()
+    return jsonify(dict(row)), 200
+
+
+@app.route("/api/admin/search-terms/<path:ca>", methods=["DELETE"])
+def admin_search_term_delete(ca):
+    if not _check_admin(request):
+        return jsonify({"error": "Unauthorized"}), 401
+    import db as _db
+    conn = _db.get_db()
+    try:
+        deleted = conn.execute("DELETE FROM search_terms WHERE ca = ?", (_norm_ocup(ca),)).rowcount
+        conn.commit()
+    finally:
+        conn.close()
+    if not deleted:
+        return jsonify({"error": "Equivalència no trobada"}), 404
+    _bump_search_terms()
+    return jsonify({"ok": True}), 200
+
+
+@app.route("/api/search-miss", methods=["POST"])
+def search_miss():
+    """Pública: una cerca que no ha donat cap resultat. Només es desa el text normalitzat i
+    un comptador (sense IP, usuari ni sessió). El límit per IP és en memòria."""
+    import db as _db
+    if not _auth_rate_ok("search_miss", _client_ip(request),
+                         limit=_SEARCH_MISS_RATE_LIMIT, window=_SEARCH_MISS_RATE_WINDOW):
+        return jsonify({"error": "massa_peticions"}), 429
+    data = request.get_json(silent=True)
+    raw = data.get("q") if isinstance(data, dict) else None
+    if not isinstance(raw, str):
+        return jsonify({"error": "Falta la cerca"}), 400
+    q = _norm_ocup(raw[:500])[:_SEARCH_MISS_MAX_CHARS].strip()
+    if len(q) < _SEARCH_MISS_MIN_CHARS or any(ord(c) < 32 or ord(c) == 127 for c in q):
+        return jsonify({"error": "Cerca no vàlida"}), 400
+    conn = _db.get_db()
+    try:
+        known = _db.query_one(conn, "SELECT 1 FROM empty_searches WHERE q = ?", (q,))
+        if known or _db.query_one(conn, "SELECT COUNT(*) AS n FROM empty_searches")["n"] < _SEARCH_MISS_MAX_ROWS:
+            # Només el dia, no l'hora: n'hi ha prou per saber si una cerca és recent.
+            conn.execute(
+                """INSERT INTO empty_searches (q, n, last_seen) VALUES (?, 1, date('now'))
+                   ON CONFLICT(q) DO UPDATE SET n = n + 1, last_seen = excluded.last_seen""",
+                (q,),
+            )
+            conn.commit()
+    finally:
+        conn.close()
+    return "", 204
+
+
+@app.route("/api/admin/empty-searches", methods=["GET"])
+def admin_empty_searches_list():
+    """Cerques sense resultat, les més freqüents primer."""
+    if not _check_admin(request):
+        return jsonify({"error": "Unauthorized"}), 401
+    import db as _db
+    conn = _db.get_db()
+    try:
+        rows = _db.query_all(
+            conn, "SELECT q, n, last_seen FROM empty_searches ORDER BY n DESC, last_seen DESC, q LIMIT ?",
+            (_SEARCH_MISS_LIST_LIMIT,))
+    finally:
+        conn.close()
+    return jsonify([dict(r) for r in rows]), 200
 
 
 # ---------------------------------------------------------------------------
