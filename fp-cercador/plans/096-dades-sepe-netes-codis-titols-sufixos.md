@@ -1,7 +1,8 @@
 # Pla 096 — Dades SEPE netes: codis, creuament amb el SOC, títols i sufixos
 
 Prioritat P1 · Mida M · Depèn de: — · Idees 3, 8, 9 i 20.
-Executable per un agent sense context. Gairebé tots els plans 097–103 en depenen.
+Executable per un agent sense context.
+**Estat: DONE i desplegat el 2026-11-26.** Gairebé tots els plans 097–103 en depenen.
 
 ## Context comú (llegir abans de començar)
 

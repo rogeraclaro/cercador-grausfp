@@ -323,6 +323,7 @@ La primera vegada, `--discover` triga ~20 min; després va de la memòria cau.
 ### Catàleg d'Especialitats Formatives del SEPE (plans 081–082)
 - 081: **fet** (commits f0a99b0, a54b18c, 7d46fee): scraper + `sepe_especs.json` + badges i filtre a l'FPO.
 - 082: **fet i desplegat 2026-11-26**. Canvi de decisió: les especialitats SEPE surten al cercador principal (pestanya «Especialitats SEPE» + bloc sota els resultats), no en una pàgina a part. Proxy del PDF del programa amb cache. Docs a per-que-grausfp.html#sepe i fonts.html#sepe. Pendent: parlar de com diferenciar-les visualment.
+- **095–099 fets i desplegats el 2026-11-26** (executats per agents, un per pla, revisats i desplegats un a un): 095 `c42b6cf`, 096 `b1925d7`, 097 `3bd6a5c`, 098 `5ad76bd` (migració 017; còpia BD a /root/fp_cercador.db.bak-pre098), 099 `99c99e4`. Pendents: 100 (descàrrega de ~10 h des de l'ordinador del propietari), 101–104.
 - **Plans 095–104 escrits el 2026-11-26** (sessió de 21 idees discutides una per una amb el propietari; un pla per sessió):
   095 refresc robust (P1, el refresc del 22-nov va fallar en silenci) · 096 dades SEPE netes (P1, arregla 216 especialitats mal creuades amb el SOC) ·
   097 filtres i presentació · 098 correccions des del panell · 099 entitats per especialitat · 100 descàrrega de programes i ocupacions ·

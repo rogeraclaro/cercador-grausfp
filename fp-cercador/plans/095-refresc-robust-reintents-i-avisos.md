@@ -2,6 +2,7 @@
 
 Prioritat P1 · Mida M · Depèn de: — · Idea 5 de la sessió 2026-11-26.
 Executable per un agent sense context.
+**Estat: DONE i desplegat el 2026-11-26.**
 
 ## Context comú (llegir abans de començar)
 

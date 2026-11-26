@@ -1,7 +1,8 @@
 # Pla 097 — Filtres i presentació de les especialitats SEPE al cercador
 
 Prioritat P2 · Mida M · Depèn de: 096 · Idees 1, 2, 12, 13, 14 i 15.
-Executable per un agent sense context. Només frontend i textos (i una ampliació d'equivalències al backend).
+Executable per un agent sense context.
+**Estat: DONE i desplegat el 2026-11-26.** Només frontend i textos (i una ampliació d'equivalències al backend).
 
 ## Context comú (llegir abans de començar)
 

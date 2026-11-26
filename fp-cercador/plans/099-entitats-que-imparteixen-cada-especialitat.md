@@ -2,6 +2,7 @@
 
 Prioritat P2 · Mida M · Depèn de: 096 · Idea 4.
 Executable per un agent sense context.
+**Estat: DONE i desplegat el 2026-11-26.**
 
 ## Context comú (llegir abans de començar)
 
