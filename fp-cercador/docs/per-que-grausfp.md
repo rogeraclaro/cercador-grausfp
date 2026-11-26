@@ -44,11 +44,11 @@ Com trobar-les: escriu el nom o el codi al cercador i, sota els graus, apareix e
 
 El botó «Entitats que la imparteixen» mostra les entitats que el SEPE té **autoritzades** per impartir l'especialitat, amb el tipus, la província i el contacte; no vol dir que tinguin un curs obert ara.
 
-Unes 400 especialitats són de **competències transversals** (idiomes, competències digitals, orientació, igualtat…): el SEPE no les assigna a cap família professional, i el cercador les agrupa a la família «Competències transversals» de la pestanya «Especialitats SEPE». Algunes tenen també un **codi anterior** (per exemple, CTRC0001 abans era FCOV0001): surt al desplegable i també es pot cercar.
+Unes 400 especialitats són de **competències transversals** (idiomes, competències digitals, orientació, igualtat…): el catàleg del SEPE no les assigna a cap família professional. El cercador les agrupa a la família «Activitats i competències transversals» de la pestanya «Especialitats SEPE», el nom que el Reial decret 69/2025 dona a la família professional nova per a aquestes competències. Algunes tenen també un **codi anterior** (per exemple, CTRC0001 abans era FCOV0001): surt al desplegable i també es pot cercar.
 
 Les lletres finals del codi indiquen el tipus d'especialitat: **PO**, programes adreçats prioritàriament a persones ocupades, i **DCP**, per a persones amb discapacitat. Segons la Resolució del SEPE de 12 de març de 2010 (BOE del 24 de març de 2010, ja derogada), **EXP** vol dir experimental, **CCC** compromís de contractació i **PTF** perfeccionament tècnic; el cercador no les etiqueta.
 
-Cada especialitat té un **nivell de qualificació** de l'1 al 5. L'Ordre TMS/283/2019 (article 3.2) el lliga als nivells del Catàleg Nacional de Qualificacions Professionals: és la mateixa escala que fan servir els graus de FP, que arriben fins al nivell 3, i els nivells 4 i 5 queden per sobre. El número indica la dificultat del contingut, no dona cap títol ni acreditació. Unes 2.100 especialitats no tenen nivell assignat i a la taula surten amb un guionet.
+Cada especialitat té un **nivell de qualificació** de l'1 al 5, segons l'Ordre TMS/283/2019 (article 3.2), que el lliga a l'escala de l'antic Catàleg Nacional de Qualificacions Professionals. Els nivells 1, 2 i 3 són comparables als dels graus de FP. Els nivells 4 i 5 vénen d'aquella escala antiga, que es va derogar el 2025 (Reial decret 69/2025): el sistema actual de FP en té només tres. El número indica la dificultat del contingut; no dona cap títol ni acreditació. Unes 2.100 especialitats no tenen nivell assignat i a la taula surten amb un guionet.
 
 ---
 

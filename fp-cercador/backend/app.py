@@ -2034,7 +2034,8 @@ def api_fpo_especialitat(codi):
 _sepe_llista_cache: dict = {"key": None, "data": None}
 # Pla 096: família virtual per a les especialitats de competència transversal.
 _SEPE_TRANSVERSAL = 'CTR'
-_SEPE_TRANSVERSAL_DESC = {'ca': 'Competències transversals', 'es': 'Competencias transversales'}
+# Nom de la família professional ACT del RD 69/2025 (annex III).
+_SEPE_TRANSVERSAL_DESC = {'ca': 'Activitats i competències transversals', 'es': 'Actividades y Competencias Transversales'}
 
 _SEPE_PDF_TTL = 30 * 86400        # un PDF baixat es reaprofita 30 dies
 _SEPE_NOPDF_TTL = 7 * 86400       # "sense programa" es recorda 7 dies per no repicar el SEPE

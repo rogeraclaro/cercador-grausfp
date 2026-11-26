@@ -124,7 +124,7 @@ def test_codi_net_es_creua_amb_soc(ctr_client):
     assert ctr['tca'] == 'Resolució de conflictes'          # el SOC en majúscules → display_title
     assert ctr['tm'] == 'Resolución de conflictos'
     assert ctr['f'] == 'CTR'
-    assert d['families']['CTR'] == {'ca': 'Competències transversals', 'es': 'Competencias transversales'}
+    assert d['families']['CTR'] == {'ca': 'Activitats i competències transversals', 'es': 'Actividades y Competencias Transversales'}
     assert next(e for e in d['especialitats'] if e['c'] == 'ADGA12DCP')['sx'] == 'DCP'
 
 
