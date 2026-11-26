@@ -24,7 +24,8 @@ _state = {
     "duration_seconds": None,
     "errors": [],
     "warnings": [],            # avisos no fatals del darrer refresh (p. ex. Pla 074)
-    "phase": None,             # nom de la fase en curs (només durant "running")
+    "phase": None,             # fase en curs ("running") o on ha fallat ("error", Pla 095)
+    "retry_at": None,          # ISO 8601 del reintent programat d'un refresc fallat (Pla 095)
 }
 
 

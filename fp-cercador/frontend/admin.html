@@ -263,6 +263,7 @@
       <h2>Refresh manual</h2>
       <button id="refresh-btn">Actualitzar dades</button>
       <div id="refresh-status"></div>
+      <p id="refresh-health" style="color: var(--warm); font-size: 13px; margin-top: 12px;"></p>
     </section>
 
     <!-- ── Secció 3: Scraping de centres ── -->
@@ -378,6 +379,7 @@
     // ── Refresh manual ───────────────────────────────────────
     const refreshBtn = document.getElementById('refresh-btn');
     const statusEl = document.getElementById('refresh-status');
+    const healthEl = document.getElementById('refresh-health');
     let pollTimer = null;
 
     function setStatus(html, kind = 'info') {
@@ -412,9 +414,21 @@
       `, 'success');
     }
 
+    // Pla 095: data de l'últim refresc correcte (mtime d'ofertes.json; sobreviu als reinicis).
+    function renderHealth(state) {
+      healthEl.textContent = state.last_success
+        ? 'Últim refresc correcte: ' + new Date(state.last_success).toLocaleString('ca-ES')
+        : 'Encara no hi ha cap refresc correcte.';
+    }
+
     function renderError(state) {
       const errs = (state.errors || []).map(e => `<li>${escapeHtml(e)}</li>`).join('');
-      setStatus(`<strong>Refresh fallat.</strong><ul style="margin-top:8px;padding-left:20px;">${errs || '<li>(sense detalls)</li>'}</ul>`, 'error');
+      const when = state.last_run ? ` (${escapeHtml(new Date(state.last_run).toLocaleString('ca-ES'))})` : '';
+      const phase = state.phase ? ` a la fase «${escapeHtml(state.phase)}»` : '';
+      const retry = state.retry_at
+        ? `<br>Reintent automàtic programat: ${escapeHtml(new Date(state.retry_at).toLocaleString('ca-ES'))}`
+        : '';
+      setStatus(`<strong>L'últim refresh${when} ha fallat${phase}.</strong> El cercador continua amb les dades anteriors.${retry}<ul style="margin-top:8px;padding-left:20px;">${errs || '<li>(sense detalls)</li>'}</ul>`, 'error');
     }
 
     async function pollOnce() {
@@ -422,6 +436,7 @@
         const res = await fetch(API_BASE + '/api/refresh-status');
         if (!res.ok) { setStatus('Error consultant l\'estat (HTTP ' + res.status + ')', 'error'); stopPolling(); return; }
         const state = await res.json();
+        renderHealth(state);
         if (state.status === 'running') {
           refreshBtn.disabled = true;
           const phaseTxt = state.phase ? ` — ${escapeHtml(state.phase)}` : '';

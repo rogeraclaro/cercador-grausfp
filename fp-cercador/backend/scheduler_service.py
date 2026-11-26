@@ -9,7 +9,8 @@ import json
 import logging
 import os
 import tempfile
-from datetime import datetime, timezone
+import time
+from datetime import datetime, timedelta, timezone
 from typing import Optional
 
 from apscheduler.schedulers.background import BackgroundScheduler
@@ -26,6 +27,13 @@ CONFIG_PATH = os.path.normpath(
 )
 
 JOB_ID = "weekly_refresh"
+# Pla 095: segon intent puntual d'un refresc programat fallat (només un).
+RETRY_JOB_ID = "weekly_refresh_retry"
+RETRY_DELAY = timedelta(hours=2)
+
+# Segell del correu d'error del refresc (mateix patró que pipeline._notify_admin_soc_failure).
+ALERT_STAMP_PATH = os.path.join(os.path.dirname(CONFIG_PATH), "last_refresh_alert.json")
+_ALERT_INTERVAL = 24 * 3600
 _OCUP_JOB_ID = "monthly_ocupaciones"
 
 VALID_DAYS = {"mon", "tue", "wed", "thu", "fri", "sat", "sun", "*"}
@@ -108,12 +116,56 @@ def _run_ocupaciones_job() -> None:
         logger.error("monthly_ocupaciones: error: %s", exc)
 
 
-def run_refresh_job() -> None:
+def last_success_iso() -> Optional[str]:
+    """Data de les últimes dades bones: mtime d'ofertes.json (només l'escriu un refresc correcte)."""
+    try:
+        mtime = os.path.getmtime(pipeline.DATA_PATH)
+    except OSError:
+        return None
+    return datetime.fromtimestamp(mtime, timezone.utc).isoformat()
+
+
+def _notify_admin_refresh_failure() -> None:
+    """Pla 095: correu a l'admin quan el refresc acaba en error (segell 24 h, no repeteix)."""
+    try:
+        with open(ALERT_STAMP_PATH, encoding="utf-8") as fh:
+            last = json.load(fh) or {}
+    except (OSError, ValueError):
+        last = {}
+    if time.time() - float(last.get("ts", 0)) < _ALERT_INTERVAL:
+        return
+    st = refresh_state.get_state()
+    errors = "\n".join(str(e) for e in st.get("errors") or []) or "(sense detalls)"
+    try:
+        import email_service
+        to = os.environ.get("ADMIN_ALERT_EMAIL") or os.environ.get("EMAIL_FROM", "noreply@grausfp.es")
+        email_service.send_email(
+            to,
+            f"Refresc GrausFP fallat ({st.get('phase') or 'fase desconeguda'})",
+            f"El refresc de dades ha fallat.\n\n"
+            f"Fase: {st.get('phase') or '(desconeguda)'}\n"
+            f"Error:\n{errors}\n\n"
+            f"Inici de l'intent (UTC): {st.get('last_run')}\n"
+            f"Últimes dades bones (ofertes.json, UTC): {last_success_iso() or '(cap)'}\n\n"
+            "El cercador continua servint les dades anteriors.",
+        )
+    except Exception as send_exc:  # l'avís no ha de trencar el refresc
+        logger.warning("refresh: no s'ha pogut avisar l'admin de l'error: %s", send_exc)
+    try:
+        _write_atomic({"ts": time.time()}, ALERT_STAMP_PATH)
+    except OSError:
+        pass
+
+
+def run_refresh_job(notify_on_error: bool = True) -> bool:
     """
     Refresc complet: pipeline + historial + novetats de Brevo + alertes + heartbeat.
 
     L'únic camí per al refresc programat i per al manual del panell d'admin, perquè
     facin exactament el mateix. Qui el crida ja té refresh_state._lock; aquí s'allibera.
+
+    Retorna True si ha acabat bé. Si falla i notify_on_error, envia el correu a l'admin
+    (el refresc programat el desactiva quan encara li queda el reintent, Pla 095).
     """
     import alerts_service
     import notifier
@@ -130,7 +182,9 @@ def run_refresh_job() -> None:
         errors=[],
         warnings=[],
         phase=None,
+        retry_at=None,
     )
+    ok = False
     try:
         result = pipeline.run(on_progress=lambda phase: refresh_state.set_state(phase=phase))
         refresh_state.set_state(
@@ -142,6 +196,8 @@ def run_refresh_job() -> None:
             warnings=result.get("warnings", []),
             phase=None,
         )
+        ok = True
+        _cancel_retry()
         # El heartbeat va abans dels correus: un SMTP lent no ha de fer saltar l'alarma.
         heartbeat.report_refresh(result)
         try:
@@ -157,19 +213,68 @@ def run_refresh_job() -> None:
         except Exception as exc_a:
             logger.error("Could not dispatch alerts: %s", exc_a)
     except Exception as exc:
-        logger.error("refresh failed: %s", exc)
-        refresh_state.set_state(status="error", errors=[str(exc)], phase=None)
-        heartbeat.report_refresh(None, error=str(exc))
+        # Pla 095: es conserva la fase on ha petat perquè l'error digui on ha fallat.
+        phase = refresh_state.get_state().get("phase")
+        msg = f"{phase}: {exc}" if phase else str(exc)
+        logger.error("refresh failed: %s", msg)
+        refresh_state.set_state(status="error", errors=[msg], phase=phase)
+        heartbeat.report_refresh(None, error=msg)
+        if notify_on_error:
+            _notify_admin_refresh_failure()
     finally:
         refresh_state._lock.release()
+    return ok
 
 
-def _scheduled_refresh() -> None:
-    """Funció invocada per APScheduler. Reutilitza el mateix lock que admin_refresh."""
+def _cancel_retry() -> None:
+    """Un refresc correcte fa innecessari el reintent pendent."""
+    if _scheduler is None:
+        return
+    try:
+        if _scheduler.get_job(RETRY_JOB_ID) is not None:
+            _scheduler.remove_job(RETRY_JOB_ID)
+            logger.info("scheduler: reintent del refresc anul·lat (ja hi ha dades noves)")
+    except Exception as exc:  # el job pot haver desaparegut entremig
+        logger.warning("scheduler: no s'ha pogut anul·lar el reintent: %s", exc)
+
+
+def _schedule_retry() -> bool:
+    """Programa un sol reintent puntual al cap de RETRY_DELAY. False si no s'ha pogut."""
+    if _scheduler is None:
+        return False
+    run_date = datetime.now(timezone.utc) + RETRY_DELAY
+    try:
+        _scheduler.add_job(
+            func=_scheduled_refresh,
+            trigger="date",
+            run_date=run_date,
+            kwargs={"is_retry": True},
+            id=RETRY_JOB_ID,
+            replace_existing=True,
+        )
+    except Exception as exc:
+        logger.error("scheduler: no s'ha pogut programar el reintent: %s", exc)
+        return False
+    refresh_state.set_state(retry_at=run_date.isoformat())
+    logger.info("scheduler: refresc fallat; reintent programat per a %s", run_date.isoformat())
+    return True
+
+
+def _scheduled_refresh(is_retry: bool = False) -> None:
+    """
+    Funció invocada per APScheduler. Reutilitza el mateix lock que admin_refresh.
+
+    Pla 095: si el refresc setmanal falla, se'n programa un segon intent al cap de
+    2 h (només un: el reintent no es reprograma). El correu a l'admin s'envia quan
+    ja no queda cap intent.
+    """
     if not refresh_state._lock.acquire(blocking=False):
         logger.info("scheduled_refresh: refresh ja en curs, omès")
         return
-    run_refresh_job()
+    will_retry = not is_retry and _scheduler is not None
+    if not run_refresh_job(notify_on_error=not will_retry) and will_retry:
+        if not _schedule_retry():
+            _notify_admin_refresh_failure()
 
 
 def apply_config(cfg: dict) -> None:

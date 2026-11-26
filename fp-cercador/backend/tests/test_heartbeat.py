@@ -1,6 +1,7 @@
 """
 test_heartbeat.py — el refresc programat avisa Uptime Kuma (monitor de tipus push).
-Sense KUMA_PUSH_URL no fa res; amb errors o avisos el refresc es marca com a caigut.
+Sense KUMA_PUSH_URL no fa res; amb errors el refresc es marca com a caigut i amb
+només avisos queda "up" amb els avisos al missatge (Pla 095).
 """
 import heartbeat
 
@@ -36,13 +37,14 @@ def test_refresc_net_envia_up(monkeypatch):
     assert timeout
 
 
-def test_avisos_o_errors_envien_down_amb_el_motiu(monkeypatch):
+def test_avisos_envien_up_i_errors_down_amb_el_motiu(monkeypatch):
     fake = FakeGet()
     monkeypatch.setenv("KUMA_PUSH_URL", "https://status.example/api/push/abc")
     monkeypatch.setattr(heartbeat.requests, "get", fake)
     heartbeat.report_refresh({"total": 13006, "errors": [], "warnings": ["foment: 51 cursos (abans 178)"]})
-    heartbeat.report_refresh({"total": 0, "errors": ["todofp no respon"], "warnings": []})
-    assert [c[1]["status"] for c in fake.calls] == ["down", "down"]
+    heartbeat.report_refresh({"total": 0, "errors": ["todofp no respon"], "warnings": ["foment: x"]})
+    assert [c[1]["status"] for c in fake.calls] == ["up", "down"]
+    assert "13006" in fake.calls[0][1]["msg"]
     assert "foment" in fake.calls[0][1]["msg"]
     assert "todofp" in fake.calls[1][1]["msg"]
 

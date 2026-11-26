@@ -28,6 +28,8 @@ import logging
 
 import requests
 
+from scrapers.http_retry import get_with_retry
+
 logger = logging.getLogger(__name__)
 
 BASE_URL = 'https://www.todofp.es/buscadorgradosfp'
@@ -81,7 +83,7 @@ def _bootstrap_session(timeout: int = 30) -> requests.Session:
     """GET inicial a /buscador per obtenir cookies fresques (JSESSIONID + __Host-todofp.es)."""
     session = requests.Session()
     session.headers.update(HEADERS)
-    resp = session.get(BOOTSTRAP_URL, timeout=timeout)
+    resp = get_with_retry(session.get, BOOTSTRAP_URL, timeout=timeout)
     resp.raise_for_status()
     if 'JSESSIONID' not in session.cookies:
         info = _dump_failure(resp, "bootstrap GET /buscador")
@@ -94,7 +96,7 @@ def _bootstrap_session(timeout: int = 30) -> requests.Session:
 
 def _fetch(session: requests.Session, grado: str, nivel: str, timeout: int = 30) -> list[dict]:
     url = f"{BASE_URL}/{_ENDPOINTS[grado]}?nivel={nivel}&idFamilia=&grado={grado}&uuid="
-    resp = session.get(url, timeout=timeout)
+    resp = get_with_retry(session.get, url, timeout=timeout)
     resp.raise_for_status()
     try:
         data = resp.json()

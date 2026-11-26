@@ -170,11 +170,14 @@ def test_refresh_started(client):
     with mock.patch(PATCH_PIPELINE_RUN, return_value=MOCK_PIPELINE_RESULT):
         r = client.post("/api/admin/refresh",
                         headers={"Authorization": "Bearer test-token"})
+        # Espera que el thread daemon acabi DINS del patch: si sortia abans, el thread
+        # podia cridar el pipeline real (xarxa) i, des del pla 095, el correu d'error.
+        import refresh_state
+        deadline = time.time() + 5
+        while refresh_state._lock.locked() and time.time() < deadline:
+            time.sleep(0.01)
     assert r.status_code == 200
     assert r.get_json() == {"status": "started"}
-    # Espera que el thread daemon completi el pipeline mockejat abans que el
-    # fixture reset_refresh_state intenti alliberar el lock (WR-06: race condition).
-    time.sleep(0.05)
 
 
 # ---------------------------------------------------------------------------
@@ -192,6 +195,7 @@ def test_refresh_status_idle(client):
     assert "by_grado" in data
     assert "duration_seconds" in data
     assert "errors" in data
+    assert "last_success" in data  # Pla 095: data de l'últim refresc correcte
 
 
 # ---------------------------------------------------------------------------

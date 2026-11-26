@@ -510,7 +510,10 @@ def get_ofertes():
 @app.route("/api/refresh-status")
 def refresh_status():
     """API-06: Retorna l'estat del darrer procés de refresh."""
-    return jsonify(refresh_state.get_state()), 200
+    state = refresh_state.get_state()
+    # Pla 095: data de l'últim refresc correcte (sobreviu als reinicis, a diferència de l'estat).
+    state["last_success"] = scheduler_service.last_success_iso()
+    return jsonify(state), 200
 
 
 def _parse_pagination(req) -> tuple[int, int]:

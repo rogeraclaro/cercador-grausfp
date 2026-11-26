@@ -34,6 +34,7 @@ import requests
 from bs4 import BeautifulSoup
 
 from scrapers.families import FAMILY_ALIASES, PREFIX_MAP
+from scrapers.http_retry import get_with_retry
 
 logger = logging.getLogger(__name__)
 
@@ -152,7 +153,7 @@ def _parse_grado_d(url: str, nivel: int) -> list[dict]:
     nivel: 1 (Básico), 2 (Medio), 3 (Superior).
     Fail fast D-01: raise_for_status() propaga HTTPError.
     """
-    resp = requests.get(url, headers=HEADERS, timeout=30)
+    resp = get_with_retry(requests.get, url, headers=HEADERS, timeout=30)
     resp.raise_for_status()
     soup = BeautifulSoup(resp.text, 'html.parser')
     fam_map = _build_fam_map(soup)
@@ -185,7 +186,7 @@ def parse_grado_e(url: str) -> list[dict]:
 
     nivel=None per a tots els registres Grado E (HTML-05).
     """
-    resp = requests.get(url, headers=HEADERS, timeout=30)
+    resp = get_with_retry(requests.get, url, headers=HEADERS, timeout=30)
     resp.raise_for_status()
     soup = BeautifulSoup(resp.text, 'html.parser')
     fam_map = _build_fam_map(soup)
