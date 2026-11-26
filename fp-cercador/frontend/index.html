@@ -635,6 +635,14 @@
       color: var(--warm);
     }
 
+    /* Pla 082 — especialitats del SEPE dins el cercador per nom */
+    .sepe-block { margin-top: 40px; padding-top: 20px; border-top: 2px solid var(--dark); }
+    .sepe-block--tab { margin-top: 0; padding-top: 0; border-top: none; }
+    .sepe-h { font-family: 'DM Serif Display', serif; font-size: 24px; font-weight: 400; margin: 0 0 6px; }
+    .sepe-note { font-size: var(--fs-small); color: var(--warm); max-width: 75ch; margin: 0 0 14px; line-height: 1.5; }
+    .sepe-note a { color: var(--dark); }
+    .sepe-more { margin-top: 14px; }
+
     /* ── Representació toggle (targetes/taula) ── */
     .repr-toggle {
       display: flex;
@@ -2470,11 +2478,11 @@
     }
   </style>
 
-  <script src="i18n.js?v=20261117b"></script>
+  <script src="i18n.js?v=20261126"></script>
   <script src="auth.js?v=20261117b"></script>
   <script src="held.js?v=1"></script>
   <script src="ics.js?v=1"></script>
-  <script src="search-tools.js?v=1"></script>
+  <script src="search-tools.js?v=2"></script>
   <script>
     const API_BASE = window.location.hostname === 'localhost'
       ? 'http://localhost:5001'
@@ -2523,6 +2531,7 @@
     // l'últim suggeriment calculat. Fora d'Alpine pel mateix motiu que filteredMemo.
     let didYouMeanVocab = { records: null, vocab: null };
     let didYouMeanMemo = { key: null, result: [] };
+    let sepeMemo = { inputs: null, result: null };   // Pla 082: mateix motiu que filteredMemo
     const sameInputs = (a, b) => a.length === b.length && a.every((v, i) => v === b[i]);
 
     document.addEventListener('alpine:init', () => {
@@ -2539,6 +2548,11 @@
 
         currentPage: 1,
         fpoPage: 1,              // Pla 067 — pàgina del mode FPO (independent de la de graus)
+        // Pla 082 — especialitats formatives del SEPE dins el cercador per nom (càrrega mandrosa)
+        sepeState: 'idle',       // idle | loading | ready | error
+        sepeRecords: [],
+        sepeExpanded: {},
+        sepePage: 1,
         pageSize: 50,
         sortCol: '',
         sortDir: 0,
@@ -3128,7 +3142,96 @@
           window.scrollTo({ top: 0, behavior: 'smooth' });
         },
 
-        resetPage() { this.currentPage = 1; this.droppedState = null; },
+        resetPage() { this.currentPage = 1; this.sepePage = 1; this.droppedState = null; },
+
+        // ── Pla 082 — especialitats formatives del SEPE ──
+        // Surten com un tipus més de resultat: a la pestanya «Especialitats SEPE» totes, i sota els
+        // graus (només les primeres) quan hi ha text de cerca. No porten favorits, alertes ni centres.
+        SEPE_PREVIEW: 10,
+
+        get sepeVisible() {
+          if (this.searchMode !== 'nom') return false;
+          if (this.filterGrado === 'SEPE') return true;
+          return !this.filterGrado && this.search.trim().length >= 2 && !this.filterFavs && this.filterOld !== 'only';
+        },
+
+        async ensureSepe() {
+          if (this.sepeState === 'loading' || this.sepeState === 'ready') return;
+          this.sepeState = 'loading';
+          try {
+            const res = await fetch(API_BASE + '/api/sepe/especialitats');
+            if (!res.ok) throw new Error('HTTP ' + res.status);
+            const data = await res.json();
+            const norm = v => String(v || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+            // Família SEPE → nom de família del cercador (mateixos filtres i mateix text a la columna).
+            const SEPE_FAM_ALIASES = { 'imagen y sonido': 'imagen y espectaculos', 'maritimo pesquera': 'maritimo-pesquera',
+              'seguridad y medioambiente': 'seguridad y medio ambiente' };
+            const famByNorm = {};
+            for (const f of this.families) famByNorm[norm(f)] = f;
+            const famName = {};
+            for (const [codi, desc] of Object.entries(data.families || {})) {
+              const n = norm(desc.es);
+              famName[codi] = famByNorm[SEPE_FAM_ALIASES[n] || n] || this.sc(desc.es || codi);
+            }
+            this.sepeRecords = (data.especialitats || []).map(e => ({
+              ...e,
+              familia: famName[e.f] || '',
+              _normT: norm(e.t) + ' ' + norm(e.tca),
+              _normC: norm(e.c),
+            }));
+            this.sepeState = 'ready';
+          } catch (e) {
+            this.sepeState = 'error';
+          }
+        },
+
+        get filteredSepe() {
+          if (this.sepeState !== 'ready' || !this.sepeVisible) return [];
+          const inputs = [this.sepeRecords, this.search, this.filterFamilia, this.filterNivel, this.caEs];
+          if (sepeMemo.inputs && sameInputs(sepeMemo.inputs, inputs)) return sepeMemo.result;
+          const q = this.search.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+          const groups = q ? this.expandSearch(q) : null;
+          const result = this.sepeRecords.filter(e => {
+            if (this.filterFamilia && e.familia !== this.filterFamilia) return false;
+            if (this.filterNivel && e.n !== parseInt(this.filterNivel)) return false;
+            if (q) {
+              const hit = groups ? groups.every(g => g.some(v => e._normT.includes(v))) : e._normT.includes(q);
+              if (!hit && !e._normC.includes(q)) return false;
+            }
+            return true;
+          });
+          sepeMemo = { inputs, result };
+          return result;
+        },
+
+        get sepeTotalPages() { return Math.ceil(this.filteredSepe.length / this.pageSize); },
+
+        get sepeCurrentPage() { return Math.min(this.sepePage, Math.max(this.sepeTotalPages, 1)); },
+
+        get pagedSepe() {
+          if (this.filterGrado !== 'SEPE') return this.filteredSepe.slice(0, this.SEPE_PREVIEW);
+          const start = (this.sepeCurrentPage - 1) * this.pageSize;
+          return this.filteredSepe.slice(start, start + this.pageSize);
+        },
+
+        goToSepePage(n) {
+          if (n < 1 || n > this.sepeTotalPages) return;
+          this.sepePage = n;
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        },
+
+        showAllSepe() {
+          this.filterGrado = 'SEPE';
+          this.resetPage();
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        },
+
+        sepeProgramaUrl(codi) { return API_BASE + '/api/sepe/programa/' + encodeURIComponent(codi); },
+
+        sepeTitol(e) { return (this.fpoLang() === 'ca' && e.tca) || this.sc(e.t); },
+
+        // Vigència en format curt (dd/mm/aaaa)
+        sepeData(iso) { return iso ? iso.split('-').reverse().join('/') : '—'; },
 
         // ── Pla 067 — paginació del mode FPO ──
         get fpoTotalPages() {
@@ -4225,6 +4328,8 @@
         <button :class="{ active: filterGrado === g }" @click="setGrado(g)"
           :aria-pressed="String(filterGrado === g)" x-text="t('index.tabs.grau') + ' ' + g"></button>
       </template>
+      <button :class="{ active: filterGrado === 'SEPE' }" @click="setGrado('SEPE')"
+        :aria-pressed="String(filterGrado === 'SEPE')" :title="t('sepe.tab.title')" x-text="t('sepe.tab')"></button>
     </div>
 
     <!-- Secondary filter bar (only in nom mode) -->
@@ -4273,7 +4378,7 @@
         <span data-i18n="index.filter.favs">Favorits</span>
       </button>
 
-      <button class="save-alert-btn" x-show="search || filterGrado || filterFamilia || filterNivel"
+      <button class="save-alert-btn" x-show="(search || filterGrado || filterFamilia || filterNivel) && filterGrado !== 'SEPE'"
         :disabled="alertSaving" @click="saveAlert()"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span x-text="t('index.btn.saveAlert')"></span>
       </button>
       <button class="save-alert-btn" x-show="state === 'ready' && filteredCount > 0" @click="exportCSV()"
@@ -4476,12 +4581,12 @@
         <a href="#" @click.prevent="restoreDroppedState()" x-text="t('index.filters_restore')"></a>
       </p>
 
-      <p class="results-count">
+      <p class="results-count" x-show="filterGrado !== 'SEPE'">
         <span x-text="filteredCount === 0 ? t('index.results.zero') : (filteredCount === 1 ? t('index.results.one') : t('index.results.many', {n: filteredCount}))"></span>
         <span x-show="dataUpdated" x-text="' · ' + t('index.data_updated', {date: dataUpdated})"></span>
       </p>
 
-      <div class="table-wrap">
+      <div class="table-wrap" x-show="filterGrado !== 'SEPE'">
         <table class="results-table" id="results-table">
           <caption class="sr-only" data-i18n="index.table.caption">Resultats del cercador de Graus FP</caption>
           <thead>
@@ -4532,7 +4637,7 @@
             <template x-if="filteredCount === 0">
               <tr class="empty-row">
                 <td colspan="5">
-                  <span x-text="search.trim() ? t('index.table.empty.search', {q: search.trim()}) : t('index.table.empty')"></span>
+                  <span x-text="filteredSepe.length ? t('sepe.mainEmpty', {n: filteredSepe.length}) : (search.trim() ? t('index.table.empty.search', {q: search.trim()}) : t('index.table.empty'))"></span>
                   <span class="did-you-mean" role="status" x-show="didYouMean.length">
                     <span x-text="t('index.didyoumean.lead')"></span>
                     <template x-for="s in didYouMean" :key="s">
@@ -5130,6 +5235,110 @@
         </div>
       </nav>
 
+      <!-- Pla 082 — Especialitats formatives del SEPE (formació en el treball) -->
+      <section class="sepe-block" :class="{ 'sepe-block--tab': filterGrado === 'SEPE' }"
+        x-show="sepeVisible" x-effect="sepeVisible && ensureSepe()" aria-labelledby="sepe-h">
+        <h2 id="sepe-h" class="sepe-h"
+          x-text="filterGrado === 'SEPE' ? t('sepe.h.tab') : t('sepe.h.preview', {n: filteredSepe.length})"></h2>
+        <p class="sepe-note">
+          <span x-text="t('sepe.note')"></span>
+          <a href="per-que-grausfp.html#sepe" x-text="t('sepe.note.more')"></a>
+        </p>
+        <p class="results-count" role="status" x-show="sepeState === 'loading'" x-text="t('sepe.loading')"></p>
+        <p class="results-count" role="alert" x-show="sepeState === 'error'" x-text="t('sepe.error')"></p>
+        <p class="results-count" x-show="sepeState === 'ready' && filterGrado === 'SEPE'"
+          x-text="filteredSepe.length === 1 ? t('index.results.one') : t('index.results.many', {n: filteredSepe.length})"></p>
+        <p class="results-count" x-show="sepeState === 'ready' && filterGrado !== 'SEPE' && filteredSepe.length === 0"
+          x-text="t('sepe.empty')"></p>
+
+        <div class="table-wrap" x-show="sepeState === 'ready' && filteredSepe.length > 0">
+          <table class="results-table results-table--sepe">
+            <caption class="sr-only" x-text="t('sepe.h.tab')"></caption>
+            <thead>
+              <tr>
+                <th scope="col" x-text="t('index.col.nom')"></th>
+                <th scope="col" x-text="t('index.col.codi')"></th>
+                <th scope="col" x-text="t('index.col.fam')"></th>
+                <th scope="col" x-text="t('index.col.niv')"></th>
+                <th scope="col" x-text="t('fpo.col.hores')"></th>
+                <th scope="col" x-text="t('fpo.filter.modalitat')"></th>
+              </tr>
+            </thead>
+            <template x-for="e in pagedSepe" :key="e.c">
+              <tbody :class="{ 'row-open': sepeExpanded[e.c] }">
+                <tr class="row-link" tabindex="0" :aria-expanded="String(!!sepeExpanded[e.c])"
+                  @click="sepeExpanded[e.c] = !sepeExpanded[e.c]"
+                  @keydown.enter.self="sepeExpanded[e.c] = !sepeExpanded[e.c]"
+                  @keydown.space.self.prevent="sepeExpanded[e.c] = !sepeExpanded[e.c]">
+                  <td class="col-nom">
+                    <span x-text="sepeTitol(e)"></span>
+                    <span class="fpo-badge" :title="t('fpo.tooltip.formacioTreball')" x-text="t('sepe.badge')"></span>
+                    <span class="fpo-badge" x-show="e.nc > 0"
+                      x-text="e.nc === 1 ? t('sepe.cursos.one') : t('sepe.cursos.many', {n: e.nc})"></span>
+                  </td>
+                  <td class="col-codi" x-text="e.c"></td>
+                  <td class="col-fam" x-text="e.familia"></td>
+                  <td class="col-niv" :class="{ 'cell-empty': !e.n }" :data-label="t('index.col.niv')" x-text="e.n || '—'"></td>
+                  <td class="col-hores" :class="{ 'cell-empty': !e.h }" :data-label="t('fpo.col.hores')"
+                    x-text="e.h ? Math.round(e.h) : '—'"></td>
+                  <td class="col-mod" :data-label="t('fpo.filter.modalitat')" x-text="e.m"></td>
+                </tr>
+                <tr x-show="sepeExpanded[e.c]">
+                  <td colspan="6" class="detall-certificat">
+                    <div class="detall-inner">
+                      <p class="fpo-avis" x-text="t('fpo.tooltip.formacioTreball')"></p>
+                      <p class="fpo-avis" x-show="e.ct">
+                        <span class="fpo-badge" style="margin-left:0"
+                          x-text="t('fpo.chip.competenciaTransversal', {nom: e.ct || ''})"></span>
+                      </p>
+                      <p class="fpo-avis" x-text="t('sepe.vigencia', {inici: sepeData(e.vi), fi: sepeData(e.vf)})"></p>
+                      <div class="detall-btns">
+                        <a class="btn-doc" target="_blank" rel="noopener"
+                          :href="sepeProgramaUrl(e.c)" x-text="t('sepe.programa')"></a>
+                        <a class="btn-doc" x-show="e.nc > 0" :href="'index.html?mode=fpo&esp=' + encodeURIComponent(e.c)"
+                          x-text="t('sepe.veureCursos')"></a>
+                        <a class="btn-doc" target="_blank" rel="noopener"
+                          href="https://sede.sepe.gob.es/FOET_CATALOGO_EEFF_SEDE/flows/main" x-text="t('sepe.cercadorSepe')"></a>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </template>
+          </table>
+        </div>
+
+        <button type="button" class="btn-doc sepe-more"
+          x-show="sepeState === 'ready' && filterGrado !== 'SEPE' && filteredSepe.length > SEPE_PREVIEW"
+          @click="showAllSepe()" x-text="t('sepe.veureTotes', {n: filteredSepe.length})"></button>
+
+        <nav class="pagination" data-i18n-aria="pagination.aria" aria-label="Paginació de resultats"
+          x-show="filterGrado === 'SEPE' && sepeTotalPages > 1">
+          <span class="pagination-info"
+            x-text="t('pagination.showing', {start: (sepeCurrentPage - 1) * pageSize + 1, end: Math.min(sepeCurrentPage * pageSize, filteredSepe.length), total: filteredSepe.length})">
+          </span>
+          <div class="pagination-controls">
+            <button @click="goToSepePage(sepeCurrentPage - 1)" :class="{ disabled: sepeCurrentPage === 1 }"
+              :aria-disabled="sepeCurrentPage === 1" x-text="t('pagination.prev')"></button>
+            <template x-for="(item, idx) in buildPagination(sepeCurrentPage, sepeTotalPages)"
+              :key="item.type === 'page' ? 'p' + item.n : 'e' + idx">
+              <span class="pagination-item">
+                <template x-if="item.type === 'page'">
+                  <button @click="goToSepePage(item.n)" :aria-current="item.n === sepeCurrentPage ? 'page' : false"
+                    :aria-label="t('pagination.page', {n: item.n})" :class="{ active: item.n === sepeCurrentPage }"
+                    x-text="item.n"></button>
+                </template>
+                <template x-if="item.type === 'ellipsis'">
+                  <span class="pagination-ellipsis">…</span>
+                </template>
+              </span>
+            </template>
+            <button @click="goToSepePage(sepeCurrentPage + 1)" :class="{ disabled: sepeCurrentPage === sepeTotalPages }"
+              :aria-disabled="sepeCurrentPage === sepeTotalPages" x-text="t('pagination.next')"></button>
+          </div>
+        </nav>
+      </section>
+
     </div>
 
     <!-- Resultats d'ocupació (mode ocupació + targetes) -->
@@ -5250,6 +5459,11 @@
                         x-show="fpoDetall[esp.codi] && safeHttpUrl(fpoDetall[esp.codi].programaUrl)"
                         :href="fpoDetall[esp.codi] && safeHttpUrl(fpoDetall[esp.codi].programaUrl)"
                         x-text="t('fpo.detall.programa')"></a>
+                      <!-- Pla 082: programa del SEPE quan el SOC no en dona -->
+                      <a class="btn-doc" target="_blank" rel="noopener"
+                        x-show="fpoDetall[esp.codi] && fpoDetall[esp.codi].programaSepeUrl"
+                        :href="fpoDetall[esp.codi] && fpoDetall[esp.codi].programaSepeUrl ? sepeProgramaUrl(esp.codi) : null"
+                        x-text="t('sepe.programa')"></a>
                       <button x-show="loggedIn" type="button" class="btn-doc"
                         :class="{ 'btn-fav--active': fpoFavSet.has(esp.codi) }"
                         @click="toggleFpoFav(esp.codi)" :disabled="fpoFavBusy"

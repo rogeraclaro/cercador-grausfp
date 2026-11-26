@@ -35,6 +35,8 @@ test('els valors invàlids s\'ignoren en silenci', () => {
   assert.deepStrictEqual(parse('grado=F&nivel=4&familia=Inventada&pla=tot&favs=si&ordre=id&dir=desc&p=0'), {});
   assert.deepStrictEqual(parse('grado=d&nivel=2a&p=-3&p=1'), {});
   assert.deepStrictEqual(parse('grado=B&p=abc&q=%20%20'), { filterGrado: 'B' });
+  assert.deepStrictEqual(parse('grado=SEPE'), { filterGrado: 'SEPE' });   // Pla 082
+  assert.deepStrictEqual(parse('grado=sepe'), {});
   assert.deepStrictEqual(parse('p=1'), {});
   assert.deepStrictEqual(parse('p=7'), { currentPage: 7 });
 });

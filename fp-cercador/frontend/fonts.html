@@ -203,7 +203,7 @@
     }
 
   </style>
-  <script src="i18n.js?v=20261118"></script>
+  <script src="i18n.js?v=20261126"></script>
   <script src="auth.js?v=20261117b"></script>
 </head>
 
@@ -621,6 +621,36 @@
     </table>
     </div>
 
+    <h2 id="sepe" data-i18n="fonts.s11.h2">Catàleg d'Especialitats Formatives del SEPE</h2>
+    <p class="src-host" data-i18n="fonts.s11.host">sede.sepe.gob.es</p>
+    <p data-i18n="fonts.s11.p">Font d'àmbit estatal: el catàleg d'especialitats de la formació en el treball (Llei 3/2023 d'Ocupació i Reial decret 438/2024), que gestiona el Servei Públic d'Ocupació Estatal. Són especialitats com «Tutorització en teleformació» (SSCE22): formació per a l'ocupació, sovint curta, que no forma part dels Graus A–E ni dona cap títol o certificat oficial.</p>
+    <div class="table-scroll">
+    <table class="src-table">
+      <thead>
+        <tr>
+          <th data-i18n="fonts.tbl.font">Font</th>
+          <th data-i18n="fonts.tbl.detall">Què se n'obté</th>
+          <th data-i18n="fonts.tbl.us">On es fa servir</th>
+          <th data-i18n="fonts.tbl.com">Com s'obté</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td data-i18n="fonts.r17.font">Especialitats formatives</td>
+          <td data-i18n="fonts.r17.detall">Totes les especialitats vigents (unes 7.500): codi, denominació, família i àrea professional, nivell, hores, modalitat, competència transversal i dates de vigència.</td>
+          <td data-i18n="fonts.r17.us">Pestanya «Especialitats SEPE» del cercador i bloc «També al catàleg estatal del SEPE» sota els resultats d'una cerca. També serveix per classificar les especialitats del mode FPO.</td>
+          <td data-i18n="fonts.r17.com"><span class="method-tag">API interna</span> El cercador del SEPE carrega el llistat des d'un servei JSON intern, sense registre ni captcha. Es demana sencer en blocs de 2.000 especialitats.</td>
+        </tr>
+        <tr>
+          <td data-i18n="fonts.r18.font">Programa formatiu (PDF)</td>
+          <td data-i18n="fonts.r18.detall">Document oficial de cada especialitat: objectiu, mòduls i hores, requisits d'accés de l'alumnat i del professorat, espais i equipaments.</td>
+          <td data-i18n="fonts.r18.us">Botó «Programa formatiu (PDF)» de cada especialitat SEPE i, al mode FPO, quan el SOC no n'enllaça cap.</td>
+          <td data-i18n="fonts.r18.com"><span class="method-tag">Descàrrega a demanda</span> El SEPE només lliura el PDF des del seu formulari. GrausFP el demana la primera vegada que algú l'obre i en guarda una còpia 30 dies.</td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+
     <h2 data-i18n="fonts.s3.h2">Catàleg de famílies professionals</h2>
     <p data-i18n="fonts.s3.p">Les 24 famílies professionals (i les variants històriques del pla anterior) es normalitzen amb una taula de correspondència interna, derivada del catàleg de la Llei Orgànica 3/2022. Serveix per unificar sota un mateix nom les famílies que apareixen amb formats diferents segons la font.</p>
 
@@ -628,7 +658,7 @@
     <p data-i18n="fonts.s4.p">El compte d'usuari (registre, favorits, alertes i seguiments de centres) es desa en una base de dades pròpia i no es comparteix amb cap tercer. L'<a href="historial.html">Historial d'actualitzacions</a> i l'<a href="observatori.html">Observatori</a> es generen a partir dels registres de les actualitzacions periòdiques del mateix cercador.</p>
 
     <h2 data-i18n="fonts.s5.h2">Amb quina freqüència s'actualitza</h2>
-    <p data-i18n="fonts.s5.p">El cercador torna a llegir les fonts automàticament un cop per setmana: el catàleg de graus, les fitxes del Ministeri i els cursos FPO (SOC, PIMEC, Foment, Cecot i CCOO). L'índex d'ocupacions es regenera un cop al mes, i els centres del Registre Estatal s'actualitzen a demanda des del panell d'administració. Cada actualització queda registrada, amb el detall dels canvis, a l'<a href="historial.html">Historial d'actualitzacions</a>.</p>
+    <p data-i18n="fonts.s5.p">El cercador torna a llegir les fonts automàticament un cop per setmana: el catàleg de graus, les fitxes del Ministeri, el catàleg d'especialitats del SEPE i els cursos FPO (SOC, PIMEC, Foment, Cecot i CCOO). L'índex d'ocupacions es regenera un cop al mes, i els centres del Registre Estatal s'actualitzen a demanda des del panell d'administració. Cada actualització queda registrada, amb el detall dels canvis, a l'<a href="historial.html">Historial d'actualitzacions</a>.</p>
 
   </main>
 

@@ -13,7 +13,7 @@
     var q = (params.get('q') || '').slice(0, MAX_QUERY).trim();
     if (q) state.search = q;
     var grado = params.get('grado') || '';
-    if (/^[A-E]$/.test(grado)) state.filterGrado = grado;
+    if (/^([A-E]|SEPE)$/.test(grado)) state.filterGrado = grado;  // SEPE: Pla 082
     var familia = params.get('familia');
     if (familia && (families || []).indexOf(familia) >= 0) state.filterFamilia = familia;
     var nivel = params.get('nivel') || '';
