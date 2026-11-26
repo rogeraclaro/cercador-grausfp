@@ -6,7 +6,7 @@ Depèn de: **081 fases 1–2** (`backend/data/sepe_especs.json`). Llegir la secc
 "Diagnosi tècnica" del pla 081: no es repeteixen aquí.
 Executable per un agent sense context.
 
-## Canvi de decisió (2026-11-26) — DONE, no desplegat
+## Canvi de decisió (2026-11-26) — DONE i desplegat
 
 El propietari vol que **tots els codis surtin al cercador principal**, no en una pàgina a part. D1 queda
 substituïda; la resta de l'API (fase 1) es manté tal com s'havia previst.

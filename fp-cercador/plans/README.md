@@ -95,7 +95,7 @@ amb quins prerequisits i quins passos manuals calen al servidor.
 | 079 | C LOMLOE: completar amb el BOE els 11 mòduls que 10 fitxes todofp ometen (constant a l'API, nota amb enllaç al RD) \| P2 | S | 078 DONE | DONE |
 | 080 | Auditar contra el BOE els 32 C LOMLOE sense decret (RD individuals; descoberta via sumari diari del BOE) \| P2 | M | 079 DONE | DONE |
 | 081 | Catàleg d'Especialitats Formatives del SEPE: dades + enriquiment de l'FPO | P2 | M | 059–061 DONE | DONE |
-| 082 | Catàleg estatal d'especialitats: al cercador principal (no pàgina a part) | P3 | M | 081 | DONE (no desplegat) |
+| 082 | Catàleg estatal d'especialitats: al cercador principal (no pàgina a part) | P3 | M | 081 | DONE |
 | 083 | «Què em falta?»: de què tens a què pots arribar (B, C, D) | P1 | L | 058, 076, 078 DONE | DONE |
 | 084 | Mode orientador: llistes de graus compartibles amb enllaç i QR | P1 | L | 023–026, 076 DONE | DONE |
 | 085 | Comparador de fins a 3 graus en columnes | P2 | M-L | 058, 076, 077, 078 DONE | DONE |
