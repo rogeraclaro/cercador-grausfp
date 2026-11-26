@@ -43,6 +43,7 @@ import logging
 import os
 import re
 import sys
+import tempfile
 import threading
 import time
 from datetime import date, datetime, timezone
@@ -73,7 +74,7 @@ import oferta_ref
 import refresh_state
 import scheduler_service
 import uc_corr
-from scrapers import buscador_scraper, pipeline
+from scrapers import buscador_scraper, pipeline, sepe_scraper
 from scrapers.centres_scraper import build_centres_data
 
 # ---------------------------------------------------------------------------
@@ -112,6 +113,7 @@ SOC_CURSOS_PATH = os.path.join(_DATA_DIR, "soc_cursos.json")    # Pla 059: curso
 SOC_ESPECS_PATH = os.path.join(_DATA_DIR, "soc_especs.json")    # Pla 059: especialitats formatives (SOC)
 SOC_CENTRES_PATH = os.path.join(_DATA_DIR, "soc_centres.json")  # Pla 059: centres de formació (SOC)
 SEPE_ESPECS_PATH = os.path.join(_DATA_DIR, "sepe_especs.json")  # Pla 081: catàleg d'especialitats del SEPE
+SEPE_PROGRAMES_DIR = os.path.join(_DATA_DIR, "sepe_programes")  # Pla 082: cache dels PDF de programa
 EXT_CURSOS_PATH = os.path.join(_DATA_DIR, "ext_cursos.json")   # Pla 062: cursos FPO de PIMEC i Foment
 _SOC_STALE_DAYS = 7  # llindar per avisar de dades FPO velles
 OCUPACIONES_PATH = os.path.join(_DATA_DIR, "ocupaciones.json")
@@ -1925,7 +1927,7 @@ def api_fpo_especialitat(codi):
                 return v
         return {'ca': '', 'es': ''}
 
-    return jsonify({
+    resp = {
         'codi': codi,
         'descripcio': espec.get('titol', {'ca': '', 'es': ''}),
         'queAprendras': _first_nonempty('queAprendras'),
@@ -1936,7 +1938,150 @@ def api_fpo_especialitat(codi):
         'sepe': ({k: sepe.get(k) for k in ('idSepe', 'vigenciaInici', 'vigenciaFi', 'versio')}
                  if sepe else None),
         'cursos': [_soc_curs_public(c) for c in cursos],
-    })
+    }
+    # Pla 082: programa del SEPE només quan el SOC no en dona cap
+    if sepe and sepe.get('idSepe') and not espec.get('programaUrl'):
+        resp['programaSepeUrl'] = f'/api/sepe/programa/{codi}'
+    return jsonify(resp)
+
+
+# ---------------------------------------------------------------------------
+# Pla 082 — Catàleg estatal d'especialitats formatives (SEPE): /api/sepe/*
+# ---------------------------------------------------------------------------
+
+_sepe_llista_cache: dict = {"key": None, "data": None}
+
+_SEPE_PDF_TTL = 30 * 86400        # un PDF baixat es reaprofita 30 dies
+_SEPE_NOPDF_TTL = 7 * 86400       # "sense programa" es recorda 7 dies per no repicar el SEPE
+_SEPE_PDF_RATE_LIMIT = 10         # descàrregues no cachejades per IP i minut
+_SEPE_PDF_RATE_WINDOW = 60
+
+
+def _sepe_llista() -> dict:
+    """Llistat compacte del catàleg SEPE + diccionaris de famílies i àrees (CA del SOC si n'hi ha).
+    Cache per mtimes del SEPE i dels fitxers SOC (títols en català i nombre de cursos)."""
+    def _mt(path):
+        return os.path.getmtime(path) if os.path.exists(path) else None
+
+    key = (_mt(SEPE_ESPECS_PATH), _mt(SOC_ESPECS_PATH), _mt(SOC_CURSOS_PATH))
+    if _sepe_llista_cache["key"] == key and _sepe_llista_cache["data"] is not None:
+        return _sepe_llista_cache["data"]
+
+    soc_by_codi = {e['codi']: e for e in _get_soc_especs() if isinstance(e, dict) and e.get('codi')}
+    cursos_by_espec = _soc_espec_index()['cursos_by_espec']
+    families: dict = {}
+    arees: dict = {}
+    for e in soc_by_codi.values():
+        for field, out in (('familia', families), ('area', arees)):
+            v = e.get(field) or {}
+            if v.get('codi') and isinstance(v.get('desc'), dict):
+                out.setdefault(v['codi'], {'ca': v['desc'].get('ca') or None, 'es': None})
+
+    especialitats = []
+    for r in _get_sepe_especs():
+        if not isinstance(r, dict) or not r.get('codi'):
+            continue
+        codi = r['codi']
+        for field, out, desc in (('familia_codi', families, r.get('familia_es')),
+                                 ('area_codi', arees, r.get('area_es'))):
+            entry = out.setdefault(r.get(field), {'ca': None, 'es': None})
+            entry['es'] = entry['es'] or desc
+        tca = ((soc_by_codi.get(codi) or {}).get('titol') or {}).get('ca') or None
+        especialitats.append({
+            'c': codi, 't': r.get('titol_es') or '', 'tca': tca,
+            'f': r.get('familia_codi'), 'a': r.get('area_codi'), 'n': r.get('nivell'),
+            'm': r.get('modalitat') or '', 'h': r.get('hores'),
+            'ct': r.get('competenciaTransversal'), 'v': r.get('versio'),
+            'vi': r.get('vigenciaInici'), 'vf': r.get('vigenciaFi'),
+            'nc': len(cursos_by_espec.get(codi, [])),
+        })
+    # Només es retornen les famílies i àrees que surten al catàleg SEPE.
+    usades_f = {e['f'] for e in especialitats}
+    usades_a = {e['a'] for e in especialitats}
+    data = {
+        'especialitats': especialitats,
+        'families': {k: {'ca': v['ca'] or v['es'] or k, 'es': v['es'] or v['ca'] or k}
+                     for k, v in families.items() if k in usades_f},
+        'arees': {k: {'ca': v['ca'] or v['es'] or k, 'es': v['es'] or v['ca'] or k}
+                  for k, v in arees.items() if k in usades_a},
+        'actualitzat': (datetime.fromtimestamp(key[0], tz=timezone.utc).isoformat()
+                        if key[0] else None),
+    }
+    _sepe_llista_cache.update(key=key, data=data)
+    return data
+
+
+@app.route('/api/sepe/especialitats')
+def api_sepe_especialitats():
+    """Pla 082: tot el catàleg estatal d'especialitats formatives, en format compacte."""
+    resp = dict(_sepe_llista())
+    if not resp['especialitats']:
+        resp['warning'] = "El catàleg d'especialitats del SEPE no està disponible temporalment."
+    return jsonify(resp)
+
+
+def _sepe_pdf_paths(codi: str) -> tuple:
+    # El codi ve de l'índex SEPE (validat), però es filtra igualment per no sortir mai del directori.
+    nom = re.sub(r'[^A-Za-z0-9_-]', '_', codi)
+    return (os.path.join(SEPE_PROGRAMES_DIR, f'{nom}.pdf'),
+            os.path.join(SEPE_PROGRAMES_DIR, f'{nom}.nopdf'))
+
+
+def _fresh(path: str, ttl: int) -> bool:
+    return os.path.exists(path) and time.time() - os.path.getmtime(path) < ttl
+
+
+def _write_atomic(path: str, content: bytes) -> None:
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    fd, tmp_path = tempfile.mkstemp(dir=os.path.dirname(path), suffix='.tmp')
+    try:
+        with os.fdopen(fd, 'wb') as f:
+            f.write(content)
+        os.replace(tmp_path, path)
+    except BaseException:
+        if os.path.exists(tmp_path):
+            os.unlink(tmp_path)
+        raise
+
+
+def _sepe_pdf_response(content: bytes, codi: str):
+    resp = Response(content, mimetype='application/pdf')
+    resp.headers['Content-Disposition'] = f'inline; filename="{os.path.basename(_sepe_pdf_paths(codi)[0])}"'
+    resp.headers['Cache-Control'] = 'public, max-age=86400'
+    return resp
+
+
+@app.route('/api/sepe/programa/<path:codi>')
+def api_sepe_programa(codi):
+    """Pla 082: PDF del programa formatiu, via el SEPE amb cache en disc.
+    Només codis del catàleg: l'id intern del SEPE surt de l'índex, mai de l'usuari."""
+    sepe = _sepe_index().get(codi)
+    if not sepe or not sepe.get('idSepe'):
+        return jsonify({'error': 'no_trobat'}), 404
+    pdf_path, nopdf_path = _sepe_pdf_paths(codi)
+    if _fresh(pdf_path, _SEPE_PDF_TTL):
+        with open(pdf_path, 'rb') as f:
+            return _sepe_pdf_response(f.read(), codi)
+    if _fresh(nopdf_path, _SEPE_NOPDF_TTL):
+        return jsonify({'error': 'sense_programa'}), 404
+    if not _auth_rate_ok('sepe_pdf', _client_ip(request),
+                         limit=_SEPE_PDF_RATE_LIMIT, window=_SEPE_PDF_RATE_WINDOW):
+        return jsonify({'error': 'massa_peticions'}), 429
+    try:
+        content = sepe_scraper.fetch_programa_pdf(sepe['idSepe'])
+    except requests.RequestException as exc:
+        logger.warning("api_sepe_programa: %s: error del SEPE: %s", codi, exc)
+        if os.path.exists(pdf_path):  # millor un PDF caducat que cap
+            with open(pdf_path, 'rb') as f:
+                return _sepe_pdf_response(f.read(), codi)
+        return jsonify({'error': 'sepe_no_disponible'}), 502
+    if content is None:
+        _write_atomic(nopdf_path, b'')
+        return jsonify({'error': 'sense_programa'}), 404
+    _write_atomic(pdf_path, content)
+    if os.path.exists(nopdf_path):
+        os.unlink(nopdf_path)
+    return _sepe_pdf_response(content, codi)
 
 
 _fpo_agenda_cache: dict = {}   # {dies: (clau, agenda)}
@@ -2748,13 +2893,14 @@ _auth_rate_hits: dict = {}
 _auth_rate_lock = threading.Lock()
 
 
-def _auth_rate_ok(bucket: str, ip: str) -> bool:
+def _auth_rate_ok(bucket: str, ip: str, *, limit: int = _AUTH_EMAIL_IP_LIMIT,
+                  window: int = _AUTH_EMAIL_IP_WINDOW) -> bool:
     """Registra una petició de `bucket` per a `ip` i diu si és dins del límit."""
     key = (bucket, ip)
     now = time.time()
     with _auth_rate_lock:
-        recent = [t for t in _auth_rate_hits.get(key, []) if now - t < _AUTH_EMAIL_IP_WINDOW]
-        if len(recent) >= _AUTH_EMAIL_IP_LIMIT:
+        recent = [t for t in _auth_rate_hits.get(key, []) if now - t < window]
+        if len(recent) >= limit:
             _auth_rate_hits[key] = recent
             return False
         recent.append(now)

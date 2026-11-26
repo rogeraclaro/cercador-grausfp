@@ -203,3 +203,33 @@ def write_sepe_data(rows: list, data_dir: str) -> None:
             os.unlink(tmp_path)
             raise
     os.replace(tmp_path, path)
+
+
+# ---------------------------------------------------------------------------
+# Programa formatiu (PDF) — Pla 082
+# ---------------------------------------------------------------------------
+
+def fetch_programa_pdf(id_sepe: int, session=None) -> bytes | None:
+    """PDF del programa formatiu d'una especialitat, o None si el SEPE no en té.
+
+    És el mateix POST JSF que fa el botó del cercador (verificat al pla 081): sense
+    document, el servidor torna l'HTML del modal "no tiene documento asociado".
+    Els errors de xarxa i HTTP es propaguen.
+    """
+    session = session or _new_session()
+    resp = session.get(f'{BASE}/flows/main', timeout=TIMEOUT)
+    resp.raise_for_status()
+    fields = {
+        'formulario_SUBMIT': '1',
+        'javax.faces.ViewState': 'e1s1',
+        'formulario:codigoPropuesta': str(int(id_sepe)),
+        'formulario:invisibleClickTargetProgramaFormativoEspecialidad': '',
+    }
+    # files= amb (None, valor) fa un multipart/form-data sense fitxers, com el navegador.
+    resp = session.post(f'{BASE}/flows/main?execution=e1s1',
+                        files={k: (None, v) for k, v in fields.items()}, timeout=POST_TIMEOUT)
+    resp.raise_for_status()
+    # El SEPE envia "Content-type: pdf" (no application/pdf): es mira també la signatura.
+    if 'pdf' not in resp.headers.get('Content-Type', '').lower() or not resp.content.startswith(b'%PDF-'):
+        return None
+    return resp.content
