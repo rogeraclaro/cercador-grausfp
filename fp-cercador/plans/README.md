@@ -113,11 +113,12 @@ amb quins prerequisits i quins passos manuals calen al servidor.
 | 097 | Filtres i presentació SEPE al cercador: nivell 1–5, modalitat, durada, família «Competències transversals», bloc SEPE visible, textos i «Volies dir…» | P2 | M | 096 | DONE i desplegat el 2026-11-26 (prod `3bd6a5c`) |
 | 098 | Correccions de títols i equivalències de cerca des del panell d'administració; cerques sense resultat; «avisa d'un error» a les especialitats | P2 | M | 096 | DONE i desplegat el 2026-11-26 (prod `5ad76bd,` migració 017) |
 | 099 | Entitats que imparteixen cada especialitat SEPE (a demanda, cache 7 dies; correu només per a l'administrador), també al mode FPO | P2 | M | 096 | DONE i desplegat el 2026-11-26 (prod `99c99e4`) |
-| 100 | Descàrrega completa dels programes formatius i les ocupacions del SEPE (des de l'ordinador del propietari, amb validacions, informe i avís de repetició) | P2 | L | 096 | TODO |
+| 100 | Descàrrega completa dels programes formatius i les ocupacions del SEPE (des de l'ordinador del propietari, amb validacions, informe i avís de repetició) | P2 | L | 096 | IN PROGRESS (codi desplegat `25f6b40`; descàrrega en marxa des del 2026-11-26 21:17, ~23 h; falta copiar `sepe_programes.json` al VPS) |
 | 101 | Pàgina pública per especialitat SEPE (`/especialitat/<codi>`), amb `noindex` si no té programa llegit | P2 | L | 096, 099, 100 | TODO |
 | 102 | Favorits, alertes (cursos a Catalunya i entitats noves) i exportació CSV per a les especialitats SEPE | P3 | M | 096 (099 per a l'alerta d'entitats) | TODO |
 | 103 | Cerca per ocupació amb especialitats SEPE i prova dels «graus relacionats» (decidir amb números) | P3 | S–M | 100 | TODO |
 | 104 | Investigació: fonts de cursos programats fora de Catalunya (SEPE–FUNDAE, comunitats grans) | P3 | S | — | TODO |
+| 105 | Aula virtual i tutoria presencial a les especialitats SEPE: dada del catàleg, filtre de modalitat de 4 opcions, etiqueta, cercador per nom al panell d'entitats | P1 | M | 096, 097, 099 | DONE i desplegat el 2026-11-26 (prod `bb2f6b8` + `sepe_especs.json` copiat al VPS) |
 
 Valors de Status: `TODO` | `IN PROGRESS` | `DONE` | `BLOCKED (motiu en una línia)` | `REJECTED (motiu en una línia)`
 

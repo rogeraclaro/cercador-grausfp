@@ -323,6 +323,8 @@ La primera vegada, `--discover` triga ~20 min; després va de la memòria cau.
 ### Catàleg d'Especialitats Formatives del SEPE (plans 081–082)
 - 081: **fet** (commits f0a99b0, a54b18c, 7d46fee): scraper + `sepe_especs.json` + badges i filtre a l'FPO.
 - 082: **fet i desplegat 2026-11-26**. Canvi de decisió: les especialitats SEPE surten al cercador principal (pestanya «Especialitats SEPE» + bloc sota els resultats), no en una pàgina a part. Proxy del PDF del programa amb cache. Docs a per-que-grausfp.html#sepe i fonts.html#sepe. Pendent: parlar de com diferenciar-les visualment.
+- **105 fet i desplegat el 2026-11-26** (`bb2f6b8`): el SEPE publica si cada especialitat admet aula virtual (3.180 de 7.557); filtre de modalitat amb 4 opcions; cercador per nom al panell d'entitats. La tutoria presencial es recull però no es mostra (significat no aclarit). Pendent: trobar la norma que permet impartir per aula virtual.
+- **100 en curs**: codi desplegat (`25f6b40`); descàrrega completa en marxa al Mac del propietari des del 2026-11-26 21:17 (log a `backend/data/sepe-descarrega.log`). En acabar: revisar l'informe i copiar `backend/data/sepe_programes.json` al VPS.
 - **095–099 fets i desplegats el 2026-11-26** (executats per agents, un per pla, revisats i desplegats un a un): 095 `c42b6cf`, 096 `b1925d7`, 097 `3bd6a5c`, 098 `5ad76bd` (migració 017; còpia BD a /root/fp_cercador.db.bak-pre098), 099 `99c99e4`. Pendents: 100 (descàrrega de ~10 h des de l'ordinador del propietari), 101–104.
 - **Plans 095–104 escrits el 2026-11-26** (sessió de 21 idees discutides una per una amb el propietari; un pla per sessió):
   095 refresc robust (P1, el refresc del 22-nov va fallar en silenci) · 096 dades SEPE netes (P1, arregla 216 especialitats mal creuades amb el SOC) ·
