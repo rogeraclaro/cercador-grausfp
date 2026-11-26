@@ -264,6 +264,14 @@
       <button id="refresh-btn">Actualitzar dades</button>
       <div id="refresh-status"></div>
       <p id="refresh-health" style="color: var(--warm); font-size: 13px; margin-top: 12px;"></p>
+      <!-- Pla 095: avís operatiu per a qui reinicia el servei -->
+      <p style="color: var(--warm); font-size: 13px; margin-top: 12px; line-height: 1.5;">
+        <strong>Abans de reiniciar el servei:</strong> comprova que no hi hagi cap refresc en marxa. El refresc dura
+        al voltant d'una hora i mitja, i si hi ha talls de connexió la primera fase es pot allargar uns 20 minuts més
+        pels reintents. Si el refresc programat falla, se'n fa un segon intent al cap de 2 hores; aquest reintent es
+        guarda només en memòria i <strong>es perd si es reinicia el servei</strong> abans que s'executi (aleshores cal
+        llançar-lo a mà amb el botó d'aquí dalt).
+      </p>
     </section>
 
     <!-- ── Secció 3: Scraping de centres ── -->
