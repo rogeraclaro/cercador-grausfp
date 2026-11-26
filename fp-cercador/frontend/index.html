@@ -2478,7 +2478,7 @@
     }
   </style>
 
-  <script src="i18n.js?v=20261126"></script>
+  <script src="i18n.js?v=20261127"></script>
   <script src="auth.js?v=20261117b"></script>
   <script src="held.js?v=1"></script>
   <script src="ics.js?v=1"></script>
@@ -2837,7 +2837,9 @@
             const itinReturn = linkParams.get('grado')
               && (linkParams.get('ref') || linkParams.get('codigo') || linkParams.get('id'));
             if (!itinReturn && !['ocupacio', 'fpo'].includes(linkParams.get('mode'))) {
-              const urlState = GFPSearch.stateFromParams(linkParams, this.families);
+              // Pla 096: ?familia=CTR només és vàlid a la pestanya SEPE
+              const urlFamilies = linkParams.get('grado') === 'SEPE' ? this.families.concat([this.SEPE_CTR]) : this.families;
+              const urlState = GFPSearch.stateFromParams(linkParams, urlFamilies);
               if (!this.loggedIn) delete urlState.filterFavs;     // favs=1 sense sessió s'ignora
               const page = urlState.currentPage;
               delete urlState.currentPage;
@@ -3148,6 +3150,7 @@
         // Surten com un tipus més de resultat: a la pestanya «Especialitats SEPE» totes, i sota els
         // graus (només les primeres) quan hi ha text de cerca. No porten favorits, alertes ni centres.
         SEPE_PREVIEW: 10,
+        SEPE_CTR: 'CTR',   // Pla 096: família virtual «Competències transversals» (només pestanya SEPE)
 
         get sepeVisible() {
           if (this.searchMode !== 'nom') return false;
@@ -3175,9 +3178,10 @@
             }
             this.sepeRecords = (data.especialitats || []).map(e => ({
               ...e,
-              familia: famName[e.f] || '',
+              // Pla 096: les transversals porten la família virtual (valor del filtre = SEPE_CTR)
+              familia: e.f === this.SEPE_CTR ? this.SEPE_CTR : (famName[e.f] || ''),
               _normT: norm(e.t) + ' ' + norm(e.tca),
-              _normC: norm(e.c),
+              _normC: norm(e.c) + ' ' + norm(e.ca),   // també pel codi anterior
             }));
             this.sepeState = 'ready';
           } catch (e) {
@@ -3228,7 +3232,15 @@
 
         sepeProgramaUrl(codi) { return API_BASE + '/api/sepe/programa/' + encodeURIComponent(codi); },
 
-        sepeTitol(e) { return (this.fpoLang() === 'ca' && e.tca) || this.sc(e.t); },
+        sepeTitol(e) { return (this.fpoLang() === 'ca' && e.tca) || e.tm || this.sc(e.t); },
+
+        // Pla 096: columna de família; les transversals mostren la categoria del SEPE
+        sepeFamilia(e) {
+          return e.f === this.SEPE_CTR ? t('sepe.fam.transversalCol', { cat: e.ct || '' }) : e.familia;
+        },
+
+        // Pla 096: només PO i DCP tenen etiqueta (EXP/CCC/PTF: vegeu per-que-grausfp.html#sepe)
+        sepeSufix(e) { return e.sx === 'PO' || e.sx === 'DCP' ? e.sx : ''; },
 
         // Vigència en format curt (dd/mm/aaaa)
         sepeData(iso) { return iso ? iso.split('-').reverse().join('/') : '—'; },
@@ -3273,6 +3285,8 @@
 
         setGrado(g) {
           this.filterGrado = this.filterGrado === g ? '' : g;
+          // Pla 096: la família virtual de les transversals només existeix a la pestanya SEPE
+          if (this.filterGrado !== 'SEPE' && this.filterFamilia === this.SEPE_CTR) this.filterFamilia = '';
           this.resetPage();
         },
 
@@ -4342,6 +4356,9 @@
         <template x-for="fam in families" :key="fam">
           <option :value="fam" x-text="fam"></option>
         </template>
+        <template x-if="filterGrado === 'SEPE'">
+          <option :value="SEPE_CTR" x-text="t('sepe.fam.transversal')"></option>
+        </template>
       </select>
 
       <label for="filter-nivel" class="sr-only" data-i18n="fpo.filter.nivell">Nivell</label>
@@ -5273,11 +5290,13 @@
                   <td class="col-nom">
                     <span x-text="sepeTitol(e)"></span>
                     <span class="fpo-badge" :title="t('fpo.tooltip.formacioTreball')" x-text="t('sepe.badge')"></span>
+                    <span class="fpo-badge" x-show="sepeSufix(e)" :title="sepeSufix(e) ? t('sepe.sufix.' + sepeSufix(e) + '.help') : ''"
+                      x-text="sepeSufix(e) ? t('sepe.sufix.' + sepeSufix(e)) : ''"></span>
                     <span class="fpo-badge" x-show="e.nc > 0"
                       x-text="e.nc === 1 ? t('sepe.cursos.one') : t('sepe.cursos.many', {n: e.nc})"></span>
                   </td>
                   <td class="col-codi" x-text="e.c"></td>
-                  <td class="col-fam" x-text="e.familia"></td>
+                  <td class="col-fam" x-text="sepeFamilia(e)"></td>
                   <td class="col-niv" :class="{ 'cell-empty': !e.n }" :data-label="t('index.col.niv')" x-text="e.n || '—'"></td>
                   <td class="col-hores" :class="{ 'cell-empty': !e.h }" :data-label="t('fpo.col.hores')"
                     x-text="e.h ? Math.round(e.h) : '—'"></td>
@@ -5292,6 +5311,7 @@
                           x-text="t('fpo.chip.competenciaTransversal', {nom: e.ct || ''})"></span>
                       </p>
                       <p class="fpo-avis" x-text="t('sepe.vigencia', {inici: sepeData(e.vi), fi: sepeData(e.vf)})"></p>
+                      <p class="fpo-avis" x-show="e.ca" x-text="e.ca ? t('sepe.codiAntic', {codi: e.ca}) : ''"></p>
                       <div class="detall-btns">
                         <a class="btn-doc" target="_blank" rel="noopener"
                           :href="sepeProgramaUrl(e.c)" x-text="t('sepe.programa')"></a>

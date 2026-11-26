@@ -81,8 +81,9 @@ def test_fetch_decodes_latin1_into_accented_text():
 def test_parse_row_adga12dcp():
     got = sepe.parse_row(_fixture_rows()[0])
     assert got == {
-        'codi': 'ADGA12DCP', 'idSepe': 107,
-        'titol_es': 'AUXILIAR DE EMPLEADO DE OFICINA', 'versio': 1,
+        'codi': 'ADGA12DCP', 'codiAntic': None, 'sufix': 'DCP', 'idSepe': 107,
+        'titol_es': 'AUXILIAR DE EMPLEADO DE OFICINA',
+        'titol_mostra': 'Auxiliar de empleado de oficina', 'versio': 1,
         'familia_es': 'ADMINISTRACIÓN Y GESTIÓN', 'area_es': 'ADMINISTRACIÓN / GESTIÓN',
         'familia_codi': 'ADG', 'area_codi': 'ADGA',
         'competenciaTransversal': None, 'nivell': 1, 'modalitat': 'Presencial',
@@ -109,6 +110,66 @@ def test_parse_row_adgd0073():
     assert got['idSepe'] == 59414
     # el títol no arrossega l'espai final ni cap tag
     assert got['titol_es'] == 'PLANIFICADOR DE RECURSOS EMPRESARIALES (ERP)'
+
+
+# --- Pla 096: codi antic, sufixos, interrogants ---
+
+def test_parse_row_codi_amb_parentesi():
+    cells = list(_fixture_rows()[2])
+    cells[1] = 'CTRC0001 (FCOV0001)'
+    got = sepe.parse_row(cells)
+    assert got['codi'] == 'CTRC0001'
+    assert got['codiAntic'] == 'FCOV0001'
+    assert got['familia_codi'] == 'CTR' and got['area_codi'] == 'CTRC'
+    assert got['sufix'] is None
+
+
+@pytest.mark.parametrize('codi,sufix', [
+    ('FCOE001PO', 'PO'), ('ADGA12DCP', 'DCP'), ('HOTR02EXP', 'EXP'), ('SSCE05CCC', 'CCC'),
+    ('IFCT01PTF', 'PTF'), ('IFCD0112', None), ('ADGD0073', None),
+])
+def test_sufix(codi, sufix):
+    assert sepe._sufix(codi) == sufix
+
+
+def test_parse_row_fcoe001po_sufix():
+    assert sepe.parse_row(_fixture_rows()[2])['sufix'] == 'PO'
+
+
+@pytest.mark.parametrize('raw,net', [
+    ('PRODUCCIÓN DE ?WEB SERIES?', 'PRODUCCIÓN DE «WEB SERIES»'),
+    ('TÉCNICA DE ?CUERDA SECA?.', 'TÉCNICA DE «CUERDA SECA».'),
+    ('MICROSOFT? CERTIFIED: AZURE', 'MICROSOFT CERTIFIED: AZURE'),
+    ('MICROSOFT?CERTIFIED: AZURE', 'MICROSOFT CERTIFIED: AZURE'),
+    ('¿QUÉ ES LA IA?', '¿QUÉ ES LA IA?'),
+    ('¿QUÉ ES ?BIG DATA??', '¿QUÉ ES «BIG DATA»?'),
+    ('SENSE INTERROGANTS', 'SENSE INTERROGANTS'),
+])
+def test_clean_title_interrogants(raw, net):
+    assert sepe.clean_title(raw) == net
+
+
+def test_parse_row_titol_net_i_mostra():
+    cells = list(_fixture_rows()[1])
+    cells[2] = cells[2].replace('PLANIFICADOR DE RECURSOS EMPRESARIALES (ERP)',
+                                'INGENIERÍA DE SISTEMAS EN ?RED HAT LINUX?')
+    got = sepe.parse_row(cells)
+    assert got['titol_es'] == 'INGENIERÍA DE SISTEMAS EN «RED HAT LINUX»'
+    assert got['titol_mostra'] == 'Ingeniería de sistemas en «Red Hat Linux»'
+
+
+def test_parse_row_sense_familia_es_transversal():
+    got = sepe.parse_row(_fixture_rows()[2])
+    assert got['familia_es'] is None
+    assert got['competenciaTransversal'] == 'Idiomas / Lingüísticas'
+    assert got['titol_mostra'] == 'Alemán A1 (marco común europeo)'
+
+
+def test_validate_unicitat_sobre_codi_net(monkeypatch):
+    monkeypatch.setattr(sepe, 'MIN_ROWS', 2)
+    rows = [{'codi': 'CTRC0001', 'codiAntic': 'FCOV0001'}, {'codi': 'CTRC0001', 'codiAntic': None}]
+    with pytest.raises(sepe.SepeDataError, match='CTRC0001'):
+        sepe.validate_rows(rows)
 
 
 def test_parse_row_wrong_cell_count_raises():

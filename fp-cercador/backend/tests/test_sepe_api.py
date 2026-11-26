@@ -12,7 +12,7 @@ import requests
 
 import app as app_module
 from scrapers import sepe_scraper
-from tests.test_fpo_api import fpo_data  # noqa: F401  (fixture: soc_*.json a tmp_path)
+from tests.test_fpo_api import _curs, _espec, fpo_data  # noqa: F401  (fixture: soc_*.json a tmp_path)
 
 SEPE_ROWS = [
     # Té cursos al SOC (fixture de test_fpo_api: 2 cursos IFCD0112)
@@ -64,6 +64,7 @@ def test_llistat_format_compacte(client):
     assert set(by_codi) == {'IFCD0112', 'SSCE22'}
     ssce = by_codi['SSCE22']
     assert ssce == {'c': 'SSCE22', 't': 'TUTORIZACION EN TELEFORMACIÓN', 'tca': None,
+                    'tm': 'Tutorizacion en teleformación', 'ca': None, 'sx': None,
                     'f': 'SSC', 'a': 'SSCE', 'n': None, 'm': 'Presencial y teleformación',
                     'h': 50.0, 'ct': 'Digitales', 'v': 1, 'vi': '2025-04-25', 'vf': '2030-04-25',
                     'nc': 0}
@@ -88,6 +89,58 @@ def test_llistat_sense_fitxer_avisa(client, fpo_data):  # noqa: F811
     os.remove(fpo_data / 'sepe_especs.json')
     d = client.get('/api/sepe/especialitats').get_json()
     assert d['especialitats'] == [] and d['warning']
+
+
+# --- Pla 096: codi antic (parèntesi), transversals, sufixos ---
+
+CTR_ROW = {'codi': 'CTRC0001', 'codiAntic': 'FCOV0001', 'sufix': None, 'idSepe': 31528,
+           'titol_es': 'RESOLUCIÓN DE CONFLICTOS', 'titol_mostra': 'Resolución de conflictos',
+           'versio': 1, 'familia_es': None, 'area_es': None, 'familia_codi': 'CTR',
+           'area_codi': 'CTRC', 'competenciaTransversal': 'Competencias básicas para la empleabilidad',
+           'nivell': 1, 'modalitat': 'Presencial', 'hores': 30.0,
+           'vigenciaInici': '2023-03-09', 'vigenciaFi': '2030-12-31'}
+
+
+@pytest.fixture
+def ctr_client(client, fpo_data):  # noqa: F811
+    """El SEPE dona «CTRC0001 (FCOV0001)» i el SOC fa servir el codi net CTRC0001."""
+    rows = SEPE_ROWS + [CTR_ROW, dict(SEPE_ROWS[1], codi='ADGA12DCP', sufix='DCP', idSepe=107)]
+    (fpo_data / 'sepe_especs.json').write_text(json.dumps(rows), encoding='utf-8')
+    especs = json.loads((fpo_data / 'soc_especs.json').read_text(encoding='utf-8'))
+    especs.append(dict(_espec('CTRC0001', fam='CTR', area='CTRC'),
+                       titol={'ca': 'RESOLUCIÓ DE CONFLICTES', 'es': 'RESOLUCIÓN DE CONFLICTOS'}))
+    (fpo_data / 'soc_especs.json').write_text(json.dumps(especs), encoding='utf-8')
+    cursos = json.loads((fpo_data / 'soc_cursos.json').read_text(encoding='utf-8'))
+    cursos.append(_curs('301', 'CTRC0001', fam='CTR', area='CTRC'))
+    (fpo_data / 'soc_cursos.json').write_text(json.dumps(cursos), encoding='utf-8')
+    return client
+
+
+def test_codi_net_es_creua_amb_soc(ctr_client):
+    d = ctr_client.get('/api/sepe/especialitats').get_json()
+    ctr = next(e for e in d['especialitats'] if e['c'] == 'CTRC0001')
+    assert ctr['ca'] == 'FCOV0001'
+    assert ctr['nc'] == 1
+    assert ctr['tca'] == 'Resolució de conflictes'          # el SOC en majúscules → display_title
+    assert ctr['tm'] == 'Resolución de conflictos'
+    assert ctr['f'] == 'CTR'
+    assert d['families']['CTR'] == {'ca': 'Competències transversals', 'es': 'Competencias transversales'}
+    assert next(e for e in d['especialitats'] if e['c'] == 'ADGA12DCP')['sx'] == 'DCP'
+
+
+def test_fpo_codi_net_vinculacio_sepe(ctr_client):
+    llista = ctr_client.get('/api/fpo/especialitats').get_json()['especialitats']
+    ctr = next(e for e in llista if e['codi'] == 'CTRC0001')
+    assert ctr['vinculacio'] == 'sepe'
+    assert ctr['competenciaTransversal'] == 'Competencias básicas para la empleabilidad'
+
+
+@pytest.mark.parametrize('codi', ['CTRC0001', 'FCOV0001', 'CTRC0001 (FCOV0001)'])
+def test_programa_accepta_codi_net_i_antic(ctr_client, fetch_calls, fpo_data, codi):  # noqa: F811
+    r = ctr_client.get('/api/sepe/programa/' + codi)
+    assert r.status_code == 200
+    assert fetch_calls['id'] == 31528
+    assert (fpo_data / 'sepe_programes' / 'CTRC0001.pdf').exists()   # cache pel codi net
 
 
 # --- Programa (PDF) ---

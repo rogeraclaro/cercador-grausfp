@@ -73,6 +73,7 @@ import centres_inherit
 import oferta_ref
 import refresh_state
 import scheduler_service
+import titols
 import uc_corr
 from scrapers import buscador_scraper, pipeline, sepe_scraper
 from scrapers.centres_scraper import build_centres_data
@@ -1759,13 +1760,27 @@ def _get_sepe_especs() -> list:
 
 
 def _sepe_index() -> dict:
-    """{codi: fila} del catàleg SEPE (Pla 081). {} si el fitxer falta. Cache per mtime."""
+    """{codi: fila} del catàleg SEPE (Pla 081). {} si el fitxer falta. Cache per mtime.
+    Pla 096: el codi és el net (CTRC0001), el mateix que fa servir el SOC."""
     key = os.path.getmtime(SEPE_ESPECS_PATH) if os.path.exists(SEPE_ESPECS_PATH) else None
     if _sepe_index_cache["key"] == key and _sepe_index_cache["data"] is not None:
         return _sepe_index_cache["data"]
     data = {r['codi']: r for r in _get_sepe_especs() if isinstance(r, dict) and r.get('codi')}
     _sepe_index_cache.update(key=key, data=data)
     return data
+
+
+def _sepe_lookup(codi: str):
+    """Fila SEPE pel codi net o, per compatibilitat, pel codi antic (FCOV0001) o pel
+    format amb parèntesi que es desava abans del Pla 096 («CTRC0001 (FCOV0001)»)."""
+    idx = _sepe_index()
+    codi = (codi or '').strip()
+    if codi in idx:
+        return idx[codi]
+    net = codi.split(' ')[0]
+    if net in idx:
+        return idx[net]
+    return next((r for r in idx.values() if r.get('codiAntic') == codi), None)
 
 
 def _fpo_today() -> str:
@@ -1953,6 +1968,9 @@ def api_fpo_especialitat(codi):
 # ---------------------------------------------------------------------------
 
 _sepe_llista_cache: dict = {"key": None, "data": None}
+# Pla 096: família virtual per a les especialitats de competència transversal.
+_SEPE_TRANSVERSAL = 'CTR'
+_SEPE_TRANSVERSAL_DESC = {'ca': 'Competències transversals', 'es': 'Competencias transversales'}
 
 _SEPE_PDF_TTL = 30 * 86400        # un PDF baixat es reaprofita 30 dies
 _SEPE_NOPDF_TTL = 7 * 86400       # "sense programa" es recorda 7 dies per no repicar el SEPE
@@ -1985,19 +2003,28 @@ def _sepe_llista() -> dict:
         if not isinstance(r, dict) or not r.get('codi'):
             continue
         codi = r['codi']
+        # Pla 096: les competències transversals no tenen família al SEPE → família virtual.
+        transversal = bool(r.get('competenciaTransversal')) and not r.get('familia_es')
+        familia = _SEPE_TRANSVERSAL if transversal else r.get('familia_codi')
         for field, out, desc in (('familia_codi', families, r.get('familia_es')),
                                  ('area_codi', arees, r.get('area_es'))):
-            entry = out.setdefault(r.get(field), {'ca': None, 'es': None})
+            entry = out.setdefault(familia if field == 'familia_codi' else r.get(field),
+                                   {'ca': None, 'es': None})
             entry['es'] = entry['es'] or desc
         tca = ((soc_by_codi.get(codi) or {}).get('titol') or {}).get('ca') or None
+        if tca and tca == tca.upper():      # el SOC també en té alguns en majúscules
+            tca = titols.display_title(tca)
         especialitats.append({
             'c': codi, 't': r.get('titol_es') or '', 'tca': tca,
-            'f': r.get('familia_codi'), 'a': r.get('area_codi'), 'n': r.get('nivell'),
+            'tm': r.get('titol_mostra') or titols.display_title(r.get('titol_es') or ''),
+            'ca': r.get('codiAntic'), 'sx': r.get('sufix'),
+            'f': familia, 'a': r.get('area_codi'), 'n': r.get('nivell'),
             'm': r.get('modalitat') or '', 'h': r.get('hores'),
             'ct': r.get('competenciaTransversal'), 'v': r.get('versio'),
             'vi': r.get('vigenciaInici'), 'vf': r.get('vigenciaFi'),
             'nc': len(cursos_by_espec.get(codi, [])),
         })
+    families[_SEPE_TRANSVERSAL] = dict(_SEPE_TRANSVERSAL_DESC)
     # Només es retornen les famílies i àrees que surten al catàleg SEPE.
     usades_f = {e['f'] for e in especialitats}
     usades_a = {e['a'] for e in especialitats}
@@ -2058,9 +2085,10 @@ def _sepe_pdf_response(content: bytes, codi: str):
 def api_sepe_programa(codi):
     """Pla 082: PDF del programa formatiu, via el SEPE amb cache en disc.
     Només codis del catàleg: l'id intern del SEPE surt de l'índex, mai de l'usuari."""
-    sepe = _sepe_index().get(codi)
+    sepe = _sepe_lookup(codi)
     if not sepe or not sepe.get('idSepe'):
         return jsonify({'error': 'no_trobat'}), 404
+    codi = sepe['codi']   # la cache i el nom del fitxer sempre amb el codi net
     pdf_path, nopdf_path = _sepe_pdf_paths(codi)
     if _fresh(pdf_path, _SEPE_PDF_TTL):
         with open(pdf_path, 'rb') as f:

@@ -24,6 +24,8 @@ import tempfile
 
 import requests
 
+from titols import display_title
+
 logger = logging.getLogger(__name__)
 
 BASE = 'https://sede.sepe.gob.es/FOET_CATALOGO_EEFF_SEDE'
@@ -48,6 +50,12 @@ _RE_FI = re.compile(r'FIN VIGENCIA:\s*(\d{2})/(\d{2})/(\d{4})')
 _RE_ID = re.compile(r'getProgramaFormativoEspecialidad\((\d+)\)')
 _RE_TAG = re.compile(r'<[^>]*>')
 _RE_WS = re.compile(r'\s+')
+# Pla 096: «CTRC0001 (FCOV0001)» → codi nou + codi anterior entre parèntesis.
+_RE_CODI = re.compile(r'^(\S+)\s*\((\S+)\)$')
+# Sufixos del codi després dels dígits (ADGA12DCP, FCOE001PO). Significat: plans/096.
+_RE_SUFIX = re.compile(r'\d(PO|EXP|DCP|CCC|PTF)$')
+# El SEPE envia «?» on hi havia cometes o ®: «?TERCER FUEGO?», «MICROSOFT?».
+_RE_QPAIR = re.compile(r'(?<![\w¿?])\?(?=[^\s?])([^?¿]*?[^\s?])\?(?!\w)')
 
 
 class SepeDataError(Exception):
@@ -138,18 +146,58 @@ def _date(regex, cell0: str):
     return f'{m.group(3)}-{m.group(2)}-{m.group(1)}' if m else None
 
 
+def _split_codi(text: str) -> tuple:
+    """(codi, codiAntic). El SOC fa servir el codi sense parèntesi."""
+    m = _RE_CODI.match(text)
+    if m:
+        return m.group(1), m.group(2)
+    return text.split(' ')[0], None
+
+
+def _sufix(codi: str):
+    m = _RE_SUFIX.search(codi)
+    return m.group(1) if m else None
+
+
+def clean_title(text: str) -> str:
+    """Treu els «?» que substitueixen cometes o ®. Un «¿…?» es deixa intacte."""
+    if '?' not in text:
+        return text
+    text = _RE_QPAIR.sub(r'«\1»', text)
+    out = []
+    obertes = 0
+    for i, ch in enumerate(text):
+        if ch == '¿':
+            obertes += 1
+        elif ch == '?':
+            if obertes:
+                obertes -= 1
+            else:
+                # Entre dues paraules («MICROSOFT?CERTIFIED») fa d'espai; si no, fora.
+                entre = (i > 0 and text[i - 1].isalnum()
+                         and i + 1 < len(text) and text[i + 1].isalnum())
+                if entre:
+                    out.append(' ')
+                continue
+        out.append(ch)
+    return _RE_WS.sub(' ', ''.join(out)).strip()
+
+
 def parse_row(cells) -> dict:
     if not isinstance(cells, list) or len(cells) != _N_CELLS:
         n = len(cells) if isinstance(cells, list) else type(cells).__name__
         raise SepeDataError(f'fila SEPE amb {n} cel·les (esperades {_N_CELLS}): canvi de format?')
-    codi = _text(cells[1])
+    codi, codi_antic = _split_codi(_text(cells[1]))
     m_id = _RE_ID.search(str(cells[2]))
     nivell = _text(cells[7])
-    # Els sufixos del codi (PO/EXP/DCP/CCC) no s'interpreten: significat no verificat.
+    titol = clean_title(_text(cells[2]))
     return {
         'codi': codi,
+        'codiAntic': codi_antic,
+        'sufix': _sufix(codi),
         'idSepe': int(m_id.group(1)) if m_id else None,
-        'titol_es': _text(cells[2]),
+        'titol_es': titol,
+        'titol_mostra': display_title(titol),
         'versio': int(cells[3]),
         'familia_es': _opt_text(cells[4]),
         'area_es': _opt_text(cells[5]),
