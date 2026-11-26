@@ -239,3 +239,159 @@ def test_fetch_programa_pdf_detecta_pdf():
 def test_fetch_programa_pdf_html_es_none():
     s = _Session(_Resp(b'<html>no tiene documento asociado</html>', 'text/html'))
     assert sepe_scraper.fetch_programa_pdf(107, session=s) is None
+
+
+# --- Pla 099: entitats que imparteixen una especialitat ---
+
+FIXTURES = os.path.join(os.path.dirname(__file__), 'fixtures')
+
+
+def _fixture(nom):
+    with open(os.path.join(FIXTURES, nom), encoding='utf-8') as f:
+        return f.read()
+
+
+def test_parse_entitats_fixture_real():
+    ents = sepe_scraper.parse_entitats(_fixture('sepe_entitats_3.html'))
+    assert [e['id'] for e in ents] == ['8000000001', '1300000002', '800000003']
+    ccc, quixote, nascor = ents
+    assert ccc == {'id': '8000000001', 'nom': 'ENTITAT A',
+                   'tipus': 'teleformacio', 'provincia': 'Madrid', 'adreca': 'CL EXEMPLE 0001',
+                   'telefon': '600000001', 'web': 'https://www.exemple-a.test',
+                   'email': 'info@exemple-a.test'}
+    assert quixote['tipus'] == 'presencial' and quixote['provincia'] == 'Ciudad Real'
+    assert quixote['web'] is None and quixote['email'] == 'INFO@EXEMPLE-B.TEST'
+    assert nascor['nom'] == 'ENTITAT C FORMACIÓN SLU'                 # UTF-8 ben llegit
+    assert (nascor['web'], nascor['email'], nascor['telefon']) == (None, None, None)   # «-» = buit
+    for e in ents:                                                  # el NIF i el titular no es desen
+        assert set(e) == {'id', 'nom', 'tipus', 'provincia', 'adreca', 'telefon', 'web', 'email'}
+
+
+def test_parse_entitats_especialitat_sense_entitats():
+    assert sepe_scraper.parse_entitats(_fixture('sepe_entitats_buida.html')) == []
+
+
+@pytest.mark.parametrize('page', [
+    '<html><title>Error</title></html>',                            # sense taula (sessió perduda…)
+    '<tbody id="formulario:resultadoEspecialidadesTablaJSF:tbody_element"><tr><td>x</td></tr></tbody>',
+    '<tbody id="formulario:resultadoEspecialidadesTablaJSF:tbody_element"><tr><td>'
+    '<div class="details-control details-control-background"></div></td><td>1</td></tr></tbody>',
+])
+def test_parse_entitats_format_desconegut(page):
+    with pytest.raises(sepe_scraper.SepeDataError):
+        sepe_scraper.parse_entitats(page)
+
+
+@pytest.mark.parametrize('raw,url', [
+    ('www.adams.es', 'http://www.adams.es'),
+    ('HTTPS://WWW.TECH-FP.COM', 'https://www.tech-fp.com'),
+    ('https://www.formacion.cc/index.php?c=ASIDOM', 'https://www.formacion.cc/index.php?c=ASIDOM'),
+    ('http://www.accionlaboral.com/', 'http://www.accionlaboral.com/'),
+    ('javascript:alert(1)', None),
+    ('no és una web', None),
+    ('sense-punt', None),
+    ('ftp://x.com', None),
+    (None, None),
+])
+def test_norm_web(raw, url):
+    assert sepe_scraper._norm_web(raw) == url
+
+
+def test_fetch_entitats_envia_el_boto_entitats():
+    s = _Session(_Resp(_fixture('sepe_entitats_3.html').encode('utf-8'), 'text/html; charset=UTF-8'))
+    assert len(sepe_scraper.fetch_entitats(97614, session=s)) == 3
+    assert s.posted['formulario:codigoPropuesta'] == (None, '97614')
+    assert 'formulario:invisibleClickTargetEntidadesFormacion' in s.posted
+
+
+ENTITATS = [
+    {'id': '1', 'nom': 'ACADEMIA', 'tipus': 'teleformacio', 'provincia': 'Madrid', 'adreca': 'CL A 1',
+     'telefon': '911', 'web': 'http://a.es', 'email': 'info@a.es'},
+    {'id': '2', 'nom': 'CENTRE', 'tipus': 'presencial', 'provincia': 'Barcelona', 'adreca': None,
+     'telefon': None, 'web': None, 'email': None},
+]
+
+
+@pytest.fixture
+def ent_calls(client, fpo_data, monkeypatch):  # noqa: F811
+    """Mock de sepe_scraper.fetch_entitats: retorna `calls['result']` i compta les crides."""
+    monkeypatch.setattr(app_module, 'SEPE_ENTITATS_DIR', str(fpo_data / 'sepe_entitats'))
+    monkeypatch.setattr(app_module, 'ADMIN_TOKEN', 'test-token')
+    calls = {'n': 0, 'result': ENTITATS}
+
+    def fake(id_sepe, session=None):
+        calls['n'] += 1
+        calls['id'] = id_sepe
+        if isinstance(calls['result'], Exception):
+            raise calls['result']
+        return [dict(e) for e in calls['result']]
+
+    monkeypatch.setattr(sepe_scraper, 'fetch_entitats', fake)
+    return calls
+
+
+def test_entitats_descarrega_i_cache(client, ent_calls, fpo_data):  # noqa: F811
+    r = client.get('/api/sepe/entitats/SSCE22')
+    assert r.status_code == 200
+    d = r.get_json()
+    assert d['total'] == 2 and d['actualitzat']
+    assert d['entitats'][0]['nom'] == 'ACADEMIA'
+    assert ent_calls['id'] == 97614                          # id de l'índex, no de l'usuari
+    assert r.headers['Cache-Control'] == 'private, no-store'
+    assert (fpo_data / 'sepe_entitats' / 'SSCE22.json').exists()
+
+    assert client.get('/api/sepe/entitats/SSCE22').get_json()['total'] == 2   # de la cache
+    assert ent_calls['n'] == 1
+
+
+def test_entitats_cache_caducada_es_refa(client, ent_calls, fpo_data):  # noqa: F811
+    client.get('/api/sepe/entitats/SSCE22')
+    vell = time.time() - app_module._SEPE_ENTITATS_TTL - 10
+    os.utime(fpo_data / 'sepe_entitats' / 'SSCE22.json', (vell, vell))
+    client.get('/api/sepe/entitats/SSCE22')
+    assert ent_calls['n'] == 2
+
+
+def test_entitats_codi_desconegut_404(client, ent_calls):
+    assert client.get('/api/sepe/entitats/NOEXISTEIX').status_code == 404
+    assert ent_calls['n'] == 0
+
+
+@pytest.mark.parametrize('exc', [requests.ConnectionError('caigut'), sepe_scraper.SepeDataError('format')])
+def test_entitats_error_sepe_502(client, ent_calls, exc):
+    ent_calls['result'] = exc
+    r = client.get('/api/sepe/entitats/SSCE22')
+    assert r.status_code == 502 and r.get_json() == {'error': 'sepe_no_disponible'}
+
+
+def test_entitats_error_sepe_serveix_copia_caducada(client, ent_calls, fpo_data):  # noqa: F811
+    client.get('/api/sepe/entitats/SSCE22')
+    vell = time.time() - app_module._SEPE_ENTITATS_TTL - 10
+    os.utime(fpo_data / 'sepe_entitats' / 'SSCE22.json', (vell, vell))
+    ent_calls['result'] = requests.ConnectionError('caigut')
+    r = client.get('/api/sepe/entitats/SSCE22')
+    assert r.status_code == 200 and r.get_json()['total'] == 2
+    assert ent_calls['n'] == 2
+
+
+def test_entitats_rate_limit(client, ent_calls):
+    ent_calls['result'] = requests.ConnectionError('caigut')   # res no es cacheja
+    codes = [client.get('/api/sepe/entitats/SSCE22').status_code
+             for _ in range(app_module._SEPE_ENTITATS_RATE_LIMIT + 1)]
+    assert codes[:-1] == [502] * app_module._SEPE_ENTITATS_RATE_LIMIT
+    assert codes[-1] == 429
+
+
+def test_entitats_correu_nomes_per_a_admin_i_mai_nif(client, ent_calls, fpo_data):  # noqa: F811
+    # Una cache que (per un error futur) portés NIF i titular tampoc no els ha de deixar sortir.
+    ent_calls['result'] = [dict(ENTITATS[0], nif='B12345678', titular='TITULAR SL')]
+    anonim = client.get('/api/sepe/entitats/SSCE22')
+    assert ent_calls['n'] == 1
+    for r in (anonim, client.get('/api/sepe/entitats/SSCE22', headers={'Authorization': 'Bearer dolent'})):
+        assert 'email' not in r.get_json()['entitats'][0]
+        assert b'info@a.es' not in r.data
+    admin = client.get('/api/sepe/entitats/SSCE22', headers={'Authorization': 'Bearer test-token'})
+    assert admin.get_json()['entitats'][0]['email'] == 'info@a.es'
+    for r in (anonim, admin):
+        assert b'B12345678' not in r.data and b'TITULAR SL' not in r.data
+        assert set(r.get_json()['entitats'][0]) <= set(app_module._SEPE_ENTITAT_PUBLIC) | {'email'}

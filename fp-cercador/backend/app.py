@@ -116,6 +116,7 @@ SOC_ESPECS_PATH = os.path.join(_DATA_DIR, "soc_especs.json")    # Pla 059: espec
 SOC_CENTRES_PATH = os.path.join(_DATA_DIR, "soc_centres.json")  # Pla 059: centres de formació (SOC)
 SEPE_ESPECS_PATH = os.path.join(_DATA_DIR, "sepe_especs.json")  # Pla 081: catàleg d'especialitats del SEPE
 SEPE_PROGRAMES_DIR = os.path.join(_DATA_DIR, "sepe_programes")  # Pla 082: cache dels PDF de programa
+SEPE_ENTITATS_DIR = os.path.join(_DATA_DIR, "sepe_entitats")  # Pla 099: cache de les entitats per especialitat
 EXT_CURSOS_PATH = os.path.join(_DATA_DIR, "ext_cursos.json")   # Pla 062: cursos FPO de PIMEC i Foment
 _SOC_STALE_DAYS = 7  # llindar per avisar de dades FPO velles
 OCUPACIONES_PATH = os.path.join(_DATA_DIR, "ocupaciones.json")
@@ -293,7 +294,8 @@ def _needs_auth_cors(path):
             or path.startswith("/api/feedback") or path.startswith("/api/admin/feedback")
             or path.startswith("/api/admin/title-overrides") or path.startswith("/api/admin/search-terms")
             or path.startswith("/api/admin/empty-searches")
-            or path.startswith("/api/held") or path.startswith("/api/lists"))
+            or path.startswith("/api/held") or path.startswith("/api/lists")
+            or path.startswith("/api/sepe/entitats"))   # Pla 099: l'admin hi envia la sessió
 
 
 @app.before_request
@@ -2038,6 +2040,11 @@ _SEPE_PDF_TTL = 30 * 86400        # un PDF baixat es reaprofita 30 dies
 _SEPE_NOPDF_TTL = 7 * 86400       # "sense programa" es recorda 7 dies per no repicar el SEPE
 _SEPE_PDF_RATE_LIMIT = 10         # descàrregues no cachejades per IP i minut
 _SEPE_PDF_RATE_WINDOW = 60
+_SEPE_ENTITATS_TTL = 7 * 86400   # Pla 099: llista d'entitats reaprofitada 7 dies
+_SEPE_ENTITATS_RATE_LIMIT = 10    # consultes no cachejades per IP i minut
+_SEPE_ENTITATS_RATE_WINDOW = 60
+# Camps que veu tothom. El correu només l'admin; el NIF i el titular ni es desen.
+_SEPE_ENTITAT_PUBLIC = ('id', 'nom', 'tipus', 'provincia', 'adreca', 'telefon', 'web')
 
 
 def _sepe_llista() -> dict:
@@ -2183,6 +2190,47 @@ def api_sepe_programa(codi):
     if os.path.exists(nopdf_path):
         os.unlink(nopdf_path)
     return _sepe_pdf_response(content, codi)
+
+
+def _read_sepe_entitats(path: str):
+    try:
+        with open(path, encoding='utf-8') as f:
+            data = json.load(f)
+        return data if isinstance(data, dict) and isinstance(data.get('entitats'), list) else None
+    except (OSError, ValueError):
+        return None
+
+
+@app.route('/api/sepe/entitats/<path:codi>')
+def api_sepe_entitats(codi):
+    """Pla 099: entitats autoritzades a impartir una especialitat, via el SEPE amb cache en disc.
+    Només codis del catàleg: l'id intern del SEPE surt de l'índex, mai de l'usuari.
+    El correu de les entitats només surt cap a un administrador."""
+    sepe = _sepe_lookup(codi)
+    if not sepe or not sepe.get('idSepe'):
+        return jsonify({'error': 'no_trobat'}), 404
+    codi = sepe['codi']
+    path = os.path.join(SEPE_ENTITATS_DIR, re.sub(r'[^A-Za-z0-9_-]', '_', codi) + '.json')
+    data = _read_sepe_entitats(path) if _fresh(path, _SEPE_ENTITATS_TTL) else None
+    if data is None:
+        if not _auth_rate_ok('sepe_entitats', _client_ip(request),
+                             limit=_SEPE_ENTITATS_RATE_LIMIT, window=_SEPE_ENTITATS_RATE_WINDOW):
+            return jsonify({'error': 'massa_peticions'}), 429
+        try:
+            entitats = sepe_scraper.fetch_entitats(sepe['idSepe'])
+        except (requests.RequestException, sepe_scraper.SepeDataError) as exc:
+            logger.warning("api_sepe_entitats: %s: error del SEPE: %s", codi, exc)
+            data = _read_sepe_entitats(path)   # millor una còpia caducada que res
+            if data is None:
+                return jsonify({'error': 'sepe_no_disponible'}), 502
+        else:
+            data = {'entitats': entitats, 'actualitzat': datetime.now(timezone.utc).isoformat()}
+            _write_atomic(path, json.dumps(data, ensure_ascii=False).encode('utf-8'))
+    camps = _SEPE_ENTITAT_PUBLIC + (('email',) if _check_admin(request) else ())
+    entitats = [{k: e.get(k) for k in camps} for e in data['entitats'] if isinstance(e, dict)]
+    resp = jsonify({'entitats': entitats, 'actualitzat': data.get('actualitzat'), 'total': len(entitats)})
+    resp.headers['Cache-Control'] = 'private, no-store'   # la resposta depèn de qui la demana
+    return resp
 
 
 _fpo_agenda_cache: dict = {}   # {dies: (clau, agenda)}

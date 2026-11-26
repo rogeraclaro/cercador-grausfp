@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="es" xml:lang="es" xmlns="http://www.w3.org/1999/xhtml"><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+<html lang="es" xml:lang="es" xmlns="http://www.w3.org/1999/xhtml">
+<meta http-equiv="X-UA-Compatible" content="IE=edge"><head>
+		<title>Entidades de formación</title>
+
+	
+	
+	<link rel="stylesheet" type="text/css" href="/FOET_CATALOGO_EEFF_SEDE/resources/bootstrap-3.3.4-dist/css/bootstrap.min.css" />
+	<link rel="stylesheet" type="text/css" href="/FOET_CATALOGO_EEFF_SEDE/resources/bootstrap-datepicker/css/bootstrap-datepicker.min.css" />
+	<link rel="stylesheet" type="text/css" href="/FOET_CATALOGO_EEFF_SEDE/resources/bootstrap-select-1.11.2/css/bootstrap-select.css" />
+	<link rel="stylesheet" type="text/css" href="/FOET_CATALOGO_EEFF_SEDE/resources/datatables-1.10.12/css/jquery.dataTables.css" />
+	<link rel="stylesheet" type="text/css" href="/FOET_CATALOGO_EEFF_SEDE/resources/datatables-1.10.12/css/buttons.dataTables.css" />
+	<link rel="stylesheet" type="text/css" href="/FOET_CATALOGO_EEFF_SEDE/resources/datatables-1.10.12/css/select.dataTables.css" />
+	<link rel="stylesheet" type="text/css" href="/FOET_CATALOGO_EEFF_SEDE/resources/datatables-1.10.12/css/dataTables.bootstrap.css" />
+	<link rel="stylesheet" type="text/css" href="/FOET_CATALOGO_EEFF_SEDE/resources/css/dataTables.custom.css" />
+	<link rel="stylesheet" type="text/css" href="/FOET_CATALOGO_EEFF_SEDE/resources/css/typeahead.custom.css" />
+
+
+	<link rel="stylesheet" type="text/css" href="/FOET_CATALOGO_EEFF_SEDE/resources/componentesCESP/css/componentesCESP.css" />
+	
+
+	
+	
+	<link rel="stylesheet" href="../resources/bootstrap-multiselect/css/bootstrap-multiselect.css" />
+
+	
+  	<link href="../resources/summernote/summernote.css" rel="stylesheet" />
+  	<link rel="stylesheet" href="../resources/css/bootstrap.custom.css" />
+    <link rel="stylesheet" type="text/css" href="../resources/css/common-custom.css" /><script type="text/javascript" src="/FOET_CATALOGO_EEFF_SEDE/faces/javax.faces.resource/jquery/js/jquery-1.11.3.min.js?ln="></script><script type="text/javascript" src="/FOET_CATALOGO_EEFF_SEDE/faces/javax.faces.resource/jquery-ui-1.11.4/jquery-ui.js?ln="></script>
+    <script src="../../resources/jquery-ui-1.11.4/jquery-ui.min.js" type="text/javascript"></script><script type="text/javascript" src="/FOET_CATALOGO_EEFF_SEDE/faces/javax.faces.resource/bootstrap-datepicker/js/bootstrap-datepicker.min.js?ln="></script><script type="text/javascript" src="/FOET_CATALOGO_EEFF_SEDE/faces/javax.faces.resource/bootstrap-datepicker/js/moment.min.js?ln="></script><script type="text/javascript" src="/FOET_CATALOGO_EEFF_SEDE/faces/javax.faces.resource/bootstrap-datepicker/js/bootstrap-datepicker.es.min.js?ln="></script><script type="text/javascript" src="/FOET_CATALOGO_EEFF_SEDE/faces/javax.faces.resource/bootstrap-datepicker/js/locales/es.js?ln="></script><script type="text/javascript" src="/FOET_CATALOGO_EEFF_SEDE/faces/javax.faces.resource/bootstrap-3.3.4-dist/js/respond.min.js?ln="></script><script type="text/javascript" src="/FOET_CATALOGO_EEFF_SEDE/faces/javax.faces.resource/bootstrap-3.3.4-dist/js/bootstrap.min.js?ln="></script><script type="text/javascript" src="/FOET_CATALOGO_EEFF_SEDE/faces/javax.faces.resource/bootstrap-select-1.11.2/js/bootstrap-select.js?ln="></script><script type="text/javascript" src="/FOET_CATALOGO_EEFF_SEDE/faces/javax.faces.resource/bootstrap-select-1.11.2/js/i18n/defaults-es_CL.js?ln="></script><script type="text/javascript" src="/FOET_CATALOGO_EEFF_SEDE/faces/javax.faces.resource/typeahead/js/typeahead.bundle.min.js?ln="></script><script type="text/javascript" src="/FOET_CATALOGO_EEFF_SEDE/faces/javax.faces.resource/typeahead/js/handlebars.min.js?ln="></script><script type="text/javascript" src="/FOET_CATALOGO_EEFF_SEDE/faces/javax.faces.resource/datatables-1.10.12/js/jquery.dataTables.js?ln="></script><script type="text/javascript" src="/FOET_CATALOGO_EEFF_SEDE/faces/javax.faces.resource/datatables-1.10.12/js/dataTables.bootstrap.js?ln="></script><script type="text/javascript" src="/FOET_CATALOGO_EEFF_SEDE/faces/javax.faces.resource/datatables-1.10.12/js/dataTables.select.js?ln="></script><script type="text/javascript" src="/FOET_CATALOGO_EEFF_SEDE/faces/javax.faces.resource/datatables-1.10.12/js/dataTables.buttons.js?ln="></script><script type="text/javascript" src="/FOET_CATALOGO_EEFF_SEDE/faces/javax.faces.resource/datatables-1.10.12/js/buttons.colVis.js?ln="></script><script type="text/javascript" src="/FOET_CATALOGO_EEFF_SEDE/faces/javax.faces.resource/js/csp.custom.js?ln="></script>
+
+	
+
+	
+	
+	<script src="../resources/bootstrap-multiselect/js/bootstrap-multiselect.js" type="text/javascript"></script>
+	<script src="../resources/jquery.mask/jquery.maskedinput.min.js" type="text/javascript"></script>
+	<script src="../resources/componentesCESP/js/fileUpload.js" type="text/javascript"></script>
+	<script src="../resources/componentesCESP/js/tableCESP.js" type="text/javascript"></script>
+	
+	<script src="../resources/summernote/summernote.js" defer="defer"></script>
+	
+	<script src="../resources/js/scripts.js" type="text/javascript"></script><script type="text/javascript" src="/FOET_CATALOGO_EEFF_SEDE/faces/javax.faces.resource/js/jqueryBuscadorEspecialidades.js?ln="></script><script type="text/javascript" src="/FOET_CATALOGO_EEFF_SEDE/faces/javax.faces.resource/jquery.mask/jquery.maskedinput.min.js?ln="></script><script type="text/javascript" src="/FOET_CATALOGO_EEFF_SEDE/faces/javax.faces.resource/js/datatableHelper.js?ln="></script><script type="text/javascript" src="/FOET_CATALOGO_EEFF_SEDE/faces/javax.faces.resource/js/centros.js?ln="></script>
+	
+		<meta http-equiv="Content-Type" content="text/html" />
+		<meta name="description" content="Servicio Publico de Empleo Estatal" />
+		<meta name="keywords" content="Buscar empleo, Ofertas de trabajo, Parado, Desempleo, Prestacion por desempleo, Despido, Cursos de formacion, certificados de profesionalidad, Cursos INEM, Empresario, Autonomo, Crear empresa, Ayudas para crear empresas, Ministerio de trabajo,Buscar trabajo, trabajo, profesional, Paro, paro, INEM, inem, prestacion, laboral, empresa, seleccion, cobrar, ofertas, SPEE, empleo, Contrata, Contrat@, Contrato, Contratos, Certificado, Certificados, Certificado de empresa, Cobrar el paro, redtrabajo, red de trabajo, trabajo en red" />
+		<link rel="shortcut icon" type="image/x-icon" href="/es/portaltrabaja/resources/images/favicon.ico" /><!-- cms:page content="website:/portalSede" dialog="site-portal-sede:pages/homePropertiesDialog" --> 
+<!-- /cms:page comment --> 
+<meta charset="utf-8"> 
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Pagina Princial de SEDE"> 
+<meta name="keywords" content="SEDE"> 
+<meta name="author" content="Sede Electrï¿œnica del SEPE - Servicio Pï¿œblico de Empleo Estatal"> 
+<meta name="Copyright" content="Sede Electrï¿œnica del SEPE - Servicio Pï¿œblico de Empleo Estatal"> 
+<title>portalSede</title> 
+<link rel="stylesheet" href="/es/portaltrabaja/resources/css/estilos.css" media="all"> 
+<link rel="stylesheet" href="/es/portaltrabaja/resources/css/slider.css" media="all">
+<link rel="stylesheet" href="/es/portaltrabaja/resources/css/aplicaciones.css" media="all">
+<!--<link rel="stylesheet" href="/es/portaltrabaja/resources/css/AAW20_base_sede.css" media="all">  -->  
+<script src="/es/portaltrabaja/resources/js/app.js" type="text/javascript"></script>
+<script>
+	if (window.location.href.includes("sede.sepe.gob.es")){
+	
+		var clientHttp = new XMLHttpRequest();
+		clientHttp.open('GET','/es/portaltrabaja/resources/htmls/Analytics.html');
+		clientHttp.onreadystatechange = function(){
+			document.head.innerHTML += clientHttp.responseText;
+		}
+		clientHttp.send();
+	}
+</script><link rel="stylesheet" type="text/css" href="/FOET_CATALOGO_EEFF_SEDE/flows/javax.faces.resource/css/plantilla.css" /><script type="text/javascript" src="/FOET_CATALOGO_EEFF_SEDE/faces/javax.faces.resource/jsf.js?ln=javax.faces"></script></head>
+	<body class="noauth">
+
+
+		<div class="modal" data-backdrop="static" id="loading">
+			  <div class="modal-dialog modal-sm">
+			    <div class="modal-content">
+			      <div class="modal-body text-center">
+			        <div class="loader"></div>
+			       <img src="../resources/images/ajaxloadingbar.gif" />
+			      </div>
+			    </div>
+			  </div>
+		</div>
+		<div id="todo">
+			<div id="cabecera"><!-- ARQ-XXX dominioDiseño = [http://webint.sepe.gob.es:26555/es] --><section class="header">
+<div class="container"> 
+ <div class="row"> 
+  <div class="col-12 col-md-7 col-lg-6 header-logo"> 
+   <div class="logoM"> 
+    <a href="https://www.sepe.es/HomeSepe" title="logo-ministerio de empleo" class="disabled"> <h1 class="oculto">Logo Ministerio Home Sede</h1> <img class="w100" src="/es/portaltrabaja/resources/img/LOGO_WEB_MARCA_SEPE.jpg" alt="Ministerio de Empleo"> </a> 
+   </div> 
+   <div class="col-12 col-md-6 logoS"> 
+    <a href="/portalSede" title="logo-ministerio de empleo" class="disabled"> <h1 class="oculto">Logo Ministerio Home Sede</h1> <img class="w100" src="/es/portaltrabaja/resources/img/sede-electronica-gris.png" alt="Logo Ministerio SEPE"> </a> 
+   </div> 
+  </div> 
+  <div class="col-12 col-md-5 col-lg-6 header-info"> 
+   <div class="header__idioma"> 
+    <div class="area"> 
+     <form>  
+		<select id="idioma" aria-label="Idioma" title="Seleccion de idioma" name="area" onchange="cambiarIdioma(form.area.options[form.area.selectedIndex].value)">
+						<option selected="" value="/autenticacionAAW20/sede?url=/portalSede/">
+			  Castellano
+			</option>
+			<option value="/autenticacionAAW20/sede?url=/portalSede/ca/">
+			  Catal&aacute;n
+			</option>
+			<option value="/autenticacionAAW20/sede?url=/portalSede/eu/">
+			  Euskera
+			</option>
+			<option value="/autenticacionAAW20/sede?url=/portalSede/gl/">
+			  Gallego
+			</option>
+			<option value="/autenticacionAAW20/sede?url=/portalSede/fr/">
+			  Franc&eacute;s
+			</option>
+			<option value="/autenticacionAAW20/sede?url=/portalSede/en/">
+			  Ingl&eacute;s
+			</option>
+			<option value="/autenticacionAAW20/sede?url=/portalSede/va/">Valenciano</option>
+			
+					</select>
+	</form>
+    </div> 
+	<script>
+	function cambiarIdioma(idioma) {
+		var redir = window.location.pathname + window.location.search;
+		window.location = idioma + '&redir=' + redir;
+	}
+	</script>
+   </div> 
+   <div>
+        <div class="header__ident">
+      <a href="/GesUsuariosSEDE/GestionUsuariosTrabajaWeb/intro_seguridad.do" type="button" class="button__item"> <i class="fas fa-user"></i> <p>Identif&iacute;cate</p> </a>
+    </div>
+       </div> 
+   <div class="inSuit"> 
+    <a rel="canonical" id="accesible" title="enlace inSuit" href="https://sede--sepe--gob--es.insuit.net/portalSede"> <p class="oculto">accesibilidad</p> <i class="fas fa-wheelchair" alt="enlace inSuit"></i> </a> 
+   </div> 
+   <div class="header__fecha"> 
+    <p class="texto">Fecha y hora oficial</p> 
+    <p class="dato" id="hora"></p> 
+   </div> 
+   <div class="header__buscador"> 
+    <button class="btnSearchMov" aria-label="Buscar" id="btnSearchmov" onclick="ver()"> <i class="fas fa-search"><p class="oculto">buscar</p></i> </button> 
+   </div> 
+   <script>
+					    var fecha_js = new Date();
+					    var dia = fecha_js.getDate();
+					    var mes = fecha_js.getMonth()+1;
+					    var anio = fecha_js.getFullYear();
+					    var segundos = fecha_js.getSeconds();
+					    var hora = fecha_js.getHours();
+					    var minutos = fecha_js.getMinutes();
+					
+					    function mostrar() {
+					        segundos++;
+					        if (segundos == 60) {
+					            segundos = 0;
+					            minutos++;
+					            if (minutos == 60) {
+					                minutos = 0;
+					                hora++;
+					                if (hora == 24) {
+					                    hora = 0;
+					                }
+					            }
+					        }
+					        if ((hora >= 0) && (hora <= 9)) {
+					            if ((String(hora)).length == 1) {
+					                hora = "0" + hora;
+					            }
+					            if (hora == 0) hora = "00";
+					        }
+					        if ((minutos >= 0) && (minutos <= 9)) {
+					            if ((String(minutos)).length == 1) {
+					                minutos = "0" + minutos;
+					            }
+					        }
+					        if ((segundos >= 0) && (segundos <= 9)) {
+					            if ((String(segundos)).length == 1) {
+					                segundos = "0" + segundos;
+					            }
+					        }
+					        document.getElementById("hora").innerHTML = dia + "/" + mes + "/" + anio + " " + hora + ":" + minutos + ":" + segundos;
+					        window.setTimeout("mostrar()", 1000);
+					    }
+					    window.setTimeout('mostrar()', 1000);
+					    
+					</script> 
+  </div> 
+ </div> 
+</div>
+			</div>	<div class="nav">
+		<div class="nav-sup"> 
+			<div class="container"> 
+				<nav class="navigation__list" tabindex="0" onfocus="onFocusNav()">
+					<ul>
+					<li class="dropdown"> 
+						 <a href="../../autenticacionAAW20/sede?url=/portalSede/procedimientos-y-servicios.html" class="dropbtn navigation__item">Procedimientos y servicios</a> 
+						 <ul class="dropdown-content"> 
+						  <li><a href="../../autenticacionAAW20/sede?url=/portalSede/procedimientos-y-servicios/personas.html">Personas</a></li> 
+						  <li><a href="../../autenticacionAAW20/sede?url=/portalSede/procedimientos-y-servicios/empresas.html">Empresas</a></li> 
+						 </ul> 
+					</li> 
+					<li class="dropdown"> 
+						 <a href="../../autenticacionAAW20/sede?url=/portalSede/informacion.html" class="dropbtn navigation__item">Informaci&oacute;n</a> 
+						 <ul class="dropdown-content"> 
+						  <!-- <li><a href="../../autenticacionAAW20/sede?url=/portalSede/informacion/como-utilizar-esta-Sede.html">ï¿œC&oacute;mo utilizar esta Sede?</a></li>  -->
+						  <li><a href="../../autenticacionAAW20/sede?url=/portalSede/informacion/normativa.html">Normativa</a> </li>
+						  <li><a href="../../autenticacionAAW20/sede?url=/portalSede/informacion/identificacion-y-titularidad.html">Identificaci&oacute;n y titularidad</a></li> 
+						  <li><a href="../../autenticacionAAW20/sede?url=/portalSede/informacion/mapa-web.html">Mapa Web</a></li> 
+						  <li><a href="../../autenticacionAAW20/sede?url=/portalSede/informacion/guia-de-navegacion.html">Gu&iacute;a de navegaci&oacute;n</a></li> 
+						  <li><a href="../../autenticacionAAW20/sede?url=/portalSede/informacion/accesibilidad.html">Accesibilidad</a></li> 
+						  <li><a href="../../autenticacionAAW20/sede?url=/portalSede/informacion/politica_cookies.html">Pol&iacute;tica de Cookies</a></li> 
+						  <li><a href="../../autenticacionAAW20/sede?url=/portalSede/informacion/aviso-Legal-de-la-sede-electronica.html">Aviso Legal de la Sede Electr&oacute;nica</a></li> 
+						  <li><a href="../../autenticacionAAW20/sede?url=/portalSede/informacion/quejas-y-sugerencias.html">Quejas y sugerencias</a></li> 
+						 </ul> 
+					</li> 
+					<li class="dropdown"> 
+						 <a href="../../autenticacionAAW20/sede?url=/portalSede/registro-electronico.html" class="dropbtn navigation__item">Registro electr&oacute;nico</a> 
+						 <!-- <ul class="dropdown-content">  -->
+						  <!-- <li><a href="../../autenticacionAAW20/sede?url=/portalSede/registro-electronico/registro-electronico-comun.html">Registro electr&oacute;nico com&uacute;n</a></li> -->
+						  <!-- <li><a href="../../autenticacionAAW20/sede?url=/portalSede/registro-electronico/preguntas-mas-frecuentes.html">Preguntas m&aacute;s frecuentes</a></li> -->
+						 <!-- </ul>  -->
+					</li> 
+					<li class="dropdown"> 
+						 <a href="../../autenticacionAAW20/sede?url=/portalSede/licitaciones.html" class="dropbtn navigation__item">Licitaciones</a> 
+					</li>
+					<li class="dropdown"> 
+						<button class="dropbtn navigation__item btnSearch" aria-label="Buscar" id="btnSearch" onclick="ver()">			<i class="fas fa-search"><p class="oculto">buscar</p></i>		</button>
+					</li>
+					</ul>
+				</nav> 
+			</div> 
+		</div>
+	</div>
+
+</section>	
+
+	<section id="buscador" class="buscador container center oculto">
+		<div class="search_nav input-group" id="searchLine">
+			<form action="/portalSede/resultados-busqueda.html" class="navbar-form" role="search" id="nav-buscador" name="buscador">
+				<input aria-label="Buscar" id="nav-search" type="text" name="queryStr" class="form-control" placeholder="">
+				<span class="input-group-btn">
+					<button class="btnSearch" aria-label="Buscar" type="submit" value="buscar"><i class="fas fa-search"><p class="oculto">buscar</p></i></button>
+				</span>
+			</form>
+		</div>
+
+		<div class="area_select">
+		  <form>
+			<select id="filtroBuscador" aria-label="Idioma" title="Seleccione un Filtro" name="filtro" onchange="onChange()">
+			<option value="/portalSede/resultados-busqueda.html">SEDE</option>
+			<option value="https://sepe.es/HomeSepe/buscador-solr.html">SEPE</option>
+
+			</select>
+		  </form>
+		</div>
+	</section>
+			<div id="cuerpo">
+				<div id="colp">
+					<div id="content">
+						<div id="contenido"><form id="formularioMenu" name="formularioMenu" method="post" action="/FOET_CATALOGO_EEFF_SEDE/flows/main?execution=e1s2" onkeypress="if (event.keyCode == 13) return false;" class="form-horizontal" enctype="application/x-www-form-urlencoded">
+    <div id="contenedorTabs">
+            <div id="tabs_menu">
+                <ul class="tabs">
+                     <li id="tabEspecialidades" class="tab active"><a href="#" onclick="return myfaces.oam.submitForm('formularioMenu','formularioMenu:j_id_1m');">
+                            <div>
+                                <span>ESPECIALIDADES</span>
+                            </div></a>
+                    </li>
+                     <li id="tabItinerarios" class="tab "><a href="#" onclick="return myfaces.oam.submitForm('formularioMenu','formularioMenu:j_id_1p');">
+                            <div>
+                                <span>ITINERARIOS</span>
+                            </div></a>
+                    </li>
+                </ul>
+                </div>
+            </div>
+			<div id="formularioMenu:modalSelectorAltaPropuestaIncial" style="" class="modal componenteCesp ccModal fade " data-backdrop="static" data-keyboard="static">
+				<div class="modal-dialog" style="">
+					<div class="modal-content"><div class="modal-header "><label style="line-height: 2px;" class="detalle floatL">Alta de un/a:</label><span style="position: absolute; right: 20px">
+                        <button type="button" style="background-color: white !important; color:#585858 !important;" class="close noBloquear" data-dismiss="modal" aria-label="Close"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
+                        <div class="clearfix"></div></span></div>
+						
+						<div class="modal-body">
+                <div>
+			<div id="formularioMenu:modalSelectorAltaPropuestaIncial:selectTipoAlta" style="" class="componenteCesp ccSelectOneMenu form-group ">
+	
+				<div class="col-sm-9"><select id="formularioMenu:modalSelectorAltaPropuestaIncial:selectTipoAlta:selectTipoAltaPropuestaSelect" name="formularioMenu:modalSelectorAltaPropuestaIncial:selectTipoAlta:selectTipoAltaPropuestaSelect" size="1" class="form-control input-sm ">	<option value="ESPECIALIDAD_NO_FORMAL">Especialidad Formativa</option>	<option value="ITINERARIO">Itinerario Formativo</option></select>
+					
+					
+
+
+
+
+
+				</div>
+
+			</div>
+                </div>
+						</div><div class="modal-footer">
+                    <div class="floatR botonera"><input id="formularioMenu:modalSelectorAltaPropuestaIncial:btnSeleccionarTipoAlta" name="formularioMenu:modalSelectorAltaPropuestaIncial:btnSeleccionarTipoAlta" type="submit" value="Continuar" onclick="var cf = function(){mostrarAvisoAjaxCargando('mostrar');};var oamSF = function(){};return (cf.apply(this, [])==false)? false : oamSF.apply(this, []); " class="btn btn-primary btnCerrarModal" />
+                    </div></div>
+
+					</div>
+				</div>
+			</div><input type="hidden" name="formularioMenu_SUBMIT" value="1" /><input type="hidden" name="javax.faces.ViewState" id="javax.faces.ViewState" value="e1s2" /></form>
+		<div id="tabs_main">
+			<div id="tabs_content">
+		<div id="contentFormulario">
+			<div id="menuSup" class="entero menuSup fwb mbot15">Entidades de formación
+			</div><form id="formulario" name="formulario" method="post" action="/FOET_CATALOGO_EEFF_SEDE/flows/main?execution=e1s2" onkeypress="if (event.keyCode == 13) return false;" class="form-horizontal" enctype="multipart/form-data"><label class="componenteCesp ccLabel control-label tituloLabel"><b>Especialidad Formativa:</b> TMVI0063, ACCESO A LA PROFESIÓN DE TAXISTA</label><input type="hidden" id="formulario:cargarBusquedaREEF" name="formulario:cargarBusquedaREEF" value="" />
+
+		<div class="w100"><div id="formulario:panel-tabla-especialidades" style="border:none;margin-top:1.5em;">
+                <div class="col-md-12 contenedorTablaEspecialidades"><table id="formulario:resultadoEspecialidadesTablaJSF" class="tablaGris no-footer tablaEspecialidades dataTable"><thead><tr><th scope="col"></th><th scope="col">Identificador</th><th scope="col">Nombre</th><th scope="col">Tipo</th><th scope="col">Provincia</th><th scope="col"></th></tr></thead><tbody id="formulario:resultadoEspecialidadesTablaJSF:tbody_element"><tr><td></td></tr></tbody></table>
+                </div></div>
+        </div>
+		<div style="text-align: right; margin-top: 10px;"><input id="formulario:volverBucadorNA" name="formulario:volverBucadorNA" type="submit" value="Volver" onclick="jsf.util.chain(this, event,'jsf.ajax.request(this,event,{onerror:function(data){console.log(\'ERROR\');console.log(data);},onevent:gestionaPeticionAjax,\'javax.faces.behavior.event\':\'action\'})'); return false;" class="btn btn-default" />
+		</div><input type="hidden" name="formulario_SUBMIT" value="1" /><input type="hidden" name="javax.faces.ViewState" id="javax.faces.ViewState" value="e1s2" /></form>
+		</div><form id="hiddenForm" name="hiddenForm" method="post" action="/FOET_CATALOGO_EEFF_SEDE/flows/main?execution=e1s2" style="display: none;" enctype="application/x-www-form-urlencoded"><input type="hidden" id="hiddenForm:codigoPropuesta" name="hiddenForm:codigoPropuesta" value="148613" /><input id="hiddenForm:invisibleClickTarget" name="hiddenForm:invisibleClickTarget" type="submit" onclick="jsf.util.chain(this, event,'jsf.ajax.request(this,event,{execute:\'hiddenForm:codigoPropuesta \',onevent:mostrarModalCarga,\'javax.faces.behavior.event\':\'action\'})'); return false;" /><input id="hiddenForm:invisibleClickTargetBorrador" name="hiddenForm:invisibleClickTargetBorrador" type="submit" onclick="jsf.util.chain(this, event,'jsf.ajax.request(this,event,{execute:\'hiddenForm:codigoPropuesta \',onevent:mostrarModalCarga,\'javax.faces.behavior.event\':\'action\'})'); return false;" /><input id="hiddenForm:invisibleClickTargetBorradorIF" name="hiddenForm:invisibleClickTargetBorradorIF" type="submit" onclick="jsf.util.chain(this, event,'jsf.ajax.request(this,event,{execute:\'hiddenForm:codigoPropuesta \',onevent:mostrarModalCarga,\'javax.faces.behavior.event\':\'action\'})'); return false;" /><input id="hiddenForm:invisibleClickTargetRevision" name="hiddenForm:invisibleClickTargetRevision" type="submit" onclick="jsf.util.chain(this, event,'jsf.ajax.request(this,event,{execute:\'hiddenForm:codigoPropuesta \',onevent:mostrarModalCarga,\'javax.faces.behavior.event\':\'action\'})'); return false;" /><input id="hiddenForm:invisibleClickTargetDetalleObs" name="hiddenForm:invisibleClickTargetDetalleObs" type="submit" onclick="jsf.util.chain(this, event,'jsf.ajax.request(this,event,{execute:\'hiddenForm:codigoPropuesta \',onevent:mostrarModalCarga,\'javax.faces.behavior.event\':\'action\'})'); return false;" /><input id="hiddenForm:invisibleClickTargetAnadirObs" name="hiddenForm:invisibleClickTargetAnadirObs" type="submit" onclick="jsf.util.chain(this, event,'jsf.ajax.request(this,event,{execute:\'hiddenForm:codigoPropuesta \',onevent:mostrarModalCarga,\'javax.faces.behavior.event\':\'action\'})'); return false;" /><input id="hiddenForm:invisibleClickTargetRevisarObs" name="hiddenForm:invisibleClickTargetRevisarObs" type="submit" onclick="jsf.util.chain(this, event,'jsf.ajax.request(this,event,{execute:\'hiddenForm:codigoPropuesta \',onevent:mostrarModalCarga,\'javax.faces.behavior.event\':\'action\'})'); return false;" /><input id="hiddenForm:invisibleClickTargetResumenObs" name="hiddenForm:invisibleClickTargetResumenObs" type="submit" onclick="jsf.util.chain(this, event,'jsf.ajax.request(this,event,{execute:\'hiddenForm:codigoPropuesta \',onevent:mostrarModalCarga,\'javax.faces.behavior.event\':\'action\'})'); return false;" /><input id="hiddenForm:invisibleClickTargetEliminarBorrador" name="hiddenForm:invisibleClickTargetEliminarBorrador" type="submit" onclick="jsf.util.chain(this, event,'jsf.ajax.request(this,event,{execute:\'hiddenForm:codigoPropuesta \',onevent:mostrarModalCarga,\'javax.faces.behavior.event\':\'action\'})'); return false;" /><input id="hiddenForm:invisibleClickTargetSetEliminarBorrador" name="hiddenForm:invisibleClickTargetSetEliminarBorrador" type="submit" onclick="jsf.util.chain(this, event,'jsf.ajax.request(this,event,{execute:\'hiddenForm:codigoPropuesta \',onevent:mostrarModalCarga,\'javax.faces.behavior.event\':\'action\'})'); return false;" /><input id="hiddenForm:invisibleClickTargetModificarEspecialidad" name="hiddenForm:invisibleClickTargetModificarEspecialidad" type="submit" onclick="jsf.util.chain(this, event,'jsf.ajax.request(this,event,{execute:\'hiddenForm:codigoPropuesta \',onevent:mostrarModalCarga,\'javax.faces.behavior.event\':\'action\'})'); return false;" /><input id="hiddenForm:invisibleClickTargetBajaEspecialidad" name="hiddenForm:invisibleClickTargetBajaEspecialidad" type="submit" onclick="jsf.util.chain(this, event,'jsf.ajax.request(this,event,{execute:\'hiddenForm:codigoPropuesta \',onevent:mostrarModalCarga,\'javax.faces.behavior.event\':\'action\'})'); return false;" /><input id="hiddenForm:invisibleClickTargetReactivarEspecialidad" name="hiddenForm:invisibleClickTargetReactivarEspecialidad" type="submit" onclick="jsf.util.chain(this, event,'jsf.ajax.request(this,event,{execute:\'hiddenForm:codigoPropuesta \',onevent:mostrarModalCarga,\'javax.faces.behavior.event\':\'action\'})'); return false;" /><input id="hiddenForm:invisibleClickTargetBajaItinerario" name="hiddenForm:invisibleClickTargetBajaItinerario" type="submit" onclick="jsf.util.chain(this, event,'jsf.ajax.request(this,event,{execute:\'hiddenForm:codigoPropuesta \',onevent:mostrarModalCarga,\'javax.faces.behavior.event\':\'action\'})'); return false;" /><input id="hiddenForm:invisibleClickTargetReactivarItinerario" name="hiddenForm:invisibleClickTargetReactivarItinerario" type="submit" onclick="jsf.util.chain(this, event,'jsf.ajax.request(this,event,{execute:\'hiddenForm:codigoPropuesta \',onevent:mostrarModalCarga,\'javax.faces.behavior.event\':\'action\'})'); return false;" /><input id="hiddenForm:invisibleClickTargetDetalleEspecialidad" name="hiddenForm:invisibleClickTargetDetalleEspecialidad" type="submit" onclick="jsf.util.chain(this, event,'jsf.ajax.request(this,event,{execute:\'hiddenForm:codigoPropuesta \',onevent:mostrarModalCarga,\'javax.faces.behavior.event\':\'action\'})'); return false;" /><input id="hiddenForm:invisibleClickTargetDetalleItinerario" name="hiddenForm:invisibleClickTargetDetalleItinerario" type="submit" onclick="jsf.util.chain(this, event,'jsf.ajax.request(this,event,{execute:\'hiddenForm:codigoPropuesta \',onevent:mostrarModalCarga,\'javax.faces.behavior.event\':\'action\'})'); return false;" /><input id="hiddenForm:invisibleClickTargetEntidadesFormacion" name="hiddenForm:invisibleClickTargetEntidadesFormacion" type="submit" onclick="jsf.util.chain(this, event,'jsf.ajax.request(this,event,{execute:\'hiddenForm:codigoPropuesta \',onevent:mostrarModalCarga,\'javax.faces.behavior.event\':\'action\'})'); return false;" /><input type="hidden" name="hiddenForm_SUBMIT" value="1" /><input type="hidden" name="javax.faces.ViewState" id="javax.faces.ViewState" value="e1s2" /></form>
+			</div>
+		</div>
+						</div>
+					</div>
+				</div>
+			</div><div class="footer"> 
+ <div class="footer__background"> 
+  <div class="container"> 
+   <div class="row"> 
+    <div class="col-12 col-md-4 button_list dsColumns"> 
+     <a href="https://www.sepe.es/HomeSepe/contacto/contacta" target="_blank" type="button" class="button__item" rel="noopener"> <img class="img-fluid" src="/es/portaltrabaja/resources/img/icons/presencial.png" alt="imagen de Atenci&oacute;n Presencial"> <p>Atenci&oacute;n Presencial</p> </a> 
+     <a href="https://www.sepe.es/HomeSepe/contacto/atencion-telefonica.html" target="_blank" type="button" class="button__item" rel="noopener"> <img class="img-fluid" src="/es/portaltrabaja/resources/img/icons/telefonica.png" alt="imagen de Atenci&oacute;n Telef&oacute;nica"> <p>Atenci&oacute;n Telef&oacute;nica</p> </a> 
+     <a href="https://www.sepe.es/HomeSepe/contacto/Atenciononline.html" target="_blank" type="button" class="button__item" rel="noopener"> <img class="img-fluid" src="/es/portaltrabaja/resources/img/icons/onLine.png" alt="imagen de Atenci&oacute;n Online"> <p>Atenci&oacute;n Online</p> </a> 
+    </div> 
+    <div class="col-12 col-md-4 linkList__footer"> 
+     <p class="list_title">Ayuda</p> 
+     <ul> 
+      <li> <span class="page "> <a href="/portalSede/informacion/accesibilidad.html">Accesibilidad</a> </span> </li> 
+      <li> <span class="page "> <a href="/portalSede/informacion/mapa-web.html">Mapa Web</a> </span> </li> 
+      <li> <span class="page "> <a href="/portalSede/firma-electronica/preguntas-frecuentes.html">Preguntas Frecuentes</a> </span> </li> 
+      <li> <span class="external "> <a href="/Registra/flows/formularioQuejasSugerencias?tipoTramite=quejasSugerencias">Quejas y Sugerencias</a> </span> </li> 
+      <li> <span class="page "> <a href="/portalSede/informacion/aviso-Legal-de-la-sede-electronica.html">Aviso Legal</a> </span> </li> 
+     </ul> 
+    </div>
+    <div class="col-12 col-md-4 linkList__footer"> 
+     <p class="list_title">P&aacute;ginas relacionadas</p> 
+     <ul> 
+      <li> <span class="external "> <a href="https://www.sepe.es/HomeSepe/que-es-el-sepe/que-es-el-sepe/Red-de-oficinas.html">Red territorial de Oficinas</a> </span> </li> 
+      <li> <span class="external "> <a href="https://www.sepe.es/HomeSepe">Servicio P&uacute;blico de Empleo Estatal</a> </span> </li> 
+      <li> <span class="external "> <a href="https://www.sistemanacionalempleo.es/">Sistema Nacional de Empleo</a> </span> </li> 
+      <li> <span class="external "> <a href="https://empleate.gob.es/empleo/#/">Empl&eacute;ate</a> </span> </li> 
+     </ul> 
+    </div> 
+   </div> 
+   <div class="row"> 
+    <div class="col-12 copyright"> 
+     <div class="copyright__logo"> 
+      <img class="img-fluid" src="/es/portaltrabaja/resources/img/icons/logo_w3c-wai-aa.png" alt="SEPE - Todos los derechos reservados"> 
+     </div> 
+     <p> SEPE - Todos los derechos reservados </p> 
+     <p></p> 
+    </div> 
+   </div> 
+  </div> 
+ </div> 
+</div>
+		</div>
+	</body></html>
+</html>

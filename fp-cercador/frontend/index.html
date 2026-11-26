@@ -648,6 +648,14 @@
     .sepe-help { display: inline-block; margin-left: 4px; font-size: 11px; color: var(--warm); cursor: help; }
     .results-table--sepe th.sortable:focus-visible { outline: 2px solid var(--dark); outline-offset: -2px; }
     #sepe-h:focus { outline: none; }
+    /* Pla 099 — entitats autoritzades */
+    .sepe-ent { border-top: 1px solid var(--border); padding-top: 10px; display: flex; flex-direction: column; gap: 8px; }
+    .sepe-ent-filters { display: flex; flex-wrap: wrap; gap: 12px; font-size: var(--fs-small); }
+    .sepe-ent-filters label { display: flex; align-items: center; gap: 6px; }
+    .sepe-ent-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; max-height: 420px; overflow-y: auto; }
+    .sepe-ent-list li { font-size: var(--fs-small); line-height: 1.45; padding-bottom: 8px; border-bottom: 1px solid var(--border); overflow-wrap: anywhere; }
+    .sepe-ent-list li span { display: block; color: var(--warm); }
+    .sepe-ent-list a { color: var(--dark); }
     #sepe-h:focus-visible { outline: 2px solid var(--dark); outline-offset: 4px; }
 
     /* ── Representació toggle (targetes/taula) ── */
@@ -2493,7 +2501,7 @@
     }
   </style>
 
-  <script src="i18n.js?v=20261129"></script>
+  <script src="i18n.js?v=20261130"></script>
   <script src="auth.js?v=20261117b"></script>
   <script src="held.js?v=1"></script>
   <script src="ics.js?v=1"></script>
@@ -2569,6 +2577,7 @@
         sepeRecords: [],
         sepeExpanded: {},
         sepePage: 1,
+        sepeEnt: {},             // Pla 099 — { codi: {open, state, entitats, prov, tipus} } entitats del SEPE
         // Pla 097 — filtres i ordre propis de la pestanya «Especialitats SEPE»
         filterSepeMod: '',       // '' | dist | part | pres (vegeu SEPE_MOD)
         filterSepeHores: '',     // '' | h30 | h100 | h300 | hmes (vegeu SEPE_HORES)
@@ -3419,6 +3428,53 @@
         },
 
         sepeProgramaUrl(codi) { return API_BASE + '/api/sepe/programa/' + encodeURIComponent(codi); },
+
+        // Pla 099: entitats autoritzades. Es baixen un cop per especialitat i es guarden en memòria;
+        // un error es torna a provar en tornar a obrir. El correu només arriba si qui demana és admin.
+        async toggleSepeEnt(codi) {
+          const cur = this.sepeEnt[codi];
+          if (cur && cur.state !== 'error' && cur.state !== 'rate') { cur.open = !cur.open; return; }
+          this.sepeEnt[codi] = { open: true, state: 'loading', entitats: [], prov: '', tipus: '' };
+          const ent = this.sepeEnt[codi];
+          try {
+            // Només l'admin necessita la sessió (per rebre el correu); la resta, petició sense galetes.
+            const res = await fetch(API_BASE + '/api/sepe/entitats/' + encodeURIComponent(codi),
+              { credentials: this.isAdmin ? 'include' : 'same-origin' });
+            if (!res.ok) { ent.state = res.status === 429 ? 'rate' : 'error'; return; }
+            const data = await res.json();
+            ent.entitats = (data.entitats || []).map(en => ({ ...en, web: safeHttpUrl(en.web) }));
+            ent.state = 'ready';
+          } catch (e) {
+            ent.state = 'error';
+          }
+        },
+
+        sepeEntProvs(codi) {
+          const provs = new Set((this.sepeEnt[codi] || { entitats: [] }).entitats.map(en => en.provincia).filter(Boolean));
+          return [...provs].sort((a, b) => a.localeCompare(b, 'es'));
+        },
+
+        sepeEntTipus(codi) {
+          return [...new Set((this.sepeEnt[codi] || { entitats: [] }).entitats.map(en => en.tipus).filter(Boolean))].sort();
+        },
+
+        // Els dos tipus coneguts es tradueixen; un altre literal del SEPE es mostra tal qual.
+        sepeEntTipusLabel(tipus) {
+          return tipus === 'presencial' || tipus === 'teleformacio' ? t('sepe.ent.tipus.' + tipus) : (tipus || '');
+        },
+
+        sepeEntFiltered(codi) {
+          const ent = this.sepeEnt[codi];
+          if (!ent) return [];
+          return ent.entitats.filter(en => (!ent.prov || en.provincia === ent.prov) && (!ent.tipus || en.tipus === ent.tipus));
+        },
+
+        sepeEntCount(codi) {
+          const total = (this.sepeEnt[codi] || { entitats: [] }).entitats.length;
+          const n = this.sepeEntFiltered(codi).length;
+          if (n !== total) return t('sepe.ent.filtrades', { n, total });
+          return total === 1 ? t('sepe.ent.total.one') : t('sepe.ent.total.many', { n: total });
+        },
 
         sepeTitol(e) { return (this.fpoLang() === 'ca' && e.tca) || e.tm || this.sc(e.t); },
 
@@ -5573,6 +5629,9 @@
                           :href="sepeProgramaUrl(e.c)" x-text="t('sepe.programa')"></a>
                         <a class="btn-doc" x-show="e.nc > 0" :href="'index.html?mode=fpo&esp=' + encodeURIComponent(e.c)"
                           x-text="t('sepe.veureCursos')"></a>
+                        <!-- Pla 099 -->
+                        <button type="button" class="btn-doc" @click.stop="toggleSepeEnt(e.c)"
+                          :aria-expanded="String(!!(sepeEnt[e.c] && sepeEnt[e.c].open))" x-text="t('sepe.ent.btn')"></button>
                         <a class="btn-doc" target="_blank" rel="noopener"
                           href="https://sede.sepe.gob.es/FOET_CATALOGO_EEFF_SEDE/flows/main" x-text="t('sepe.cercadorSepe')"></a>
                         <!-- Pla 098: només admins (el backend ho comprova igualment) -->
@@ -5583,6 +5642,45 @@
                         <button type="button" class="fb-report-link" @click.stop="reportEspec(e.c, sepeTitol(e))"
                           x-text="t('index.report')"></button>
                       </p>
+                      <!-- Pla 099: entitats autoritzades (text del SEPE sempre com a text pla) -->
+                      <template x-if="sepeEnt[e.c]">
+                        <div class="sepe-ent" x-show="sepeEnt[e.c].open">
+                          <p class="fpo-avis" x-text="t('sepe.ent.note')"></p>
+                          <p class="results-count" role="status" x-show="sepeEnt[e.c].state === 'loading'" x-text="t('sepe.ent.loading')"></p>
+                          <p class="results-count" role="alert" x-show="sepeEnt[e.c].state === 'error'" x-text="t('sepe.ent.error')"></p>
+                          <p class="results-count" role="alert" x-show="sepeEnt[e.c].state === 'rate'" x-text="t('sepe.ent.rate')"></p>
+                          <p class="results-count" role="status" x-show="sepeEnt[e.c].state === 'ready' && !sepeEnt[e.c].entitats.length"
+                            x-text="t('sepe.ent.cap')"></p>
+                          <p class="results-count" role="status" x-show="sepeEnt[e.c].state === 'ready' && sepeEnt[e.c].entitats.length"
+                            x-text="sepeEntCount(e.c)"></p>
+                          <div class="sepe-ent-filters" x-show="sepeEnt[e.c].state === 'ready' && sepeEnt[e.c].entitats.length > 1">
+                            <label><span x-text="t('sepe.ent.prov')"></span>
+                              <select x-model="sepeEnt[e.c].prov">
+                                <option value="" x-text="t('sepe.ent.prov.totes')"></option>
+                                <template x-for="pv in sepeEntProvs(e.c)" :key="pv"><option :value="pv" x-text="pv"></option></template>
+                              </select>
+                            </label>
+                            <label><span x-text="t('sepe.ent.tipus')"></span>
+                              <select x-model="sepeEnt[e.c].tipus">
+                                <option value="" x-text="t('sepe.ent.tipus.tots')"></option>
+                                <template x-for="tp in sepeEntTipus(e.c)" :key="tp"><option :value="tp" x-text="sepeEntTipusLabel(tp)"></option></template>
+                              </select>
+                            </label>
+                          </div>
+                          <ul class="sepe-ent-list" x-show="sepeEnt[e.c].state === 'ready' && sepeEnt[e.c].entitats.length">
+                            <template x-for="en in sepeEntFiltered(e.c)" :key="en.id">
+                              <li>
+                                <strong x-text="en.nom"></strong>
+                                <span x-text="[sepeEntTipusLabel(en.tipus), en.provincia].filter(Boolean).join(' · ')"></span>
+                                <span x-show="en.adreca" x-text="en.adreca"></span>
+                                <span x-show="en.telefon" x-text="en.telefon ? t('sepe.ent.tel', {n: en.telefon}) : ''"></span>
+                                <a x-show="safeHttpUrl(en.web)" :href="safeHttpUrl(en.web)" target="_blank" rel="noopener" x-text="en.web"></a>
+                                <span x-show="en.email" x-text="en.email ? t('sepe.ent.email', {email: en.email}) : ''"></span>
+                              </li>
+                            </template>
+                          </ul>
+                        </div>
+                      </template>
                     </div>
                   </td>
                 </tr>
@@ -5747,6 +5845,9 @@
                         x-show="fpoDetall[esp.codi] && fpoDetall[esp.codi].programaSepeUrl"
                         :href="fpoDetall[esp.codi] && fpoDetall[esp.codi].programaSepeUrl ? sepeProgramaUrl(esp.codi) : null"
                         x-text="t('sepe.programa')"></a>
+                      <!-- Pla 099 -->
+                      <button type="button" class="btn-doc" x-show="esp.vinculacio === 'sepe'" @click.stop="toggleSepeEnt(esp.codi)"
+                        :aria-expanded="String(!!(sepeEnt[esp.codi] && sepeEnt[esp.codi].open))" x-text="t('sepe.ent.btn')"></button>
                       <button x-show="loggedIn" type="button" class="btn-doc"
                         :class="{ 'btn-fav--active': fpoFavSet.has(esp.codi) }"
                         @click="toggleFpoFav(esp.codi)" :disabled="fpoFavBusy"
@@ -5759,6 +5860,45 @@
                       <button type="button" class="fb-report-link"
                         @click="reportEspec(esp.codi, (esp.titol || {})[fpoLang()])" x-text="t('index.report')"></button>
                     </p>
+                    <!-- Pla 099: entitats autoritzades (text del SEPE sempre com a text pla) -->
+                    <template x-if="esp.vinculacio === 'sepe' && sepeEnt[esp.codi]">
+                      <div class="sepe-ent" x-show="sepeEnt[esp.codi].open">
+                        <p class="fpo-avis" x-text="t('sepe.ent.note')"></p>
+                        <p class="results-count" role="status" x-show="sepeEnt[esp.codi].state === 'loading'" x-text="t('sepe.ent.loading')"></p>
+                        <p class="results-count" role="alert" x-show="sepeEnt[esp.codi].state === 'error'" x-text="t('sepe.ent.error')"></p>
+                        <p class="results-count" role="alert" x-show="sepeEnt[esp.codi].state === 'rate'" x-text="t('sepe.ent.rate')"></p>
+                        <p class="results-count" role="status" x-show="sepeEnt[esp.codi].state === 'ready' && !sepeEnt[esp.codi].entitats.length"
+                          x-text="t('sepe.ent.cap')"></p>
+                        <p class="results-count" role="status" x-show="sepeEnt[esp.codi].state === 'ready' && sepeEnt[esp.codi].entitats.length"
+                          x-text="sepeEntCount(esp.codi)"></p>
+                        <div class="sepe-ent-filters" x-show="sepeEnt[esp.codi].state === 'ready' && sepeEnt[esp.codi].entitats.length > 1">
+                          <label><span x-text="t('sepe.ent.prov')"></span>
+                            <select x-model="sepeEnt[esp.codi].prov">
+                              <option value="" x-text="t('sepe.ent.prov.totes')"></option>
+                              <template x-for="pv in sepeEntProvs(esp.codi)" :key="pv"><option :value="pv" x-text="pv"></option></template>
+                            </select>
+                          </label>
+                          <label><span x-text="t('sepe.ent.tipus')"></span>
+                            <select x-model="sepeEnt[esp.codi].tipus">
+                              <option value="" x-text="t('sepe.ent.tipus.tots')"></option>
+                              <template x-for="tp in sepeEntTipus(esp.codi)" :key="tp"><option :value="tp" x-text="sepeEntTipusLabel(tp)"></option></template>
+                            </select>
+                          </label>
+                        </div>
+                        <ul class="sepe-ent-list" x-show="sepeEnt[esp.codi].state === 'ready' && sepeEnt[esp.codi].entitats.length">
+                          <template x-for="en in sepeEntFiltered(esp.codi)" :key="en.id">
+                            <li>
+                              <strong x-text="en.nom"></strong>
+                              <span x-text="[sepeEntTipusLabel(en.tipus), en.provincia].filter(Boolean).join(' · ')"></span>
+                              <span x-show="en.adreca" x-text="en.adreca"></span>
+                              <span x-show="en.telefon" x-text="en.telefon ? t('sepe.ent.tel', {n: en.telefon}) : ''"></span>
+                              <a x-show="safeHttpUrl(en.web)" :href="safeHttpUrl(en.web)" target="_blank" rel="noopener" x-text="en.web"></a>
+                              <span x-show="en.email" x-text="en.email ? t('sepe.ent.email', {email: en.email}) : ''"></span>
+                            </li>
+                          </template>
+                        </ul>
+                      </div>
+                    </template>
 
                     <template x-if="fpoDetall[esp.codi]">
                       <div style="display:flex;flex-direction:column;gap:8px;">

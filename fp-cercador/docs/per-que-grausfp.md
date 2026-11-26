@@ -42,6 +42,8 @@ A més dels Graus A–E, el cercador inclou el **catàleg estatal d'especialitat
 
 Com trobar-les: escriu el nom o el codi al cercador i, sota els graus, apareix el bloc «També al catàleg estatal del SEPE». Per veure-les totes, fes servir la pestanya «Especialitats SEPE», que també es pot filtrar per família, nivell, modalitat i durada, i ordenar per denominació, codi o hores. La modalitat diu com es pot impartir segons el catàleg, no com s'ofereix ara cap curs concret. Cada especialitat té el programa formatiu oficial en PDF i, si n'hi ha cursos programats a Catalunya, un enllaç per veure'ls al mode «Cursos FPO (Catalunya)».
 
+El botó «Entitats que la imparteixen» mostra les entitats que el SEPE té **autoritzades** per impartir l'especialitat, amb el tipus, la província i el contacte; no vol dir que tinguin un curs obert ara.
+
 Unes 400 especialitats són de **competències transversals** (idiomes, competències digitals, orientació, igualtat…): el SEPE no les assigna a cap família professional, i el cercador les agrupa a la família «Competències transversals» de la pestanya «Especialitats SEPE». Algunes tenen també un **codi anterior** (per exemple, CTRC0001 abans era FCOV0001): surt al desplegable i també es pot cercar.
 
 Les lletres finals del codi indiquen el tipus d'especialitat: **PO**, programes adreçats prioritàriament a persones ocupades, i **DCP**, per a persones amb discapacitat. Segons la Resolució del SEPE de 12 de març de 2010 (BOE del 24 de març de 2010, ja derogada), **EXP** vol dir experimental, **CCC** compromís de contractació i **PTF** perfeccionament tècnic; el cercador no les etiqueta.

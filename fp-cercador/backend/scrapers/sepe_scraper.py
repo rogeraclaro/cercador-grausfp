@@ -281,3 +281,108 @@ def fetch_programa_pdf(id_sepe: int, session=None) -> bytes | None:
     if 'pdf' not in resp.headers.get('Content-Type', '').lower() or not resp.content.startswith(b'%PDF-'):
         return None
     return resp.content
+
+
+# ---------------------------------------------------------------------------
+# Entitats de formació que imparteixen una especialitat — Pla 099
+# ---------------------------------------------------------------------------
+
+_ENT_TBODY = '<tbody id="formulario:resultadoEspecialidadesTablaJSF:tbody_element">'
+_ENT_ROW_SPLIT = 'details-control details-control-background'
+# Després del separador: id, nom, tipus, província i la taula de detall.
+_RE_ENT_ROW = re.compile(
+    r'^[^<]*</div></td><td>(.*?)</td><td>(.*?)</td><td>(.*?)</td><td>(.*?)</td><td>\s*'
+    r'<table class="tablaDetalle[^"]*">(.*?)</table>', re.S)
+_RE_ENT_FIELD = re.compile(r'<span[^>]*>\s*([^<:]+?)\s*:\s*</span>([^<]*)')
+# Etiqueta del SEPE → clau pròpia. El NIF i el nom del titular no es desen mai.
+_ENT_FIELDS = {'Dirección': 'adreca', 'Teléfono': 'telefon', 'Sitio web': 'web', 'Mail': 'email'}
+_ENT_TIPUS = {'Teleformación': 'teleformacio',
+              'Formación Presencial (instalaciones fijas)': 'presencial'}
+_RE_WEB_HOST = re.compile(r'^[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)+(:\d+)?$')
+_PLACE_LOWER = {'de', 'del', 'la', 'las', 'los', 'el', 'y', 'i'}
+
+
+def _norm_web(value):
+    """URL http(s) o None. El SEPE en dona sense protocol («www.adams.es») o en majúscules.
+
+    Sense protocol es posa http:// (no https://): el navegador hi puja sol si el lloc el
+    suporta, mentre que un https:// en un lloc que no en té fallaria."""
+    if not value or ' ' in value:
+        return None
+    m = re.match(r'^(https?)://(.+)$', value, re.I)
+    scheme, rest = (m.group(1).lower(), m.group(2)) if m else ('http', value)
+    host, sep, path = rest.partition('/')
+    host = host.lower()
+    if not _RE_WEB_HOST.match(host):
+        return None
+    return f'{scheme}://{host}{sep}{path}'
+
+
+def _title_place(value):
+    """«SANTA CRUZ DE TENERIFE» → «Santa Cruz de Tenerife»."""
+    if not value:
+        return value
+    words = value.lower().split(' ')
+    return ' '.join(w if i and w in _PLACE_LOWER else '/'.join(p[:1].upper() + p[1:] for p in w.split('/'))
+                    for i, w in enumerate(words))
+
+
+def parse_entitats(page: str) -> list:
+    """Entitats de la pàgina «Entidades de formación» del SEPE.
+
+    Sense la taula de resultats → SepeDataError (canvi de format o sessió perduda).
+    Una especialitat sense entitats té la taula amb un tbody de fila buida
+    (`<tr><td></td></tr>`) → [].
+    """
+    start = page.find(_ENT_TBODY)
+    if start < 0:
+        raise SepeDataError("Entitats: no hi ha la taula de resultats")
+    body = page[start + len(_ENT_TBODY):]
+    chunks = body.split(_ENT_ROW_SPLIT)
+    if len(chunks) == 1:
+        end = body.find('</tbody>')
+        if end < 0 or _RE_WS.sub('', body[:end]) not in ('', '<tr><td></td></tr>'):
+            raise SepeDataError("Entitats: taula sense files reconegudes")
+        return []
+    entitats = []
+    for chunk in chunks[1:]:
+        m = _RE_ENT_ROW.match(chunk)
+        if not m:
+            raise SepeDataError("Entitats: fila amb format desconegut")
+        ident, nom, tipus, provincia = (_opt_text(c) for c in m.groups()[:4])
+        if not ident or not nom:
+            raise SepeDataError("Entitats: fila sense identificador o nom")
+        detall = {_ENT_FIELDS[k]: _opt_text(v) for k, v in _RE_ENT_FIELD.findall(m.group(5))
+                  if k in _ENT_FIELDS}
+        entitats.append({
+            'id': ident,
+            'nom': nom,
+            'tipus': _ENT_TIPUS.get(tipus, tipus),
+            'provincia': _title_place(provincia),
+            'adreca': detall.get('adreca'),
+            'telefon': detall.get('telefon'),
+            'web': _norm_web(detall.get('web')),
+            'email': detall.get('email'),
+        })
+    return entitats
+
+
+def fetch_entitats(id_sepe: int, session=None) -> list:
+    """Entitats autoritzades a impartir una especialitat (una sola petició, sense paginar).
+
+    Mateix POST JSF que fetch_programa_pdf amb un altre botó invisible; el SEPE respon
+    302 → HTML UTF-8. Errors de xarxa i HTTP es propaguen; format inesperat → SepeDataError.
+    """
+    session = session or _new_session()
+    resp = session.get(f'{BASE}/flows/main', timeout=TIMEOUT)
+    resp.raise_for_status()
+    fields = {
+        'formulario_SUBMIT': '1',
+        'javax.faces.ViewState': 'e1s1',
+        'formulario:codigoPropuesta': str(int(id_sepe)),
+        'formulario:invisibleClickTargetEntidadesFormacion': '',
+    }
+    resp = session.post(f'{BASE}/flows/main?execution=e1s1',
+                        files={k: (None, v) for k, v in fields.items()}, timeout=POST_TIMEOUT)
+    resp.raise_for_status()
+    return parse_entitats(resp.content.decode('utf-8', errors='replace'))
