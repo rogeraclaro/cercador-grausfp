@@ -14,11 +14,30 @@
     var io = new IntersectionObserver(function (entries) {
       entries.forEach(function (entry) {
         if (!entry.isIntersecting) return;
-        entry.target.classList.add('in');
+        (entry.target._reveals || [entry.target]).forEach(function (el) { el.classList.add('in'); });
         io.unobserve(entry.target);
       });
     }, { rootMargin: '0px 0px -12% 0px', threshold: 0.08 });
-    revealed.forEach(function (el) { io.observe(el); });
+    revealed.forEach(function (el) {
+      /* A fully clipped element never counts as intersecting, so a clip reveal is
+         triggered by its parent coming into view, not by the clipped element itself. */
+      if (el.classList.contains('rv-clip')) {
+        var host = el.parentElement;
+        if (!host._reveals) { host._reveals = []; io.observe(host); }
+        host._reveals.push(el);
+      } else {
+        io.observe(el);
+      }
+    });
+    /* Safety net: nothing stays hidden if the observer never fires. */
+    window.addEventListener('load', function () {
+      setTimeout(function () {
+        revealed.forEach(function (el) {
+          var r = el.getBoundingClientRect();
+          if (r.top < window.innerHeight && r.bottom > 0) el.classList.add('in');
+        });
+      }, 1200);
+    });
   }
 
   /* ── Counters: <span data-count="12989">12.989</span> counts up once when it enters ── */
