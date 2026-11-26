@@ -41,6 +41,21 @@ test('els valors invàlids s\'ignoren en silenci', () => {
   assert.deepStrictEqual(parse('p=7'), { currentPage: 7 });
 });
 
+test('pla 097: nivells 4, 5 i «none», modalitat i durada només a la pestanya SEPE', () => {
+  const state = { ...DEFAULTS, filterGrado: 'SEPE', filterNivel: 'none', filterSepeMod: 'dist', filterSepeHores: 'h100' };
+  const text = query(paramsFromState(state));
+  assert.strictEqual(text, 'grado=SEPE&nivel=none&mod=dist&hores=h100');
+  assert.deepStrictEqual(parse(text),
+    { filterGrado: 'SEPE', filterNivel: 'none', filterSepeMod: 'dist', filterSepeHores: 'h100' });
+  assert.deepStrictEqual(parse('grado=SEPE&nivel=5'), { filterGrado: 'SEPE', filterNivel: '5' });
+  // Fora de la pestanya SEPE no valen
+  assert.deepStrictEqual(parse('grado=D&nivel=4&mod=dist&hores=h30'), { filterGrado: 'D' });
+  assert.deepStrictEqual(parse('nivel=none&mod=part'), {});
+  assert.deepStrictEqual(paramsFromState({ ...DEFAULTS, filterGrado: 'D', filterSepeMod: 'dist' }), [['grado', 'D']]);
+  // Valors inventats
+  assert.deepStrictEqual(parse('grado=SEPE&nivel=6&mod=online&hores=h50'), { filterGrado: 'SEPE' });
+});
+
 test('q es retalla a 200 caràcters, també en escriure', () => {
   assert.strictEqual(parse('q=' + 'x'.repeat(500)).search.length, 200);
   assert.strictEqual(paramsFromState({ ...DEFAULTS, search: 'y'.repeat(500) })[0][1].length, 200);

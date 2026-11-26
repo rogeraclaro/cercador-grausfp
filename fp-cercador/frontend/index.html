@@ -642,6 +642,13 @@
     .sepe-note { font-size: var(--fs-small); color: var(--warm); max-width: 75ch; margin: 0 0 14px; line-height: 1.5; }
     .sepe-note a { color: var(--dark); }
     .sepe-more { margin-top: 14px; }
+    /* Pla 097 */
+    .sepe-jump { margin: -4px 0 12px; font-size: var(--fs-small); }
+    .sepe-jump a { color: var(--dark); }
+    .sepe-help { display: inline-block; margin-left: 4px; font-size: 11px; color: var(--warm); cursor: help; }
+    .results-table--sepe th.sortable:focus-visible { outline: 2px solid var(--dark); outline-offset: -2px; }
+    #sepe-h:focus { outline: none; }
+    #sepe-h:focus-visible { outline: 2px solid var(--dark); outline-offset: 4px; }
 
     /* ── Representació toggle (targetes/taula) ── */
     .repr-toggle {
@@ -2478,11 +2485,11 @@
     }
   </style>
 
-  <script src="i18n.js?v=20261127"></script>
+  <script src="i18n.js?v=20261128"></script>
   <script src="auth.js?v=20261117b"></script>
   <script src="held.js?v=1"></script>
   <script src="ics.js?v=1"></script>
-  <script src="search-tools.js?v=2"></script>
+  <script src="search-tools.js?v=3"></script>
   <script>
     const API_BASE = window.location.hostname === 'localhost'
       ? 'http://localhost:5001'
@@ -2520,7 +2527,8 @@
     const COMPARE_KEY = 'grausfp.compareRefs';   // Pla 085: graus triats per comparar (dura la pestanya)
     const COMPARE_MAX = 3;
     const LIST_STATE_DEFAULTS = { search: '', filterGrado: '', filterFamilia: '', filterNivel: '',
-      filterOld: 'all', filterFavs: false, sortCol: '', sortDir: 0, currentPage: 1 };
+      filterOld: 'all', filterFavs: false, sortCol: '', sortDir: 0, currentPage: 1,
+      filterSepeMod: '', filterSepeHores: '' };   // Pla 097: filtres de la pestanya SEPE
     const LIST_STATE_FIELDS = Object.keys(LIST_STATE_DEFAULTS);
 
     // Memòria de filteredRecords. Alpine no memoritza els getters i la taula el llegeix desenes de
@@ -2553,6 +2561,11 @@
         sepeRecords: [],
         sepeExpanded: {},
         sepePage: 1,
+        // Pla 097 — filtres i ordre propis de la pestanya «Especialitats SEPE»
+        filterSepeMod: '',       // '' | dist | part | pres (vegeu SEPE_MOD)
+        filterSepeHores: '',     // '' | h30 | h100 | h300 | hmes (vegeu SEPE_HORES)
+        sepeSortCol: '',         // '' | titol | codi | hores
+        sepeSortDir: 0,
         pageSize: 50,
         sortCol: '',
         sortDir: 0,
@@ -2831,7 +2844,8 @@
               .catch(() => { });
             // Enllaç del perfil: ?ref=… obre els centres d'aquell grau (antic: ?oferta=<id>).
             const linkParams = new URLSearchParams(location.search);
-            // Pla 087: la cerca per nom viu a l'adreça (q, grado, familia, nivel, pla, favs, ordre, dir, p).
+            // Pla 087: la cerca per nom viu a l'adreça (q, grado, familia, nivel, pla, favs, ordre, dir, p;
+            // pla 097: mod i hores, només amb grado=SEPE).
             // Els valors invàlids s'ignoren. No s'aplica a la tornada de l'itinerari (?grado=X&ref=…),
             // on `grado` és el del grau que s'obre i la llista es restaura de sessionStorage.
             const itinReturn = linkParams.get('grado')
@@ -2880,7 +2894,8 @@
           let timer = null;
           this.$watch(
             () => [this.searchMode, this.search, this.filterGrado, this.filterFamilia, this.filterNivel,
-                   this.filterOld, this.filterFavs, this.sortCol, this.sortDir, this.currentPage].join('\u0001'),
+                   this.filterOld, this.filterFavs, this.sortCol, this.sortDir, this.currentPage,
+                   this.filterSepeMod, this.filterSepeHores].join('\u0001'),
             () => { clearTimeout(timer); timer = setTimeout(() => this.writeSearchUrl(), 300); });
         },
 
@@ -2901,11 +2916,19 @@
           const q = this.search.trim();
           if (this.searchMode !== 'nom' || q.length < 4 || this.filteredCount !== 0 || this.filterGrado
               || this.filterFamilia || this.filterNivel || this.filterOld !== 'all' || this.filterFavs) return [];
+          // Pla 097: només quan tampoc hi ha cap especialitat del SEPE; mentre es carreguen, encara no se sap
+          // ('idle' també: el primer cop la càrrega encara no ha començat i es veia un suggeriment fals)
+          if ((this.sepeVisible && this.sepeState !== 'ready' && this.sepeState !== 'error')
+              || this.filteredSepe.length) return [];
+          const sepe = this.sepeState === 'ready' ? this.sepeRecords : [];
           const key = q + '\u0001' + (this.caEs ? 1 : 0);
-          if (didYouMeanMemo.key === key && didYouMeanVocab.records === this.allRecords) return didYouMeanMemo.result;
-          if (didYouMeanVocab.records !== this.allRecords) {
-            didYouMeanVocab = { records: this.allRecords,
-                                vocab: GFPSearch.buildVocabulary(this.allRecords.map(r => r._normDen)) };
+          if (didYouMeanMemo.key === key && didYouMeanVocab.records === this.allRecords
+              && didYouMeanVocab.sepe === sepe) return didYouMeanMemo.result;
+          if (didYouMeanVocab.records !== this.allRecords || didYouMeanVocab.sepe !== sepe) {
+            // Pla 097: el vocabulari també inclou els títols del SEPE quan estan carregats
+            didYouMeanVocab = { records: this.allRecords, sepe,
+                                vocab: GFPSearch.buildVocabulary(this.allRecords.map(r => r._normDen)
+                                  .concat(sepe.map(e => e._normT))) };
           }
           const translate = token => {
             const groups = this.expandSearch(token);
@@ -2914,8 +2937,8 @@
           // El suggeriment ha de donar resultats amb la mateixa regla que la cerca.
           const test = text => {
             const groups = this.expandSearch(text);
-            return this.allRecords.some(r => groups
-              ? groups.every(g => g.some(v => r._normDen.includes(v))) : r._normDen.includes(text));
+            const hit = name => groups ? groups.every(g => g.some(v => name.includes(v))) : name.includes(text);
+            return this.allRecords.some(r => hit(r._normDen)) || sepe.some(e => hit(e._normT));
           };
           didYouMeanMemo = { key, result: GFPSearch.suggest(q, didYouMeanVocab.vocab, { translate, test }) };
           return didYouMeanMemo.result;
@@ -3151,6 +3174,42 @@
         // graus (només les primeres) quan hi ha text de cerca. No porten favorits, alertes ni centres.
         SEPE_PREVIEW: 10,
         SEPE_CTR: 'CTR',   // Pla 096: família virtual «Competències transversals» (només pestanya SEPE)
+        // Pla 097: valors literals de la modalitat del catàleg agrupats en tres opcions
+        SEPE_MOD: {
+          dist: ['Teleformación', 'Presencial y teleformación'],
+          part: ['Mixta', 'Presencial y mixta'],
+          pres: ['Presencial'],
+        },
+        // Pla 097: trams de durada (hores), interval (mín, màx]
+        SEPE_HORES: { h30: [0, 30], h100: [30, 100], h300: [100, 300], hmes: [300, Infinity] },
+
+        // Pla 097: ordre de la taula SEPE (mateix cicle que sortBy: asc → desc → cap)
+        sepeSortBy(col) {
+          if (this.sepeSortCol !== col) {
+            this.sepeSortCol = col; this.sepeSortDir = 1;
+          } else if (this.sepeSortDir === 1) {
+            this.sepeSortDir = -1;
+          } else { this.sepeSortCol = ''; this.sepeSortDir = 0; }
+          this.sepePage = 1;
+        },
+
+        sepeAriaSort(col) {
+          return this.sepeSortCol === col ? (this.sepeSortDir === 1 ? 'ascending' : 'descending') : 'none';
+        },
+
+        // Pla 097: enllaç «També hi ha N especialitats del SEPE ↓»
+        scrollToSepe() {
+          const h = document.getElementById('sepe-h');
+          if (!h) return;
+          h.setAttribute('tabindex', '-1');
+          h.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          h.focus({ preventScroll: true });
+        },
+
+        // Pla 097: cap grau coincideix però sí alguna especialitat del SEPE (la taula de graus no es pinta)
+        get sepeOnly() {
+          return this.filterGrado !== 'SEPE' && this.filteredCount === 0 && this.filteredSepe.length > 0;
+        },
 
         get sepeVisible() {
           if (this.searchMode !== 'nom') return false;
@@ -3191,19 +3250,38 @@
 
         get filteredSepe() {
           if (this.sepeState !== 'ready' || !this.sepeVisible) return [];
-          const inputs = [this.sepeRecords, this.search, this.filterFamilia, this.filterNivel, this.caEs];
+          // Pla 097: modalitat, durada i ordre només compten a la pestanya SEPE (fora, els filtres no es veuen)
+          const tab = this.filterGrado === 'SEPE';
+          const mod = tab ? this.SEPE_MOD[this.filterSepeMod] : null;
+          const hores = tab ? this.SEPE_HORES[this.filterSepeHores] : null;
+          const sortCol = tab ? this.sepeSortCol : '';
+          const inputs = [this.sepeRecords, this.search, this.filterFamilia, this.filterNivel, this.caEs,
+            mod, hores, sortCol, this.sepeSortDir];
           if (sepeMemo.inputs && sameInputs(sepeMemo.inputs, inputs)) return sepeMemo.result;
           const q = this.search.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
           const groups = q ? this.expandSearch(q) : null;
           const result = this.sepeRecords.filter(e => {
             if (this.filterFamilia && e.familia !== this.filterFamilia) return false;
-            if (this.filterNivel && e.n !== parseInt(this.filterNivel)) return false;
+            // Pla 097: «none» = nivell sense especificar (només a la pestanya SEPE)
+            if (this.filterNivel === 'none' ? e.n : (this.filterNivel && e.n !== parseInt(this.filterNivel))) return false;
+            if (mod && !mod.includes(e.m)) return false;
+            if (hores && !(e.h > hores[0] && e.h <= hores[1])) return false;
             if (q) {
               const hit = groups ? groups.every(g => g.some(v => e._normT.includes(v))) : e._normT.includes(q);
               if (!hit && !e._normC.includes(q)) return false;
             }
             return true;
           });
+          if (sortCol && this.sepeSortDir) {
+            const dir = this.sepeSortDir;
+            const key = sortCol === 'hores' ? (e => e.h || 0)
+              : sortCol === 'codi' ? (e => e.c) : (e => this.sepeTitol(e).toLowerCase());
+            result.sort((a, b) => {
+              const va = key(a), vb = key(b);
+              if (typeof va === 'number') return (va - vb) * dir;
+              return va.localeCompare(vb, 'es') * dir;
+            });
+          }
           sepeMemo = { inputs, result };
           return result;
         },
@@ -3287,6 +3365,11 @@
           this.filterGrado = this.filterGrado === g ? '' : g;
           // Pla 096: la família virtual de les transversals només existeix a la pestanya SEPE
           if (this.filterGrado !== 'SEPE' && this.filterFamilia === this.SEPE_CTR) this.filterFamilia = '';
+          // Pla 097: els nivells 4, 5 i «sense especificar» i la modalitat/durada són propis de la pestanya SEPE
+          if (this.filterGrado !== 'SEPE') {
+            if (!['', '1', '2', '3'].includes(this.filterNivel)) this.filterNivel = '';
+            this.filterSepeMod = ''; this.filterSepeHores = '';
+          }
           this.resetPage();
         },
 
@@ -4243,7 +4326,7 @@
     <div class="hero">
       <h1><span data-i18n="index.hero.h1.line1">Formació</span><br><em data-i18n="index.hero.h1.line2">Professional</em>
       </h1>
-      <p class="hero-sub" data-i18n="index.hero.sub">Explora els graus disponibles a l'estat espanyol</p>
+      <p class="hero-sub" data-i18n="index.hero.sub">Explora els graus de FP i la formació per a l'ocupació</p>
       <section class="start" x-show="!startHidden" x-cloak aria-labelledby="start-title">
         <div class="start-head">
           <h2 id="start-title" x-text="t('start.title')"></h2>
@@ -4285,6 +4368,8 @@
             </template>
           </dl>
           <p class="g-foot"><span x-text="t('start.graus.foot')"></span> <a href="per-que-grausfp.html" x-text="t('start.graus.more')"></a></p>
+          <!-- Pla 097: la mateixa targeta explica també les especialitats del SEPE -->
+          <p class="g-foot"><span x-text="t('start.graus.sepe')"></span> <a href="per-que-grausfp.html#sepe" x-text="t('start.graus.sepe.more')"></a></p>
         </div>
       </section>
       <button type="button" class="start-reopen" x-show="startHidden" x-cloak @click="showStart()" x-text="t('start.title')"></button>
@@ -4336,7 +4421,7 @@
     <!-- Grau tabs (only in nom mode) -->
     <div class="grau-tabs" role="group" data-i18n-aria="index.tabs.aria" aria-label="Filtre per grau"
       x-show="searchMode === 'nom'">
-      <button :class="{ active: filterGrado === '' }" @click="filterGrado=''; resetPage()"
+      <button :class="{ active: filterGrado === '' }" @click="setGrado('')"
         :aria-pressed="String(filterGrado === '')" x-text="t('index.tabs.all')"></button>
       <template x-for="g in ['A','B','C','D','E']" :key="g">
         <button :class="{ active: filterGrado === g }" @click="setGrado(g)"
@@ -4367,6 +4452,35 @@
         <option value="1" data-i18n="index.filter.niv1">Nivell 1</option>
         <option value="2" data-i18n="index.filter.niv2">Nivell 2</option>
         <option value="3" data-i18n="index.filter.niv3">Nivell 3</option>
+        <!-- Pla 097: a la pestanya SEPE l'escala arriba al 5 i hi ha especialitats sense nivell -->
+        <template x-if="filterGrado === 'SEPE'">
+          <option value="4" :selected="filterNivel === '4'" x-text="t('sepe.filter.niv4')"></option>
+        </template>
+        <template x-if="filterGrado === 'SEPE'">
+          <option value="5" :selected="filterNivel === '5'" x-text="t('sepe.filter.niv5')"></option>
+        </template>
+        <template x-if="filterGrado === 'SEPE'">
+          <option value="none" :selected="filterNivel === 'none'" x-text="t('sepe.filter.nivNone')"></option>
+        </template>
+      </select>
+
+      <!-- Pla 097: modalitat i durada, només a la pestanya «Especialitats SEPE» -->
+      <label for="filter-sepe-mod" class="sr-only" x-show="filterGrado === 'SEPE'" x-text="t('fpo.filter.modalitat')"></label>
+      <select id="filter-sepe-mod" x-model="filterSepeMod" @change="resetPage()" x-show="filterGrado === 'SEPE'"
+        :title="t('sepe.mod.note')">
+        <option value="" x-text="t('sepe.filter.modAll')"></option>
+        <option value="dist" x-text="t('sepe.filter.mod.dist')"></option>
+        <option value="part" x-text="t('sepe.filter.mod.part')"></option>
+        <option value="pres" x-text="t('sepe.filter.mod.pres')"></option>
+      </select>
+
+      <label for="filter-sepe-hores" class="sr-only" x-show="filterGrado === 'SEPE'" x-text="t('sepe.filter.hores')"></label>
+      <select id="filter-sepe-hores" x-model="filterSepeHores" @change="resetPage()" x-show="filterGrado === 'SEPE'">
+        <option value="" x-text="t('sepe.filter.horesAll')"></option>
+        <option value="h30" x-text="t('sepe.filter.hores.h30')"></option>
+        <option value="h100" x-text="t('sepe.filter.hores.h100')"></option>
+        <option value="h300" x-text="t('sepe.filter.hores.h300')"></option>
+        <option value="hmes" x-text="t('sepe.filter.hores.hmes')"></option>
       </select>
 
       <div class="radio-group">
@@ -4408,8 +4522,8 @@
       </button>
       <span role="status" style="font-size:13px;color:#9b2c2c" x-show="exportStructureFailed" x-text="t('export.structure.error')"></span>
       <button class="clear-btn"
-        x-show="search || filterGrado || filterFamilia || filterNivel || filterOld !== 'all' || filterFavs"
-        @click="search=''; filterGrado=''; filterFamilia=''; filterNivel=''; filterOld='all'; filterFavs=false; resetPage()"
+        x-show="search || filterGrado || filterFamilia || filterNivel || filterOld !== 'all' || filterFavs || filterSepeMod || filterSepeHores"
+        @click="search=''; filterGrado=''; filterFamilia=''; filterNivel=''; filterOld='all'; filterFavs=false; filterSepeMod=''; filterSepeHores=''; resetPage()"
         x-text="t('index.btn.clearFilters')">
       </button>
     </div>
@@ -4599,11 +4713,17 @@
       </p>
 
       <p class="results-count" x-show="filterGrado !== 'SEPE'">
-        <span x-text="filteredCount === 0 ? t('index.results.zero') : (filteredCount === 1 ? t('index.results.one') : t('index.results.many', {n: filteredCount}))"></span>
+        <span x-text="sepeOnly ? t('sepe.mainEmpty') : (filteredCount === 0 ? t('index.results.zero') : (filteredCount === 1 ? t('index.results.one') : t('index.results.many', {n: filteredCount})))"></span>
         <span x-show="dataUpdated" x-text="' · ' + t('index.data_updated', {date: dataUpdated})"></span>
       </p>
+      <!-- Pla 097: hi ha graus i també especialitats del SEPE (bloc més avall) -->
+      <p class="sepe-jump" x-show="filterGrado !== 'SEPE' && filteredCount > 0 && filteredSepe.length > 0">
+        <a href="#sepe-h" @click.prevent="scrollToSepe()"
+          x-text="filteredSepe.length === 1 ? t('sepe.jump.one') : t('sepe.jump.many', {n: filteredSepe.length})"></a>
+      </p>
 
-      <div class="table-wrap" x-show="filterGrado !== 'SEPE'">
+      <!-- Pla 097: si només hi ha especialitats del SEPE, la taula de graus queda en la línia de dalt -->
+      <div class="table-wrap" x-show="filterGrado !== 'SEPE' && !sepeOnly">
         <table class="results-table" id="results-table">
           <caption class="sr-only" data-i18n="index.table.caption">Resultats del cercador de Graus FP</caption>
           <thead>
@@ -4654,7 +4774,7 @@
             <template x-if="filteredCount === 0">
               <tr class="empty-row">
                 <td colspan="5">
-                  <span x-text="filteredSepe.length ? t('sepe.mainEmpty', {n: filteredSepe.length}) : (search.trim() ? t('index.table.empty.search', {q: search.trim()}) : t('index.table.empty'))"></span>
+                  <span x-text="search.trim() ? t('index.table.empty.search', {q: search.trim()}) : t('index.table.empty')"></span>
                   <span class="did-you-mean" role="status" x-show="didYouMean.length">
                     <span x-text="t('index.didyoumean.lead')"></span>
                     <template x-for="s in didYouMean" :key="s">
@@ -5261,6 +5381,7 @@
           <span x-text="t('sepe.note')"></span>
           <a href="per-que-grausfp.html#sepe" x-text="t('sepe.note.more')"></a>
         </p>
+        <p class="sepe-note" x-show="filterGrado === 'SEPE'" x-text="t('sepe.mod.note')"></p>
         <p class="results-count" role="status" x-show="sepeState === 'loading'" x-text="t('sepe.loading')"></p>
         <p class="results-count" role="alert" x-show="sepeState === 'error'" x-text="t('sepe.error')"></p>
         <p class="results-count" x-show="sepeState === 'ready' && filterGrado === 'SEPE'"
@@ -5273,12 +5394,36 @@
             <caption class="sr-only" x-text="t('sepe.h.tab')"></caption>
             <thead>
               <tr>
-                <th scope="col" x-text="t('index.col.nom')"></th>
-                <th scope="col" x-text="t('index.col.codi')"></th>
+                <!-- Pla 097: ordenable per denominació, codi i hores (només a la pestanya SEPE) -->
+                <template x-for="colDef in [['titol', 'index.col.nom'], ['codi', 'index.col.codi']]" :key="colDef[0]">
+                  <th scope="col" :class="[filterGrado === 'SEPE' ? 'sortable' : '', sepeSortCol === colDef[0] ? 'sort-active' : '']"
+                    :tabindex="filterGrado === 'SEPE' ? 0 : null"
+                    @click="filterGrado === 'SEPE' && sepeSortBy(colDef[0])"
+                    @keydown.enter.prevent="filterGrado === 'SEPE' && sepeSortBy(colDef[0])"
+                    @keydown.space.prevent="filterGrado === 'SEPE' && sepeSortBy(colDef[0])"
+                    :aria-sort="filterGrado === 'SEPE' ? sepeAriaSort(colDef[0]) : null">
+                    <span x-text="t(colDef[1])"></span>
+                    <span class="sort-indicator" aria-hidden="true" x-show="filterGrado === 'SEPE'"
+                      x-text="sepeSortCol === colDef[0] && sepeSortDir === -1 ? '▼' : '▲'"></span>
+                  </th>
+                </template>
                 <th scope="col" x-text="t('index.col.fam')"></th>
-                <th scope="col" x-text="t('index.col.niv')"></th>
-                <th scope="col" x-text="t('fpo.col.hores')"></th>
-                <th scope="col" x-text="t('fpo.filter.modalitat')"></th>
+                <th scope="col" :title="t('sepe.nivell.help')">
+                  <span x-text="t('index.col.niv')"></span>
+                  <span class="sepe-help" aria-hidden="true">?</span>
+                  <span class="sr-only" x-text="t('sepe.nivell.help')"></span>
+                </th>
+                <th scope="col" :class="[filterGrado === 'SEPE' ? 'sortable' : '', sepeSortCol === 'hores' ? 'sort-active' : '']"
+                  :tabindex="filterGrado === 'SEPE' ? 0 : null"
+                  @click="filterGrado === 'SEPE' && sepeSortBy('hores')"
+                  @keydown.enter.prevent="filterGrado === 'SEPE' && sepeSortBy('hores')"
+                  @keydown.space.prevent="filterGrado === 'SEPE' && sepeSortBy('hores')"
+                  :aria-sort="filterGrado === 'SEPE' ? sepeAriaSort('hores') : null">
+                  <span x-text="t('fpo.col.hores')"></span>
+                  <span class="sort-indicator" aria-hidden="true" x-show="filterGrado === 'SEPE'"
+                    x-text="sepeSortCol === 'hores' && sepeSortDir === -1 ? '▼' : '▲'"></span>
+                </th>
+                <th scope="col" :title="t('sepe.mod.note')" x-text="t('fpo.filter.modalitat')"></th>
               </tr>
             </thead>
             <template x-for="e in pagedSepe" :key="e.c">

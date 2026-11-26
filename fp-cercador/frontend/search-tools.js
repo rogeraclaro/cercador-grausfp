@@ -4,7 +4,10 @@
 (function (root) {
   var SORT_COLS = ['denominacion', 'codigo', 'familia', 'grado', 'nivel'];
   /* Paràmetres de l'adreça que pertanyen a la cerca per nom. */
-  var PARAMS = ['q', 'grado', 'familia', 'nivel', 'pla', 'favs', 'ordre', 'dir', 'p'];
+  var PARAMS = ['q', 'grado', 'familia', 'nivel', 'pla', 'favs', 'ordre', 'dir', 'p', 'mod', 'hores'];
+  /* Pla 097: filtres propis de la pestanya «Especialitats SEPE» (grado=SEPE). */
+  var SEPE_MOD = ['dist', 'part', 'pres'];
+  var SEPE_HORES = ['h30', 'h100', 'h300', 'hmes'];
   var MAX_QUERY = 200;
 
   /* Adreça → camps de l'estat. Només torna els que hi són i són vàlids; la resta s'ignora. */
@@ -18,6 +21,14 @@
     if (familia && (families || []).indexOf(familia) >= 0) state.filterFamilia = familia;
     var nivel = params.get('nivel') || '';
     if (/^[1-3]$/.test(nivel)) state.filterNivel = nivel;
+    if (grado === 'SEPE') {
+      // Al catàleg del SEPE l'escala arriba al 5 i hi ha especialitats sense nivell («none»)
+      if (/^([45]|none)$/.test(nivel)) state.filterNivel = nivel;
+      var mod = params.get('mod');
+      if (SEPE_MOD.indexOf(mod) >= 0) state.filterSepeMod = mod;
+      var hores = params.get('hores');
+      if (SEPE_HORES.indexOf(hores) >= 0) state.filterSepeHores = hores;
+    }
     var pla = params.get('pla');
     if (pla === 'hide' || pla === 'only') state.filterOld = pla;
     if (params.get('favs') === '1') state.filterFavs = true;
@@ -46,6 +57,10 @@
       if (state.sortDir < 0) out.push(['dir', 'desc']);
     }
     if (state.currentPage > 1) out.push(['p', String(state.currentPage)]);
+    if (state.filterGrado === 'SEPE') {
+      if (state.filterSepeMod) out.push(['mod', state.filterSepeMod]);
+      if (state.filterSepeHores) out.push(['hores', state.filterSepeHores]);
+    }
     return out;
   }
 

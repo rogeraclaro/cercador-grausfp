@@ -40,11 +40,13 @@ A més dels Graus A–E, el cercador inclou el **catàleg estatal d'especialitat
 
 **No són graus de FP.** No donen cap títol ni certificat oficial i no s'acumulen per obtenir-ne cap: són cursos per actualitzar-se o especialitzar-se, que imparteixen entitats acreditades a tot l'Estat, sovint dins de programes subvencionats o de formació bonificada per les empreses. Per això el cercador les mostra a part, amb l'etiqueta «Especialitat SEPE».
 
-Com trobar-les: escriu el nom o el codi al cercador i, sota els graus, apareix el bloc «També al catàleg estatal del SEPE». Per veure-les totes, fes servir la pestanya «Especialitats SEPE», que també es pot filtrar per família i nivell. Cada especialitat té el programa formatiu oficial en PDF i, si n'hi ha cursos programats a Catalunya, un enllaç per veure'ls al mode «Cursos FPO (Catalunya)».
+Com trobar-les: escriu el nom o el codi al cercador i, sota els graus, apareix el bloc «També al catàleg estatal del SEPE». Per veure-les totes, fes servir la pestanya «Especialitats SEPE», que també es pot filtrar per família, nivell, modalitat i durada, i ordenar per denominació, codi o hores. La modalitat diu com es pot impartir segons el catàleg, no com s'ofereix ara cap curs concret. Cada especialitat té el programa formatiu oficial en PDF i, si n'hi ha cursos programats a Catalunya, un enllaç per veure'ls al mode «Cursos FPO (Catalunya)».
 
 Unes 400 especialitats són de **competències transversals** (idiomes, competències digitals, orientació, igualtat…): el SEPE no les assigna a cap família professional, i el cercador les agrupa a la família «Competències transversals» de la pestanya «Especialitats SEPE». Algunes tenen també un **codi anterior** (per exemple, CTRC0001 abans era FCOV0001): surt al desplegable i també es pot cercar.
 
 Les lletres finals del codi indiquen el tipus d'especialitat: **PO**, programes adreçats prioritàriament a persones ocupades, i **DCP**, per a persones amb discapacitat. Segons la Resolució del SEPE de 12 de març de 2010 (BOE del 24 de març de 2010, ja derogada), **EXP** vol dir experimental, **CCC** compromís de contractació i **PTF** perfeccionament tècnic; el cercador no les etiqueta.
+
+Cada especialitat té un **nivell de qualificació** de l'1 al 5. L'Ordre TMS/283/2019 (article 3.2) el lliga als nivells del Catàleg Nacional de Qualificacions Professionals: és la mateixa escala que fan servir els graus de FP, que arriben fins al nivell 3, i els nivells 4 i 5 queden per sobre. El número indica la dificultat del contingut, no dona cap títol ni acreditació. Unes 2.100 especialitats no tenen nivell assignat i a la taula surten amb un guionet.
 
 ---
 

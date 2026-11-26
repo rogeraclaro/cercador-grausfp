@@ -63,6 +63,19 @@ def test_expand_token_dict_transport():
     assert _expand_token('transport') == ['transport', 'transporte']
 
 
+@pytest.mark.parametrize('ca, es', [
+    ('seguretat', 'seguridad'),          # -etat: la regla de sufix -itat no la cobreix
+    ('disseny', 'diseno'),
+    ('instal·lacions', 'instalaciones'),
+    ('desenvolupament', 'desarrollo'),
+    ('professional', 'profesional'),
+])
+def test_expand_token_sepe_terms(ca, es):
+    """Pla 097: paraules freqüents dels títols del SEPE."""
+    from app import _expand_token
+    assert _expand_token(ca) == [ca, es]
+
+
 # --- GET /api/ca-es-terms: la taula principal reutilitza l'expansió CA→ES --------
 
 
