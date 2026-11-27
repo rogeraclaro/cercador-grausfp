@@ -1,7 +1,7 @@
 // Eines del cercador per nom (Pla 087). Executar: node --test scripts/test_search_tools.js
 const test = require('node:test');
 const assert = require('node:assert');
-const { stateFromParams, paramsFromState, buildVocabulary, boundedDistance, suggest, normalize } =
+const { stateFromParams, paramsFromState, buildVocabulary, boundedDistance, suggest, normalize, csvText } =
   require('../frontend/search-tools.js');
 
 const FAMILIES = ['Sanidad', 'Administración y Gestión', 'Fabricación Mecánica'];
@@ -144,4 +144,18 @@ test('res de semblant, paraules curtes i consulta buida: cap suggeriment', () =>
   assert.deepStrictEqual(suggest('xyzwvq', VOCAB), []);
   assert.deepStrictEqual(suggest('sol', VOCAB), []);
   assert.deepStrictEqual(suggest('', VOCAB), []);
+});
+
+// Pla 102: CSV de les exportacions (mateix format que exportCSV(): ';', BOM, CRLF)
+test('csvText: BOM, separador ; i salt de línia CRLF', () => {
+  assert.strictEqual(csvText([['a', 'b;c'], ['x"y', null, 3]]), '\uFEFFa;"b;c"\r\n"x""y";;3');
+});
+
+test('csvText: cometes quan el valor porta ; , " o salts de línia, i null/undefined buits', () => {
+  assert.strictEqual(csvText([['a,b', 'c\nd', 'e\rf', undefined, 0, false]]), '\uFEFF"a,b";"c\nd";"e\rf";;0;false');
+  assert.strictEqual(csvText([['sense especials', 'Sí']]), '\uFEFFsense especials;Sí');
+});
+
+test('csvText: sense files només queda el BOM', () => {
+  assert.strictEqual(csvText([]), '\uFEFF');
 });

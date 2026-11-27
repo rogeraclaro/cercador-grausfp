@@ -140,8 +140,18 @@
     return out;
   }
 
+  // Pla 102: text d'un CSV a partir d'un array de files (la primera, la capçalera). Punt i coma perquè
+  // l'Excel en català/castellà no separa columnes per comes; BOM perquè l'obri com a UTF-8; CRLF.
+  function csvText(rows) {
+    function cell(v) {
+      var s = String(v == null ? '' : v);
+      return /[;,"\r\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+    }
+    return '\uFEFF' + rows.map(function (row) { return row.map(cell).join(';'); }).join('\r\n');
+  }
+
   var api = { PARAMS: PARAMS, SORT_COLS: SORT_COLS, stateFromParams: stateFromParams, paramsFromState: paramsFromState,
-              normalize: normalize, buildVocabulary: buildVocabulary, boundedDistance: boundedDistance, suggest: suggest };
+              normalize: normalize, buildVocabulary: buildVocabulary, boundedDistance: boundedDistance, suggest: suggest, csvText: csvText };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.GFPSearch = api;
 })(typeof window !== 'undefined' ? window : this);
