@@ -874,39 +874,63 @@
         return parts.join(' · ');
       }
 
+      // Pla 102: alertes d'entitats SEPE autoritzades noves
+      function sepeEntAlertLabel(a) {
+        var parts = [((a.titol || {})[fpoLang] || a.codi) + ' (' + a.codi + ')',
+                     a.provincia || t('sepe.entAlert.provTotes')];
+        if (a.nomes_teleformacio) parts.push(t('sepe.entAlert.nomesTele'));
+        return parts.join(' · ');
+      }
+
+      // `kind` = 'fpo' | 'ent': escull l'endpoint dels botons de pausa i esborrat.
+      function alertItems(alerts, label, kind) {
+        return alerts.map(function (a) {
+          return '<li class="fpo-alert' + (a.active ? '' : ' fpo-alert--paused') + '">' +
+            '<span class="fpo-alert-label">' + esc(label(a)) +
+            (a.active ? '' : ' <span class="badge-old">' + t('fpo.alert.paused') + '</span>') + '</span>' +
+            '<span class="fpo-alert-actions">' +
+            '<button type="button" class="fpo-alert-btn" data-kind="' + kind + '" data-id="' + a.id + '" data-active="' + (a.active ? '0' : '1') + '">' +
+            t(a.active ? 'fpo.alert.pause' : 'fpo.alert.resume') + '</button>' +
+            '<button type="button" class="fpo-alert-btn fpo-alert-btn--delete" data-kind="' + kind + '" data-id="' + a.id + '" ' +
+            'aria-label="' + esc(t('fpo.alert.delete_aria', { name: label(a) })) + '">' + t('fpo.alert.delete') + '</button>' +
+            '</span></li>';
+        }).join('');
+      }
+
       async function loadFpoAlerts() {
         var box = document.getElementById('fpo-alerts');
         var alerts = [];
+        var entAlerts = [];
         try {
           var res = await fetch(API_BASE + '/api/fpo/alerts', { credentials: 'include' });
           if (!res.ok) { box.innerHTML = ''; return; }
           alerts = await res.json();
         } catch (e) { box.innerHTML = ''; return; }
+        try {
+          var resEnt = await fetch(API_BASE + '/api/sepe/entity-alerts', { credentials: 'include' });
+          if (resEnt.ok) entAlerts = await resEnt.json();
+        } catch (e) { /* les alertes d'entitats són un afegit: si fallen, la resta es mostra igual */ }
 
-        var items = alerts.map(function (a) {
-          return '<li class="fpo-alert' + (a.active ? '' : ' fpo-alert--paused') + '">' +
-            '<span class="fpo-alert-label">' + esc(fpoAlertLabel(a)) +
-            (a.active ? '' : ' <span class="badge-old">' + t('fpo.alert.paused') + '</span>') + '</span>' +
-            '<span class="fpo-alert-actions">' +
-            '<button type="button" class="fpo-alert-btn" data-id="' + a.id + '" data-active="' + (a.active ? '0' : '1') + '">' +
-            t(a.active ? 'fpo.alert.pause' : 'fpo.alert.resume') + '</button>' +
-            '<button type="button" class="fpo-alert-btn fpo-alert-btn--delete" data-id="' + a.id + '" ' +
-            'aria-label="' + esc(t('fpo.alert.delete_aria', { name: fpoAlertLabel(a) })) + '">' + t('fpo.alert.delete') + '</button>' +
-            '</span></li>';
-        }).join('');
+        var items = alertItems(alerts, fpoAlertLabel, 'fpo');
 
         box.innerHTML = '<h2 class="fpo-alerts-title">' + t('fpo.alert.title') + '</h2>' +
           (alerts.length
             ? '<p class="fpo-alerts-note">' + t('fpo.alert.note') + '</p><ul class="fpo-alerts-list">' + items + '</ul>'
             : '<p class="fpo-alerts-note">' + t('fpo.alert.empty') +
-              ' <a href="index.html?mode=fpo&vista=agenda">' + t('fpo.alert.go_agenda') + '</a></p>');
+              ' <a href="index.html?mode=fpo&vista=agenda">' + t('fpo.alert.go_agenda') + '</a></p>') +
+          (entAlerts.length
+            ? '<h2 class="fpo-alerts-title">' + t('perfil.sepeEnt.title') + '</h2>' +
+              '<p class="fpo-alerts-note">' + t('perfil.sepeEnt.note') + '</p>' +
+              '<ul class="fpo-alerts-list">' + alertItems(entAlerts, sepeEntAlertLabel, 'ent') + '</ul>'
+            : '');
 
         box.querySelectorAll('.fpo-alert-btn').forEach(function (btn) {
           btn.addEventListener('click', async function () {
             btn.disabled = true;
             var remove = btn.classList.contains('fpo-alert-btn--delete');
+            var base = btn.dataset.kind === 'ent' ? '/api/sepe/entity-alerts/' : '/api/fpo/alerts/';
             try {
-              var r = await fetch(API_BASE + '/api/fpo/alerts/' + btn.dataset.id, remove
+              var r = await fetch(API_BASE + base + btn.dataset.id, remove
                 ? { method: 'DELETE', credentials: 'include' }
                 : { method: 'PATCH', credentials: 'include', headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ active: btn.dataset.active === '1' }) });

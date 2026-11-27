@@ -74,6 +74,7 @@ import centres_inherit
 import oferta_ref
 import refresh_state
 import scheduler_service
+import sepe_entity_alerts_service
 import titols
 import uc_corr
 from scrapers import buscador_scraper, pipeline, sepe_scraper
@@ -297,6 +298,7 @@ def _needs_auth_cors(path):
             or path.startswith("/api/admin/empty-searches")
             or path.startswith("/api/held") or path.startswith("/api/lists")
             or path.startswith("/api/sepe/entitats")    # Pla 099: l'admin hi envia la sessió
+            or path.startswith("/api/sepe/entity-alerts")   # Pla 102
             or path.startswith("/api/admin/sepe-programes"))
 
 
@@ -2197,6 +2199,10 @@ def api_sepe_programa(codi):
     return _sepe_pdf_response(content, codi)
 
 
+def _sepe_entitats_path(codi: str) -> str:
+    return os.path.join(SEPE_ENTITATS_DIR, re.sub(r'[^A-Za-z0-9_-]', '_', codi) + '.json')
+
+
 def _read_sepe_entitats(path: str):
     try:
         with open(path, encoding='utf-8') as f:
@@ -2215,7 +2221,7 @@ def api_sepe_entitats(codi):
     if not sepe or not sepe.get('idSepe'):
         return jsonify({'error': 'no_trobat'}), 404
     codi = sepe['codi']
-    path = os.path.join(SEPE_ENTITATS_DIR, re.sub(r'[^A-Za-z0-9_-]', '_', codi) + '.json')
+    path = _sepe_entitats_path(codi)
     data = _read_sepe_entitats(path) if _fresh(path, _SEPE_ENTITATS_TTL) else None
     if data is None:
         if not _auth_rate_ok('sepe_entitats', _client_ip(request),
@@ -4053,6 +4059,168 @@ def fpo_alerts_unsubscribe(alert_id):
         if not row:
             return redirect("/?unsubscribe_error=1")
         conn.execute("UPDATE fpo_alerts SET active = 0 WHERE id = ?", (alert_id,))
+        conn.execute("DELETE FROM tokens WHERE id = ?", (row["id"],))
+        conn.commit()
+    finally:
+        conn.close()
+    return redirect("/?unsubscribed=1")
+
+
+# ---------------------------------------------------------------------------
+# Alertes d'entitats SEPE autoritzades noves — /api/sepe/entity-alerts  (Pla 102)
+# ---------------------------------------------------------------------------
+
+_SEPE_ENT_ALERT_CODI_MAX = 40
+_SEPE_ENT_ALERT_PROVINCIA_MAX = 60
+
+
+def _sepe_ent_alert_fields(data):
+    """Valida el cos d'una alerta d'entitats. Torna (codi_net, provincia, nomes_teleformacio) o None."""
+    if not isinstance(data, dict):
+        return None
+    codi = data.get("codi")
+    if not isinstance(codi, str) or not codi.strip() or len(codi.strip()) > _SEPE_ENT_ALERT_CODI_MAX:
+        return None
+    sepe = _sepe_lookup(codi)   # només codis del catàleg; es desa sempre el codi net
+    if not sepe:
+        return None
+    provincia = data.get("provincia")
+    if provincia is not None:
+        if not isinstance(provincia, str) or len(provincia.strip()) > _SEPE_ENT_ALERT_PROVINCIA_MAX:
+            return None
+        provincia = provincia.strip() or None
+    tele = data.get("nomes_teleformacio", False)
+    if not isinstance(tele, bool):
+        return None
+    return sepe["codi"], provincia, tele
+
+
+@app.route("/api/sepe/entity-alerts", methods=["GET"])
+def sepe_entity_alerts_get():
+    """Les alertes d'entitats SEPE de l'usuari, amb el títol de l'especialitat."""
+    import db as _db
+    user_id = _get_session_user(request)
+    if not user_id:
+        return jsonify({"error": "No autenticat"}), 401
+    conn = _db.get_db()
+    try:
+        rows = _db.query_all(
+            conn,
+            "SELECT id, codi, provincia, nomes_teleformacio, active, created_at, last_sent_at "
+            "FROM sepe_entity_alerts WHERE user_id = ? ORDER BY id DESC", (user_id,))
+    finally:
+        conn.close()
+    return jsonify([{
+        "id": r["id"], "codi": r["codi"], "titol": _sepe_espec_as_fpo(r["codi"]).get("titol"),
+        "provincia": r["provincia"], "nomes_teleformacio": bool(r["nomes_teleformacio"]),
+        "active": bool(r["active"]), "created_at": r["created_at"], "last_sent_at": r["last_sent_at"],
+    } for r in rows]), 200
+
+
+@app.route("/api/sepe/entity-alerts", methods=["POST"])
+def sepe_entity_alerts_create():
+    """Crea una alerta. Cos: {codi, provincia?, nomes_teleformacio?}."""
+    import db as _db
+    user_id = _get_session_user(request)
+    if not user_id:
+        return jsonify({"error": "No autenticat"}), 401
+    fields = _sepe_ent_alert_fields(request.get_json(silent=True))
+    if fields is None:
+        return jsonify({"error": "cal un codi del catàleg SEPE i filtres vàlids"}), 400
+    codi, provincia, tele = fields
+    conn = _db.get_db()
+    try:
+        rows = _db.query_all(
+            conn, "SELECT id, codi, provincia, nomes_teleformacio FROM sepe_entity_alerts WHERE user_id = ?",
+            (user_id,))
+        for r in rows:
+            if (r["codi"], (r["provincia"] or "").casefold(), bool(r["nomes_teleformacio"])) \
+                    == (codi, (provincia or "").casefold(), tele):
+                conn.execute("UPDATE sepe_entity_alerts SET active = 1 WHERE id = ?", (r["id"],))
+                conn.commit()
+                return jsonify({"status": "already_exists", "id": r["id"]}), 200
+        # Compten totes les files, també les pausades.
+        if len(rows) >= sepe_entity_alerts_service.ALERTS_MAX_PER_USER:
+            return jsonify({"error": f"Límit de {sepe_entity_alerts_service.ALERTS_MAX_PER_USER} alertes"}), 429
+        cur = conn.execute(
+            "INSERT INTO sepe_entity_alerts (user_id, codi, provincia, nomes_teleformacio) VALUES (?, ?, ?, ?)",
+            (user_id, codi, provincia, int(tele)))
+        conn.commit()
+        # Les entitats que l'usuari ja ha vist al panell són la instantània de partida: així no es perd
+        # res entre la subscripció i el proper refresc. Sense fitxer de cache, el refresc la crearà.
+        if sepe_entity_alerts_service.load_snapshot(conn, codi) is None:
+            cached = _read_sepe_entitats(_sepe_entitats_path(codi))
+            if cached:
+                sepe_entity_alerts_service.save_snapshot(
+                    conn, codi, {sepe_entity_alerts_service.entity_key(e)
+                                 for e in cached["entitats"] if isinstance(e, dict)})
+        return jsonify({"status": "created", "id": cur.lastrowid}), 201
+    finally:
+        conn.close()
+
+
+def _sepe_ent_alert_owned(conn, user_id, alert_id):
+    import db as _db
+    return _db.query_one(conn, "SELECT id FROM sepe_entity_alerts WHERE id = ? AND user_id = ?",
+                         (alert_id, user_id))
+
+
+@app.route("/api/sepe/entity-alerts/<int:alert_id>", methods=["PATCH"])
+def sepe_entity_alerts_update(alert_id):
+    """Activa o pausa una alerta. Cos: {active: bool}."""
+    import db as _db
+    user_id = _get_session_user(request)
+    if not user_id:
+        return jsonify({"error": "No autenticat"}), 401
+    data = request.get_json(silent=True)
+    if not isinstance(data, dict) or not isinstance(data.get("active"), bool):
+        return jsonify({"error": "active ha de ser true o false"}), 400
+    conn = _db.get_db()
+    try:
+        if not _sepe_ent_alert_owned(conn, user_id, alert_id):
+            return jsonify({"error": "Alerta no trobada"}), 404
+        conn.execute("UPDATE sepe_entity_alerts SET active = ? WHERE id = ?", (int(data["active"]), alert_id))
+        conn.commit()
+        return jsonify({"status": "updated", "active": data["active"]}), 200
+    finally:
+        conn.close()
+
+
+@app.route("/api/sepe/entity-alerts/<int:alert_id>", methods=["DELETE"])
+def sepe_entity_alerts_delete(alert_id):
+    import db as _db
+    user_id = _get_session_user(request)
+    if not user_id:
+        return jsonify({"error": "No autenticat"}), 401
+    conn = _db.get_db()
+    try:
+        if not _sepe_ent_alert_owned(conn, user_id, alert_id):
+            return jsonify({"error": "Alerta no trobada"}), 404
+        conn.execute("DELETE FROM sepe_entity_alerts WHERE id = ?", (alert_id,))
+        prefix = f"{sepe_entity_alerts_service.TOKEN_KIND}_{alert_id}_"
+        conn.execute("DELETE FROM tokens WHERE type = ? AND substr(token, 1, ?) = ?",
+                     (sepe_entity_alerts_service.TOKEN_TYPE, len(prefix), prefix))
+        conn.commit()
+        return "", 204
+    finally:
+        conn.close()
+
+
+@app.route("/api/sepe/entity-alerts/<int:alert_id>/unsubscribe", methods=["GET"])
+def sepe_entity_alerts_unsubscribe(alert_id):
+    """Baixa sense sessió des de l'enllaç del correu: pausa l'alerta. Sempre redirigeix a
+    la portada, amb l'avís de baixa feta o, si el token no val, amb l'avís d'error."""
+    import db as _db
+    from flask import redirect
+    stored_token = f"{sepe_entity_alerts_service.TOKEN_KIND}_{alert_id}_{request.args.get('token', '')}"
+    conn = _db.get_db()
+    try:
+        row = _db.query_one(
+            conn, "SELECT id FROM tokens WHERE token = ? AND type = ? AND expires_at > datetime('now')",
+            (stored_token, sepe_entity_alerts_service.TOKEN_TYPE))
+        if not row:
+            return redirect("/?unsubscribe_error=1")
+        conn.execute("UPDATE sepe_entity_alerts SET active = 0 WHERE id = ?", (alert_id,))
         conn.execute("DELETE FROM tokens WHERE id = ?", (row["id"],))
         conn.commit()
     finally:

@@ -650,6 +650,7 @@
     #sepe-h:focus { outline: none; }
     /* Pla 099 — entitats autoritzades */
     .sepe-ent { border-top: 1px solid var(--border); padding-top: 10px; display: flex; flex-direction: column; gap: 8px; }
+    .sepe-ent-alert { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; border-top: 1px solid var(--border); padding-top: 10px; }
     .sepe-ent-filters { display: flex; flex-wrap: wrap; gap: 12px; font-size: var(--fs-small); }
     .sepe-ent-filters label { display: flex; align-items: center; gap: 6px; }
     .sepe-ent-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; max-height: 420px; overflow-y: auto; }
@@ -3449,7 +3450,7 @@
         async toggleSepeEnt(codi) {
           const cur = this.sepeEnt[codi];
           if (cur && cur.state !== 'error' && cur.state !== 'rate') { cur.open = !cur.open; return; }
-          this.sepeEnt[codi] = { open: true, state: 'loading', entitats: [], prov: '', tipus: '', nom: '', av: false };
+          this.sepeEnt[codi] = { open: true, state: 'loading', entitats: [], prov: '', tipus: '', nom: '', av: false, alertMsg: '' };
           const ent = this.sepeEnt[codi];
           try {
             // Només l'admin necessita la sessió (per rebre el correu); la resta, petició sense galetes.
@@ -3513,6 +3514,31 @@
         // Els dos tipus coneguts es tradueixen; un altre literal del SEPE es mostra tal qual.
         sepeEntTipusLabel(tipus) {
           return tipus === 'presencial' || tipus === 'teleformacio' ? t('sepe.ent.tipus.' + tipus) : (tipus || '');
+        },
+
+        // Pla 102: els filtres del panell són els de l'alerta. «Presencial» vol dir qualsevol modalitat:
+        // només «teleformació» es desa com a filtre.
+        sepeEntAlertFiltres(codi) {
+          const ent = this.sepeEnt[codi] || {};
+          return t('sepe.entAlert.filtres', {
+            prov: ent.prov || t('sepe.entAlert.provTotes'),
+            tipus: ent.tipus === 'teleformacio' ? t('sepe.entAlert.nomesTele') : t('sepe.entAlert.qualsevolTipus'),
+          });
+        },
+
+        async createSepeEntAlert(codi) {
+          if (!this.loggedIn) { this.showCentresModal(); return; }
+          const ent = this.sepeEnt[codi];
+          if (!ent) return;
+          ent.alertMsg = 'saving';
+          try {
+            const r = await fetch(API_BASE + '/api/sepe/entity-alerts', {
+              method: 'POST', credentials: 'include',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ codi, provincia: ent.prov || null, nomes_teleformacio: ent.tipus === 'teleformacio' })
+            });
+            ent.alertMsg = r.status === 201 ? 'saved' : r.status === 200 ? 'exists' : r.status === 429 ? 'max' : 'error';
+          } catch (e) { ent.alertMsg = 'error'; }
         },
 
         sepeEntFiltered(codi) {
@@ -5847,6 +5873,19 @@
                               </li>
                             </template>
                           </ul>
+                          <!-- Pla 102: alerta aproximada d'entitats noves (dins la mateixa arrel de l'x-if) -->
+                          <div class="sepe-ent-alert" x-show="sepeEnt[e.c].state === 'ready'">
+                            <p class="fpo-avis" x-text="t('sepe.entAlert.note')"></p>
+                            <p class="fpo-avis" x-text="sepeEntAlertFiltres(e.c)"></p>
+                            <button type="button" class="btn-doc" @click.stop="createSepeEntAlert(e.c)"
+                              :disabled="sepeEnt[e.c].alertMsg === 'saving'" x-text="t('sepe.entAlert.btn')"></button>
+                            <p class="agenda-alert-msg" role="status" :class="{ ok: ['saved', 'exists'].includes(sepeEnt[e.c].alertMsg) }"
+                              x-show="sepeEnt[e.c].alertMsg && sepeEnt[e.c].alertMsg !== 'saving'">
+                              <span x-text="sepeEnt[e.c].alertMsg && sepeEnt[e.c].alertMsg !== 'saving' ? t('sepe.entAlert.msg.' + sepeEnt[e.c].alertMsg) : ''"></span>
+                              <a href="perfil.html#fpo" x-show="['saved', 'exists', 'max'].includes(sepeEnt[e.c].alertMsg)"
+                                x-text="t('fpo.alert.manage')"></a>
+                            </p>
+                          </div>
                         </div>
                       </template>
                     </div>

@@ -298,6 +298,20 @@ def notify_fpo_new_courses(data_dir: str, before: list) -> int:
         return 0
 
 
+def notify_sepe_entity_alerts(data_dir: str) -> int:
+    """Avisa les alertes d'entitats SEPE autoritzades noves (Pla 102). No fatal."""
+    try:
+        import sepe_entity_alerts_service
+        site_url = os.environ.get('SITE_URL', 'https://grausfp.es').rstrip('/')
+        sent = sepe_entity_alerts_service.check_new_entities(
+            data_dir, base_url=os.environ.get('BASE_URL') or site_url, site_url=site_url)
+        logger.info("pipeline: %d correus d'alerta d'entitats SEPE enviats", sent)
+        return sent
+    except Exception as exc:
+        logger.warning("pipeline: les alertes d'entitats SEPE han fallat (no fatal): %s", exc)
+        return 0
+
+
 def refresh_sepe_especs(data_dir: str, *, max_age_days: int = 7) -> int | None:
     """Catàleg d'especialitats del SEPE -> sepe_especs.json (Pla 081).
 
@@ -568,6 +582,10 @@ def run(on_progress=None) -> dict:
     # --- Pla 081: catàleg d'especialitats del SEPE (setmanal, no fatal) ---
     _report("Catàleg d'especialitats (SEPE)")
     refresh_sepe_especs(os.path.dirname(DATA_PATH))
+
+    # --- Pla 102: entitats SEPE noves per a les alertes (setmanal, no fatal) ---
+    _report("Alertes d'entitats (SEPE)")
+    notify_sepe_entity_alerts(os.path.dirname(DATA_PATH))
 
     # --- Pla 062: cursos FPO de PIMEC i Foment (no fatal; cada font és independent) ---
     _report('Cursos FPO (PIMEC i Foment)')
