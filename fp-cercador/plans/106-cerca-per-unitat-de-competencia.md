@@ -57,8 +57,11 @@ Executable per un agent sense context.
   535 no s'han llegit enlloc com a UC (276: l'annex escriu la UC en altres mòduls però no en aquest;
   177: l'annex no porta cap frase d'UC; 82: annex escanejat o no llegit). En 28 mòduls la UC escrita
   té un altre número que el MF.
-- Conseqüència: 77 certificats del pla antic no tenen cap UC llegida i no sortiran en cercar una UC,
-  tret que es llegeixi la seva fitxa de todofp (que escriu `ECP…`). Pendent de decisió del propietari.
+- Conseqüència amb el lector actual: 77 certificats del pla antic no tenen cap UC llegida i no surten
+  en cercar una UC. El recompte del 2026-11-28 mostra que és sobretot una limitació del lector: 442
+  annexos porten l'apartat «Relación de unidades de competencia que configuran el certificado de
+  profesionalidad», que avui no es llegeix. El pla 107 l'afegeix; per això convé executar el 107
+  abans que aquest.
 - **Decisió del propietari (2026-11-28): una errada d'impremta evident de la font es mostra corregida,
   amb una anotació que ho digui.** S'aplica a un zero que falta o un espai de més (`UC736_2` →
   `UC0736_2`), no a un número diferent. Com es fa:
@@ -70,8 +73,13 @@ Executable per un agent sense context.
     fitxer coincideixen, com `tests/test_c_horas_overrides.py`.
   - A la nota de la fila, quan el codi mostrat és un de corregit, s'hi afegeix «(la font hi escriu
     UC736_2)».
-  - Casos coneguts als cicles D: `UC736_2`, `UC738_2`, `UC783_3` i `UC 1441_3`. Els dels annexos dels
-    certificats s'estan comptant (2026-11-28) i s'hi han d'afegir.
+  - Casos coneguts als cicles D: `UC736_2`, `UC738_2`, `UC783_3` i `UC 1441_3`.
+  - Casos coneguts als annexos dels certificats (`plans/outputs/recompte_uc_annexos.md`): ELEE0109
+    `UC820_2`, QUIO0110 i QUIO0112 `UC044_2`, i SANP0108 `uc1605_3` (minúscules).
+  - **No són errades evidents i no es corregeixen:** HOTU0109 `UC142_2` (mòdul `MF1042_2`) i ARTG0512
+    `UC217_3` (mòdul `MF2127_3`). Avui `c_loe_estructura.json` els desa com a `UC0142_2` i `UC0217_3`,
+    que no són a l'annex: el pla 107 ho arregla. Mentre no estigui arreglat, aquest pla els ha
+    d'excloure de l'índex.
 - Fora d'aquest pla: la web en producció ja mostra codis UC de `bc_loe.json` a l'itinerari, a «Què em
   falta?», a `/grau/<ref>` i al CSV (plans 090–093). Cal un pla a part per revisar-ho.
 

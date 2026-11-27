@@ -95,6 +95,27 @@ verificada a mà als decrets al pla 080) i els `ECP` de les fitxes dels B.
   còpia (`*.bak-pre107`).
 - Cap dependència nova. No desplegar sense l'aprovació del propietari.
 
+## Recompte dels annexos (2026-11-28, després d'escriure el pla)
+
+Informe: `plans/outputs/recompte_uc_annexos.md`. Canvia el quadre del Context:
+
+- **Els 535 parells «no llegits» són sobretot una limitació del lector, no de la font.** Dels 2.285
+  parells de `bc_loe.json` dels 566 certificats llegibles, 2.282 surten escrits com a `UC####_N` en
+  algun lloc del text del seu certificat. El lector actual només captura el codi quan va enganxat a
+  «Asociado a la Unidad de Competencia:»; als annexos a dues columnes el codi queda en una altra
+  posició (376 vegades).
+- **442 annexos tenen l'apartat «Relación de unidades de competencia que configuran el certificado de
+  profesionalidad»**, amb la llista de codis. És la lectura que falta. **No s'ha analitzat per
+  separat**: «escrit en algun lloc del text» no demostra que sigui una unitat del certificat (pot ser
+  un requisit d'accés o una referència).
+- Els 3 parells que no surten escrits enlloc: QUIE0108 `UC0048_3` (l'annex escriu `UC0048_2`),
+  TMVI0112 `UC1467_3` (escriu `UC1467_2` i `UC1462_2`) i FMEM0311 `UC2156_3` (escriu `UC2152_3`).
+- 14 certificats no es poden llegir (5 sense PDF, 9 escanejats): 43 parells sense cap comprovació.
+- **Codis desats diferent de l'imprès: 6 de 1.847.** Quatre són errades evidents (ELEE0109 `UC820_2`,
+  QUIO0110 i QUIO0112 `UC044_2`, SANP0108 `uc1605_3` en minúscules). **Dos no ho són i avui es desen
+  malament:** HOTU0109 `UC142_2` es desa com a `UC0142_2` (mòdul `MF1042_2`) i ARTG0512 `UC217_3` com a
+  `UC0217_3` (mòdul `MF2127_3`). Afegir-hi un zero al davant fabrica un codi que no és a l'annex.
+
 ## Què s'ha de fer
 
 0. **Auditoria prèvia, sense tocar producció.** Script `scripts/audit_uc_literal.py` que escriu
@@ -105,8 +126,16 @@ verificada a mà als decrets al pla 080) i els `ECP` de les fitxes dels B.
      amb només UC llegides, amb la llista de les que canvien (certificat, cicle, mòduls abans i
      després).
    Aturar-se aquí i presentar l'informe al propietari: és la base de les decisions obertes 1–4.
-1. **Guardar la forma impresa.** A `scripts/generate_c_loe_estructura.py`, quan el `zfill` canvia el
-   codi llegit, desar també `uc_font` amb la forma tal com surt a l'annex. Regenerar
+1. **Llegir l'apartat «Relación de unidades de competencia que configuran el certificado de
+   profesionalidad»** de cada annex i desar-ne la llista de codis per certificat (camp nou a
+   `c_loe_estructura.json` o fitxer propi). Primer mesurar-ho: en quants dels 442 annexos es pot
+   delimitar l'apartat, quants codis dona i quants dels 2.328 parells de `bc_loe.json` confirma. Aquest
+   apartat és la font de «quines UC té el certificat»; la frase de cada mòdul és la font de «quina UC
+   va amb quin mòdul».
+   **Guardar la forma impresa.** A `scripts/generate_c_loe_estructura.py`, no completar amb un zero un
+   codi de 3 xifres quan el resultat no és el número del mòdul (HOTU0109, ARTG0512): desar-lo tal com
+   surt i marcar-lo com a discrepància. Quan el `zfill` sí que és una errada evident,
+   desar també `uc_font` amb la forma tal com surt a l'annex. Regenerar
    `c_loe_estructura.json` (necessita `pdftotext` i xarxa; 580 annexos) i comprovar que, fora
    d'aquest camp nou, el fitxer no canvia.
 2. **Registre d'errades evidents.** `backend/uc_errades_font.json` (versionat): codi mostrat, codi tal
@@ -166,7 +195,10 @@ verificada a mà als decrets al pla 080) i els `ECP` de les fitxes dels B.
 
 ## Decisions obertes per al propietari
 
-1. **Els 535 parells sense UC llegida (77 certificats sense cap).** Amb la regla estricta deixen de
+1. **Els parells que quedin sense UC llegida.** Eren 535 (77 certificats sense cap) amb el lector
+   actual; el recompte del 2026-11-28 indica que, llegint l'apartat «Relación de unidades de
+   competencia…», en poden quedar molt pocs (3 parells que no surten enlloc i 43 de 14 certificats
+   il·legibles). Decidir-ho amb la xifra real del pas 1. Amb la regla estricta, els que quedin deixen de
    donar convalidacions. Alternatives: (a) estricte: no s'afirma res (recomanat mentre no hi hagi
    una altra lectura); (b) llegir la fitxa de todofp del certificat, que escriu `ECP…`; però les
    taules dels decrets escriuen `UC…`, i casar-los és creuar prefixos, que el pla 106 només admet
