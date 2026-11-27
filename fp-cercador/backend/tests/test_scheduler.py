@@ -18,6 +18,8 @@ RESULT = {
 @pytest.fixture(autouse=True)
 def isolate(tmp_path, monkeypatch):
     monkeypatch.setattr(history, "HISTORY_PATH", str(tmp_path / "h.json"))
+    # Without this the scheduled refresh overwrites the real data/last_snapshot.json.
+    monkeypatch.setattr(history, "SNAPSHOT_PATH", str(tmp_path / "snap.json"))
     if refresh_state._lock.locked():
         refresh_state._lock.release()
     yield
