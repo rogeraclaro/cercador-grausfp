@@ -333,7 +333,8 @@ La primera vegada, `--discover` triga ~20 min; després va de la memòria cau.
   097 filtres i presentació · 098 correccions des del panell · 099 entitats per especialitat · 100 descàrrega de programes i ocupacions ·
   101 pàgina pública per especialitat · 102 favorits/alertes/CSV · 103 cerca per ocupació · 104 investigació de cursos fora de Catalunya.
   Ordre recomanat: 095, 096, 097, 098, 099, 100, 101, 102, 103, 104. Idea descartada: l'avís «Requisits E» (es va resoldre sol).
-- **106 escrit el 2026-11-27 (TODO)**: cerca per codi d'unitat de competència (UC0493_3) al cercador principal, i fer-ho constar a la web. Comença per un pas 0 d'investigació (codis d'UC dels B/C del pla nou) i s'atura amb l'informe.
+- **106 escrit el 2026-11-27 (TODO, llest per executar)**: cerca per codi d'unitat de competència (UC0493_3) al cercador principal, i fer-ho constar a la web. Pas 0 fet (`plans/outputs/investigacio_uc_pla_nou.md`): els codis del pla nou ja són a `b_contingut.json` amb el prefix `ECP` (mateix número que `UC`). Decisions del propietari: es mostren tots dos prefixos, els Graus A no surten, i els C del pla nou es llegeixen de la fitxa de todofp.
+- **104 fet el 2026-11-27 (investigació)**: `plans/outputs/spike-cursos-fora-catalunya.md`. Recomanació: només el cercador estatal de Fundae (`agora.fundae.es`; 1.089 cursos, 750 de teleformació, 927 de 933 codis al nostre catàleg; una petició). «Fundae no respon» era el certificat de la FNMT sense intermedi, no un bloqueig. Pendent del propietari: confirmar si la teleformació admet alumnes de qualsevol província i donar el vistiplau per escriure el pla d'implementació.
 - Refresc manual del 2026-11-26: OK (12.989 registres, 7.557 especialitats SEPE, 94 min). Kuma torna a estar en «correcte».
 - Clau: el catàleg és formació en el treball (RD 438/2024 art. 24), no Grados A–E; els CP ja no hi són.
 
