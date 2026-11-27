@@ -59,8 +59,19 @@ Executable per un agent sense context.
   té un altre número que el MF.
 - Conseqüència: 77 certificats del pla antic no tenen cap UC llegida i no sortiran en cercar una UC,
   tret que es llegeixi la seva fitxa de todofp (que escriu `ECP…`). Pendent de decisió del propietari.
-- **Pendent de decisió del propietari:** si una errada d'impremta corregida (un zero que falta, un
-  espai) es pot mostrar corregida o s'ha de mostrar tal com surt a la font.
+- **Decisió del propietari (2026-11-28): una errada d'impremta evident de la font es mostra corregida,
+  amb una anotació que ho digui.** S'aplica a un zero que falta o un espai de més (`UC736_2` →
+  `UC0736_2`), no a un número diferent. Com es fa:
+  - La correcció es desa amb la forma impresa al costat (codi mostrat + codi tal com surt a la font +
+    document), en un fitxer versionat petit (p. ex. `backend/uc_errades_font.json`), no dins dels
+    lectors.
+  - `fonts.html#errors` (on ja hi ha les errades del buscador i dels annexos, pla 094) en porta la
+    llista: què diu la font, què mostrem i a quin decret o annex. Un test comprova que la pàgina i el
+    fitxer coincideixen, com `tests/test_c_horas_overrides.py`.
+  - A la nota de la fila, quan el codi mostrat és un de corregit, s'hi afegeix «(la font hi escriu
+    UC736_2)».
+  - Casos coneguts als cicles D: `UC736_2`, `UC738_2`, `UC783_3` i `UC 1441_3`. Els dels annexos dels
+    certificats s'estan comptant (2026-11-28) i s'hi han d'afegir.
 - Fora d'aquest pla: la web en producció ja mostra codis UC de `bc_loe.json` a l'itinerari, a «Què em
   falta?», a `/grau/<ref>` i al CSV (plans 090–093). Cal un pla a part per revisar-ho.
 
