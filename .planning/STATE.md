@@ -5,10 +5,10 @@ current_phase: 2
 current_phase_name: PDF Scrapers (Grados A, B, C)
 status: verifying
 stopped_at: Phase 7 complete, ready to verify Phase 2
-last_updated: "2026-11-08T19:44:38.648Z"
-last_activity: 2026-11-05
+last_updated: "2026-11-27T16:15:40.715Z"
+last_activity: 2026-11-08
 last_activity_desc: Phase 7 complete, transitioned to Phase 2
-state_head: 7d46fee0c023167b4ff18e512fb7be3deccc4652
+state_head: 92b8fec526226af60e609324f32a5390d5c8b444
 progress:
   total_phases: 7
   completed_phases: 5
@@ -32,7 +32,7 @@ See: .planning/PROJECT.md (updated 2026-04-16)
 Phase: 2 — PDF Scrapers (Grados A, B, C)
 Plan: 3
 Status: Phase complete — ready for verification
-Last activity: 2026-11-08 - Completed quick task 261108-say: Pla 081: scraper catàleg SEPE + enriquiment FPO
+Last activity: 2026-11-27 - Completed quick task 261127-nao: Plan 102: SEPE favourites, course and entity alerts, CSV export
 
 Progress: [███████░░░] 71% (Fases 01, 02, 03, 04, 05 completades; 06 pendent)
 
@@ -129,6 +129,7 @@ None yet.
 | 261117-ew2 | Pla 090: bc_loe.json sense UC d'altres annexos (140 certificats corregits) | 2026-11-17 | 75f556d | — | [261117-ew2-plan-090-fix-bc-loe-json-contamination](./quick/261117-ew2-plan-090-fix-bc-loe-json-contamination/) |
 | 261117-u6p | Pla 091: correspondència UC ↔ mòdul des del BOE (d_uc_corr.json, 182 de 195 cicles) i /api/correspondencia | 2026-11-17 | fefa45e | — | [261117-u6p-plan-091-uc-module-correspondence-boe](./quick/261117-u6p-plan-091-uc-module-correspondence-boe/) |
 | 261117-w2c | Pla 092: correspondència certificat ↔ mòduls de cicle a la web (itinerari, pàgina del cicle, «Què em falta?»), amb les taules derogades marcades | 2026-11-17 | — | — | [261117-w2c-plan-092-correspondence-on-the-web](./quick/261117-w2c-plan-092-correspondence-on-the-web/) |
+| 261127-nao | Plan 102: SEPE favourites, course and entity alerts, CSV export | 2026-11-27 | 92b8fec | — | [261127-nao-plan-102-sepe-favourites-alerts-csv](./quick/261127-nao-plan-102-sepe-favourites-alerts-csv/) |
 
 ### Blockers/Concerns
 
