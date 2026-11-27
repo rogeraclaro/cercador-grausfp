@@ -22,10 +22,14 @@ Executable per un agent sense context.
     `convalida_anterior` (taules derogades, pla 091). Hi ha 1.477 UC diferents.
   - `c_loe_estructura.json`: estructura MF/UF de cada certificat, amb el camp `uc`. És redundant amb
     `bc_loe.json` per a la cerca.
-- Els B i C del pla nou (LOMLOE: `ADG_B_3001`, `ADG_C_001_3B`) no tenen codis d'UC a les dades. Sense
-  ells, qui cerqui una UC només veurà el pla antic i els cicles D. Pot ser que no hi trobi l'opció que
-  més li convé. Per això el pas 0 investiga d'on treure'ls. `bc_lomloe.json` ja diu de quins B es
-  compon cada C (`{"ADG_C_001_3B": ["ADG_B_3001", …]}`): amb les UC dels B, les dels C surten per unió.
+- **Pas 0 fet el 2026-11-27** (informe: `plans/outputs/investigacio_uc_pla_nou.md`). Els B del pla nou
+  i del pla antic ja tenen els codis a `b_contingut.json` (camp `ecp`, pla 068), però amb el prefix
+  `ECP` (`ECP0493_3` = `UC0493_3`: mateix número, prefix nou del ministeri). Els C del pla nou els tenen
+  a la seva fitxa de todofp, que `bc_lomloe_scraper` ja baixa cada setmana. No s'han de calcular sumant
+  els dels seus B: només coincideix amb el decret en 257 de 400.
+- **Pendent de tres decisions del propietari** abans dels passos 1–4: quin prefix es mostra (`UC`,
+  `ECP` o tots dos), si els Graus A surten heretant la UC del seu B, i si els C del pla nou es llegeixen
+  de la fitxa (recomanat) o del decret. Els passos 1–4 d'aquest pla s'han d'ajustar amb la resposta.
 
 ## Convencions
 
