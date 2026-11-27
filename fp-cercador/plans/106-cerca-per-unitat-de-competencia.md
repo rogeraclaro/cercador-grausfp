@@ -1,6 +1,6 @@
 # Pla 106 — Cerca per unitat de competència (codis UC de l'INCUAL)
 
-Prioritat P2 · Mida S · Depèn de: 090, 091 (dades ja fetes) · Origen: pregunta del propietari del 2026-11-27.
+Prioritat P2 · Mida S–M (S sense el pla nou) · Depèn de: 090, 091 (dades ja fetes) · Origen: pregunta del propietari del 2026-11-27.
 Executable per un agent sense context.
 
 ## Context
@@ -22,8 +22,10 @@ Executable per un agent sense context.
     `convalida_anterior` (taules derogades, pla 091). Hi ha 1.477 UC diferents.
   - `c_loe_estructura.json`: estructura MF/UF de cada certificat, amb el camp `uc`. És redundant amb
     `bc_loe.json` per a la cerca.
-- Els C i B del pla nou (LOMLOE: `ADG_C_001_3B`, `ADG_B_3001`) no tenen codis d'UC a les dades. Queden
-  fora d'abast (veure al final).
+- Els B i C del pla nou (LOMLOE: `ADG_B_3001`, `ADG_C_001_3B`) no tenen codis d'UC a les dades. Sense
+  ells, qui cerqui una UC només veurà el pla antic i els cicles D. Pot ser que no hi trobi l'opció que
+  més li convé. Per això el pas 0 investiga d'on treure'ls. `bc_lomloe.json` ja diu de quins B es
+  compon cada C (`{"ADG_C_001_3B": ["ADG_B_3001", …]}`): amb les UC dels B, les dels C surten per unió.
 
 ## Convencions
 
@@ -38,6 +40,30 @@ Executable per un agent sense context.
 
 ## Què s'ha de fer
 
+0. **Investigació: codis d'UC dels Graus B i C del pla nou** (abans de la resta; sense codi de producció).
+   - Fonts candidates, en aquest ordre:
+     - La fitxa de todofp de cada Grau B o C (`ficha_id` a `ofertes.json`; mirar què porta el
+       buscador del ministeri per a un B).
+     - Els reials decrets dels certificats professionals del pla nou al BOE (annexos amb els estàndards de
+       competència). El pla 080 ja els localitza (`scripts/audit_c_modulos_boe.py --discover`, memòria
+       cau a `--cache`).
+     - El Catàleg Nacional d'Estàndards de Competències Professionals de l'INCUAL.
+     - `c_modulos.json`, que ja porta camps `uc` en els mòduls amb nota `uc_sense_b` (pla 080).
+   - Preguntes:
+     - Els codis del pla nou tenen el mateix format `UC####_n` o un de nou? Si és nou, hi ha una taula
+       d'equivalència amb els antics?
+     - Un Grau B correspon a una sola UC o a més d'una?
+     - Quina cobertura dona cada font? Cal provar-ho amb una mostra d'uns 20 B i 10 C de famílies
+       diferents, inclosos els tres casos de `UC0493_3`.
+     - Quant costa treure-ho tot (peticions, format, si cal pdfplumber) i com es mantindria al dia amb
+       el refresc setmanal?
+   - Resultat: un informe a `plans/outputs/investigacio_uc_pla_nou.md`. Amb l'informe, el propietari
+     decideix una de dues coses:
+     - **Viable:** s'afegeix la font a l'índex del pas 1 (B pel seu codi; C per unió dels seus B
+       via `bc_lomloe.json`), amb un generador fora del servidor, com `build_d_uc_corr.py`.
+     - **No viable o massa car:** es fa la resta del pla sense el pla nou, i els textos del pas 4 diuen
+       explícitament què cobreix la cerca per UC.
+   - Aturar-se aquí i presentar l'informe abans de continuar amb els passos 1–4.
 1. **Índex UC → graus (backend).** `GET /api/uc-index` retorna `{"UC0493_3": ["IFCD0210",
    "informatica-comunicaciones~admin-sist-informaticos-red", …], …}`, construït des de `bc_loe.json`
    (clau = `ref` del certificat) i `d_uc_corr.json` (UC de `convalida`, `acredita` i
@@ -61,6 +87,8 @@ Executable per un agent sense context.
    - `com-funciona.html`, secció `#cerca` (`com.demo.p1`, o un paràgraf nou): una frase que expliqui
      que es pot cercar per codi d'UC.
    - Textos en català i castellà. Les xifres que s'hi posin han de sortir de les dades reals del moment.
+   - Els textos han de dir què cobreix la cerca segons el resultat del pas 0. Per exemple, si el pla
+     nou no hi entra: «certificats del pla antic i cicles de Grau D».
 
 ## Tests
 
@@ -81,8 +109,5 @@ Executable per un agent sense context.
 
 ## Fora d'abast
 
-- **Graus B i C del pla nou (LOMLOE).** Cada Grau B del pla nou correspon a un estàndard de competència,
-  però el codi no és a les nostres dades. Caldria un spike per veure si les fitxes de todofp o els
-  decrets el donen.
 - Codis de qualificació professional i de mòdul formatiu.
 - Especialitats del SEPE.
