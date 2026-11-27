@@ -84,6 +84,25 @@ al pla nou.
 2. **Graus A:** no surten en cercar una UC.
 3. **C del pla nou:** es llegeixen de la fitxa de todofp.
 
+## Afegit el 2026-11-28: quins codis UC s'han llegit de debò
+
+Comprovat al codi dels generadors i tornant a executar el lector dels cicles en mode de prova.
+
+- **`bc_loe.json`: cap.** Els 2.328 parells certificat–«UC» són capçaleres «Código: MF####_N» amb el
+  prefix canviat (`scripts/generate_bc_loe.py`). La taula de cobertura de dalt («Graus C del pla
+  antic: 580 de 580») compta codis deduïts, no llegits.
+- **`c_loe_estructura.json`, camp `uc`: literal**, de la frase «Asociado a la Unidad de Competencia:
+  UC…» de l'annex. 1.822 mòduls de 503 certificats. Confirma 1.793 dels parells de `bc_loe.json`; 535
+  no s'han llegit enlloc. En 28 mòduls la UC escrita té un altre número que el MF (algunes són errades
+  de l'annex, com `UC7033_1` al mòdul `MF1333_1`).
+- **`d_uc_corr.json`: literal en 1.484 de 1.488 codis.** Els altres 4 són errades d'impremta del BOE
+  corregides pel lector (`UC736_2`, `UC738_2`, `UC783_3`, `UC 1441_3`). Cap nivell completat.
+- **`b_contingut.json`: literal** (`ECP…`, de la fitxa de cada B). En 201 parells de `bc_loe.json`, la
+  fitxa del mòdul escriu un `ECP` amb un altre número (`UC2051_1` deduït contra `ECP2578_1` escrit).
+- Les xifres «1.918 números amb tots dos prefixos» i «286 només UC» del punt 1 es van calcular comptant
+  `bc_loe.json` com a font d'UC. Amb només lectures literals s'han de tornar a calcular en executar el
+  pla.
+
 ## Materials
 
 Scripts i dades de la investigació, fora del repositori (carpeta temporal de la sessió): no es

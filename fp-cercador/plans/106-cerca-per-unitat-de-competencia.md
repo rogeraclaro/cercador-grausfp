@@ -21,7 +21,7 @@ Executable per un agent sense context.
 
   | Què | Fitxer | Forma |
   |---|---|---|
-  | C del pla antic | `bc_loe.json` | `{codi_certificat: ["UC0491_3", …]}`; la clau és el `ref` del registre |
+  | C del pla antic | `c_loe_estructura.json` (pla 093), camp `uc` de cada MF | llegit de la frase «Asociado a la Unidad de Competencia: UC…» de l'annex. **No `bc_loe.json`**: els seus «UC» són codis `MF…` amb el prefix canviat (veure «Codis llegits de debò») |
   | B del pla nou i del pla antic | `b_contingut.json` (pla 068) | `{codi_b: {ecp: [{codigo: "ECP0493_3", text}], ra: […]}}` |
   | Cicles D | `d_uc_corr.json` (pla 091) | per `ref`: files `convalida`, `acredita` i `convalida_anterior` (derogades) amb camp `uc` |
   | C del pla nou | **encara no es desa** | la fitxa de todofp del C porta la secció «Estándares de competencia»; `bc_lomloe_scraper` ja baixa aquesta fitxa cada setmana |
@@ -42,6 +42,27 @@ Executable per un agent sense context.
 2. **Els Graus A no surten** en cercar una UC. Des del B ja s'hi arriba.
 3. **Els C del pla nou es llegeixen de la fitxa de todofp**, no dels decrets del BOE ni sumant els dels
    seus B (la suma només coincideix amb el decret en 257 de 400).
+
+## Codis llegits de debò (comprovat el 2026-11-28)
+
+| Font | Què porta | Llegit literalment? |
+|---|---|---|
+| `bc_loe.json` | 2.328 parells certificat–«UC» | **No, cap.** Són capçaleres «Código: MF####_N» amb el prefix canviat (`scripts/generate_bc_loe.py`, `as_uc`). No es pot fer servir per mostrar ni per cercar UC |
+| `c_loe_estructura.json`, camp `uc` | 1.822 mòduls de 503 certificats | Sí, de la frase «Asociado a la Unidad de Competencia: UC…» de l'annex. Reserva: `UC820_2` es desa com a `UC0820_2` (no se sap quants casos) |
+| `d_uc_corr.json` | 1.488 codis de 185 cicles | Sí en 1.484. En 4 es corregeix una errada d'impremta del BOE: `UC736_2`, `UC738_2`, `UC783_3` i `UC 1441_3` |
+| `b_contingut.json`, camp `ecp` | 2.017 codis `ECP` | Sí, de la fitxa de todofp de cada B |
+| `c_ecp.json` (nou) | estàndards dels C del pla nou | Sí, de la fitxa de todofp de cada C |
+
+- Dels 2.328 parells de `bc_loe.json`, 1.793 coincideixen amb una lectura literal del mateix annex i
+  535 no s'han llegit enlloc com a UC (276: l'annex escriu la UC en altres mòduls però no en aquest;
+  177: l'annex no porta cap frase d'UC; 82: annex escanejat o no llegit). En 28 mòduls la UC escrita
+  té un altre número que el MF.
+- Conseqüència: 77 certificats del pla antic no tenen cap UC llegida i no sortiran en cercar una UC,
+  tret que es llegeixi la seva fitxa de todofp (que escriu `ECP…`). Pendent de decisió del propietari.
+- **Pendent de decisió del propietari:** si una errada d'impremta corregida (un zero que falta, un
+  espai) es pot mostrar corregida o s'ha de mostrar tal com surt a la font.
+- Fora d'aquest pla: la web en producció ja mostra codis UC de `bc_loe.json` a l'itinerari, a «Què em
+  falta?», a `/grau/<ref>` i al CSV (plans 090–093). Cal un pla a part per revisar-ho.
 
 ## Convencions
 
@@ -69,7 +90,8 @@ Executable per un agent sense context.
    `{"UC0493_3": {"refs": ["IFCD0210", "informatica-comunicaciones~des-aplicaciones-web", …], "derogats": [...]},
    "ECP0493_3": {"refs": ["MF0493_3", "IFC_B_0376", "IFC_B_0614", …], "derogats": []}}`.
    Cap codi es normalitza ni es reescriu en construir l'índex.
-   - Fonts: `bc_loe.json` (C antic), `b_contingut.json` camp `ecp` (B nou i antic), `c_ecp.json` (C nou)
+   - Fonts: `c_loe_estructura.json` camp `uc` (C antic; **mai** `bc_loe.json`), `b_contingut.json` camp
+     `ecp` (B nou i antic), `c_ecp.json` (C nou)
      i `d_uc_corr.json` (D: `convalida` i `acredita`; `convalida_anterior` va a `derogats` quan el `ref`
      no surt també per una taula vigent).
    - Només entren `ref` que existeixen a `ofertes.json`. Els Graus A no hi entren.
