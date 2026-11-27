@@ -3946,7 +3946,9 @@ def fpo_alerts_get():
         "id": r["id"], "comarca": r["comarca"],
         "familia_codi": r["familia_codi"], "familia_desc": families.get(r["familia_codi"]),
         "espec_codi": r["espec_codi"],
-        "espec_titol": (_fpo_espec_by_codi(r["espec_codi"]).get("titol") if r["espec_codi"] else None),
+        # Pla 102: una especialitat sense cursos al SOC pren el títol del catàleg SEPE.
+        "espec_titol": ((_fpo_espec_by_codi(r["espec_codi"]) or _sepe_espec_as_fpo(r["espec_codi"])).get("titol")
+                        if r["espec_codi"] else None),
         "inclou_en_linia": bool(r["inclou_en_linia"]), "active": bool(r["active"]),
         "created_at": r["created_at"], "last_sent_at": r["last_sent_at"],
     } for r in rows]), 200
@@ -4400,6 +4402,33 @@ def _fpo_espec_by_codi(codi):
     return {}
 
 
+def _sepe_espec_as_fpo(codi):
+    """Pla 102: fila del catàleg SEPE amb la forma d'una especialitat FPO (la que emet
+    /api/fpo/favorites), o {} si el codi no és al catàleg. Els títols porten les correccions del Pla 098."""
+    sepe = _sepe_lookup(codi)
+    if not sepe:
+        return {}
+    llista = _sepe_llista()
+    row = next((r for r in llista['especialitats'] if r['c'] == sepe['codi']), None)
+    if row is None:
+        return {}
+
+    def dict_of(kind, code):
+        return {'codi': code, 'desc': llista[kind][code]} if code in llista[kind] else {}
+
+    return {
+        'font': 'sepe',
+        'titol': {'ca': row['tca'] or row['tm'], 'es': row['tm']},
+        'familia': dict_of('families', row['f']),
+        'area': dict_of('arees', row['a']),
+        'nivell': row['n'] or 0,
+        'hores': row['h'] or 0.0,
+        'modalitat': row['m'],
+        'esCertProf': False,
+        'programaUrl': f"/api/sepe/programa/{sepe['codi']}" if sepe.get('idSepe') else '',
+    }
+
+
 def _fpo_curs_by_id(curs_id):
     """Curs FPO per idCurs (SOC o extern), o None si ja no hi és."""
     if fpo_ext.is_ext_codi(curs_id):
@@ -4458,7 +4487,8 @@ def fpo_favorites_get():
         result = []
         for fav in favs:
             codi = fav["especialitat_codi"]
-            espec = _fpo_espec_by_codi(codi)
+            # Pla 102: el catàleg SEPE només omple el que el SOC (o l'extern) no té.
+            espec = _fpo_espec_by_codi(codi) or _sepe_espec_as_fpo(codi)
             courses = _db.query_all(
                 conn,
                 "SELECT curs_id, centre_id, created_at FROM fpo_favorite_courses "
@@ -4476,6 +4506,7 @@ def fpo_favorites_get():
                 "hores": espec.get("hores", 0.0),
                 "esCertProf": bool(espec.get("esCertProf")),
                 "programaUrl": espec.get("programaUrl", ""),
+                "modalitat": espec.get("modalitat", ""),
                 "cursos": [_fpo_fav_course_public(c) for c in courses],
             })
         return jsonify(result), 200

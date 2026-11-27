@@ -2585,6 +2585,7 @@
         sepeRecords: [],
         sepeExpanded: {},
         sepePage: 1,
+        sepeCursAlertMsg: {},    // Pla 102 — { codi: saving|saved|exists|max|error } alerta de cursos a Catalunya
         sepeEnt: {},             // Pla 099 — { codi: {open, state, entitats, prov, tipus} } entitats del SEPE
         sepeDet: {},             // Pla 100 — { codi: {state, programa, ocupacions} } programa extret i ocupacions
         // Pla 097 — filtres i ordre propis de la pestanya «Especialitats SEPE»
@@ -4201,6 +4202,22 @@
           } catch (e) { this.fpoAlertMsg = 'error'; }
         },
 
+        // Pla 102: alerta de cursos a Catalunya d'una especialitat SEPE (també sense cursos encara).
+        async createSepeCursAlert(codi) {
+          if (!this.loggedIn) { this.showCentresModal(); return; }
+          this.sepeCursAlertMsg = { ...this.sepeCursAlertMsg, [codi]: 'saving' };
+          let msg;
+          try {
+            const r = await fetch(API_BASE + '/api/fpo/alerts', {
+              method: 'POST', credentials: 'include',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ espec_codi: codi, inclou_en_linia: true })
+            });
+            msg = r.status === 201 ? 'saved' : r.status === 200 ? 'exists' : r.status === 429 ? 'max' : 'error';
+          } catch (e) { msg = 'error'; }
+          this.sepeCursAlertMsg = { ...this.sepeCursAlertMsg, [codi]: msg };
+        },
+
         async fetchFpoEspecs() {
           try {
             const r = await fetch(API_BASE + '/api/fpo/especialitats');
@@ -5669,6 +5686,18 @@
                   @keydown.enter.self="toggleSepeRow(e.c)"
                   @keydown.space.self.prevent="toggleSepeRow(e.c)">
                   <td class="col-nom">
+                    <!-- Pla 102: mateixos favorits que el mode FPO (taula fpo_favorites) -->
+                    <button class="btn-fav" @click.stop="loggedIn ? toggleFpoFav(e.c) : showCentresModal()"
+                      :class="{ 'btn-fav--active': fpoFavSet.has(e.c) }"
+                      :title="fpoFavSet.has(e.c) ? t('index.fav.remove') : t('index.fav.add')"
+                      :aria-label="(fpoFavSet.has(e.c) ? t('index.fav.remove') : t('index.fav.add')) + ': ' + sepeTitol(e)"
+                      :aria-pressed="String(fpoFavSet.has(e.c))">
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16">
+                        <path :fill="fpoFavSet.has(e.c) ? 'currentColor' : 'none'" stroke="currentColor"
+                          stroke-width="2" stroke-linejoin="round"
+                          d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                      </svg>
+                    </button>
                     <span x-text="sepeTitol(e)"></span>
                     <span class="fpo-badge" :title="t('fpo.tooltip.formacioTreball')" x-text="t('sepe.badge')"></span>
                     <span class="fpo-badge" x-show="sepeSufix(e)" :title="sepeSufix(e) ? t('sepe.sufix.' + sepeSufix(e) + '.help') : ''"
@@ -5752,6 +5781,10 @@
                           :href="sepeProgramaUrl(e.c)" x-text="t('sepe.programa')"></a>
                         <a class="btn-doc" x-show="e.nc > 0" :href="'index.html?mode=fpo&esp=' + encodeURIComponent(e.c)"
                           x-text="t('sepe.veureCursos')"></a>
+                        <!-- Pla 102: alerta de cursos a Catalunya (fpo_alert amb només l'especialitat) -->
+                        <button type="button" class="btn-doc" @click.stop="createSepeCursAlert(e.c)"
+                          :disabled="sepeCursAlertMsg[e.c] === 'saving'"
+                          x-text="e.nc > 0 ? t('fpo.alert.cta') : t('sepe.alertCursos.cap')"></button>
                         <!-- Pla 099 -->
                         <button type="button" class="btn-doc" @click.stop="toggleSepeEnt(e.c)"
                           :aria-expanded="String(!!(sepeEnt[e.c] && sepeEnt[e.c].open))" x-text="t('sepe.ent.btn')"></button>
@@ -5761,6 +5794,12 @@
                         <button type="button" class="btn-doc" x-show="isAdmin" @click.stop="openTitleFix(e.c)"
                           x-text="t('tfix.btn')"></button>
                       </div>
+                      <p class="agenda-alert-msg" role="status" :class="{ ok: ['saved', 'exists'].includes(sepeCursAlertMsg[e.c]) }"
+                        x-show="sepeCursAlertMsg[e.c] && sepeCursAlertMsg[e.c] !== 'saving'">
+                        <span x-text="sepeCursAlertMsg[e.c] && sepeCursAlertMsg[e.c] !== 'saving' ? (sepeCursAlertMsg[e.c] === 'saved' ? t('sepe.alertCursos.msg.saved') : t('fpo.alert.msg.' + sepeCursAlertMsg[e.c])) : ''"></span>
+                        <a href="perfil.html#fpo" x-show="['saved', 'exists', 'max'].includes(sepeCursAlertMsg[e.c])"
+                          x-text="t('fpo.alert.manage')"></a>
+                      </p>
                       <p x-show="hasFeedback()">
                         <button type="button" class="fb-report-link" @click.stop="reportEspec(e.c, sepeTitol(e))"
                           x-text="t('index.report')"></button>

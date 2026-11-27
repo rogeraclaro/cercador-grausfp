@@ -935,12 +935,19 @@
             var fam = (e.familia || {}).desc ? (e.familia.desc[fpoLang] || '') : '';
             var area = (e.area || {}).desc ? (e.area.desc[fpoLang] || '') : '';
             var meta = [(e.font && e.font !== 'soc') ? t('fpo.font.' + e.font) : '', fam, area, e.nivell ? t('fpo.col.nivell') + ' ' + e.nivell : '',
-                        e.hores ? Math.round(e.hores) + ' h' : ''].filter(Boolean).join(' · ');
+                        e.hores ? Math.round(e.hores) + ' h' : '', e.modalitat || ''].filter(Boolean).join(' · ');
             var nCursos = (e.cursos || []).length;
+            // Pla 102: una especialitat només del catàleg SEPE s'obre a la pestanya SEPE, no al mode FPO.
+            var isSepe = e.font === 'sepe';
+            var titleHref = isSepe
+              ? 'index.html?grado=SEPE&q=' + encodeURIComponent(e.especialitat_codi)
+              : 'index.html?mode=fpo&esp=' + encodeURIComponent(e.especialitat_codi);
+            // programaUrl del SEPE és relatiu a l'API (safeHttpUrl només deixa passar URL absolutes).
+            var programaHref = isSepe ? (e.programaUrl ? API_BASE + e.programaUrl : '') : safeHttpUrl(e.programaUrl);
 
             var bodyParts = [];
-            if (safeHttpUrl(e.programaUrl)) {
-              bodyParts.push('<a class="btn-doc" href="' + esc(safeHttpUrl(e.programaUrl)) + '" target="_blank" rel="noopener" ' +
+            if (programaHref) {
+              bodyParts.push('<a class="btn-doc" href="' + esc(programaHref) + '" target="_blank" rel="noopener" ' +
                 'style="display:inline-block;margin:8px 0;">' + t('fpo.detall.programa') + '</a>');
             }
             if (nCursos) {
@@ -966,7 +973,7 @@
               'style="cursor:pointer;">' +
               '<div style="font-weight:600;">' + heartBtn +
               ' <span class="fpo-card-caret" style="display:inline-block;width:12px;color:var(--warm);">▸</span> ' +
-              '<a class="fav-denom-link fpo-card-titlelink" href="index.html?mode=fpo&esp=' + encodeURIComponent(e.especialitat_codi) +
+              '<a class="fav-denom-link fpo-card-titlelink" href="' + esc(titleHref) +
               '" title="' + t('index.itinerari.fpo_veure') + '">' + esc(titol) + '</a>' +
               ' <span class="badge-old" style="font-weight:400;">' + esc(e.especialitat_codi) + '</span></div>' +
               '<div style="font-size:12px;color:var(--warm);margin-top:2px;">' + esc(meta) +
