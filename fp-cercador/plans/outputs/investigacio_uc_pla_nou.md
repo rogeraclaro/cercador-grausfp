@@ -5,9 +5,12 @@ Data: 2026-11-27. Només lectura: cap codi ni cap dada de producció tocats. Dad
 
 ## Conclusió
 
-**No cal cap font nova.** Els codis ja són a les nostres dades, però amb un altre prefix: el ministeri
-ara escriu `ECP0493_3` (estàndard de competència professional) on abans escrivia `UC0493_3`. El número
-i el nivell són els mateixos. Per això una cerca de `UC…` a les dades no trobava res del pla nou.
+**No cal cap font nova.** Els codis ja són a les nostres dades, però amb un altre prefix: les fitxes de
+todofp escriuen `ECP0493_3` (estàndard de competència professional) on els decrets antics escriuen
+`UC0493_3`. Per això una cerca de `UC…` a les dades no trobava res del pla nou.
+
+**Correcció del mateix dia:** la primera versió d'aquest informe deia que `UC` i `ECP` són «el mateix
+codi». És una observació, no un fet establert: no he llegit cap norma que ho digui. Veure el punt 1.
 
 | Què | D'on surt | Cobertura | Cost |
 |---|---|---|---|
@@ -22,11 +25,18 @@ al pla nou.
 
 ## Respostes a les preguntes del pla
 
-1. **Format del codi.** Dos prefixos per al mateix codi: `UC####_n` (decrets fins a mitjan 2025 i les
-   nostres dades del pla antic) i `ECP####_n` (fitxes de todofp i decrets des del desembre del 2025).
-   No hi ha taula d'equivalència perquè no cal: el número no canvia. Comprovat en 1.716 dels 2.017
-   codis `ECP` de `b_contingut.json`, que tenen una `UC` amb el mateix número a `bc_loe.json`; la
-   resta són estàndards nous.
+1. **Format del codi.** Dos prefixos: `UC####_n` (decrets fins a mitjan 2025 i les nostres dades del
+   pla antic) i `ECP####_n` (fitxes de todofp i decrets des del desembre del 2025). Què s'ha observat:
+   - 1.918 números surten escrits amb tots dos prefixos (`UC` a `bc_loe.json` o `d_uc_corr.json`, `ECP`
+     a `b_contingut.json`), 99 només com a `ECP` i 286 només com a `UC`.
+   - La fitxa de todofp d'un certificat del pla antic (`IFCD0210`) llista `ECP0491_3`, `ECP0492_3` i
+     `ECP0493_3`, i el seu annex del BOE llista `UC0491_3`, `UC0492_3` i `UC0493_3`.
+   - Dels 1.115 números on es pot comparar el títol del decret amb el de la fitxa, 724 són idèntics i
+     391 tenen una altra redacció (`0255_1`: «Ejecutar operaciones básicas de aprovisionamiento…» al
+     BOE, «Desarrollar actividades auxiliares de aprovisionamiento…» a la fitxa).
+   - **No he trobat ni buscat la norma que estableix la codificació `ECP`.** Sense ella no es pot
+     afirmar que un codi `ECP` sigui el mateix que el `UC` del mateix número, ni construir-ne un a
+     partir de l'altre.
 2. **Un Grau B = una UC?** No sempre. Al pla nou: 525 B amb un estàndard, 298 amb dos, 113 amb tres i
    80 amb quatre o més (un, «Interpretación gráfica», en té 26).
 3. **Al pla antic el codi del B no dona sempre la UC.** `MF0493_3` → `ECP0493_3` es compleix en 1.766
@@ -59,19 +69,20 @@ al pla nou.
 
 - L'índex UC → graus incorpora `b_contingut.json` (B nous i antics) i una llista nova d'estàndards per
   C del pla nou, extreta a `bc_lomloe_scraper` de la fitxa que ja es baixa.
-- La cerca ha d'acceptar `UC0493_3` i `ECP0493_3` i casar pel número i el nivell.
-- Exemple real: `UC0493_3` trobaria 8 resultats: `IFCD0210` (C antic), `MF0493_3` (B antic),
+- La cerca accepta `UC0493_3` i `ECP0493_3`, però només creua un prefix amb l'altre quan totes dues
+  formes s'han vist escrites (decisió del propietari, veure més avall).
+- Exemple real: `UC0493_3` (vist amb tots dos prefixos) trobaria 8 resultats: `IFCD0210` (C antic), `MF0493_3` (B antic),
   `IFC_B_0376` i `IFC_B_0614` (B nous), `IFC_C_003_5B` i `IFC_C_007_5B` (C nous) i els dos cicles D.
 - Fins al primer refresc després del desplegament, els C del pla nou no tindrien llista. Es pot
   omplir abans executant el scraper a mà (400 fitxes, 10–16 min).
 
-## Decisions que demano
+## Decisions del propietari (2026-11-27)
 
-1. **Quin prefix es mostra a la web:** `UC` (el que la gent coneix), `ECP` (el que escriu ara el
-   ministeri) o tots dos.
-2. **Graus A:** si han de sortir en cercar una UC (heretant la del seu B) o no. Cada B en té uns
-   quants i allargarien la llista.
-3. **C del pla nou:** fitxa de todofp (recomanat) o llista del decret.
+1. **Prefix:** zero invents o inferències. Cada codi es mostra només tal com l'hem vist escrit en una
+   font oficial, amb el prefix d'aquella font. No es construeix mai un `UC…` a partir d'un `ECP…` ni
+   a l'inrevés.
+2. **Graus A:** no surten en cercar una UC.
+3. **C del pla nou:** es llegeixen de la fitxa de todofp.
 
 ## Materials
 
