@@ -1,35 +1,36 @@
-# Pla 106 — Cerca per unitat de competència (codis UC de l'INCUAL)
+# Pla 106 — Cerca per unitat de competència (codis UC / ECP)
 
-Prioritat P2 · Mida S–M (S sense el pla nou) · Depèn de: 090, 091 (dades ja fetes) · Origen: pregunta del propietari del 2026-11-27.
+Prioritat P2 · Mida M · Depèn de: 068, 090, 091 (dades ja fetes) · Origen: pregunta del propietari del 2026-11-27.
 Executable per un agent sense context.
 
 ## Context
 
 - Una **unitat de competència** (UC) és la peça mínima que acredita l'INCUAL. El codi té la forma
-  `UC` + 4 xifres + `_` + nivell (`UC0493_3`). Diverses UC formen una qualificació professional.
-- Ja tenim les UC a les dades, però **el cercador principal no les troba**. El 2026-11-27, cercar
-  `UC0493_3` no tornava res. Aquesta UC és d'IFCD0210 (certificat del pla antic) i convalida mòduls de
-  dos cicles D: `informatica-comunicaciones~admin-sist-informaticos-red` i
-  `informatica-comunicaciones~des-aplicaciones-web`. Totes dues coses ja surten a l'itinerari, a
-  `/grau/<ref>` i a l'exportació CSV.
+  prefix + 4 xifres + `_` + nivell. El prefix antic és `UC` (`UC0493_3`); el ministeri ara escriu `ECP`
+  (`ECP0493_3`, «estàndard de competència professional»). **El número i el nivell són els mateixos.**
+- El cercador principal no troba res per codi d'UC. El 2026-11-27, cercar `UC0493_3` no tornava res.
 - La cerca és al navegador. `filteredRecords` a `frontend/index.html` (~línia 3150) només mira
   `_normDen` i `_normCod`. `/api/ofertes` serveix `ofertes.json` tal qual (`backend/app.py`,
   `get_ofertes`), i aquest fitxer no porta cap codi d'UC.
-- On són les UC (`backend/data/`, fora del git; per cercar-hi cal `rg -uu`):
-  - `bc_loe.json`: `{codi_certificat: [UC…]}`, amb 1.887 UC diferents. La clau coincideix amb el
-    `ref`/`codigo` dels registres C del pla antic (`IFCD0210`).
-  - `d_uc_corr.json`: per `ref` de cicle D, files `convalida` / `acredita` amb camp `uc`, més
-    `convalida_anterior` (taules derogades, pla 091). Hi ha 1.477 UC diferents.
-  - `c_loe_estructura.json`: estructura MF/UF de cada certificat, amb el camp `uc`. És redundant amb
-    `bc_loe.json` per a la cerca.
-- **Pas 0 fet el 2026-11-27** (informe: `plans/outputs/investigacio_uc_pla_nou.md`). Els B del pla nou
-  i del pla antic ja tenen els codis a `b_contingut.json` (camp `ecp`, pla 068), però amb el prefix
-  `ECP` (`ECP0493_3` = `UC0493_3`: mateix número, prefix nou del ministeri). Els C del pla nou els tenen
-  a la seva fitxa de todofp, que `bc_lomloe_scraper` ja baixa cada setmana. No s'han de calcular sumant
-  els dels seus B: només coincideix amb el decret en 257 de 400.
-- **Pendent de tres decisions del propietari** abans dels passos 1–4: quin prefix es mostra (`UC`,
-  `ECP` o tots dos), si els Graus A surten heretant la UC del seu B, i si els C del pla nou es llegeixen
-  de la fitxa (recomanat) o del decret. Els passos 1–4 d'aquest pla s'han d'ajustar amb la resposta.
+- Investigació prèvia (pas 0, fet el 2026-11-27): `plans/outputs/investigacio_uc_pla_nou.md`. **Llegir-la
+  abans de començar.**
+- On són els codis (`backend/data/`, fora del git; per cercar-hi cal `rg -uu`, i buscar `UC\d{4}` sol
+  no troba el pla nou):
+
+  | Què | Fitxer | Forma |
+  |---|---|---|
+  | C del pla antic | `bc_loe.json` | `{codi_certificat: ["UC0491_3", …]}`; la clau és el `ref` del registre |
+  | B del pla nou i del pla antic | `b_contingut.json` (pla 068) | `{codi_b: {ecp: [{codigo: "ECP0493_3", text}], ra: […]}}` |
+  | Cicles D | `d_uc_corr.json` (pla 091) | per `ref`: files `convalida`, `acredita` i `convalida_anterior` (derogades) amb camp `uc` |
+  | C del pla nou | **encara no es desa** | la fitxa de todofp del C porta la secció «Estándares de competencia»; `bc_lomloe_scraper` ja baixa aquesta fitxa cada setmana |
+
+## Decisions del propietari (2026-11-27)
+
+1. **Es mostren tots dos prefixos**: «UC0493_3 (ECP0493_3)». La cerca accepta qualsevol dels dos i casa
+   pel número i el nivell.
+2. **Els Graus A no surten** en cercar una UC. Des del B ja s'hi arriba.
+3. **Els C del pla nou es llegeixen de la fitxa de todofp**, no dels decrets del BOE ni sumant els dels
+   seus B (la suma només coincideix amb el decret en 257 de 400).
 
 ## Convencions
 
@@ -37,81 +38,83 @@ Executable per un agent sense context.
   en català i castellà a `frontend/i18n.js`, sense literals dins `x-text`. Els `x-if` porten una sola
   arrel.
 - En tocar `i18n.js` cal pujar `?v=` a **totes** les pàgines `frontend/*.html`, `I18N_VERSION` a
-  `backend/grau_page.py` i l'assert de `backend/tests/test_grau_page.py`.
-- Tests: des de `backend/`, `python3 -m pytest -q --ignore-glob='tests/*scraper*' --ignore=tests/test_pipeline.py`.
-  Frontend: `node scripts/test_search_tools.js` des de `fp-cercador/`.
+  `backend/grau_page.py` i l'assert de `backend/tests/test_grau_page.py`. En tocar `search-tools.js`,
+  pujar el seu `?v=`.
+- Tests: des de `backend/`, `python3 -m pytest -q --ignore-glob='tests/*scraper*' --ignore=tests/test_pipeline.py`
+  (935 verds el 2026-11-27). Frontend: `node scripts/test_search_tools.js` des de `fp-cercador/`.
+- Els tests no han d'escriure mai a `backend/data/`: fitxers de prova en directoris temporals.
 - Cap dependència nova. No desplegar sense l'aprovació del propietari.
 
 ## Què s'ha de fer
 
-0. **Investigació: codis d'UC dels Graus B i C del pla nou** (abans de la resta; sense codi de producció).
-   - Fonts candidates, en aquest ordre:
-     - La fitxa de todofp de cada Grau B o C (`ficha_id` a `ofertes.json`; mirar què porta el
-       buscador del ministeri per a un B).
-     - Els reials decrets dels certificats professionals del pla nou al BOE (annexos amb els estàndards de
-       competència). El pla 080 ja els localitza (`scripts/audit_c_modulos_boe.py --discover`, memòria
-       cau a `--cache`).
-     - El Catàleg Nacional d'Estàndards de Competències Professionals de l'INCUAL.
-     - `c_modulos.json`, que ja porta camps `uc` en els mòduls amb nota `uc_sense_b` (pla 080).
-   - Preguntes:
-     - Els codis del pla nou tenen el mateix format `UC####_n` o un de nou? Si és nou, hi ha una taula
-       d'equivalència amb els antics?
-     - Un Grau B correspon a una sola UC o a més d'una?
-     - Quina cobertura dona cada font? Cal provar-ho amb una mostra d'uns 20 B i 10 C de famílies
-       diferents, inclosos els tres casos de `UC0493_3`.
-     - Quant costa treure-ho tot (peticions, format, si cal pdfplumber) i com es mantindria al dia amb
-       el refresc setmanal?
-   - Resultat: un informe a `plans/outputs/investigacio_uc_pla_nou.md`. Amb l'informe, el propietari
-     decideix una de dues coses:
-     - **Viable:** s'afegeix la font a l'índex del pas 1 (B pel seu codi; C per unió dels seus B
-       via `bc_lomloe.json`), amb un generador fora del servidor, com `build_d_uc_corr.py`.
-     - **No viable o massa car:** es fa la resta del pla sense el pla nou, i els textos del pas 4 diuen
-       explícitament què cobreix la cerca per UC.
-   - Aturar-se aquí i presentar l'informe abans de continuar amb els passos 1–4.
-1. **Índex UC → graus (backend).** `GET /api/uc-index` retorna `{"UC0493_3": ["IFCD0210",
-   "informatica-comunicaciones~admin-sist-informaticos-red", …], …}`, construït des de `bc_loe.json`
-   (clau = `ref` del certificat) i `d_uc_corr.json` (UC de `convalida`, `acredita` i
-   `convalida_anterior`). Es manté a la memòria cau per `mtime` dels dos fitxers, com `get_ofertes`. Els
-   fitxers que falten no fan fallar res: si no n'hi ha cap, l'índex surt buit. Només entren `ref` que
-   existeixen a `ofertes.json`. No es toca `/api/ofertes`, per no engreixar la càrrega inicial.
-2. **Cerca (frontend).** Quan la cerca normalitzada té forma d'UC (`/^uc ?\d{4}(_\d)?$/`, és a dir,
-   `uc0493`, `UC0493_3` o `uc 0493`), es carrega `/api/uc-index` una sola vegada (mandrós) i els
-   registres els `ref` dels quals hi surten també coincideixen. Sense nivell (`uc0493`) casa amb
-   qualsevol nivell. Mentre l'índex es carrega no es mostra «Cap resultat»: es reutilitza l'estat de
-   càrrega que ja hi hagi. «Volies dir…» (`search-tools.js`) no ha de proposar res per a un codi d'UC.
-   La lògica de reconeixement va a `search-tools.js` com a funció pura, amb proves.
-3. **Per què surt.** A la fila d'un resultat que surt per UC i no pel nom, cal una nota curta: «Coincideix
-   per la unitat de competència UC0493_3». Si el vincle ve d'una taula derogada, la nota ho ha de dir.
-4. **Fer-ho constar** (petició del propietari):
-   - Text d'ajuda del cercador: el placeholder `index.search.placeholder` ha de passar a dir que també
-     es pot cercar per unitat de competència. Si no hi cap a 375 px, es manté el placeholder i es posa
-     una línia d'ajuda sota el camp.
-   - `per-que-grausfp.html`: un `feature-item` nou, «Cerca per unitat de competència», amb un exemple
-     (`UC0493_3` → IFCD0210 i els dos cicles D).
-   - `com-funciona.html`, secció `#cerca` (`com.demo.p1`, o un paràgraf nou): una frase que expliqui
-     que es pot cercar per codi d'UC.
-   - Textos en català i castellà. Les xifres que s'hi posin han de sortir de les dades reals del moment.
-   - Els textos han de dir què cobreix la cerca segons el resultat del pas 0. Per exemple, si el pla
-     nou no hi entra: «certificats del pla antic i cicles de Grau D».
+1. **Estàndards dels C del pla nou (scraper).** A `backend/scrapers/bc_lomloe_scraper.py`, llegir de la
+   mateixa fitxa que ja es baixa la secció «Estándares de competencia» (elements «( ECP####_n ) text»;
+   `b_contingut_scraper.parse_b_ficha` ja fa aquesta lectura per als B i es pot reaprofitar) i desar
+   `backend/data/c_ecp.json`: `{codi_c: [{codigo, text}]}`. S'escriu al mateix punt de `pipeline.py` on
+   s'escriuen `bc_lomloe.json` i `c_modulos.json`, amb el mateix tractament d'errors (no fatal). Cap
+   petició nova a todofp. Afegir `c_ecp.json` al `.gitignore` si no hi entra pel patró existent.
+2. **Índex UC → graus (backend).** `GET /api/uc-index` retorna, per clau `####_n` (sense prefix), els
+   `ref` que hi casen i quins venen només d'una taula derogada:
+   `{"0493_3": {"refs": ["IFCD0210", "MF0493_3", "IFC_B_0376", …], "derogats": [...]}}`.
+   - Fonts: `bc_loe.json` (C antic), `b_contingut.json` camp `ecp` (B nou i antic), `c_ecp.json` (C nou)
+     i `d_uc_corr.json` (D: `convalida` i `acredita`; `convalida_anterior` va a `derogats` quan el `ref`
+     no surt també per una taula vigent).
+   - Només entren `ref` que existeixen a `ofertes.json`. Els Graus A no hi entren.
+   - Memòria cau per `mtime` dels fitxers, com `get_ofertes`. Un fitxer que falta o és invàlid s'ignora
+     amb un avís al registre; sense cap fitxer, l'índex és `{}`.
+   - No es toca `/api/ofertes`, per no engreixar la càrrega inicial.
+3. **Cerca (frontend).** Quan la cerca normalitzada té forma de codi (`/^(uc|ecp) ?\d{4}(_\d)?$/`:
+   `uc0493`, `UC0493_3`, `ecp0493_3`, `uc 0493`), es carrega `/api/uc-index` una sola vegada (mandrós) i
+   els registres els `ref` dels quals hi surten també coincideixen. Sense nivell casa amb qualsevol
+   nivell. Mentre l'índex es carrega no es mostra «Cap resultat». «Volies dir…» no ha de proposar res
+   per a un codi d'UC. El reconeixement del codi va a `search-tools.js` com a funció pura, amb proves.
+   Si l'índex no es pot carregar, la cerca es comporta com ara.
+4. **Per què surt.** A la fila d'un resultat que surt per UC i no pel nom ni pel codi, una nota curta:
+   «Coincideix per la unitat de competència UC0493_3 (ECP0493_3)». Si el `ref` és a `derogats`, la nota
+   ho ha de dir («taula de convalidació derogada»).
+5. **Fer-ho constar** (petició del propietari). Textos en català i castellà:
+   - Camp de cerca: que digui que també es pot cercar per unitat de competència. Si no hi cap al
+     placeholder a 375 px, es manté el placeholder i s'hi posa una línia d'ajuda a sota.
+   - `per-que-grausfp.html`: un `feature-item` nou, «Cerca per unitat de competència», amb l'exemple
+     `UC0493_3` i l'explicació que `UC` i `ECP` són el mateix codi.
+   - `com-funciona.html`, secció `#cerca`: una frase que digui que es pot cercar per codi d'UC.
+   - `fonts.html`: d'on surten els estàndards (fitxes de todofp per als B i C, decrets per als cicles) i
+     l'avís que la fitxa d'un C pot no coincidir amb el seu decret (2 de 11 a la mostra del pas 0:
+     `HOT_C_001_4B` i `AFD_C_006_4B`).
+   - Les xifres que s'hi posin han de sortir de les dades reals del moment.
 
 ## Tests
 
-- `GET /api/uc-index` amb fitxers de prova: unió de certificat i cicle, UC de la taula derogada
-  inclosa, `ref` inexistent descartat, sense fitxers → `{}`, memòria cau invalidada en canviar el
-  `mtime`.
-- `search-tools.js`: reconeixement de formats d'UC (amb i sense nivell, minúscules, espai) i
-  no-reconeixement de codis de certificat (`IFCD0210`) ni de paraules normals.
-- Navegador (ca i es, 1280 i 375 px): `UC0493_3` → IFCD0210 i els dos cicles; `uc0493` → els mateixos;
-  la nota «per què surt» i el text d'ajuda.
+- Lectura de la secció d'estàndards d'una fitxa de C (HTML de prova): codis i textos, fitxa sense secció
+  → llista buida.
+- `GET /api/uc-index` amb fitxers de prova: unió de les quatre fonts sota la mateixa clau (`UC0493_3` i
+  `ECP0493_3` → `0493_3`), `ref` que només ve d'una taula derogada marcat a `derogats`, `ref` inexistent
+  i Graus A descartats, sense fitxers → `{}`, memòria cau invalidada en canviar un `mtime`.
+- `search-tools.js`: reconeixement dels formats (dos prefixos, amb i sense nivell, minúscules, espai) i
+  no-reconeixement de codis de certificat (`IFCD0210`, `MF0493_3`) ni de paraules normals.
+- Navegador (ca i es, 1280 i 375 px): `UC0493_3` i `ecp0493_3` donen els mateixos resultats (amb les
+  dades del 2026-11-27: `IFCD0210`, `MF0493_3`, `IFC_B_0376`, `IFC_B_0614` i els dos cicles D; els C nous
+  `IFC_C_003_5B` i `IFC_C_007_5B` quan hi hagi `c_ecp.json`); la nota «per què surt» i el text d'ajuda.
+
+## En desplegar
+
+- `c_ecp.json` no existirà fins que corri el scraper. O bé s'espera al refresc setmanal següent, o bé
+  es llança un refresc manual des del panell (uns 94 min; **mai** durant un altre refresc). Fins
+  llavors, cercar una UC no torna els C del pla nou; la resta funciona.
+- Cal reiniciar el servei (ruta nova). Comprovar abans `/api/refresh-status`.
 
 ## Decisions preses en escriure el pla (revisables)
 
 - Endpoint a part i càrrega mandrosa, en lloc d'afegir les UC a `/api/ofertes`.
-- S'inclouen les UC de les taules derogades, perquè qui té un certificat antic ha de trobar els cicles
-  on encara li compta. La nota ho indica.
-- Només codis d'UC, no de MF (`MF0493_3`) ni de qualificació (`IFC154_3`).
+- S'inclouen les UC de les taules derogades dels cicles, perquè qui té un certificat antic ha de trobar
+  els cicles on encara li compta. La nota ho indica.
+- Els B del pla antic es llegeixen del camp `ecp` i no es dedueixen del codi `MF…`: en 172 de 1.938 el
+  número és un altre.
 
 ## Fora d'abast
 
-- Codis de qualificació professional i de mòdul formatiu.
+- Graus A (decisió del propietari).
+- Codis de qualificació professional (`IFC154_3`) i cerca pel codi de mòdul formatiu.
 - Especialitats del SEPE.
+- Mostrar els estàndards d'un C del pla nou a la seva fitxa o a l'itinerari: aquest pla només els fa
+  servir per a la cerca.
