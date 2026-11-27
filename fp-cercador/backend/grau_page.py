@@ -18,15 +18,15 @@ import json
 from urllib.parse import quote
 
 # Versions dels recursos compartits: les mateixes que a les subpàgines (fonts.html).
-I18N_VERSION = '20261203'
+I18N_VERSION = '20261204'
 SITE_CSS_VERSION = '6'
-FOOTER_VERSION = '3'
-FEEDBACK_VERSION = '6'
+FOOTER_VERSION = '4'
+FEEDBACK_VERSION = '7'
 
 # Sister site with the accredited-centres search (same host as the topbar link).
 CENTRES_URL = 'https://centres.grausfp.es'
 
-STATIC_PAGES = ['/', '/per-que-grausfp.html', '/fonts.html', '/observatori.html',
+STATIC_PAGES = ['/', '/per-que-grausfp.html', '/com-funciona.html', '/fonts.html', '/observatori.html',
                 '/historial.html', '/que-em-falta.html', '/families']
 
 GRADOS = ('A', 'B', 'C', 'D', 'E')

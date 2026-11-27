@@ -8,7 +8,7 @@ import pytest
 
 from app import app
 
-PAGES = ["index", "itinerari", "per-que-grausfp", "fonts", "observatori", "historial", "que-em-falta"]
+PAGES = ["index", "itinerari", "per-que-grausfp", "com-funciona", "fonts", "observatori", "historial", "que-em-falta"]
 
 
 @pytest.fixture

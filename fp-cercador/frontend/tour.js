@@ -41,7 +41,19 @@
   }
 
   /* ── Counters: <span data-count="12989">12.989</span> counts up once when it enters ── */
-  var fmt = new Intl.NumberFormat('ca-ES');
+  function makeFmt() {
+    /* 'always': Spanish drops the separator in 4-digit numbers by default (7557); the site writes 7.557. */
+    return new Intl.NumberFormat(typeof window.getLang === 'function' && window.getLang() === 'es' ? 'es-ES' : 'ca-ES', { useGrouping: 'always' });
+  }
+  var fmt = makeFmt();
+  /* Final values in the current language (the markup holds the Catalan format). */
+  function formatCounts() {
+    document.querySelectorAll('[data-count]').forEach(function (el) {
+      var target = Number(el.getAttribute('data-count'));
+      if (isFinite(target)) el.textContent = fmt.format(target);
+    });
+  }
+  formatCounts();
   function countUp(el) {
     var target = Number(el.getAttribute('data-count'));
     if (reduce || !isFinite(target)) return;
@@ -122,6 +134,13 @@
       textEl.classList.add('swap');
     }
 
+    /* Language switch: re-read the texts (window.TOUR_ROUTES) and the station and button labels. */
+    el._routeRefresh = function () {
+      data = (window.TOUR_ROUTES || {})[el.getAttribute('data-route')] || data;
+      if (playBtn) playBtn.textContent = playBtn.getAttribute(timer ? 'data-label-stop' : 'data-label-play');
+      render();
+    };
+
     function stop() {
       if (timer) { clearInterval(timer); timer = null; }
       if (playBtn) playBtn.textContent = playBtn.getAttribute('data-label-play');
@@ -165,5 +184,13 @@
   }
   document.querySelectorAll('[data-route]').forEach(initRoute);
 
-  window.TOUR = { reduce: reduce, fmt: fmt };
+  /* Re-renders what tour.js draws after a language switch (i18n.js 'langchange'). */
+  function refresh() {
+    fmt = makeFmt();
+    window.TOUR.fmt = fmt;
+    formatCounts();
+    document.querySelectorAll('[data-route]').forEach(function (el) { if (el._routeRefresh) el._routeRefresh(); });
+  }
+
+  window.TOUR = { reduce: reduce, fmt: fmt, refresh: refresh };
 })();

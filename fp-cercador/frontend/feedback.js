@@ -225,6 +225,27 @@
     if (event.target.closest('[data-fb-close]')) dialog.close();
   });
 
+  /* Pages that switch language without reloading (i18n.js 'langchange'): relabel tab and dialog. */
+  document.addEventListener('langchange', function () {
+    tab.textContent = tr('fb.tab');
+    tab.setAttribute('aria-label', tr('fb.tab.aria'));
+    dialog.setAttribute('aria-label', tr('fb.dialog.aria'));
+    form.querySelector('.fb-title').textContent = tr('fb.title');
+    form.querySelector('p.fb-label').textContent = tr('fb.note');
+    form.querySelector('.fb-kinds').setAttribute('aria-label', tr('fb.kinds.aria'));
+    dialog.querySelectorAll('.fb-kind').forEach(function (btn) { btn.textContent = tr('fb.kind.' + btn.dataset.kind); });
+    aboutEl.querySelector('span').firstChild.nodeValue = tr('fb.about') + ' ';
+    setAbout(about);
+    form.querySelector('label[for="fb-text"]').textContent = tr('fb.label');
+    form.querySelector('label[for="fb-email"]').textContent = tr('fb.email.label');
+    form.querySelector('[data-fb-close]').textContent = tr('fb.cancel');
+    if (!submitBtn.disabled) submitBtn.textContent = tr('fb.send');
+    sent.querySelector('.fb-title').textContent = tr('fb.thanks');
+    sent.querySelector('p:not(.fb-title)').textContent = tr('fb.thanks.body');
+    sent.querySelector('[data-fb-close]').textContent = tr('fb.close');
+    errorEl.hidden = true;
+  });
+
   /* Plan 089: pages open the dialog about one grado with grausfpFeedback.open({ref, label}).
      If this script has not loaded, their "report an error" links simply do not show. */
   window.grausfpFeedback = { open: open };

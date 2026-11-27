@@ -24,6 +24,8 @@ PAGES_ES = {
                   "De qué grados está formada una enseñanza de FP y a qué grados da acceso, con datos oficiales."),
     "per-que-grausfp": ("¿Por qué GrausFP?",
                         "Por qué hemos hecho un único buscador para toda la oferta de Formación Profesional."),
+    "com-funciona": ("Cómo funciona GrausFP",
+                     "De dónde salen los datos de GrausFP, cada cuánto se actualizan, qué pasa cuando buscas y cómo se corrigen los errores de las fuentes oficiales."),
     "fonts": ("Fuentes de datos — GrausFP",
               "De dónde salen los datos de GrausFP y cada cuánto se actualizan."),
     "observatori": ("Observatorio de la oferta FP — GrausFP",

@@ -327,7 +327,7 @@ def test_topbar_enllaca_al_cercador_de_centres(client):
             'data-lang-href="https://centres.grausfp.es/" target="_blank" rel="noopener" '
             'data-i18n="nav.centres">') in body
     assert '/site.css?v=6"' in body
-    assert '/i18n.js?v=20261203"' in body
+    assert '/i18n.js?v=20261204"' in body
 
 
 CENTRES_SEARCH = 'centres.grausfp.es/es/search'
@@ -550,6 +550,7 @@ def test_sitemap_valid_i_complet(client):
     assert f'{SITE}/grau/UF0620~IMA' in locs
     assert f'{SITE}/familia/ADG' in locs
     assert f'{SITE}/families' in locs
+    assert f'{SITE}/com-funciona.html' in locs
     assert all(loc.startswith(SITE + '/') for loc in locs)
     lastmods = {u.find('s:lastmod', ns).text for u in root.findall('s:url', ns)}
     assert all(re.fullmatch(r'\d{4}-\d{2}-\d{2}', d) for d in lastmods)
@@ -592,7 +593,7 @@ def test_la_pagina_del_grau_porta_el_ref_per_reportar_un_error(client):
     body = _page(client, 'ADG_B_3999')
     assert 'data-report-ref="ADG_B_3999"' in body
     assert 'data-report-label="&lt;script&gt;alert(1)&lt;/script&gt; &amp; &quot;cometes&quot;"' in body
-    assert '/feedback.js?v=6"' in body
+    assert '/feedback.js?v=7"' in body
     assert 'error en esta ficha' not in body       # sense JavaScript, l'enllaç no surt
     assert 'data-report-ref' not in client.get('/api/familia/ADG').get_data(as_text=True)
 

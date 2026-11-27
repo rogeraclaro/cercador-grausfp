@@ -4,9 +4,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Com funciona GrausFP — Què passa darrere d'una cerca</title>
-  <meta name="description" content="D'on surten les dades de GrausFP, cada quan s'actualitzen, què passa quan cerques i com es corregeixen els errors de les fonts oficials.">
-  <meta name="robots" content="noindex">
+  <title data-i18n="com.page.title">Com funciona GrausFP — Què passa darrere d'una cerca</title>
+  <meta name="description" content="D'on surten les dades de GrausFP, cada quan s'actualitzen, què passa quan cerques i com es corregeixen els errors de les fonts oficials." data-i18n-content="com.page.desc">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="GrausFP">
+  <meta property="og:title" content="Com funciona GrausFP">
+  <meta property="og:description" content="D'on surten les dades de GrausFP, cada quan s'actualitzen, què passa quan cerques i com es corregeixen els errors de les fonts oficials.">
+  <meta property="og:image" content="https://grausfp.es/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="GrausFP: tota la Formació Professional, en un sol cercador">
+  <meta name="twitter:card" content="summary_large_image">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link
@@ -161,16 +169,21 @@
       .demo-steps li, .demo-res li, .src-card.swap { animation: none; }
     }
   </style>
+  <script src="i18n.js?v=20261204"></script>
   <script defer src="https://analytics.masellas.info/script.js" data-exclude-search="true" data-exclude-hash="true" data-website-id="ddb6c664-550b-4e2d-848f-796a676e4036"></script>
 </head>
 
-<body>
+<body data-i18n-live>
 
   <header class="topbar">
     <div class="topbar-inner">
       <a href="index.html" class="topbar-logo">GrausFP</a>
       <span class="topbar-spacer"></span>
-      <a class="auth-btn auth-btn--primary" href="index.html">Obre el cercador</a>
+      <a class="auth-btn auth-btn--primary" href="index.html" data-i18n="com.open">Obre el cercador</a>
+      <div class="lang-selector" aria-label="Language selector">
+        <button class="lang-btn" data-lang="ca" onclick="setLang('ca')">CA</button>
+        <button class="lang-btn" data-lang="es" onclick="setLang('es')">ES</button>
+      </div>
     </div>
   </header>
 
@@ -178,36 +191,36 @@
     <div class="sheet hero">
       <div class="hero-grid">
         <div>
-          <h1 class="display rv-clip">Què passa <em>darrere</em> d'una cerca</h1>
-          <p class="lead rv" style="--i:2">GrausFP reuneix en un sol cercador tota la Formació Professional oficial. Aquesta pàgina explica, pas a pas, d'on surt cada dada i què se'n fa abans que arribi a la teva pantalla.</p>
+          <h1 class="display rv-clip" data-i18n="com.hero.h1">Què passa <em>darrere</em> d'una cerca</h1>
+          <p class="lead rv" style="--i:2" data-i18n="com.hero.lead">GrausFP reuneix en un sol cercador tota la Formació Professional oficial. Aquesta pàgina explica, pas a pas, d'on surt cada dada i què se'n fa abans que arribi a la teva pantalla.</p>
           <div class="actions rv" style="--i:3">
-            <a class="btn" href="#fonts">Comença per les fonts
+            <a class="btn" href="#fonts"><span data-i18n="com.hero.cta">Comença per les fonts</span>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
             </a>
-            <a class="btn btn--ghost" href="index.html">Obre el cercador</a>
+            <a class="btn btn--ghost" href="index.html" data-i18n="com.open">Obre el cercador</a>
           </div>
         </div>
 
         <div class="fitxa route rv" style="--i:4" data-route="registre">
-          <h2 class="fitxa-title">Segueix un registre, de la font a la pantalla</h2>
-          <div class="seg" data-route-set role="group" aria-label="Tria un registre">
-            <button type="button" data-set="d" aria-pressed="true">Un cicle de Grau D<small>Desarrollo de Aplicaciones Web</small></button>
-            <button type="button" data-set="sepe" aria-pressed="false">Una especialitat<small><span class="code">SSCE22</span> · catàleg del SEPE</small></button>
-            <button type="button" data-set="fpo" aria-pressed="false">Un curs a Catalunya<small>SOC i altres entitats</small></button>
+          <h2 class="fitxa-title" data-i18n="com.route.title">Segueix un registre, de la font a la pantalla</h2>
+          <div class="seg" data-route-set role="group" aria-label="Tria un registre" data-i18n-aria="com.route.sets.aria">
+            <button type="button" data-set="d" aria-pressed="true" data-i18n="com.route.set.d">Un cicle de Grau D<small>Desarrollo de Aplicaciones Web</small></button>
+            <button type="button" data-set="sepe" aria-pressed="false" data-i18n="com.route.set.sepe">Una especialitat<small><span class="code">SSCE22</span> · catàleg del SEPE</small></button>
+            <button type="button" data-set="fpo" aria-pressed="false" data-i18n="com.route.set.fpo">Un curs a Catalunya<small>SOC i altres entitats</small></button>
           </div>
           <ol class="route-stations">
-            <li><button type="button">Font oficial</button></li>
-            <li><button type="button">Lectura</button></li>
-            <li><button type="button">Comprovació</button></li>
-            <li><button type="button">Registre</button></li>
-            <li><button type="button">La teva pantalla</button></li>
+            <li><button type="button" data-i18n="com.route.st.1">Font oficial</button></li>
+            <li><button type="button" data-i18n="com.route.st.2">Lectura</button></li>
+            <li><button type="button" data-i18n="com.route.st.3">Comprovació</button></li>
+            <li><button type="button" data-i18n="com.route.st.4">Registre</button></li>
+            <li><button type="button" data-i18n="com.route.st.5">La teva pantalla</button></li>
           </ol>
           <div class="route-panel" aria-live="polite">
             <p class="route-step"></p>
             <p class="route-text"></p>
           </div>
           <div class="route-controls">
-            <button type="button" class="link-btn" data-route-play data-label-play="Torna a fer el recorregut" data-label-stop="Atura">Torna a fer el recorregut</button>
+            <button type="button" class="link-btn" data-route-play data-label-play="Torna a fer el recorregut" data-label-stop="Atura" data-i18n="com.route.replay">Torna a fer el recorregut</button>
           </div>
         </div>
       </div>
@@ -216,10 +229,10 @@
     <section class="sec" id="fonts">
       <div class="sheet">
         <div class="sec-head">
-          <h2 class="q rv-clip">D'on surten les dades?</h2>
+          <h2 class="q rv-clip" data-i18n="com.src.h2">D'on surten les dades?</h2>
           <div class="prose rv" style="--i:1">
-            <p>De <strong>catorze fonts</strong>. Cap dada és nostra: totes es llegeixen de llocs oficials o de les entitats que organitzen els cursos, i cada registre enllaça la seva fitxa original.</p>
-            <p>Tria una font per veure què se'n treu i com es llegeix.</p>
+            <p data-i18n="com.src.p1">De <strong>catorze fonts</strong>. Cap dada és nostra: totes es llegeixen de llocs oficials o de les entitats que organitzen els cursos, i cada registre enllaça la seva fitxa original.</p>
+            <p data-i18n="com.src.p2">Tria una font per veure què se'n treu i com es llegeix.</p>
           </div>
         </div>
 
@@ -228,47 +241,47 @@
           <div class="src-list" id="src-list"></div>
           <article class="src-card" id="src-card" aria-live="polite"></article>
         </div>
-        <noscript><p class="prose">La llista completa de fonts és a <a href="fonts.html">Fonts de dades</a>.</p></noscript>
-        <p class="small" style="margin-top:28px">El detall de cada font, amb el mètode exacte, és a <a href="fonts.html">Fonts de dades</a>.</p>
+        <noscript><p class="prose" data-i18n="com.src.noscript">La llista completa de fonts és a <a href="fonts.html">Fonts de dades</a>.</p></noscript>
+        <p class="small" style="margin-top:28px" data-i18n="com.src.more">El detall de cada font, amb el mètode exacte, és a <a href="fonts.html">Fonts de dades</a>.</p>
       </div>
     </section>
 
     <section class="sec" id="contingut">
       <div class="sheet">
         <div class="sec-head">
-          <h2 class="q rv-clip">Què hi ha, exactament?</h2>
+          <h2 class="q rv-clip" data-i18n="com.inv.h2">Què hi ha, exactament?</h2>
           <div class="prose rv" style="--i:1">
-            <p>Tres coses diferents, que el cercador no barreja mai. Els <strong>graus</strong> són la FP que dona una acreditació oficial. Les <strong>especialitats</strong> i els <strong>cursos FPO</strong> són formació per a l'ocupació.</p>
-            <p>Les tres barres fan servir la mateixa escala.</p>
+            <p data-i18n="com.inv.p1">Tres coses diferents, que el cercador no barreja mai. Els <strong>graus</strong> són la FP que dona una acreditació oficial. Les <strong>especialitats</strong> i els <strong>cursos FPO</strong> són formació per a l'ocupació.</p>
+            <p data-i18n="com.inv.p2">Les tres barres fan servir la mateixa escala.</p>
           </div>
         </div>
 
         <div class="inv rv" id="inv">
           <div class="inv-row">
-            <div class="inv-label"><span class="n" data-count="12989">12.989</span><span class="w">graus del sistema de FP, de l'A a l'E</span></div>
+            <div class="inv-label"><span class="n" data-count="12989">12.989</span><span class="w" data-i18n="com.inv.graus.w">graus del sistema de FP, de l'A a l'E</span></div>
             <div class="bar" style="--w:100;--i:0" id="bar-graus" aria-hidden="true">
               <span style="--s:67.96" data-k="A"></span><span style="--s:22.70" data-k="B"></span><span style="--s:7.55" data-k="C"></span><span style="--s:1.50" data-k="D"></span><span style="--s:0.29" data-k="E"></span>
             </div>
-            <div class="seg" id="inv-seg" role="group" aria-label="Tria un grau">
-              <button type="button" data-k="A" aria-pressed="true">Grau A · 8.827</button>
-              <button type="button" data-k="B" aria-pressed="false">Grau B · 2.948</button>
-              <button type="button" data-k="C" aria-pressed="false">Grau C · 981</button>
-              <button type="button" data-k="D" aria-pressed="false">Grau D · 195</button>
-              <button type="button" data-k="E" aria-pressed="false">Grau E · 38</button>
+            <div class="seg" id="inv-seg" role="group" aria-label="Tria un grau" data-i18n-aria="com.inv.seg.aria">
+              <button type="button" data-k="A" data-i18n="com.inv.btn.A" aria-pressed="true">Grau A · 8.827</button>
+              <button type="button" data-k="B" data-i18n="com.inv.btn.B" aria-pressed="false">Grau B · 2.948</button>
+              <button type="button" data-k="C" data-i18n="com.inv.btn.C" aria-pressed="false">Grau C · 981</button>
+              <button type="button" data-k="D" data-i18n="com.inv.btn.D" aria-pressed="false">Grau D · 195</button>
+              <button type="button" data-k="E" data-i18n="com.inv.btn.E" aria-pressed="false">Grau E · 38</button>
             </div>
             <div class="inv-detail" id="inv-detail" aria-live="polite"></div>
           </div>
 
           <div class="inv-row">
-            <div class="inv-label"><span class="n" data-count="7557">7.557</span><span class="w">especialitats del catàleg estatal del SEPE</span></div>
+            <div class="inv-label"><span class="n" data-count="7557">7.557</span><span class="w" data-i18n="com.inv.sepe.w">especialitats del catàleg estatal del SEPE</span></div>
             <div class="bar bar--hatch" style="--w:58.18;--i:1" aria-hidden="true"><span style="--s:100"></span></div>
-            <p class="prose">Formació en el treball: cursos per actualitzar-se o especialitzar-se, la majoria d'entre 10 i 100 hores. No donen cap títol oficial, i per això surten en un bloc a part, amb la seva etiqueta. 3.180 es poden seguir en directe per aula virtual.</p>
+            <p class="prose" data-i18n="com.inv.sepe.p">Formació en el treball: cursos per actualitzar-se o especialitzar-se, la majoria d'entre 10 i 100 hores. No donen cap títol oficial, i per això surten en un bloc a part, amb la seva etiqueta. 3.180 es poden seguir en directe per aula virtual.</p>
           </div>
 
           <div class="inv-row">
-            <div class="inv-label"><span class="n">Uns 950</span><span class="w">cursos programats ara a Catalunya</span></div>
+            <div class="inv-label"><span class="n" data-i18n="com.inv.fpo.n">Uns 950</span><span class="w" data-i18n="com.inv.fpo.w">cursos programats ara a Catalunya</span></div>
             <div class="bar bar--hatch" style="--w:7.3;--i:2" aria-hidden="true"><span style="--s:100"></span></div>
-            <p class="prose">Cursos amb centre, dates i inscripció: els del Servei d'Ocupació de Catalunya i els de PIMEC, Foment, Cecot i CCOO. Canvien cada setmana.</p>
+            <p class="prose" data-i18n="com.inv.fpo.p">Cursos amb centre, dates i inscripció: els del Servei d'Ocupació de Catalunya i els de PIMEC, Foment, Cecot i CCOO. Canvien cada setmana.</p>
           </div>
         </div>
       </div>
@@ -277,10 +290,10 @@
     <section class="sec band-ink" id="refresc">
       <div class="sheet">
         <div class="sec-head">
-          <h2 class="q rv-clip">Cada quan s'actualitza?</h2>
+          <h2 class="q rv-clip" data-i18n="com.ref.h2">Cada quan s'actualitza?</h2>
           <div class="prose rv" style="--i:1">
-            <p>Cada <strong>diumenge al matí</strong> el cercador torna a llegir totes les fonts. L'últim cop va trigar 94 minuts i va fer milers de consultes, una darrere l'altra, per no carregar els servidors oficials.</p>
-            <p>Arrossega la barra o prem el botó per veure què es fa a cada minut.</p>
+            <p data-i18n="com.ref.p1">Cada <strong>diumenge al matí</strong> el cercador torna a llegir totes les fonts. L'últim cop va trigar 94 minuts i va fer milers de consultes, una darrere l'altra, per no carregar els servidors oficials.</p>
+            <p data-i18n="com.ref.p2">Arrossega la barra o prem el botó per veure què es fa a cada minut.</p>
           </div>
         </div>
 
@@ -293,32 +306,32 @@
           <div>
             <div class="track">
               <div class="track-bar" id="track-bar" aria-hidden="true"></div>
-              <input type="range" id="clock-range" min="0" max="94" step="1" value="0" aria-label="Minut del refresc setmanal">
+              <input type="range" id="clock-range" min="0" max="94" step="1" value="0" aria-label="Minut del refresc setmanal" data-i18n-aria="com.clock.aria">
             </div>
-            <div class="track-ends"><span>inici</span><span>94 min</span></div>
+            <div class="track-ends"><span data-i18n="com.clock.start">inici</span><span>94 min</span></div>
           </div>
           <div class="actions">
             <button type="button" class="btn" id="clock-play">Reprodueix el refresc</button>
           </div>
-          <p class="small">Durades del refresc del 26 de novembre de 2026, arrodonides al minut.</p>
+          <p class="small" data-i18n="com.clock.note">Durades del refresc del 26 de novembre de 2026, arrodonides al minut.</p>
         </div>
 
         <div class="after">
-          <h3 class="rv">I si una font no respon aquell dia?</h3>
+          <h3 class="rv" data-i18n="com.tall.h3">I si una font no respon aquell dia?</h3>
           <div class="route rv" style="--i:1" data-route="tall">
             <ol class="route-stations">
-              <li><button type="button">Tall</button></li>
-              <li><button type="button">Als 10 s</button></li>
-              <li><button type="button">Als 30 s</button></li>
-              <li><button type="button">Als 90 s</button></li>
-              <li><button type="button">Si tot falla</button></li>
+              <li><button type="button" data-i18n="com.tall.st.1">Tall</button></li>
+              <li><button type="button" data-i18n="com.tall.st.2">Als 10 s</button></li>
+              <li><button type="button" data-i18n="com.tall.st.3">Als 30 s</button></li>
+              <li><button type="button" data-i18n="com.tall.st.4">Als 90 s</button></li>
+              <li><button type="button" data-i18n="com.tall.st.5">Si tot falla</button></li>
             </ol>
             <div class="route-panel" aria-live="polite">
               <p class="route-step"></p>
               <p class="route-text"></p>
             </div>
             <div class="route-controls">
-              <button type="button" class="link-btn" data-route-play data-label-play="Torna-ho a veure" data-label-stop="Atura">Torna-ho a veure</button>
+              <button type="button" class="link-btn" data-route-play data-label-play="Torna-ho a veure" data-label-stop="Atura" data-i18n="com.tall.replay">Torna-ho a veure</button>
             </div>
           </div>
         </div>
@@ -328,10 +341,10 @@
     <section class="sec" id="cerca" style="border-top:none">
       <div class="sheet">
         <div class="sec-head">
-          <h2 class="q rv-clip">Què passa quan escric una cerca?</h2>
+          <h2 class="q rv-clip" data-i18n="com.demo.h2">Què passa quan escric una cerca?</h2>
           <div class="prose rv" style="--i:1">
-            <p>Tot el catàleg ja és al teu navegador, i per això els resultats surten mentre escrius. Els noms oficials són en castellà, però pots cercar en català: el cercador prova l'equivalent.</p>
-            <p>Prova-ho aquí amb una mostra de 17 registres reals.</p>
+            <p data-i18n="com.demo.p1">Tot el catàleg ja és al teu navegador, i per això els resultats surten mentre escrius. Els noms oficials són en castellà, però pots cercar en català: el cercador prova l'equivalent.</p>
+            <p data-i18n="com.demo.p2">Prova-ho aquí amb una mostra de 17 registres reals.</p>
           </div>
         </div>
 
@@ -339,9 +352,9 @@
           <div>
             <label class="demo-field" for="demo-q">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="M20 20l-3.5-3.5" /></svg>
-              <input id="demo-q" type="search" autocomplete="off" spellcheck="false" value="tutorització" aria-label="Cerca de demostració">
+              <input id="demo-q" type="search" autocomplete="off" spellcheck="false" value="tutorització" aria-label="Cerca de demostració" data-i18n-aria="com.demo.aria">
             </label>
-            <div class="seg" id="demo-chips" style="margin-top:12px" role="group" aria-label="Exemples de cerca">
+            <div class="seg" id="demo-chips" style="margin-top:12px" role="group" aria-label="Exemples de cerca" data-i18n-aria="com.demo.chips.aria">
               <button type="button" aria-pressed="false">tutorització</button>
               <button type="button" aria-pressed="false">ciberseguretat</button>
               <button type="button" aria-pressed="false">soldadra</button>
@@ -357,50 +370,50 @@
     <section class="sec" id="errors">
       <div class="sheet">
         <div class="sec-head">
-          <h2 class="q rv-clip">I si la font oficial s'equivoca?</h2>
+          <h2 class="q rv-clip" data-i18n="com.err.h2">I si la font oficial s'equivoca?</h2>
           <div class="prose rv" style="--i:1">
-            <p>Passa. Quan una dada no quadra amb el reial decret o amb una altra font oficial, es contrasta, es corregeix i <strong>es deixa escrit què s'ha canviat i per què</strong>. Aquestes són correccions reals.</p>
+            <p data-i18n="com.err.p1">Passa. Quan una dada no quadra amb el reial decret o amb una altra font oficial, es contrasta, es corregeix i <strong>es deixa escrit què s'ha canviat i per què</strong>. Aquestes són correccions reals.</p>
           </div>
         </div>
 
         <ul class="errata">
-          <li class="rv"><del>20 certificats amb una durada que no era la del seu reial decret</del><ins>Hores corregides amb l'annex de cada decret</ins><span class="why">Font: cercador de certificats del ministeri. Contrastat amb el BOE i amb la llista del SEPE.</span></li>
-          <li class="rv"><del>399 enllaços entre certificats i unitats de competència que no existien, en 140 certificats</del><ins>Enllaços eliminats i refets des del BOE</ins><span class="why">Venien d'una lectura automàtica que enganxava unitats d'un certificat al següent.</span></li>
-          <li class="rv"><del>Fonaments de programació amb HTML, CSS i JAVASCRIP</del><ins>Fonaments de programació amb HTML, CSS i JavaScript</ins><span class="why">Errada al títol en català de l'especialitat <span class="code">IFCD0025</span>. Corregida des del panell d'administració.</span></li>
-          <li class="rv"><del>10 títols del SEPE amb un interrogant on hi havia cometes o el símbol ®</del><ins>Cometes restaurades, interrogant eliminat</ins><span class="why">El caràcter original es perd al servidor del SEPE: «TÉCNICA DE ?CUERDA SECA?».</span></li>
-          <li class="rv"><del>Unes 150 especialitats etiquetades com a pròpies del SOC</del><ins>Reconegudes com a especialitats del catàleg estatal</ins><span class="why">El SEPE hi afegeix el codi antic entre parèntesis, i els codis no coincidien.</span></li>
+          <li class="rv"><del data-i18n="com.err.1.del">20 certificats amb una durada que no era la del seu reial decret</del><ins data-i18n="com.err.1.ins">Hores corregides amb l'annex de cada decret</ins><span class="why" data-i18n="com.err.1.why">Font: cercador de certificats del ministeri. Contrastat amb el BOE i amb la llista del SEPE.</span></li>
+          <li class="rv"><del data-i18n="com.err.2.del">399 enllaços entre certificats i unitats de competència que no existien, en 140 certificats</del><ins data-i18n="com.err.2.ins">Enllaços eliminats i refets des del BOE</ins><span class="why" data-i18n="com.err.2.why">Venien d'una lectura automàtica que enganxava unitats d'un certificat al següent.</span></li>
+          <li class="rv"><del lang="ca">Fonaments de programació amb HTML, CSS i JAVASCRIP</del><ins lang="ca">Fonaments de programació amb HTML, CSS i JavaScript</ins><span class="why" data-i18n="com.err.3.why">Errada al títol en català de l'especialitat <span class="code">IFCD0025</span>. Corregida des del panell d'administració.</span></li>
+          <li class="rv"><del data-i18n="com.err.4.del">10 títols del SEPE amb un interrogant on hi havia cometes o el símbol ®</del><ins data-i18n="com.err.4.ins">Cometes restaurades, interrogant eliminat</ins><span class="why" data-i18n="com.err.4.why">El caràcter original es perd al servidor del SEPE: «TÉCNICA DE ?CUERDA SECA?».</span></li>
+          <li class="rv"><del data-i18n="com.err.5.del">Unes 150 especialitats etiquetades com a pròpies del SOC</del><ins data-i18n="com.err.5.ins">Reconegudes com a especialitats del catàleg estatal</ins><span class="why" data-i18n="com.err.5.why">El SEPE hi afegeix el codi antic entre parèntesis, i els codis no coincidien.</span></li>
         </ul>
-        <p class="prose" style="margin-top:28px">Si veus un error, cada fitxa té l'enllaç «Hi ha un error en aquesta fitxa?». L'avís arriba amb el grau o l'especialitat ja identificats. La llista d'errors coneguts de les fonts és a <a href="fonts.html#errors">Fonts de dades</a>.</p>
+        <p class="prose" style="margin-top:28px" data-i18n="com.err.foot">Si veus un error, cada fitxa té l'enllaç «Hi ha un error en aquesta fitxa?». L'avís arriba amb el grau o l'especialitat ja identificats. La llista d'errors coneguts de les fonts és a <a href="fonts.html#errors">Fonts de dades</a>.</p>
       </div>
     </section>
 
     <section class="sec" id="privacitat">
       <div class="sheet">
         <div class="sec-head">
-          <h2 class="q rv-clip">Què en feu, de les meves dades?</h2>
+          <h2 class="q rv-clip" data-i18n="com.priv.h2">Què en feu, de les meves dades?</h2>
           <div class="prose rv" style="--i:1">
-            <p>El mínim. GrausFP és un projecte personal, gratuït i sense publicitat.</p>
+            <p data-i18n="com.priv.p1">El mínim. GrausFP és un projecte personal, gratuït i sense publicitat.</p>
           </div>
         </div>
 
         <ul class="plain">
-          <li class="rv"><strong>Cercar no demana compte</strong><span>Pots consultar graus, especialitats, cursos, itineraris i centres sense registrar-te ni donar cap dada.</span></li>
-          <li class="rv"><strong>El compte guarda el que tu hi deses</strong><span>El correu, els favorits, les alertes, els centres que segueixes i les llistes. Serveix per avisar-te quan apareix oferta nova.</span></li>
-          <li class="rv"><strong>Les cerques sense resultat es compten, sense saber de qui són</strong><span>Només es guarda el text cercat i quantes vegades s'ha repetit, per saber quines paraules falten. Ni adreça, ni usuari, ni sessió.</span></li>
+          <li class="rv"><strong data-i18n="com.priv.1.k">Cercar no demana compte</strong><span data-i18n="com.priv.1.v">Pots consultar graus, especialitats, cursos, itineraris i centres sense registrar-te ni donar cap dada.</span></li>
+          <li class="rv"><strong data-i18n="com.priv.2.k">El compte guarda el que tu hi deses</strong><span data-i18n="com.priv.2.v">El correu, els favorits, les alertes, els centres que segueixes i les llistes. Serveix per avisar-te quan apareix oferta nova.</span></li>
+          <li class="rv"><strong data-i18n="com.priv.3.k">Les cerques sense resultat es compten, sense saber de qui són</strong><span data-i18n="com.priv.3.v">Només es guarda el text cercat i quantes vegades s'ha repetit, per saber quines paraules falten. Ni adreça, ni usuari, ni sessió.</span></li>
         </ul>
-        <p class="small" style="margin-top:24px">Tot el detall és a la <a href="politica-privacitat.html">Política de privacitat</a>.</p>
+        <p class="small" style="margin-top:24px" data-i18n="com.priv.foot">Tot el detall és a la <a href="politica-privacitat.html">Política de privacitat</a>.</p>
       </div>
     </section>
 
     <section class="band-ink closing">
       <div class="sheet">
-        <h2 class="q rv-clip">Ara ja saps què hi ha a sota</h2>
-        <p class="lead rv" style="--i:1">Fes una cerca i comprova-ho amb les teves pròpies paraules.</p>
+        <h2 class="q rv-clip" data-i18n="com.end.h2">Ara ja saps què hi ha a sota</h2>
+        <p class="lead rv" style="--i:1" data-i18n="com.end.lead">Fes una cerca i comprova-ho amb les teves pròpies paraules.</p>
         <div class="actions rv" style="--i:2">
-          <a class="btn" href="index.html">Obre el cercador
+          <a class="btn" href="index.html"><span data-i18n="com.open">Obre el cercador</span>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
           </a>
-          <a class="btn btn--ghost" href="fonts.html">Fonts de dades</a>
+          <a class="btn btn--ghost" href="fonts.html" data-i18n="com.fonts">Fonts de dades</a>
         </div>
       </div>
     </section>
@@ -409,85 +422,65 @@
   <footer class="site-footer" id="site-footer"></footer>
 
   <script>
-    window.TOUR_ROUTES = {
-      registre: {
-        auto: 3200,
-        sets: {
-          d: [
-            "todofp.es, el portal del Ministeri d'Educació, publica la llista de cicles formatius de grau superior.",
-            "Cada diumenge el cercador torna a llegir aquesta pàgina i la fitxa del cicle: mòduls, hores i requisits d'accés.",
-            "Si el nombre de cicles cau de cop o la pàgina ha canviat de format, la lectura es descarta i es conserven les dades de la setmana anterior.",
-            "El cicle rep un identificador estable i es lliga als certificats que hi convaliden mòduls i als centres que l'imparteixen.",
-            "El trobes pel nom, pel codi o per l'ofici, amb el seu itinerari i l'enllaç a la fitxa oficial."
-          ],
-          sepe: [
-            "La seu electrònica del SEPE publica el Catàleg d'Especialitats Formatives: 7.557 especialitats de formació en el treball.",
-            "Es demana el catàleg sencer en blocs de 2.000 i, a part, el programa oficial de cada especialitat, que és un PDF.",
-            "SSCE22 arriba en majúscules i sense accents. Es netegen els títols i es comprova que no hi hagi cap codi repetit.",
-            "S'hi afegeix si admet aula virtual, el títol en català quan el SOC el té i quants cursos hi ha programats a Catalunya.",
-            "Surt a la pestanya «Especialitats SEPE» i sota els graus quan cerques, amb l'avís que no dona cap títol oficial."
-          ],
-          fpo: [
-            "El Servei d'Ocupació de Catalunya publica els cursos programats. PIMEC, Foment, Cecot i CCOO publiquen els seus.",
-            "Cada setmana es llegeixen tots: centre, dates, horari, modalitat i estat de la inscripció.",
-            "Si una entitat publica de cop molts menys cursos que la setmana anterior, es conserven els anteriors i s'avisa l'administrador.",
-            "Els cursos s'agrupen per especialitat i es lliguen al certificat professional o al catàleg del SEPE que els correspon.",
-            "Els veus al mode «Cursos FPO (Catalunya)» i a l'agenda de «Comencen aviat», i pots rebre un avís quan n'aparegui un de nou."
-          ]
-        }
-      },
-      tall: {
-        auto: 2800,
-        sets: {
-          u: [
-            "El servidor oficial talla la connexió a mitja lectura. És el que va passar el 22 de novembre de 2026.",
-            "Primer reintent al cap de 10 segons. La majoria de talls es resolen aquí.",
-            "Segon reintent, al cap de 30 segons més.",
-            "Tercer i últim reintent, al cap de 90 segons.",
-            "No s'escriu res: el cercador continua amb les dades de la setmana anterior. Al cap de dues hores es torna a provar tot el refresc i, si també falla, l'administrador rep un correu que diu en quina fase ha fallat."
-          ]
-        }
-      }
-    };
+    /* Route texts come from i18n.js (com.route.*, com.tall.*); rebuilt on every language switch. */
+    function buildTourRoutes() {
+      function texts(prefix) { return [1, 2, 3, 4, 5].map(function (i) { return t(prefix + i); }); }
+      window.TOUR_ROUTES = {
+        registre: { auto: 3200, sets: { d: texts('com.route.d.'), sepe: texts('com.route.sepe.'), fpo: texts('com.route.fpo.') } },
+        tall: { auto: 2800, sets: { u: texts('com.tall.') } }
+      };
+      document.querySelectorAll('[data-route-play]').forEach(function (b) {
+        b.setAttribute('data-label-play', t(b.getAttribute('data-i18n')));
+        b.setAttribute('data-label-stop', t('com.stop'));
+      });
+    }
+    buildTourRoutes();
   </script>
-  <script src="tour.js?v=2"></script>
+  <script src="tour.js?v=4"></script>
   <script>
     (function () {
       var reduce = window.TOUR.reduce;
 
-      /* ── Sources: list, card and connecting lines ── */
+      /* ── Sources: list, card and connecting lines ──
+         Texts are i18n keys: com.src.<group>.org / .host and com.src.<item>.n / .get / .read.
+         A literal `n` or `host` is a proper name that stays the same in every language. */
       var SOURCES = [
-        { org: "Ministeri d'Educació i FP", host: 'todofp.es', items: [
-          { n: 'Cercador de graus A, B i C', how: 'JSON', get: "Els 12.756 graus A, B i C: codi, denominació, família, nivell i si són del pla antic.", read: "El cercador oficial respon en JSON. Es demana grau per grau i nivell per nivell." },
-          { n: 'Cicles i cursos d\'especialització', how: 'HTML', get: "Els 195 cicles de Grau D i els 38 cursos de Grau E, per família professional.", read: "Es llegeixen les pàgines de «Què estudiar» de todofp.es, una per tipus de cicle." },
-          { n: 'Fitxes de cada títol', how: 'HTML', get: "Mòduls, hores, requisits d'accés i sortides professionals.", read: "Una consulta per fitxa. És la part més lenta del refresc: milers de fitxes." },
-          { n: 'Cercador de certificats', how: 'JSON', get: "Durada, reial decret i annexos dels certificats del pla antic.", read: "API del cercador de certificats. Vint durades es corregeixen amb el BOE." }
+        { key: 'min', host: 'todofp.es', items: [
+          { key: 'graus', how: 'JSON' },
+          { key: 'cicles', how: 'HTML' },
+          { key: 'fitxes', how: 'HTML' },
+          { key: 'cert', how: 'JSON' }
         ] },
-        { org: 'Butlletí Oficial de l\'Estat', host: 'boe.es', items: [
-          { n: 'Reials decrets de cada títol', how: 'PDF', get: "Quins mòduls d'un cicle es convaliden amb cada unitat de competència.", read: "Es llegeix l'annex de correspondències de cada reial decret." }
+        { key: 'boe', host: 'boe.es', items: [
+          { key: 'rd', how: 'PDF' }
         ] },
-        { org: 'Registre Estatal d\'Entitats de Formació', host: 'Ministeri d\'Educació i FP', items: [
-          { n: 'Centres acreditats per grau', how: 'HTML', get: "Quins centres imparteixen cada grau, amb localitat i contacte.", read: "S'actualitza a demanda, perquè són moltes consultes." }
+        { key: 'reef', hostKey: 'com.src.min.org', items: [
+          { key: 'centres', how: 'HTML' }
         ] },
-        { org: 'Servei Públic d\'Ocupació Estatal', host: 'sede.sepe.gob.es', items: [
-          { n: 'Catàleg d\'especialitats', how: 'JSON', get: "7.557 especialitats: hores, nivell, modalitat, vigència i si admeten aula virtual.", read: "El cercador del SEPE carrega la llista des d'un servei intern, sense registre." },
-          { n: 'Programes formatius', how: 'PDF', get: "Objectiu, mòduls amb hores i requisits d'accés de cada especialitat.", read: "El PDF només es pot demanar des del formulari del SEPE, un per un." },
-          { n: 'Entitats autoritzades', how: 'HTML', get: "Qui pot impartir cada especialitat: nom, tipus, província i contacte.", read: "Es demana quan algú obre l'especialitat i es guarda set dies." }
+        { key: 'sepe', host: 'sede.sepe.gob.es', items: [
+          { key: 'cataleg', how: 'JSON' },
+          { key: 'programes', how: 'PDF' },
+          { key: 'entitats', how: 'HTML' }
         ] },
-        { org: 'Catalunya', host: 'SOC i entitats formadores', items: [
-          { n: 'Servei d\'Ocupació de Catalunya', how: 'API', get: "Cursos programats, especialitats i centres de formació per a l'ocupació.", read: "El cercador del SOC funciona amb un servei de cerca; es recorre sencer." },
-          { n: 'PIMEC Formació', how: 'AJAX', get: "Cursos subvencionats i bonificables de la patronal.", read: "Cercador públic de la seva web, pàgina per pàgina." },
-          { n: 'Foment Formació', how: 'HTML', get: "Cursos de Foment del Treball, amb dates i modalitat.", read: "Llistat públic de la seva web." },
-          { n: 'Cecot Formació', how: 'JSON', get: "Cursos de la patronal Cecot.", read: "Llistat de cursos de la seva web." },
-          { n: 'Fundació Paco Puerto (CCOO)', how: 'API', get: "Cursos de l'entitat formadora de CCOO de Catalunya.", read: "API pública del seu catàleg, més la fitxa de cada curs." }
+        { key: 'cat', hostKey: 'com.src.cat.host', items: [
+          { key: 'soc', how: 'API' },
+          { key: 'pimec', n: 'PIMEC Formació', how: 'AJAX' },
+          { key: 'foment', n: 'Foment Formació', how: 'HTML' },
+          { key: 'cecot', n: 'Cecot Formació', how: 'JSON' },
+          { key: 'paco', n: 'Fundació Paco Puerto (CCOO)', how: 'API' }
         ] }
       ];
+      function itemName(item) { return item.n || t('com.src.' + item.key + '.n'); }
+      function groupOrg(group) { return t('com.src.' + group.key + '.org'); }
+      function groupHost(group) { return group.host || t(group.hostKey); }
 
       var srcWrap = document.getElementById('src');
       var listEl = document.getElementById('src-list');
       var cardEl = document.getElementById('src-card');
       var svg = srcWrap.querySelector('.src-lines');
       var buttons = [];
+      var orgHeads = [];
+      var selected = null;
       var NS = 'http://www.w3.org/2000/svg';
 
       SOURCES.forEach(function (group) {
@@ -495,7 +488,8 @@
         g.className = 'src-group';
         var h = document.createElement('h3');
         h.className = 'src-org';
-        h.textContent = group.org;
+        h._group = group;
+        orgHeads.push(h);
         g.appendChild(h);
         group.items.forEach(function (item) {
           var b = document.createElement('button');
@@ -503,7 +497,6 @@
           b.className = 'src-item';
           b.setAttribute('aria-pressed', 'false');
           var name = document.createElement('span');
-          name.textContent = item.n;
           var how = document.createElement('span');
           how.className = 'how';
           how.textContent = item.how;
@@ -512,11 +505,16 @@
           b.addEventListener('click', function () { select(b); });
           b._item = item;
           b._group = group;
+          b._name = name;
           buttons.push(b);
           g.appendChild(b);
         });
         listEl.appendChild(g);
       });
+      function labelSources() {
+        orgHeads.forEach(function (h) { h.textContent = groupOrg(h._group); });
+        buttons.forEach(function (b) { b._name.textContent = itemName(b._item); });
+      }
 
       function field(dl, label, text) {
         var dt = document.createElement('dt');
@@ -528,16 +526,17 @@
       }
 
       function select(btn) {
+        selected = btn;
         buttons.forEach(function (b) { b.setAttribute('aria-pressed', String(b === btn)); });
         cardEl.textContent = '';
         var h = document.createElement('h3');
-        h.textContent = btn._item.n;
+        h.textContent = itemName(btn._item);
         var host = document.createElement('p');
         host.className = 'host';
-        host.textContent = btn._group.org + ' · ' + btn._group.host;
+        host.textContent = groupOrg(btn._group) + ' · ' + groupHost(btn._group);
         var dl = document.createElement('dl');
-        field(dl, "Què se n'obté", btn._item.get);
-        field(dl, 'Com es llegeix', btn._item.read);
+        field(dl, t('com.src.get'), t('com.src.' + btn._item.key + '.get'));
+        field(dl, t('com.src.read'), t('com.src.' + btn._item.key + '.read'));
         cardEl.appendChild(h);
         cardEl.appendChild(host);
         cardEl.appendChild(dl);
@@ -569,35 +568,37 @@
         });
       }
 
+      labelSources();
       select(buttons[6]);
       drawLines();
       var resizeTimer;
       window.addEventListener('resize', function () { clearTimeout(resizeTimer); resizeTimer = setTimeout(drawLines, 120); });
       if (document.fonts && document.fonts.ready) document.fonts.ready.then(drawLines);
 
-      /* ── What is inside ── */
-      var GRAUS = {
-        A: ['Acreditació parcial de competència', "La peça més petita del sistema: acredita una part d'un mòdul. Per això n'hi ha tantes: 8.827, dos terços del catàleg.", 'Exemple: Preparación de los equipos'],
-        B: ['Certificat de competència', "Acredita un mòdul professional sencer. Diversos graus B sumen un certificat professional.", 'Exemple: Técnicas administrativas básicas'],
-        C: ['Certificat professional', "L'antic certificat de professionalitat. Sis de cada deu encara són del pla anterior, i el cercador els marca.", 'Exemple: Seguridad informática'],
-        D: ['Cicle formatiu', "Els cicles de grau bàsic, mitjà i superior: el que tothom entén per «fer FP». Són només l'1,5 % dels registres.", 'Exemple: Técnico Superior en Desarrollo de Aplicaciones Web'],
-        E: ['Curs d\'especialització', "Per a qui ja té un cicle i vol especialitzar-se. N'hi ha 38 a tot l'Estat.", 'Exemple: Curso de Especialización en Ciberseguridad en Entornos de las Tecnologías de la Información']
+      /* ── What is inside ── (texts: com.grau.<k>.n / .t; the example is an official title) */
+      var GRAU_EX = {
+        A: 'Preparación de los equipos',
+        B: 'Técnicas administrativas básicas',
+        C: 'Seguridad informática',
+        D: 'Técnico Superior en Desarrollo de Aplicaciones Web',
+        E: 'Curso de Especialización en Ciberseguridad en Entornos de las Tecnologías de la Información'
       };
       var invButtons = Array.prototype.slice.call(document.querySelectorAll('#inv-seg button'));
       var invDetail = document.getElementById('inv-detail');
       var barSegs = Array.prototype.slice.call(document.querySelectorAll('#bar-graus span'));
+      var currentGrau = 'A';
       function pickGrau(k) {
+        currentGrau = k;
         invButtons.forEach(function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-k') === k)); });
         barSegs.forEach(function (s) { s.classList.toggle('on', s.getAttribute('data-k') === k); });
         invDetail.textContent = '';
-        var d = GRAUS[k];
         var s = document.createElement('strong');
-        s.textContent = 'Grau ' + k + ' · ' + d[0];
+        s.textContent = t('com.grau.label', { k: k }) + ' · ' + t('com.grau.' + k + '.n');
         var p = document.createElement('p');
-        p.textContent = d[1];
+        p.textContent = t('com.grau.' + k + '.t');
         var ex = document.createElement('p');
         ex.className = 'ex';
-        ex.textContent = d[2];
+        ex.textContent = t('com.grau.ex', { t: GRAU_EX[k] });
         invDetail.appendChild(s);
         invDetail.appendChild(p);
         invDetail.appendChild(ex);
@@ -605,17 +606,10 @@
       invButtons.forEach(function (b) { b.addEventListener('click', function () { pickGrau(b.getAttribute('data-k')); }); });
       pickGrau('A');
 
-      /* ── Weekly refresh ── */
-      var PHASES = [
-        { m: 1, n: 'Catàleg de graus', t: "Es demanen els graus A, B i C al cercador del ministeri i els cicles i cursos d'especialització a todofp.es. En un minut hi ha els 12.989 registres." },
-        { m: 23, n: 'Fitxes dels certificats', t: "S'obre la fitxa de cada certificat professional per llegir-ne els mòduls i saber amb quins graus B es correspon." },
-        { m: 4, n: 'Mòduls dels cicles', t: "El mateix per als cicles formatius: quins mòduls tenen i quants en comparteixen amb cada certificat." },
-        { m: 31, n: 'Contingut dels graus B', t: "Una consulta per cada certificat de competència, per poder explicar en què consisteix." },
-        { m: 30, n: 'Graus A del pla antic', t: "Prop de 3.000 fitxes per saber de quin grau B forma part cada acreditació parcial." },
-        { m: 1, n: 'Accés als cursos d\'especialització', t: "Per a cada curs de Grau E, quins cicles hi donen accés." },
-        { m: 3, n: 'Cursos a Catalunya', t: "Es llegeixen els cursos del SOC i els de PIMEC, Foment, Cecot i CCOO." },
-        { m: 1, n: 'Catàleg del SEPE i tancament', t: "Es refresca el catàleg d'especialitats, s'anota què ha canviat a l'historial i s'envien els avisos a qui tenia una alerta." }
-      ];
+      /* ── Weekly refresh ── (minutes per phase; texts: com.ph.<n>.n / .t) */
+      var PHASES = [1, 23, 4, 31, 30, 1, 3, 1].map(function (m, i) {
+        return { m: m, key: 'com.ph.' + (i + 1) };
+      });
       var total = PHASES.reduce(function (a, p) { return a + p.m; }, 0);
       var trackBar = document.getElementById('track-bar');
       var range = document.getElementById('clock-range');
@@ -636,20 +630,20 @@
         var idx = PHASES.length - 1;
         for (var i = 0; i < PHASES.length; i++) { acc += PHASES[i].m; if (m < acc) { idx = i; break; } }
         segEls.forEach(function (s, i) { s.classList.toggle('past', i < idx); s.classList.toggle('now', i === idx); });
-        minEl.textContent = 'minut ' + m + ' de ' + total;
+        minEl.textContent = t('com.clock.min', { m: m, total: total });
         if (idx !== lastPhase) {
           lastPhase = idx;
-          phaseEl.textContent = PHASES[idx].n;
-          textEl.textContent = PHASES[idx].t;
+          phaseEl.textContent = t(PHASES[idx].key + '.n');
+          textEl.textContent = t(PHASES[idx].key + '.t');
         }
       }
       var playing = null;
-      function stopClock() { if (playing) { clearInterval(playing); playing = null; } playBtn.textContent = 'Reprodueix el refresc'; }
+      function stopClock() { if (playing) { clearInterval(playing); playing = null; } playBtn.textContent = t('com.clock.play'); }
       range.addEventListener('input', function () { stopClock(); showMinute(Number(range.value)); });
       playBtn.addEventListener('click', function () {
         if (playing) { stopClock(); return; }
         if (Number(range.value) >= total) range.value = 0;
-        playBtn.textContent = 'Atura';
+        playBtn.textContent = t('com.stop');
         playing = setInterval(function () {
           var v = Number(range.value) + 1;
           range.value = v;
@@ -657,6 +651,7 @@
           if (v >= total) stopClock();
         }, reduce ? 60 : 130);
       });
+      playBtn.textContent = t('com.clock.play');
       showMinute(0);
 
       /* ── Search demo ── */
@@ -732,13 +727,13 @@
         }
         rows.forEach(function (r) {
           var li = document.createElement('li');
-          var t = document.createElement('span');
-          t.textContent = r.t;
-          li.appendChild(t);
+          var tt = document.createElement('span');
+          tt.textContent = r.t;
+          li.appendChild(tt);
           if (r.c) { var c = document.createElement('span'); c.className = 'code'; c.textContent = r.c; li.appendChild(c); }
           var g = document.createElement('span');
           g.className = 'tag';
-          g.textContent = tag || ('Grau ' + r.g);
+          g.textContent = tag || t('com.grau.label', { k: r.g });
           li.appendChild(g);
           ul.appendChild(li);
         });
@@ -752,57 +747,78 @@
         chips.forEach(function (c) { c.setAttribute('aria-pressed', String(c.textContent === raw)); });
         stepsEl.textContent = '';
         resEl.textContent = '';
-        if (raw.length < 2) { step(0, 'Esperant', 'Escriu dues lletres o més.'); return; }
+        if (raw.length < 2) { step(0, t('com.demo.wait.k'), t('com.demo.wait.v')); return; }
         var n = norm(raw);
         var words = n.split(/\s+/);
         var es = words.map(toEs);
-        step(0, 'Has escrit', '«' + raw + '»');
-        step(1, 'Sense accents', n);
-        step(2, 'En castellà', es.join(' ') === n ? 'igual: ' + n : es.join(' '));
+        step(0, t('com.demo.typed'), '«' + raw + '»');
+        step(1, t('com.demo.noacc'), n);
+        /* In Spanish the step reads "Idioma": a Catalan word is shown with the Spanish form that is searched too. */
+        step(2, t('com.demo.lang'), es.join(' ') === n ? t('com.demo.lang.same', { q: n }) : t('com.demo.lang.tr', { q: es.join(' ') }));
         function hit(r) {
-          var t = norm(r.t);
+          var tt = norm(r.t);
           var c = norm(r.c);
-          return c.indexOf(n) >= 0 || words.every(function (w, i) { return t.indexOf(w) >= 0 || t.indexOf(es[i]) >= 0; });
+          return c.indexOf(n) >= 0 || words.every(function (w, i) { return tt.indexOf(w) >= 0 || tt.indexOf(es[i]) >= 0; });
         }
         var g = D_GRAUS.filter(hit);
         var s = D_SEPE.filter(hit);
-        step(3, 'On es busca', 'Al nom i al codi dels graus i de les especialitats, alhora.');
-        step(4, 'Resultat', g.length + (g.length === 1 ? ' grau i ' : ' graus i ') + s.length + (s.length === 1 ? ' especialitat' : ' especialitats') + ' a la mostra.');
+        step(3, t('com.demo.where.k'), t('com.demo.where.v'));
+        step(4, t('com.demo.res.k'), t('com.demo.res.v', {
+          g: g.length, gw: t(g.length === 1 ? 'com.demo.g1' : 'com.demo.gN'),
+          s: s.length, sw: t(s.length === 1 ? 'com.demo.s1' : 'com.demo.sN')
+        }));
         if (!g.length && !s.length) {
           var best = Object.keys(VOCAB).map(function (w) { return [distance(es[0], w), w]; })
             .filter(function (x) { return x[0] <= 2; }).sort(function (a, b) { return a[0] - b[0]; })[0];
           var div = document.createElement('div');
           var h = document.createElement('h3');
-          h.textContent = 'Cap resultat';
+          h.textContent = t('com.demo.none');
           var p = document.createElement('p');
           p.className = 'dym';
           p.style.paddingTop = '14px';
           if (best) {
-            p.appendChild(document.createTextNode('Volies dir '));
+            p.appendChild(document.createTextNode(t('com.demo.dym.pre')));
             var b = document.createElement('button');
             b.type = 'button';
             b.textContent = best[1];
             b.addEventListener('click', function () { qEl.value = best[1]; run(); });
             p.appendChild(b);
-            p.appendChild(document.createTextNode(' ?'));
+            p.appendChild(document.createTextNode(t('com.demo.dym.post')));
           } else {
-            p.textContent = 'Cap paraula semblant a la mostra.';
+            p.textContent = t('com.demo.nosim');
           }
           div.appendChild(h);
           div.appendChild(p);
           resEl.appendChild(div);
           return;
         }
-        block('Graus de FP', g, 'Cap grau A–E coincideix amb la cerca.');
-        block('Especialitats del SEPE', s, 'Cap especialitat coincideix amb la cerca.', 'Especialitat SEPE');
+        block(t('com.demo.graus'), g, t('com.demo.graus.none'));
+        block(t('com.demo.sepe'), s, t('com.demo.sepe.none'), t('com.demo.tag.sepe'));
       }
       qEl.addEventListener('input', run);
       chips.forEach(function (c) { c.addEventListener('click', function () { qEl.value = c.textContent; run(); }); });
       run();
+
+      /* ── Language switch (i18n.js): repaint everything drawn here, keeping the current state ── */
+      function repaint() {
+        buildTourRoutes();
+        window.TOUR.refresh();
+        labelSources();
+        if (selected) select(selected);
+        drawLines();
+        pickGrau(currentGrau);
+        playBtn.textContent = t(playing ? 'com.stop' : 'com.clock.play');
+        lastPhase = -1;
+        showMinute(Number(range.value));
+        run();
+      }
+      document.addEventListener('langchange', repaint);
+      /* i18n.js translates the markup on DOMContentLoaded, after tour.js drew the route labels. */
+      document.addEventListener('DOMContentLoaded', function () { window.TOUR.refresh(); });
     })();
   </script>
-  <script src="footer.js?v=3"></script>
-  <script src="feedback.js?v=6"></script>
+  <script src="footer.js?v=4"></script>
+  <script src="feedback.js?v=7"></script>
 
 </body>
 
