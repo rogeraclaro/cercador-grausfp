@@ -1,4 +1,4 @@
-/* Shared behaviour for com-funciona.html and el-projecte.html: scroll reveals, counters,
+/* Behaviour for com-funciona.html: scroll reveals, counters,
    scroll progress and the "route" diagram (stations + travelling progress). No dependencies.
    Every page works without this file: content is visible by default. */
 (function () {

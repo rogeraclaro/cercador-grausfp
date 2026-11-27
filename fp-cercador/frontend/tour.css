@@ -1,4 +1,4 @@
-/* Shared styles for the two explanatory pages (com-funciona.html, el-projecte.html).
+/* Styles for the explanatory page com-funciona.html.
    Tokens and the top bar come from site.css; this file only adds the long-read layout,
    the operable diagrams and their motion. No library: plain CSS + tour.js. */
 
